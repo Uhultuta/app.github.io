@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Visualizador de Vagas de Estacionamento</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column; /* Stack elements vertically on small screens */
+            align-items: center;
+            padding: 10px;
+        }
+
+        .parking-lot {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr)); /* Responsive grid */
+            grid-gap: 10px;
+            margin: 20px;
+            width: 100%; /* Full width */
+        }
+
+        .spot {
+            width: 100%; /* Full width of the grid cell */
+            height: 80px; /* Adjusted height for better touch target */
+            border: 2px solid #000;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            position: relative;
+        }
+
+        .spot.vacant {
+            background-color: green;
+        }
+
+        .spot.occupied {
+            background-color: red;
+        }
+
+        .info {
+            position: absolute;
+            bottom: 5px;
+            left: 5px;
+            color: white;
+            font-size: 12px;
+            text-shadow: 1px 1px 2px black;
+        }
+
+        .logbook {
+            margin-top: 20px;
+            text-align: left;
+            max-width: 100%; /* Full width */
+            border: 1px solid #000;
+            padding: 10px;
+            height: 300px; /* Adjusted height for mobile */
+            overflow-y: auto;
+        }
+
+        /* Media query for larger screens */
+        @media (min-width: 600px) {
+            .logbook {
+                max-width: 300px; /* Limit width on larger screens */
+            }
+        }
+    </style>
+</head>
+<body>
+    <h1>Vagas de Estacionamento</h1>
+    <div class="container">
+        <div id="parking-lot" class="parking-lot">
+            <!-- As vagas de estacionamento serão geradas aqui -->
+        </div>
+        <div class="logbook" id="logbook">
+            <h2>Histórico de Atividades</h2>
+            <ul id="log-list">
+                <!-- As atividades serão registradas aqui -->
+            </ul>
+        </div>
+    </div>
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const parkingLot = document.getElementById("parking-lot");
+        const logList = document.getElementById("log-list");
+        const correctPassword = "iph21";
+        const maxSpots = 16; // Maximum number of parking spots
+
+        // Function to get the current date and time in Niterói, RJ
+        function getCurrentDateTime() {
+            const options = { timeZone: 'America/Sao_Paulo', year: 'numeric', month: '2-digit', day: '2-digit', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            return new Date().toLocaleString('pt-BR', options);
+        }
+
+        // Function to log activity in the logbook
+        function logActivity(message) {
+            const logItem = document.createElement("li");
+            logItem.textContent = message;
+            logList.insertBefore(logItem, logList.firstChild); // Insert the new item at the top of the list
+        }
+
+        // Function to update the displayed information in the spot
+        function updateSpotInfo(spot) {
+            const infoDiv = document.createElement("div");
+            infoDiv.classList.add("info");
+            infoDiv.textContent = spot.dataset.info;
+            spot.innerHTML = "";
+            spot.appendChild(infoDiv);
+        }
+
+        // Create parking spots up to the maximum limit
+        for (let i = 0; i < maxSpots; i++) {
+            const spot = document.createElement("div");
+            spot.classList.add("spot", "vacant");
+            spot.dataset.info = ""; // Store information about the spot
+            spot.dataset.roomNumber = ""; // Store the room number
+
+           
+
+                             spot.addEventListener("click", () => {
+    const currentState = spot.classList.contains("vacant") ? "vacant" : "occupied";
+    const action = currentState === "vacant" ? "ocupar" : "liberar";
+    const confirmation = confirm(`Tem certeza que deseja ${action} esta vaga?`);
+
+    if (confirmation) {
+        const password = prompt("Digite a senha para confirmar:");
+        if (password === correctPassword) {
+            if (currentState === "vacant") {
+                const roomNumber = prompt("Digite o número do quarto do dono do carro:");
+                const vehiclePlate = prompt("Qual a placa do veículo?"); // New prompt for vehicle plate
+                const entryDateTime = getCurrentDateTime();
+                spot.classList.remove("vacant");
+                spot.classList.add("occupied");
+                spot.dataset.info = `Quarto: ${roomNumber}\nPlaca: ${vehiclePlate}\nEntrada: ${entryDateTime}`; // Include vehicle plate
+                spot.dataset.roomNumber = roomNumber; // Store the room number
+                logActivity(`Vaga ocupada: Quarto ${roomNumber}, Placa: ${vehiclePlate}, Entrada: ${entryDateTime}`); // Include vehicle plate in log
+            } else {
+                const exitDateTime = getCurrentDateTime();
+                const roomNumber = spot.dataset.roomNumber; // Retrieve the room number
+                const vehiclePlate = spot.dataset.info.split('\n')[1].split(': ')[1]; // Extract vehicle plate from info
+                spot.classList.remove("occupied");
+                spot.classList.add("vacant");
+                spot.dataset.info = `Saída: ${exitDateTime}`;
+                logActivity(`Vaga liberada: Quarto ${roomNumber}, Placa: ${vehiclePlate}, Saída: ${exitDateTime}`); // Include vehicle plate in log
+            }
+            updateSpotInfo(spot);
+        } else {
+            alert("Senha incorreta! A alteração não foi realizada.");
+        }
+    }
+});
+
+
+                parkingLot.appendChild(spot);
+            }
+        });
+    </script>
+</body>
+</html>
+
