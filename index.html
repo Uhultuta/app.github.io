@@ -122,38 +122,47 @@
 
            
 
-                             spot.addEventListener("click", () => {
+spot.addEventListener("click", () => {
     const currentState = spot.classList.contains("vacant") ? "vacant" : "occupied";
     const action = currentState === "vacant" ? "ocupar" : "liberar";
     const confirmation = confirm(`Tem certeza que deseja ${action} esta vaga?`);
 
-    if (confirmation) {
+    if (confirmation) { // Se o usuário clicar em "OK"
         const password = prompt("Digite a senha para confirmar:");
         if (password === correctPassword) {
             if (currentState === "vacant") {
                 const roomNumber = prompt("Digite o número do quarto do dono do carro:");
-                const vehiclePlate = prompt("Qual a placa do veículo?"); // New prompt for vehicle plate
+                const vehiclePlate = prompt("Qual a placa do veículo?"); // Nova solicitação para a placa do veículo
                 const entryDateTime = getCurrentDateTime();
-                spot.classList.remove("vacant");
-                spot.classList.add("occupied");
-                spot.dataset.info = `Quarto: ${roomNumber}\nPlaca: ${vehiclePlate}\nEntrada: ${entryDateTime}`; // Include vehicle plate
-                spot.dataset.roomNumber = roomNumber; // Store the room number
-                logActivity(`Vaga ocupada: Quarto ${roomNumber}, Placa: ${vehiclePlate}, Entrada: ${entryDateTime}`); // Include vehicle plate in log
+                
+                // Atualiza o estado do spot apenas se todas as informações forem fornecidas
+                if (roomNumber && vehiclePlate) {
+                    spot.classList.remove("vacant");
+                    spot.classList.add("occupied");
+                    spot.dataset.info = `Quarto: ${roomNumber}\nPlaca: ${vehiclePlate}\nEntrada: ${entryDateTime}`; // Inclui a placa do veículo
+                    spot.dataset.roomNumber = roomNumber; // Armazena o número do quarto
+                    logActivity(`Vaga ocupada: Quarto ${roomNumber}, Placa: ${vehiclePlate}, Entrada: ${entryDateTime}`); // Inclui a placa do veículo no log
+                }
             } else {
                 const exitDateTime = getCurrentDateTime();
-                const roomNumber = spot.dataset.roomNumber; // Retrieve the room number
-                const vehiclePlate = spot.dataset.info.split('\n')[1].split(': ')[1]; // Extract vehicle plate from info
-                spot.classList.remove("occupied");
-                spot.classList.add("vacant");
-                spot.dataset.info = `Saída: ${exitDateTime}`;
-                logActivity(`Vaga liberada: Quarto ${roomNumber}, Placa: ${vehiclePlate}, Saída: ${exitDateTime}`); // Include vehicle plate in log
+                const roomNumber = spot.dataset.roomNumber; // Recupera o número do quarto
+                const vehiclePlate = spot.dataset.info.split('\n')[1].split(': ')[1]; // Extrai a placa do veículo das informações
+                
+                // Atualiza o estado do spot apenas se o número do quarto for válido
+                if (roomNumber) {
+                    spot.classList.remove("occupied");
+                    spot.classList.add("vacant");
+                    spot.dataset.info = `Saída: ${exitDateTime}`;
+                    logActivity(`Vaga liberada: Quarto ${roomNumber}, Placa: ${vehiclePlate}, Saída: ${exitDateTime}`); // Inclui a placa do veículo no log
+                }
             }
             updateSpotInfo(spot);
         } else {
             alert("Senha incorreta! A alteração não foi realizada.");
         }
-    }
+    } // Se o usuário clicar em "Cancelar", nada acontece.
 });
+
 
 
                 parkingLot.appendChild(spot);
