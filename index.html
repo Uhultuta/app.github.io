@@ -1,184 +1,85 @@
 <!DOCTYPE html>
-<html>
+<html lang="pt-BR">
 <head>
-  <title>Icaraí Praia Hotel - Ofertas Especiais</title>
-  <style>
-    body {
-      margin: 0;
-      height: 100vh;
-      overflow: hidden; /* Prevent scrolling */
-    }
-
-    .banner-container {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      background-color: rgba(255, 255, 255, 0.8);
-      padding: 20px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      z-index: 1000;
-      display: none;
-    }
-
-    .banner {
-      padding: 40px;
-      border-radius: 10px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-      width: 468px; /* Increased from 360px to 468px (30% bigger) */
-      margin: 10px;
-      height: 780px; /* Increased from 600px to 780px (30% bigger) */
-      transition: transform 0.1s ease; /* Smooth transition */
-      background-size: cover; /* Cover the entire banner */
-      background-position: center; /* Center the background image */
-      text-align: center; /* Centralizar o texto */
-      display: flex; /* Usar flexbox para centralizar o conteúdo */
-      flex-direction: column; /* Colocar os itens em coluna */
-      justify-content: center; /* Centralizar verticalmente */
-    }
-
-    .banner:nth-child(1) {
-      background-image: url('https://png.pngtree.com/thumb_back/fh260/background/20220216/pngtree-beauty-product-discount-coupon-image_935516.jpg'); /* Nova imagem para a promoção */
-    }
-
-    .banner:nth-child(2) {
-      background-image: url('https://i.pinimg.com/originals/d2/8e/1d/d28e1dbc14ff726d2b267be7ef09d4a7.jpg'); /* Nova imagem para Reveillon */
-    }
-
-    .banner:nth-child(3) {
-      background-image: url('https://i.pinimg.com/736x/cb/dd/4f/cbdd4ff83c26c042464f1d02ff7cbcbd.jpg');
-    }
-
-    .banner h2 {
-      font-size: 28px; /* Aumentar o tamanho da fonte */
-      font-weight: bold;
-      margin-bottom: 10px; /* Ajustar a margem */
-      color: #fff; /* Cor do texto */
-    }
-
-    .banner p {
-      font-size: 20px; /* Aumentar o tamanho da fonte */
-      margin-bottom: 20px; /* Ajustar a margem */
-      color: #fff; /* Cor do texto */
-    }
-
-    .banner button {
-      background-color: #2196F3;
-      color: #fff;
-      padding: 15px 30px; /* Increased padding for larger buttons */
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-      font-size: 18px;
-      transition: background-color 0.3s ease; /* Smooth transition for hover effect */
-      margin-top: 10px; /* Add some space above the button */
-    }
-
-    .banner button:hover {
-      background-color: #1A237E; /* Darker shade on hover */
-    }
-
-    /* Media query for mobile devices */
-    @media (max-width: 768px) {
-      .banner-container {
-        width: 100vw; /* Full width */
-        height: 100vh; /* Full height */
-        top: 0; /* Align to the top */
-        left: 0; /* Align to the left */
-        transform: none; /* Remove centering transform */
-        padding: 0; /* Remove padding */
-        border-radius: 0; /* Remove border radius */
-      }
-
-      .banner {
-        width: 100%; /* Full width for banners */
-        height: auto; /* Auto height for banners */
-        margin: 0; /* Remove margin */
-      }
-    }
-  </style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dropdown de Nomes</title>
+    <style>
+        .dropdown {
+            margin: 20px;
+            position: relative;
+            display: inline-block;
+        }
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            background-color: blue;
+            min-width: 200px;
+            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
+            z-index: 1;
+        }
+        .dropdown-content a {
+            color: black;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: block;
+        }
+        .dropdown-content a:hover {
+            background-color: #f1f1f1;
+        }
+        .show {
+            display: block;
+        }
+    </style>
 </head>
 <body>
-  <div class="banner-container">
-    <div class="banner">
-      <h2>Aproveite 6% de Desconto</h2>
-      
-      <p>Reserve agora e aproveite 6% de desconto em sua estadia!</p>
-      <button onclick="window.location.href='https://book.omnibees.com/hotelresults?c=3870&q=6977&hotel_folder=&NRooms=1&CheckIn=24102024&CheckOut=25102024&ad=2&ch=0&ag=&child_age_input=&Code=52744&lang=pt-BR&currencyId=16'">Reserve Agora</button>
-    </div>
-    <div class="banner">
-      <h2>Reveillon 2025</h2>
-      <p>Desfrute de nossa oferta especial para o Reveillon!</p>
-      <button onclick="window.location.href='https://book.omnibees.com/hotelresults?c=3870&q=6977&hotel_folder=&NRooms=1&CheckIn=29122024&CheckOut=02012025&ad=2&ch=0&ag=&child_age_input=&Code=&group_code=&loyalty_code=&lang=pt-BR&currencyId=16'">Reserve Agora</button>
-    </div>
-    <div class="banner">
-      <h2>Carnaval 2025</h2>
-      <p>Desfrute de nossa oferta especial para o Carnaval!</p>
-      <button onclick="window.location.href='https://book.omnibees.com/hotelresults?c=3870&q=6977&hotel_folder=&NRooms=1&CheckIn=28022025&CheckOut=05032025&ad=2&ch=0&ag=&child_age_input=&Code=&group_code=&loyalty_code=&lang=pt-BR&currencyId=16'">Reserve Agora</button>
-    </div>
-  </div>
 
-  <script>
-    // Mostrar o banner após 2 segundos
-    setTimeout(function() {
-      document.querySelector(".banner-container").style.display = "flex";
-    }, 2000);
+<div class="dropdown">
+    <button onclick="toggleDropdown()">Nomes do Titular da reserva</button>
+    <div id="myDropdown" class="dropdown-content">
+        <a href="#" onclick="showLink('https://pag.getnet.com.br/VEdv3nFj7', 'sascenciom2203@gmail.com')">Pedro Vargas</a>
+        <a href="#" onclick="showLink('https://pag.getnet.com.br/zx3i6hb8b', 'ivillarrealgza@gmail.com')">Julio Villarreal</a>
+        <a href="#" onclick="showLink('https://pag.getnet.com.br/dPLvIuNAp', 'montseberges09@gmail.com')">Vivian Carrasco</a>
+        <a href="#" onclick="showLink('https://pag.getnet.com.br/jazjFc9AJ', 'dr.oscar.villaloniz@gmail.com')">Oscar Villalon</a>
+        <a href="#" onclick="showLink('https://pag.getnet.com.br/SNJxQS2Fi', 'cuervorender1@gmail.com')">Ernesto Raul Sanchez</a>
+        <a href="#" onclick="showLink('https://pag.getnet.com.br/LPUGMJKVW', 'aragabrielcano@gmail.com')">Jose Gabriel Cano</a>
+        <a href="#" onclick="showLink('https://pag.getnet.com.br/6PW-CjMuI', 'nandocobosia@gmail.com')">Fernando Cobos</a>
+        <a href="#" onclick="showLink('https://pag.getnet.com.br/79hr2VFcH', 'outriggercanocclubpa@gmail.com')">Alfonso Serrano</a>
+        <a href="#" onclick="showLink('https://pag.getnet.com.br/2FfRBB2wl', 'estefymariel27@gmail.com')">Yolanda Estefanía</a>
+        <a href="#" onclick="showLink('https://pag.getnet.com.br/jzH9M641b', 'dnalikowska@hotmail.com')">Mariela Judit Zavala</a>
+        <a href="#" onclick="showLink('https://pag.getnet.com.br/R6Jqmh7b8G', '')">Fernanda de Paula</a>
+    </div>
+</div>
 
-    // Fechar o banner ao clicar no botão
-    function fecharBanner() {
-      document.querySelector(".banner-container").style.display = "none";
+<p id="linkDisplay" style="margin-top: 20px;"></p>
+
+<script>
+    function toggleDropdown() {
+        document.getElementById("myDropdown").classList.toggle("show");
     }
 
-    // Draggable functionality
-    let isDragging = false;
-    let startX, initialX;
+    function showLink(link, email) {
+        let displayText = `Link associado: <a href="${link}" target="_blank">${link}</a>`;
+        if (email) {
+            displayText += `<br>Email: <a href="mailto:${email}">${email}</a>`;
+        }
+        document.getElementById("linkDisplay").innerHTML = displayText;
+        toggleDropdown(); // Fecha o dropdown após clicar
+    }
 
-    const bannerContainer = document.querySelector('.banner-container');
-
-    bannerContainer.addEventListener('touchstart', (e) => {
-      isDragging = true;
-      startX = e.touches[0].clientX;
-      initialX = bannerContainer.offsetLeft;
-    });
-
-    bannerContainer.addEventListener('touchmove', (e) => {
-      if (isDragging) {
-        e.preventDefault(); // Prevent scrolling
-        const currentX = e.touches[0].clientX;
-        const dx = currentX - startX;
-        bannerContainer.style.left = `${initialX + dx}px`;
-      }
-    });
-
-    bannerContainer.addEventListener('touchend', () => {
-      isDragging = false;
-    });
-
-    // Optional: Add mouse drag support for non-touch devices
-    bannerContainer.addEventListener('mousedown', (e) => {
-      isDragging = true;
-      startX = e.clientX;
-      initialX = bannerContainer.offsetLeft;
-      bannerContainer.style.cursor = 'grabbing';
-    });
-
-    document.addEventListener('mousemove', (e) => {
-      if (isDragging) {
-        const currentX = e.clientX;
-        const dx = currentX - startX;
-        bannerContainer.style.left = `${initialX + dx}px`;
-      }
-    });
-
-    document.addEventListener('mouseup', () => {
-      isDragging = false;
-      bannerContainer.style.cursor = 'grab';
-    });
-  </script>
+    // Fecha o dropdown se o usuário clicar fora dele
+    window.onclick = function(event) {
+        if (!event.target.matches('.dropdown button')) {
+            var dropdowns = document.getElementsByClassName("dropdown-content");
+            for (var i = 0; i < dropdowns.length; i++) {
+                var openDropdown = dropdowns[i];
+                if (openDropdown.classList.contains('show')) {
+                    openDropdown.classList.remove('show');
+                }
+            }
+        }
+    }
+</script>
 
 </body>
 </html>
