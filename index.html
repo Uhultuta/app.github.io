@@ -3,93 +3,169 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dropdown de Nomes</title>
+    <title>Visualizador de Vagas de Estacionamento</title>
     <style>
-        .dropdown {
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+        }
+
+        .container {
+            display: flex;
+            justify-content: center;
+        }
+
+        .parking-lot {
+            display: grid;
+            grid-template-columns: repeat(4, 100px);
+            grid-gap: 10px;
             margin: 20px;
+        }
+
+        .spot {
+            width: 100px;
+            height: 100px;
+            border: 2px solid #000;
+            cursor: pointer;
+            transition: background-color 0.3s;
             position: relative;
-            display: inline-block;
         }
-        .dropdown-content {
-            display: none;
+
+        .spot.vacant {
+            background-color: green;
+        }
+
+        .spot.occupied {
+            background-color: red;
+        }
+
+        .info {
             position: absolute;
-            background-color: blue;
-            min-width: 200px;
-            box-shadow: 0px 8px 16px 0px rgba(0,0,0,0.2);
-            z-index: 1;
+            bottom: 5px;
+            left: 5px;
+            color: white;
+            font-size: 12px;
+            text-shadow: 1px 1px 2px black;
         }
-        .dropdown-content a {
-            color: black;
-            padding: 12px 16px;
-            text-decoration: none;
-            display: block;
-        }
-        .dropdown-content a:hover {
-            background-color: #f1f1f1;
-        }
-        .show {
-            display: block;
+
+        .logbook {
+            margin-left: 20px;
+            text-align: left;
+            max-width: 300px;
+            border: 1px solid #000;
+            padding: 10px;
+            height: 400px;
+            overflow-y: auto;
         }
     </style>
 </head>
 <body>
-<div class="dropdown">
-    <button onclick="toggleDropdown()">Nombres del Titular de la reserva</button>
-    <div id="myDropdown" class="dropdown-content">
-        <a href="#" onclick="showLink('https://pag.getnet.com.br/VEdv3nFj7', 'sascenciom2203@gmail.com')">Pedro Vargas</a>
-        <a href="#" onclick="showLink('https://pag.getnet.com.br/zx3i6hb8b', 'ivillarrealgza@gmail.com')">Julio Villarreal</a>
-        <a href="#" onclick="showLink('https://pag.getnet.com.br/dPLvIuNAp', 'montse.berges09@gmail.com')">Vivian Carrasco</a>
-        <a href="#" onclick="showLink('https://pag.getnet.com.br/jazjFc9AJ', 'dr.oscar.villaloniz@gmail.com')">Oscar Villalon</a>
-        <a href="#" onclick="showLink('https://pag.getnet.com.br/SNJxQS2Fi', 'cuervorender1@gmail.com')">Ernesto Raul Sanchez</a>
-        <a href="#" onclick="showLink('https://pag.getnet.com.br/LPUGMJKVW', 'aragabrielcano@gmail.com')">Jose Gabriel Cano</a>
-        <a href="#" onclick="showLink('https://pag.getnet.com.br/6PW-CjMuI', 'nandocobosia@gmail.com')">Fernando Cobos</a>
-        <a href="#" onclick="showLink('https://pag.getnet.com.br/79hr2VFcH', 'outriggercanoeclubpa@gmail.com')">Alfonso Serrano</a>
-        <a href="#" onclick="showLink('https://pag.getnet.com.br/2FfRBB2wl', 'estefymariel27@gmail.com')">Yolanda Estefanía</a>
-        <a href="#" onclick="showLink('https://pag.getnet.com.br/jzH9M641b', 'dnalikowska@hotmail.com')">Mariela Judit Zavala</a>
-        <a href="#" onclick="showLink('https://pag.getnet.com.br/R6Jqmh7b8G', '')">Fernanda de Paula</a>
+    <h1>Vagas de Estacionamento</h1>
+    <div class="container">
+        <div id="parking-lot" class="parking-lot">
+            <!-- As vagas de estacionamento serão geradas aqui -->
+        </div>
+        <div class="logbook" id="logbook">
+            <h2>Histórico de Atividades</h2>
+            <ul id="log-list">
+                <!-- As atividades serão registradas aqui -->
+            </ul>
+        </div>
     </div>
-</div>
-   <div>
-    <p>Estimados,</p>
-    
-    <p>Espero que se encuentren bien.</p>
-    
-    <p>Agradezco su atención y quedo a su disposición para cualquier consulta.</p>
-    
-    <p>Atentamente,</p>
-    
-    <p>Ullen Luz</p>
-</div> 
+    <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        const parkingLot = document.getElementById("parking-lot");
+        const logList = document.getElementById("log-list");
+        const correctPassword = "iph21";
 
-<p id="linkDisplay" style="margin-top: 20px;"></p>
-
-<script>
-    function toggleDropdown() {
-        document.getElementById("myDropdown").classList.toggle("show");
-    }
-
-    function showLink(link, email) {
-        let displayText = `enlace para el pago: <a href="${link}" target="_blank">${link}</a>`;
-        if (email) {
-            displayText += `<br>Email: <a href="mailto:${email}">${email}</a>`;
+        // Função para obter o horário atual em Niterói, RJ
+        function getCurrentTime() {
+            const options = { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+            return new Date().toLocaleTimeString('pt-BR', options);
         }
-        document.getElementById("linkDisplay").innerHTML = displayText;
-        toggleDropdown(); // Fecha o dropdown após clicar
-    }
 
-    // Fecha o dropdown se o usuário clicar fora dele
-    window.onclick = function(event) {
-        if (!event.target.matches('.dropdown button')) {
-            var dropdowns = document.getElementsByClassName("dropdown-content");
-            for (var i = 0; i < dropdowns.length; i++) {
-                var openDropdown = dropdowns[i];
-                if (openDropdown.classList.contains('show')) {
-                    openDropdown.classList.remove('show');
+        // Função para registrar a atividade no logbook
+        function logActivity(message) {
+            const logItem = document.createElement("li");
+            logItem.textContent = message;
+            logList.appendChild(logItem);
+        }
+
+        // Função para atualizar as informações exibidas na vaga
+        function updateSpotInfo(spot) {
+            const infoDiv = document.createElement("div");
+            infoDiv.classList.add("info");
+            infoDiv.textContent = spot.dataset.info;
+            spot.innerHTML = "";
+            spot.appendChild(infoDiv);
+        }
+
+        // Load the parking state from localStorage
+        function loadParkingState() {
+            const parkingState = JSON.parse(localStorage.getItem('parkingState')) || {};
+            for (let i = 0; i < 16; i++) {
+                const spot = parkingLot.children[i];
+                if (parkingState[i]) {
+                    spot.classList.remove("vacant");
+                    spot.classList.add("occupied");
+                    spot.dataset.info = parkingState[i].info;
+                    updateSpotInfo(spot);
                 }
             }
         }
-    }
-</script>
 
+        // Save the parking state to localStorage
+        function saveParkingState() {
+            const parkingState = {};
+            parkingLot.childNodes.forEach((spot, index) => {
+                parkingState[index] = {
+                    info: spot.dataset.info
+                };
+            });
+            localStorage.setItem('parkingState', JSON.stringify(parkingState));
+        }
+
+        // Cria 16 vagas de estacionamento
+        for (let i = 0; i < 16; i++) {
+            const spot = document.createElement("div");
+            spot.classList.add("spot", "vacant");
+            spot.dataset.info = ""; // Armazena informações da vaga
+
+            spot.addEventListener("click", () => {
+                const currentState = spot.classList.contains("vacant") ? "vacant" : "occupied";
+                const action = currentState === "vacant" ? "ocupar" : "liberar";
+                const confirmation = confirm(`Tem certeza que deseja ${action} esta vaga?`);
+
+                if (confirmation) {
+                    const password = prompt("Digite a senha para confirmar:");
+                    if (password === correctPassword) {
+                        if (currentState === "vacant") {
+                            const roomNumber = prompt("Digite o número do quarto do dono do carro:");
+                            const entryTime = getCurrentTime();
+                            spot.classList.remove("vacant");
+                            spot.classList.add("occupied");
+                            spot.dataset.info = `Quarto: ${roomNumber}\nEntrada: ${entryTime}`;
+                            logActivity(`Vaga ocupada: Quarto ${roomNumber}, Entrada: ${entryTime}`);
+                        } else {
+                            const exitTime = getCurrentTime();
+                            spot.classList.remove("occupied");
+                            spot.classList.add("vacant");
+                            spot.dataset.info = `Saída: ${exitTime}`;
+                            logActivity(`Vaga liberada: Saída: ${exitTime}`);
+                        }
+                        updateSpotInfo(spot);
+                        saveParkingState(); // Save the state after updating
+                    } else {
+                        alert("Senha incorreta! A alteração não foi realizada.");
+                    }
+                }
+            });
+
+            parkingLot.appendChild(spot);
+        }
+
+        loadParkingState(); // Load the parking state on page load
+    });
+</script>
 </body>
 </html>
