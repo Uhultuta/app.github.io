@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualizador de Vagas de Estacionamento</title>
@@ -73,6 +75,20 @@
         </div>
     </div>
     <script>
+        // Your web app's Firebase configuration
+const firebaseConfig = {
+    apiKey: "YOUR_API_KEY",
+    authDomain: "YOUR_PROJECT_ID.firebaseapp.com",
+    projectId: "YOUR_PROJECT_ID",
+    storageBucket: "YOUR_PROJECT_ID.appspot.com",
+    messagingSenderId: "YOUR_SENDER_ID",
+    appId: "YOUR_APP_ID"
+};
+
+// Initialize Firebase
+const app = firebase.initializeApp(firebaseConfig);
+const db = firebase.firestore();
+
     document.addEventListener("DOMContentLoaded", () => {
         const parkingLot = document.getElementById("parking-lot");
         const logList = document.getElementById("log-list");
@@ -100,30 +116,34 @@
             spot.appendChild(infoDiv);
         }
 
-        // Load the parking state from localStorage
-        function loadParkingState() {
-            const parkingState = JSON.parse(localStorage.getItem('parkingState')) || {};
-            for (let i = 0; i < 16; i++) {
-                const spot = parkingLot.children[i];
-                if (parkingState[i]) {
-                    spot.classList.remove("vacant");
-                    spot.classList.add("occupied");
-                    spot.dataset.info = parkingState[i].info;
-                    updateSpotInfo(spot);
-                }
-            }
+// Load the parking state from Firestore
+async function loadParkingState() {
+    const snapshot = await db.collection('parkingSpots').get();
+    snapshot.forEach(doc => {
+        const spotData = doc.data();
+        const spot = parkingLot.children[spotData.index];
+        if (spotData.occupied) {
+            spot.classList.remove("vacant");
+            spot.classList.add("occupied");
+            spot.dataset.info = spotData.info;
+            updateSpotInfo(spot);
         }
+    });
+}
 
-        // Save the parking state to localStorage
-        function saveParkingState() {
-            const parkingState = {};
-            parkingLot.childNodes.forEach((spot, index) => {
-                parkingState[index] = {
-                    info: spot.dataset.info
-                };
-            });
-            localStorage.setItem('parkingState', JSON.stringify(parkingState));
-        }
+// Save the parking state to Firestore
+async function saveParkingState() {
+    const batch = db.batch();
+    Array.from(parkingLot.childNodes).forEach((spot, index) => {
+        const spotRef = db.collection('parkingSpots').doc(index.toString());
+        batch.set(spotRef, {
+            index: index,
+            info: spot.dataset.info,
+            occupied: spot.classList.contains("occupied")
+        });
+    });
+    await batch.commit();
+}
 
         // Cria 16 vagas de estacionamento
         for (let i = 0; i < 16; i++) {
