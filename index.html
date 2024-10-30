@@ -2,7 +2,7 @@
 <html lang="pt-BR">
 <head>
     <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-<script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Visualizador de Vagas de Estacionamento</title>
@@ -76,117 +76,122 @@
     </div>
     <script>
         // Your web app's Firebase configuration
-const firebaseConfig = {
-  apiKey: "AIzaSyCu2LUS8OahzyAu4tzhmSz6u9PgWIyI8Y0",
-  authDomain: "teste-7d79b.firebaseapp.com",
-  projectId: "teste-7d79b",
-  storageBucket: "teste-7d79b.appspot.com",
-  messagingSenderId: "163690491422",
-  appId: "1:163690491422:web:82a7ee3014abcd91c5480f",
-  measurementId: "G-CZ06WD2SL8"
-};
+        const firebaseConfig = {
+            apiKey: "AIzaSyCu2LUS8OahzyAu4tzhmSz6u9PgWIyI8Y0",
+            authDomain: "teste-7d79b.firebaseapp.com",
+            projectId: "teste-7d79b",
+            storageBucket: "teste-7d79b.appspot.com",
+            messagingSenderId: "163690491422",
+            appId: "1:163690491422:web:82a7ee3014abcd91c5480f",
+            measurementId: "G-CZ06WD2SL8"
+        };
 
-// Initialize Firebase
-const app = firebase.initializeApp(firebaseConfig);
-const db = firebase.firestore();
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
 
-    document.addEventListener("DOMContentLoaded", () => {
-        const parkingLot = document.getElementById("parking-lot");
-        const logList = document.getElementById("log-list");
-        const correctPassword = "iph21";
+        document.addEventListener("DOMContentLoaded", () => {
+            const parkingLot = document.getElementById("parking-lot");
+            const logList = document.getElementById("log-list");
+            const correctPassword = "iph21";
 
-        // Função para obter o horário atual em Niterói, RJ
-        function getCurrentTime() {
-            const options = { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-            return new Date().toLocaleTimeString('pt-BR', options);
-        }
+            // Função para obter o horário atual em Niterói, RJ
+            function getCurrentTime() {
+                const options = { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit', second: '2-digit' };
+                return new Date().toLocaleTimeString('pt-BR', options);
+            }
 
-        // Função para registrar a atividade no logbook
-        function logActivity(message) {
-            const logItem = document.createElement("li");
-            logItem.textContent = message;
-            logList.appendChild(logItem);
-        }
+            // Função para registrar a atividade no logbook
+            function logActivity(message) {
+                const logItem = document.createElement("li");
+                logItem.textContent = message;
+                logList.appendChild(logItem);
+            }
 
-        // Função para atualizar as informações exibidas na vaga
-        function updateSpotInfo(spot) {
-            const infoDiv = document.createElement("div");
-            infoDiv.classList.add("info");
-            infoDiv.textContent = spot.dataset.info;
-            spot.innerHTML = "";
-            spot.appendChild(infoDiv);
-        }
+            // Função para atualizar as informações exibidas na vaga
+            function updateSpotInfo(spot) {
+                const infoDiv = document.createElement("div");
+                infoDiv.classList.add("info");
+                infoDiv.textContent = spot.dataset.info;
+                spot.innerHTML = "";
+                spot.appendChild(infoDiv);
+            }
 
-// Load the parking state from Firestore
-async function loadParkingState() {
-    const snapshot = await db.collection('parkingSpots').get();
-    snapshot.forEach(doc => {
-        const spotData = doc.data();
-        const spot = parkingLot.children[spotData.index];
-        if (spotData.occupied) {
-            spot.classList.remove("vacant");
-            spot.classList.add("occupied");
-            spot.dataset.info = spotData.info;
-            updateSpotInfo(spot);
-        }
-    });
-}
-
-// Save the parking state to Firestore
-async function saveParkingState() {
-    const batch = db.batch();
-    Array.from(parkingLot.childNodes).forEach((spot, index) => {
-        const spotRef = db.collection('parkingSpots').doc(index.toString());
-        batch.set(spotRef, {
-            index: index,
-            info: spot.dataset.info,
-            occupied: spot.classList.contains("occupied")
-        });
-    });
-    await batch.commit();
-}
-
-        // Cria 16 vagas de estacionamento
-        for (let i = 0; i < 16; i++) {
-            const spot = document.createElement("div");
-            spot.classList.add("spot", "vacant");
-            spot.dataset.info = ""; // Armazena informações da vaga
-
-            spot.addEventListener("click", () => {
-                const currentState = spot.classList.contains("vacant") ? "vacant" : "occupied";
-                const action = currentState === "vacant" ? "ocupar" : "liberar";
-                const confirmation = confirm(`Tem certeza que deseja ${action} esta vaga?`);
-
-                if (confirmation) {
-                    const password = prompt("Digite a senha para confirmar:");
-                    if (password === correctPassword) {
-                        if (currentState === "vacant") {
-                            const roomNumber = prompt("Digite o número do quarto do dono do carro:");
-                            const entryTime = getCurrentTime();
-                            spot.classList.remove("vacant");
-                            spot.classList.add("occupied");
-                            spot.dataset.info = `Quarto: ${roomNumber}\nEntrada: ${entryTime}`;
-                            logActivity(`Vaga ocupada: Quarto ${roomNumber}, Entrada: ${entryTime}`);
-                        } else {
-                            const exitTime = getCurrentTime();
-                            spot.classList.remove("occupied");
-                            spot.classList.add("vacant");
-                            spot.dataset.info = `Saída: ${exitTime}`;
-                            logActivity(`Vaga liberada: Saída: ${exitTime}`);
-                        }
+            // Load the parking state from Firestore
+            async function loadParkingState() {
+                const snapshot = await db.collection('parkingSpots').get();
+                snapshot.forEach(doc => {
+                    const spotData = doc.data();
+                    const spot = parkingLot.children[spotData.index];
+                    if (spotData.occupied) {
+                        spot.classList.remove("vacant");
+                        spot.classList.add("occupied");
+                        spot.dataset.info = spotData.info;
                         updateSpotInfo(spot);
-                        saveParkingState(); // Save the state after updating
                     } else {
-                        alert("Senha incorreta! A alteração não foi realizada.");
+                        spot.classList.remove("occupied");
+                        spot.classList.add("vacant");
+                        spot.dataset.info = "";
+                        updateSpotInfo(spot);
                     }
-                }
-            });
+                });
+            }
 
-            parkingLot.appendChild(spot);
-        }
+            // Save the parking state to Firestore
+            async function saveParkingState() {
+                const batch = db.batch();
+                Array.from(parkingLot.childNodes).forEach((spot, index) => {
+                    const spotRef = db.collection('parkingSpots').doc(index.toString());
+                    batch.set(spotRef, {
+                        index: index,
+                        info: spot.dataset.info,
+                        occupied: spot.classList.contains("occupied")
+                    }, { merge: true });
+                });
+                await batch.commit();
+            }
 
-        loadParkingState(); // Load the parking state on page load
-    });
-</script>
+            // Cria 16 vagas de estacionamento
+            for (let i = 0; i < 16; i++) {
+                const spot = document.createElement("div");
+                spot.classList.add("spot", "vacant");
+                spot.dataset.info = ""; // Armazena informações da vaga
+
+                spot.addEventListener("click", () => {
+                    const currentState = spot.classList.contains("vacant") ? "vacant" : "occupied";
+                    const action = currentState === "vacant" ? "ocupar" : "liberar";
+                    const confirmation = confirm(`Tem certeza que deseja ${action} esta vaga?`);
+
+                    if (confirmation) {
+                        const password = prompt("Digite a senha para confirmar:");
+                        if (password === correctPassword) {
+                            if (currentState === "vacant") {
+                                const roomNumber = prompt("Digite o número do quarto do dono do carro:");
+                                const entryTime = getCurrentTime();
+                                spot.classList.remove("vacant");
+                                spot.classList.add("occupied");
+                                spot.dataset.info = `Quarto: ${roomNumber}\nEntrada: ${entryTime}`;
+                                logActivity(`Vaga ocupada: Quarto ${roomNumber}, Entrada: ${entryTime}`);
+                            } else {
+                                const exitTime = getCurrentTime();
+                                spot.classList.remove("occupied");
+                                spot.classList.add("vacant");
+                                spot.dataset.info = `Saída: ${exitTime}`;
+                                logActivity(`Vaga liberada: Saída: ${exitTime}`);
+                            }
+                            updateSpotInfo(spot);
+                            saveParkingState(); // Save the state after updating
+                        } else {
+                            alert("Senha incorreta! A alteração não foi realizada.");
+                        }
+                    }
+                });
+
+                parkingLot.appendChild(spot);
+            }
+
+            loadParkingState(); // Load the parking state on page load
+        });
+    </script>
 </body>
 </html>
