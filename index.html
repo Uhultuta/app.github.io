@@ -1,197 +1,287 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.1/firebase-firestore.js"></script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Visualizador de Vagas de Estacionamento</title>
+    <title>Frigobar</title>
     <style>
         body {
             font-family: Arial, sans-serif;
-            text-align: center;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
         }
 
         .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #333;
+        }
+
+        .item-container {
+            margin-bottom: 20px;
+        }
+
+        .item {
             display: flex;
-            justify-content: center;
-        }
-
-        .parking-lot {
-            display: grid;
-            grid-template-columns: repeat(4, 100px);
-            grid-gap: 10px;
-            margin: 20px;
-        }
-
-        .spot {
-            width: 100px;
-            height: 100px;
-            border: 2px solid #000;
-            cursor: pointer;
-            transition: background-color 0.3s;
-            position: relative;
-        }
-
-        .spot.vacant {
-            background-color: green;
-        }
-
-        .spot.occupied {
-            background-color: red;
-        }
-
-        .info {
-            position: absolute;
-            bottom: 5px;
-            left: 5px;
-            color: white;
-            font-size: 12px;
-            text-shadow: 1px 1px 2px black;
-        }
-
-        .logbook {
-            margin-left: 20px;
-            text-align: left;
-            max-width: 300px;
-            border: 1px solid #000;
+            align-items: center;
+            justify-content: space-between;
             padding: 10px;
-            height: 400px;
-            overflow-y: auto;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+        }
+
+        .item button {
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+
+        .item button.remove {
+            background-color: #dc3545;
+        }
+
+        .item button:hover {
+            background-color: #218838;
+        }
+
+        .item button.remove:hover {
+            background-color: #c82333;
+        }
+
+        .quantity, .total {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        #summary {
+            margin-top: 20px;
+            font-size: 1.2em;
+        }
+
+        .input-apartment {
+            margin-bottom: 20px;
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
-    <h1>Vagas de Estacionamento</h1>
     <div class="container">
-        <div id="parking-lot" class="parking-lot">
-            <!-- As vagas de estacionamento serão geradas aqui -->
+        <h1>Frigobar</h1>
+
+     <div class="input-apartment">
+     <label for="apartmentNumber"><strong>Número do Apartamento:</strong></label>
+     <input type="text" id="apartmentNumber" placeholder="Digite o número do apartamento" />
+     </div>
+
+        <h2>Bebidas</h2>
+        <div class="item-container" id="beverages">
+            <div class="item">
+                <span>Água Mineral s/Gás (500ml)</span>
+                <button onclick="addItem(this, 7)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 7)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <span>Água Mineral c/Gás (310ml)</span>
+                <button onclick="addItem(this, 7)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 7)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <span>Cerveja (lata 350ml)</span>
+                <button onclick="addItem(this, 10)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 10)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <span>Refrigerantes (lata 350ml)</span>
+                <button onclick="addItem(this, 8)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 8)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <span>Toddynho (200ml)</span>
+                <button onclick="addItem(this, 8)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 8)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
         </div>
-        <div class="logbook" id="logbook">
-            <h2>Histórico de Atividades</h2>
-            <ul id="log-list">
-                <!-- As atividades serão registradas aqui -->
-            </ul>
+
+        <h2>Snacks</h2>
+        <div class="item-container" id="snacks">
+                        <div class="item">
+                <span>Castanha de Caju (50g)</span>
+                <button onclick="addItem(this, 15)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 15)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <span>Batata Frita (40g)</span>
+                <button onclick="addItem(this, 9)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 9)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <span>Chocolate Kit Kat (41,5g)</span>
+                <button onclick="addItem(this, 9)">Adicionar</button>
+                <button onclick="removeItem(this, 9)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <span>Bala Mentos (unid)</span>
+                <button onclick="addItem(this, 6)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 6)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
         </div>
+
+        <h2>Resumo de Custos</h2>
+        <div id="summary">
+            <p>Total Bebidas (R$): <span id="totalBeverages">0</span></p>
+            <p>Total Snacks (R$): <span id="totalSnacks">0</span></p>
+            <p>Custo Total (R$): <span id="totalCost">0</span></p>
+        </div>
+
+        <h5>By Nellu</h5>
+        <button onclick="sendWhatsApp()">Enviar via WhatsApp</button> <!-- Novo botão -->
     </div>
+
     <script>
-        // Your web app's Firebase configuration
-        const firebaseConfig = {
-            apiKey: "AIzaSyCu2LUS8OahzyAu4tzhmSz6u9PgWIyI8Y0",
-            authDomain: "teste-7d79b.firebaseapp.com",
-            projectId: "teste-7d79b",
-            storageBucket: "teste-7d79b.appspot.com",
-            messagingSenderId: "163690491422",
-            appId: "1:163690491422:web:82a7ee3014abcd91c5480f",
-            measurementId: "G-CZ06WD2SL8"
-        };
+        function addItem(button, price) {
+    const item = button.parentElement; // Obtém o elemento pai (div.item)
+    const quantityElement = item.getElementsByClassName('quantity')[0];
+    const totalElement = item.getElementsByClassName('total')[0];
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const db = firebase.firestore();
+    // Incrementa a quantidade
+    let quantity = parseInt(quantityElement.innerText) + 1;
+    quantityElement.innerText = quantity;
 
-        document.addEventListener("DOMContentLoaded", () => {
-            const parkingLot = document.getElementById("parking-lot");
-            const logList = document.getElementById("log-list");
-            const correctPassword = "iph21";
+    // Calcula o total para o item
+    let total = quantity * price;
+    totalElement.innerText = `R$ ${total.toFixed(2)}`; // Adiciona o símbolo R$
 
-            // Função para obter o horário atual em Niterói, RJ
-            function getCurrentTime() {
-                const options = { timeZone: 'America/Sao_Paulo', hour: '2-digit', minute: '2-digit', second: '2-digit' };
-                return new Date().toLocaleTimeString('pt-BR', options);
-            }
+    updateSummary();
+}
 
-            // Função para registrar a atividade no logbook
-            function logActivity(message) {
-                const logItem = document.createElement("li");
-                logItem.textContent = message;
-                logList.appendChild(logItem);
-            }
+function removeItem(button, price) {
+    const item = button.parentElement; // Obtém o elemento pai (div.item)
+    const quantityElement = item.getElementsByClassName('quantity')[0];
+    const totalElement = item.getElementsByClassName('total')[0];
 
-            // Função para atualizar as informações exibidas na vaga
-            function updateSpotInfo(spot) {
-                const infoDiv = document.createElement("div");
-                infoDiv.classList.add("info");
-                infoDiv.textContent = spot.dataset.info;
-                spot.innerHTML = "";
-                spot.appendChild(infoDiv);
-            }
+    // Decrementa a quantidade se for maior que zero
+    let quantity = parseInt(quantityElement.innerText);
+    if (quantity > 0) {
+        quantity -= 1;
+        quantityElement.innerText = quantity;
 
-            // Load the parking state from Firestore
-            async function loadParkingState() {
-                const snapshot = await db.collection('parkingSpots').get();
-                snapshot.forEach(doc => {
-                    const spotData = doc.data();
-                    const spot = parkingLot.children[spotData.index];
-                    if (spotData.occupied) {
-                        spot.classList.remove("vacant");
-                        spot.classList.add("occupied");
-                        spot.dataset.info = spotData.info;
-                        updateSpotInfo(spot);
-                    } else {
-                        spot.classList.remove("occupied");
-                        spot.classList.add("vacant");
-                        spot.dataset.info = "";
-                        updateSpotInfo(spot);
-                    }
-                });
-            }
+        // Calcula o total para o item
+        let total = quantity * price;
+        totalElement.innerText = `R$ ${total.toFixed(2)}`; // Adiciona o símbolo R$
+    }
 
-            // Save the parking state to Firestore
-            async function saveParkingState() {
-                const batch = db.batch();
-                Array.from(parkingLot.childNodes).forEach((spot, index) => {
-                    const spotRef = db.collection('parkingSpots').doc(index.toString());
-                    batch.set(spotRef, {
-                        index: index,
-                        info: spot.dataset.info,
-                        occupied: spot.classList.contains("occupied")
-                    }, { merge: true });
-                });
-                await batch.commit();
-            }
+    updateSummary();
+}
 
-            // Cria 16 vagas de estacionamento
-            for (let i = 0; i < 16; i++) {
-                const spot = document.createElement("div");
-                spot.classList.add("spot", "vacant");
-                spot.dataset.info = ""; // Armazena informações da vaga
+function updateSummary() {
+    const beverageItems = document.getElementById('beverages').getElementsByClassName('item');
+    const snackItems = document.getElementById('snacks').getElementsByClassName('item');
 
-                spot.addEventListener("click", () => {
-                    const currentState = spot.classList.contains("vacant") ? "vacant" : "occupied";
-                    const action = currentState === "vacant" ? "ocupar" : "liberar";
-                    const confirmation = confirm(`Tem certeza que deseja ${action} esta vaga?`);
+    let totalBeverages = 0;
+    let totalSnacks = 0;
 
-                    if (confirmation) {
-                        const password = prompt("Digite a senha para confirmar:");
-                        if (password === correctPassword) {
-                            if (currentState === "vacant") {
-                                const roomNumber = prompt("Digite o número do quarto do dono do carro:");
-                                const entryTime = getCurrentTime();
-                                spot.classList.remove("vacant");
-                                spot.classList.add("occupied");
-                                spot.dataset.info = `Quarto: ${roomNumber}\nEntrada: ${entryTime}`;
-                                logActivity(`Vaga ocupada: Quarto ${roomNumber}, Entrada: ${entryTime}`);
-                            } else {
-                                const exitTime = getCurrentTime();
-                                spot.classList.remove("occupied");
-                                spot.classList.add("vacant");
-                                spot.dataset.info = `Saída: ${exitTime}`;
-                                logActivity(`Vaga liberada: Saída: ${exitTime}`);
-                            }
-                            updateSpotInfo(spot);
-                            saveParkingState(); // Save the state after updating
-                        } else {
-                            alert("Senha incorreta! A alteração não foi realizada.");
-                        }
-                    }
-                });
+    // Calcula o total de bebidas
+    for (let item of beverageItems) {
+        totalBeverages += parseFloat(item.getElementsByClassName('total')[0].innerText.replace('R$ ', '').replace(',', '.'));
+    }
 
-                parkingLot.appendChild(spot);
-            }
+    // Calcula o total de snacks
+    for (let item of snackItems) {
+        totalSnacks += parseFloat(item.getElementsByClassName('total')[0].innerText.replace('R$ ', '').replace(',', '.'));
+    }
 
-            loadParkingState(); // Load the parking state on page load
-        });
+    // Atualiza o resumo
+    document.getElementById('totalBeverages').innerText = `R$ ${totalBeverages.toFixed(2)}`; // Adiciona o símbolo R$
+    document.getElementById('totalSnacks').innerText = `R$ ${totalSnacks.toFixed(2)}`; // Adiciona o símbolo R$
+    document.getElementById('totalCost').innerText = `R$ ${(totalBeverages + totalSnacks).toFixed(2)}`; // Adiciona o símbolo R$
+}
+
+        function registerItems() {
+            alert("Itens registrados com sucesso!");
+                        // Aqui você pode adicionar a lógica para enviar os dados para um servidor ou processá-los conforme necessário.
+        }
+
+function sendWhatsApp() {
+    const apartmentNumber = document.getElementById('apartmentNumber').value.trim(); // Remove espaços em branco
+
+    // Verifica se o número do apartamento está vazio
+    if (!apartmentNumber) {
+        alert("Por favor, insira o número do apartamento."); // Alerta para o usuário
+        return; // Encerra a função se o campo estiver vazio
+    }
+
+    const beverageItems = document.getElementById('beverages').getElementsByClassName('item');
+    const snackItems = document.getElementById('snacks').getElementsByClassName('item');
+
+    let message = `Itens do Frigobar - Apartamento: ${apartmentNumber}\n\n`;
+
+    // Coleta os itens de bebidas
+    for (let item of beverageItems) {
+        const name = item.getElementsByTagName('span')[0].innerText;
+        const quantity = item.getElementsByClassName('quantity')[0].innerText;
+        if (quantity > 0) {
+            message += `${name}: ${quantity}\n`;
+        }
+    }
+
+    // Coleta os itens de snacks
+    for (let item of snackItems) {
+        const name = item.getElementsByTagName('span')[0].innerText;
+        const quantity = item.getElementsByClassName('quantity')[0].innerText;
+        if (quantity > 0) {
+            message += `${name}: ${quantity}\n`;
+        }
+    }
+
+    // Adiciona o custo total à mensagem
+    const totalCost = document.getElementById('totalCost').innerText;
+    message += `\nCusto Total: R$ ${totalCost}`;
+
+    // Codifica a mensagem para a URL
+    const encodedMessage = encodeURIComponent(message);
+    const whatsappUrl = 'whatsapp://send?text=' + encodedMessage;
+
+    // Abre o WhatsApp com a mensagem
+    window.open(whatsappUrl, '_blank');
+}
+
     </script>
 </body>
 </html>
+
