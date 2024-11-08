@@ -238,25 +238,24 @@ function updateSummary() {
         }
 
 function sendWhatsApp() {
-    const apartmentNumber = document.getElementById('apartmentNumber').value.trim(); // Remove espaços em branco
+    const apartmentNumber = document.getElementById('apartmentNumber').value.trim();
 
-    // Verifica se o número do apartamento está vazio
     if (!apartmentNumber) {
-        alert("Por favor, insira o número do apartamento."); // Alerta para o usuário
-        return; // Encerra a função se o campo estiver vazio
+        alert("Por favor, insira o número do apartamento.");
+        return;
     }
 
     const beverageItems = document.getElementById('beverages').getElementsByClassName('item');
     const snackItems = document.getElementById('snacks').getElementsByClassName('item');
 
-    let message = `*Uh: ${apartmentNumber} -Frigobar* \n\n`;
+    let message = `*Uh: ${apartmentNumber} - Frigobar* \n\n`;
 
     // Coleta os itens de bebidas
     for (let item of beverageItems) {
         const name = item.getElementsByTagName('span')[0].innerText;
         const quantity = item.getElementsByClassName('quantity')[0].innerText;
         if (quantity > 0) {
-            message += `*${quantity} ${name}*\n`;
+            message += `*${quantity}* ${name}\n`;
         }
     }
 
@@ -265,7 +264,7 @@ function sendWhatsApp() {
         const name = item.getElementsByTagName('span')[0].innerText;
         const quantity = item.getElementsByClassName('quantity')[0].innerText;
         if (quantity > 0) {
-            message += `*${quantity} ${name}*\n`;
+            message += `*${quantity}* ${name}\n`;
         }
     }
 
@@ -275,7 +274,8 @@ function sendWhatsApp() {
 
     // Codifica a mensagem para a URL
     const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = 'whatsapp://send?text=' + encodedMessage;
+    const phoneNumber = '552126125030'; // Número de telefone desejado
+    const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
 
     // Abre o WhatsApp com a mensagem
     window.open(whatsappUrl, '_blank');
@@ -284,4 +284,3 @@ function sendWhatsApp() {
     </script>
 </body>
 </html>
-
