@@ -249,14 +249,14 @@ function sendWhatsApp() {
     const beverageItems = document.getElementById('beverages').getElementsByClassName('item');
     const snackItems = document.getElementById('snacks').getElementsByClassName('item');
 
-    let message = `Itens do Frigobar - Apartamento: ${apartmentNumber}\n\n`;
+    let message = `Uh: ${apartmentNumber} -Frigobar \n\n`;
 
     // Coleta os itens de bebidas
     for (let item of beverageItems) {
         const name = item.getElementsByTagName('span')[0].innerText;
         const quantity = item.getElementsByClassName('quantity')[0].innerText;
         if (quantity > 0) {
-            message += `${name}: ${quantity}\n`;
+            message += `${quantity} ${name}\n`;
         }
     }
 
@@ -265,7 +265,7 @@ function sendWhatsApp() {
         const name = item.getElementsByTagName('span')[0].innerText;
         const quantity = item.getElementsByClassName('quantity')[0].innerText;
         if (quantity > 0) {
-            message += `${name}: ${quantity}\n`;
+            message += `${quantity} ${name}\n`;
         }
     }
 
