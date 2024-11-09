@@ -295,6 +295,42 @@ function sendWhatsApp() {
 }
 
     </script>
+             <script>
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            const installButton = document.createElement('button');
+            installButton.textContent = 'Instalar';
+            installButton.style.background = '#4CAF50';
+            installButton.style.color = '#fff';
+            installButton.style.padding = '11px';
+            installButton.style.border = 'none';
+            installButton.style.borderRadius = '50%'; // torna o botão redondo
+            installButton.style.cursor = 'pointer';
+            installButton.style.display = 'flex';
+            installButton.style.justifyContent = 'center';
+            installButton.style.alignItems = 'center';
+            installButton.style.width = '55px'; // define o tamanho do botão
+            installButton.style.height = '55px'; // define o tamanho do botão
+            installButton.style.margin = '10px';
+            installButton.style.position = 'fixed'; // evita que o botão sobreponha texto
+            installButton.style.top = '10px'; // posiciona o botão no topo da tela
+            installButton.style.left = '10px'; // posiciona o botão no canto esquerdo da tela
+            installButton.style.fontWeight = 'bold'; // torna o texto em negrito
+            installButton.style.fontSize = '13.2px'; // ajusta o tamanho do texto
+
+            installButton.addEventListener('click', () => {
+                event.prompt();
+                event.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuário aceitou a instalação da aplicação');
+                    } else {
+                        console.log('Usuário recusou a instalação da aplicação');
+                    }
+                });
+            });
+            document.body.appendChild(installButton);
+        });
+    </script>
 </body>
 </html>
 
