@@ -1,7 +1,7 @@
 {
   "name": "Frigobar",
   "short_name": "Frigobar",
-  "start_url": "/",
+  "start_url": "https://uhultuta.github.io/app.github.io/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
