@@ -1,0 +1,26 @@
+{
+  "name": "Frigobar",
+  "short_name": "Frigobar",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#ffffff",
+  "description": "Aplicativo para lançamentos do frigobar.",
+  "icons": [
+    {
+      "src": "logo-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "logo-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "logo.ico",
+      "sizes": "any",
+      "type": "image/x-icon"
+    }
+  ]
+}
