@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="logo.ico" type="image/ico">
+    <link rel="apple-touch-icon" sizes="192x192" href="logo.ico">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Frigobar">
+    <meta name="theme-color" content="#ffffff"> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frigobar</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .item-container {
+            margin-bottom: 20px;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #ecf0f1;
+            transition: background-color 0.3s;
+        }
+
+        .item:hover {
+            background-color: #dfe6e9;
+        }
+
+        .item button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .item button.remove {
+            background-color: #e74c3c;
+        }
+
+        .item button:hover {
+            background-color: #2980b9;
+        }
+
+        .item button.remove:hover {
+            background-color: #c0392b;
+        }
+
+        .quantity, .total {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        #summary {
+            margin-top: 20px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .input-apartment {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .input-apartment input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: calc(100% - 22px);
+            max-width: 300px;
+        }
+
+        button.send-whatsapp {
+            background-color: #25D366;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            transition: background-color 0.3s;
+        }
+
+        button.send-whatsapp:hover {
+            background-color: #1da851;
+        }
+
+        h5 {
+            text-align: center;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Frigobar</h1>
+
+        <div class="input-apartment">
+            <label for="apartmentNumber"><strong>Número do Apartamento:</strong></label>
+            <input type="text" id="apartmentNumber" placeholder="Digite o número do apartamento" />
+        </div>
+
+        <h2>Bebidas</h2>
+        <div class="item-container" id="beverages">
+            <div class="item">
+                <span>Água Mineral s/Gás (500ml)</span>
+                <button onclick="addItem(this, 7)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 7)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <span>Água Mineral c/Gás (310ml)</span>
+                <button onclick="addItem(this, 7)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 7)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <span>Cerveja (lata 350ml)</span>
+                <button onclick="addItem(this, 10)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 10)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <span>Refrigerantes (lata 350ml)</span>
+                <button onclick="addItem(this, 8)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 8)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <span>Toddynho (200ml)</span>
+                <button onclick="addItem(this, 8)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 8)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+        </div>
+
+        <h2>Snacks</h2>
+        <div class="item-container" id="snacks">
+            <div class="item">
+                <span>Castanha de Caju (50g)</span>
+                <button onclick="addItem(this, 15)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 15)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <span>Batata Frita (40g)</span>
+                <button onclick="addItem(this, 9)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 9)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <span>Chocolate Kit Kat (41,5g)</span>
+                <button onclick="addItem(this, 9)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 9)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <span>Bala Mentos (unid)</span>
+                <button onclick="addItem(this, 6)">Adicionar</button>
+                <button class="remove" onclick="removeItem(this, 6)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+        </div>
+
+        <h2>Resumo de Custos</h2>
+        <div id="summary">
+            <p>Total Bebidas (R$): <span id="totalBeverages">0</span></p>
+            <p>Total Snacks (R$): <span id="totalSnacks">0</span></p>
+            <p>Custo Total (R$): <span id="totalCost">0</span></p>
+        </div>
+
+        <h5>By Nellu</h5>
+        <button class="send-whatsapp" onclick="sendWhatsApp()">
+            Enviar via WhatsApp
+        </button>
+    </div>
+
+    <script>
+        function addItem(button, price) {
+            const item = button.parentElement; // Obtém o elemento pai (div.item)
+            const quantityElement = item.getElementsByClassName('quantity')[0];
+            const totalElement = item.getElementsByClassName('total')[0];
+
+            // Incrementa a quantidade
+            let quantity = parseInt(quantityElement.innerText) + 1;
+            quantityElement.innerText = quantity
+// Calcula o total para o item
+            let total = quantity * price;
+            totalElement.innerText = `R$ ${total.toFixed(2)}`; // Adiciona o símbolo R$
+
+            updateSummary();
+        }
+
+        function removeItem(button, price) {
+            const item = button.parentElement; // Obtém o elemento pai (div.item)
+            const quantityElement = item.getElementsByClassName('quantity')[0];
+            const totalElement = item.getElementsByClassName('total')[0];
+
+            // Decrementa a quantidade se for maior que zero
+            let quantity = parseInt(quantityElement.innerText);
+            if (quantity > 0) {
+                quantity -= 1;
+                quantityElement.innerText = quantity;
+
+                // Calcula o total para o item
+                let total = quantity * price;
+                totalElement.innerText = `R$ ${total.toFixed(2)}`; // Adiciona o símbolo R$
+            }
+
+            updateSummary();
+        }
+
+        function updateSummary() {
+            const beverageItems = document.getElementById('beverages').getElementsByClassName('item');
+            const snackItems = document.getElementById('snacks').getElementsByClassName('item');
+
+            let totalBeverages = 0;
+            let totalSnacks = 0;
+
+            // Calcula o total de bebidas
+            for (let item of beverageItems) {
+                totalBeverages += parseFloat(item.getElementsByClassName('total')[0].innerText.replace('R$ ', '').replace(',', '.'));
+            }
+
+            // Calcula o total de snacks
+            for (let item of snackItems) {
+                totalSnacks += parseFloat(item.getElementsByClassName('total')[0].innerText.replace('R$ ', '').replace(',', '.'));
+            }
+
+            // Atualiza o resumo
+            document.getElementById('totalBeverages').innerText = `R$ ${totalBeverages.toFixed(2)}`; // Adiciona o símbolo R$
+            document.getElementById('totalSnacks').innerText = `R$ ${totalSnacks.toFixed(2)}`; // Adiciona o símbolo R$
+            document.getElementById('totalCost').innerText = `R$ ${(totalBeverages + totalSnacks).toFixed(2)}`; // Adiciona o símbolo R$
+        }
+
+        function sendWhatsApp() {
+            const apartmentNumber = document.getElementById('apartmentNumber').value.trim();
+
+            if (!apartmentNumber) {
+                alert("Por favor, insira o número do apartamento.");
+                return;
+            }
+
+            const beverageItems = document.getElementById('beverages').getElementsByClassName('item');
+            const snackItems = document.getElementById('snacks').getElementsByClassName('item');
+
+            let message = `*Uh: ${apartmentNumber} - Frigobar* \n\n`;
+
+            // Coleta os itens de bebidas
+            for (let item of beverageItems) {
+                const name = item.getElementsByTagName('span')[0].innerText;
+                const quantity = item.getElementsByClassName('quantity')[0].innerText;
+                if (quantity > 0) {
+                    message += `*${quantity}* ${name}\n`;
+                }
+            }
+
+            // Coleta os itens de snacks
+            for (let item of snackItems) {
+                const name = item.getElementsByTagName('span')[0].innerText;
+                const quantity = item.getElementsByClassName('quantity')[0].innerText;
+                if (quantity > 0) {
+                    message += `*${quantity}* ${name}\n`;
+                }
+            }
+
+            // Adiciona o custo total à mensagem
+            const totalCost = document.getElementById('totalCost').innerText;
+            message += `\n*Custo Total: R$ ${totalCost}*`;
+
+            // Codifica a mensagem para a URL
+            const encodedMessage = encodeURIComponent(message);
+            const phoneNumber = '552126125030'; // Número de telefone desejado
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+            // Abre o WhatsApp com a mensagem
+            window.open(whatsappUrl, '_blank');
+        }
+
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            const installButton = document.createElement('button');
+            installButton.textContent = 'Instalar';
+            installButton.style.background = '#4CAF50';
+            installButton.style.color = '#fff';
+            installButton.style.padding = '11px';
+            installButton.style.border = 'none';
+            installButton.style.borderRadius = '50%'; // torna o botão redondo
+            installButton.style.cursor = 'pointer';
+            installButton.style.display = 'flex';
+            installButton.style.justifyContent = 'center';
+            installButton.style.alignItems = 'center';
+            installButton.style.width = '55px'; // define o tamanho do botão
+            installButton.style.height = '55px'; // define o tamanho do botão
+            installButton.style.margin = '10px';
+            installButton.style.position = 'fixed'; // evita que o botão sobreponha texto
+            installButton.style.top = '10px'; // posiciona o botão no topo da tela
+            installButton.style.left = '10px'; // posiciona o botão no canto esquerdo da tela
+            installButton.style.fontWeight = 'bold'; // torna o texto em negrito
+            installButton.style.fontSize = '13.2px'; // ajusta o tamanho do texto
+
+            installButton.addEventListener('click', () => {
+                event.prompt();
+                event.userChoice.then((choiceResult) => {
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuário aceitou a instalação da aplicação');
+                    } else {
+                        console.log('Usuário recusou a instalação da aplicação');
+                    }
+                });
+            });
+            document.body.appendChild(installButton);
+        });
+    </script>
+</body>
+</html>
