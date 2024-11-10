@@ -1,7 +1,7 @@
 {
   "name": "Frigobar",
   "short_name": "Frigobar",
-  "start_url": "/app.github.io",
+  "start_url": "/app.github.io/frigobar.html",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#ffffff",
