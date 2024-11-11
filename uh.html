@@ -92,7 +92,10 @@
             const apartmentDiv = document.createElement('div');
             apartmentDiv.classList.add('apartment');
             apartmentDiv.textContent = apartment;
-            apartmentDiv.onclick = () => alert(`Você selecionou o apartamento ${apartment}`);
+            apartmentDiv.onclick = () => {
+                alert(`Você selecionou o apartamento ${apartment}`);
+                apartmentList.style.display = 'none'; // Esconde a lista após a seleção
+            };
             apartmentList.appendChild(apartmentDiv);
         });
 
