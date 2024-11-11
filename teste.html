@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="logo.ico" type="image/ico">
+    <link rel="apple-touch-icon" sizes="192x192" href="logo.ico">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Frigobar">
+    <meta name="theme-color" content="#ffffff"> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frigobar</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative; /* Para posicionar o botão de instalação */
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .apartment-list {
+            display: none; /* Inicialmente oculto */
+            margin-top: 20px;
+        }
+
+        .floor {
+            margin-bottom: 20px;
+        }
+
+        .apartment {
+            background: #007bff;
+            color: white;
+            padding: 8px;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin: 5px;
+            font-size: 12px;
+            display: inline-block;
+            width: calc(25% - 10px);
+        }
+
+        .apartment:hover {
+            background: #0056b3;
+        }
+
+        .item-container {
+            margin-bottom: 20px;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #ecf0f1;
+            transition: background-color 0.3s;
+        }
+
+        .item:hover {
+            background-color: #dfe6e9;
+        }
+
+        .item button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .item button.remove {
+            background-color: #e74c3c;
+        }
+
+        .item button:hover {
+            background-color: #2980b9;
+        }
+
+        .item button.remove:hover {
+            background-color: #c0392b;
+        }
+
+        .quantity, .total {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        #summary {
+            margin-top: 20px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .input-apartment {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .input-apartment input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: calc(100% - 22px);
+            max-width: 300px;
+        }
+
+        button.send-whatsapp {
+            background-color: #25D366;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            transition: background-color 0.3s;
+        }
+
+        button.send-whatsapp:hover {
+            background-color: #1da851;
+        }
+
+        h5 {
+            text-align: center;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+
+        .install-button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+                        border-radius: 50%; /* Faz o botão redondo */
+            cursor: pointer;
+            position: absolute; /* Posiciona-o absolutamente */
+            top: 20px; /* Distância do topo */
+            left: 20px; /* Distância da esquerda */
+            width: 40px; /* Largura fixa */
+            height: 40px; /* Altura fixa */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .install-button:hover {
+            background-color: #45a049;
+        }
+
+        #show-apartments {
+            background-color: blue; /* Cor do botão azul */
+            color: white; /* Cor do texto branco */
+            border: none; /* Remove a borda */
+            padding: 10px 20px; /* Adiciona padding */
+            font-size: 16px; /* Define o tamanho da fonte */
+            cursor: pointer; /* Muda o cursor para pointer */
+            border-radius: 5px; /* Adiciona borda arredondada */
+            display: block; /* Faz do botão um elemento de bloco */
+            margin: 20px auto; /* Centraliza o botão */
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Seleção de Apartamentos e Frigobar</h1>
+
+        <div class="input-apartment">
+            <label for="apartmentNumber"><strong>Número do Apartamento:</strong></label>
+            <input type="text" id="apartmentNumber" placeholder="Digite o número do apartamento" />
+        </div>
+
+        <button id="show-apartments">Selecionar Apartamentos</button> <!-- Botão centralizado -->
+
+        <div class="apartment-list" id="apartment-list">
+            <!-- Apartamentos serão gerados aqui -->
+        </div>
+
+        <h2>Bebidas</h2>
+        <div class="item-container" id="beverages">
+            <div class="item">
+                <img src="agua.ico" alt="Água Mineral s/Gás" style="width: 50px; cursor: pointer;" onclick="addItem(this, 7)">
+                <span>Água Mineral s/Gás (500ml)</span>
+                <button class="remove" onclick="removeItem(this, 7)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <img src="aguacomgas.ico" alt="Água Mineral c/Gás" style="width: 50px; cursor: pointer;" onclick="addItem(this, 7)">
+                <span>Água Mineral c/Gás (310ml)</span>
+                <button class="remove" onclick="removeItem(this, 7)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <img src="cerveja.ico" alt="Cerveja" style="width: 50px; cursor: pointer;" onclick="addItem(this, 10)">
+                <span>Cerveja (lata 350ml)</span>
+                <button class="remove" onclick="removeItem(this, 10)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <img src="refrigerante.ico" alt="Refrigerante" style="width: 50px; cursor: pointer;" onclick="addItem(this, 8)">
+                <span>Refrigerantes (lata 350ml)</span>
+                <button class="remove" onclick="removeItem(this, 8)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <img src="Toddynho.ico" alt="Toddynho" style="width: 50px; cursor: pointer;" onclick="addItem(this, 8)">
+                <span>Toddynho (200ml)</span>
+                <button class="remove" onclick="removeItem(this, 8)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+        </div>
+
+        <h2>Snacks</h2>
+        <div class="item-container" id="snacks">
+                        <div class="item">
+                <img src="castanhadecaju.ico" alt="Castanha de Caju" style="width: 50px; cursor: pointer;" onclick="addItem(this, 15)">
+                <span>Castanha de Caju (50g)</span>
+                <button class="remove" onclick="removeItem(this, 15)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <img src="batata.ico" alt="Batata Frita" style="width: 50px; cursor: pointer;" onclick="addItem(this, 9)">
+                <span>Batata Frita (40g)</span>
+                <button class="remove" onclick="removeItem(this, 9)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <img src="kitkat.ico" alt="Chocolate Kit Kat" style="width: 50px; cursor: pointer;" onclick="addItem(this, 9)">
+                <span>Chocolate Kit Kat (41,5g)</span>
+                <button class="remove" onclick="removeItem(this, 9)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+            <div class="item">
+                <img src="mentos.ico" alt="Bala Mentos" style="width: 50px; cursor: pointer;" onclick="addItem(this, 6)">
+                <span>Bala Mentos (41,5g)</span>
+                <button class="remove" onclick="removeItem(this, 6)">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">0</span>
+            </div>
+        </div>
+
+        <h2>Resumo de Custos</h2>
+        <div id="summary">
+            <p>Total Bebidas (R$): <span id="totalBeverages">0</span></p>
+            <p>Total Snacks (R$): <span id="totalSnacks">0</span></p>
+            <p>Custo Total (R$): <span id="totalCost">0</span></p>
+        </div>
+
+        <h5>By Nellu</h5>
+        <button class="send-whatsapp" onclick="sendWhatsApp()">
+            Enviar via WhatsApp
+        </button>
+
+        <button class="install-button" id="install-button" style="display: none;">
+            +
+        </button>
+    </div>
+
+    <script>
+        // Função para adicionar item
+        function addItem(button, price) {
+            const item = button.parentElement; // Obtém o elemento pai (div.item)
+            const quantityElement = item.getElementsByClassName('quantity')[0];
+            const totalElement = item.getElementsByClassName('total')[0];
+
+            // Incrementa a quantidade
+            let quantity = parseInt(quantityElement.innerText) + 1;
+            quantityElement.innerText = quantity;
+
+            // Calcula o total para o item
+            let total = quantity * price;
+            totalElement.innerText = `R$ ${total.toFixed(2)}`; // Adiciona o símbolo R$
+
+            updateSummary();
+        }
+
+        // Função para remover item
+        function removeItem(button, price) {
+            const item = button.parentElement; // Obtém o elemento pai (div.item)
+            const quantityElement = item.getElementsByClassName('quantity')[0];
+            const totalElement = item.getElementsByClassName('total')[0];
+
+            // Decrementa a quantidade se for maior que zero
+            let quantity = parseInt(quantityElement.innerText);
+            if (quantity > 0) {
+                quantity -= 1;
+                quantityElement.innerText = quantity;
+
+                // Calcula o total para o item
+                let total = quantity * price;
+                totalElement.innerText = `R$ ${total.toFixed(2)}`; // Adiciona o símbolo R$
+            }
+
+            updateSummary();
+        }
+
+        // Função para atualizar o resumo
+        function updateSummary() {
+            const beverageItems = document.getElementById('beverages').getElementsByClassName('item');
+            const snackItems = document.getElementById('snacks').getElementsByClassName('item');
+
+            let totalBeverages = 0;
+            let totalSnacks = 0;
+
+                        // Calcula o total de bebidas
+            for (let item of beverageItems) {
+                totalBeverages += parseFloat(item.getElementsByClassName('total')[0].innerText.replace('R$ ', '').replace(',', '.'));
+            }
+
+            // Calcula o total de snacks
+            for (let item of snackItems) {
+                totalSnacks += parseFloat(item.getElementsByClassName('total')[0].innerText.replace('R$ ', '').replace(',', '.'));
+            }
+
+            // Atualiza o resumo
+            document.getElementById('totalBeverages').innerText = `R$ ${totalBeverages.toFixed(2)}`; // Adiciona o símbolo R$
+            document.getElementById('totalSnacks').innerText = `R$ ${totalSnacks.toFixed(2)}`; // Adiciona o símbolo R$
+            document.getElementById('totalCost').innerText = `R$ ${(totalBeverages + totalSnacks).toFixed(2)}`; // Adiciona o símbolo
+        }
+
+        // Função para enviar via WhatsApp
+        function sendWhatsApp() {
+            const apartmentNumber = document.getElementById('apartmentNumber').value.trim();
+
+            if (!apartmentNumber) {
+                alert("Por favor, insira o número do apartamento.");
+                return;
+            }
+
+            const beverageItems = document.getElementById('beverages').getElementsByClassName('item');
+            const snackItems = document.getElementById('snacks').getElementsByClassName('item');
+
+            let message = `*Uh: ${apartmentNumber} - Frigobar* \n\n`;
+
+            // Coleta os itens de bebidas
+            for (let item of beverageItems) {
+                const name = item.getElementsByTagName('span')[0].innerText;
+                const quantity = item.getElementsByClassName('quantity')[0].innerText;
+                if (quantity > 0) {
+                    message += `*${quantity}* ${name}\n`;
+                }
+            }
+
+            // Coleta os itens de snacks
+            for (let item of snackItems) {
+                const name = item.getElementsByTagName('span')[0].innerText;
+                const quantity = item.getElementsByClassName('quantity')[0].innerText;
+                if (quantity > 0) {
+                    message += `*${quantity}* ${name}\n`;
+                }
+            }
+
+            // Adiciona o custo total à mensagem
+            const totalCost = document.getElementById('totalCost').innerText;
+            message += `\n*Custo Total: R$ ${totalCost}*`;
+
+            // Codifica a mensagem para a URL
+            const encodedMessage = encodeURIComponent(message);
+            const phoneNumber = '552126125030'; // Número de telefone desejado
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+            // Abre o WhatsApp com a mensagem
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // Geração da lista de apartamentos
+        const apartmentList = document.getElementById('apartment-list');
+        const showButton = document.getElementById('show-apartments');
+
+        showButton.onclick = () => {
+            // Alterna a exibição da lista de apartamentos
+            if (apartmentList.style.display === 'none' || apartmentList.style.display === '') {
+                apartmentList.style.display = 'block'; // Mostra a lista
+            } else {
+                apartmentList.style.display = 'none'; // Esconde a lista
+            }
+        };
+
+        // Gera os apartamentos
+        for (let floor = 3; floor <= 10; floor++) {
+            const floorDiv = document.createElement('div');
+            floorDiv.classList.add('floor');
+            const floorTitle = document.createElement('h2');
+            floorTitle.textContent = `Andar ${floor}`;
+            floorDiv.appendChild(floorTitle);
+
+            const roomCount = floor === 10 ? 7 : 8; // 10º andar tem 7 apartamentos, outros andares têm 8
+            for (let room = 1; room <= roomCount; room++) {
+                const apartment = floor === 10 ? `100${room}` : `${floor}0${room}`;
+                const apartmentDiv = document.createElement('div');
+                apartmentDiv.classList.add('apartment');
+                apartmentDiv.textContent = apartment;
+                apartmentDiv.onclick = () => {
+                    document.getElementById('apartmentNumber').value = apartment; // Preenche o número do apartamento
+                                        apartmentList.style.display = 'none'; // Esconde a lista após a seleção
+                };
+                floorDiv.appendChild(apartmentDiv);
+            }
+
+            apartmentList.appendChild(floorDiv);
+        }
+
+        // Lógica para o botão de instalação do aplicativo
+        let deferredPrompt;
+        const installButton = document.getElementById('install-button');
+
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deferredPrompt = event;
+            installButton.style.display = 'block'; // Mostra o botão de instalação
+        });
+
+        installButton.addEventListener('click', () => {
+            installButton.style.display = 'none'; // Esconde o botão após o clique
+            deferredPrompt.prompt(); // Mostra o prompt de instalação
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('Usuário aceitou a instalação da aplicação');
+                } else {
+                    console.log('Usuário recusou a instalação da aplicação');
+                }
+                deferredPrompt = null; // Limpa a variável
+            });
+        });
+    </script>
+</body>
+</html>
+
+
+
