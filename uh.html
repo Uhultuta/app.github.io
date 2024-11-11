@@ -117,7 +117,7 @@
                 alert(`Você selecionou o apartamento ${apartment}`);
                 document.getElementById('apartment-list').style.display = 'none'; // Esconde a lista após a seleção
             };
-            floorDiv.appendChild(apartmentDiv);
+                        floorDiv.appendChild(apartmentDiv);
         }
 
         document.getElementById('apartment-list').appendChild(floorDiv);
@@ -127,8 +127,7 @@
 
         showButton.onclick = () => {
             // Alterna a exibição da lista de apartamentos
-            if (apartmentList.style.display
-                            if (apartmentList.style.display === 'none' || apartmentList.style.display === '') {
+            if (apartmentList.style.display === 'none' || apartmentList.style.display === '') {
                 apartmentList.style.display = 'block'; // Mostra a lista
             } else {
                 apartmentList.style.display = 'none'; // Esconde a lista
