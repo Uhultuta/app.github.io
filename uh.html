@@ -100,7 +100,12 @@
         });
 
         showButton.onclick = () => {
-            apartmentList.style.display = apartmentList.style.display === 'none' ? 'grid' : 'none';
+            // Alterna a exibição da lista de apartamentos
+            if (apartmentList.style.display === 'none' || apartmentList.style.display === '') {
+                apartmentList.style.display = 'grid';
+            } else {
+                apartmentList.style.display = 'none';
+            }
         };
     </script>
 </body>
