@@ -27,9 +27,11 @@
         }
 
         .apartment-list {
+            display: none; /* Inicialmente oculto */
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
             gap: 10px;
+            margin-top: 20px;
         }
 
         .apartment {
@@ -45,11 +47,29 @@
         .apartment:hover {
             background: #0056b3;
         }
+
+        .show-button {
+            display: block;
+            margin: 0 auto;
+            padding: 10px 20px;
+            background: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .show-button:hover {
+            background: #218838;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>Selecione seu Apartamento</h1>
+        <button class="show-button" id="show-apartments">Apartamentos</button>
         <div class="apartment-list" id="apartment-list">
             <!-- Apartamentos serão gerados aqui -->
         </div>
@@ -66,6 +86,7 @@
         }
 
         const apartmentList = document.getElementById('apartment-list');
+        const showButton = document.getElementById('show-apartments');
 
         apartments.forEach(apartment => {
             const apartmentDiv = document.createElement('div');
@@ -74,6 +95,10 @@
             apartmentDiv.onclick = () => alert(`Você selecionou o apartamento ${apartment}`);
             apartmentList.appendChild(apartmentDiv);
         });
+
+        showButton.onclick = () => {
+            apartmentList.style.display = apartmentList.style.display === 'none' ? 'grid' : 'none';
+        };
     </script>
 </body>
 </html>
