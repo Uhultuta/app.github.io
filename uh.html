@@ -38,13 +38,15 @@
         .apartment {
             background: #007bff;
             color: white;
-            padding: 10px; /* Reduzido para 50% menor */
+            padding: 8px; /* Tamanho do botão reduzido */
             text-align: center;
             border-radius: 5px;
             cursor: pointer;
             transition: background 0.3s;
             margin: 5px; /* Espaçamento entre os botões */
-            font-size: 14px; /* Tamanho da fonte reduzido */
+            font-size: 12px; /* Tamanho da fonte reduzido */
+            display: inline-block; /* Permite que os botões fiquem lado a lado */
+            width: calc(25% - 10px); /* 4 botões por linha, com margem */
         }
 
         .apartment:hover {
@@ -117,13 +119,13 @@
                 alert(`Você selecionou o apartamento ${apartment}`);
                 document.getElementById('apartment-list').style.display = 'none'; // Esconde a lista após a seleção
             };
-                        floorDiv.appendChild(apartmentDiv);
+            floorDiv.appendChild(apartmentDiv);
         }
 
         document.getElementById('apartment-list').appendChild(floorDiv);
 
         const apartmentList = document.getElementById('apartment-list');
-        const showButton = document.getElementById('show-apartments');
+                const showButton = document.getElementById('show-apartments');
 
         showButton.onclick = () => {
             // Alterna a exibição da lista de apartamentos
