@@ -28,20 +28,23 @@
 
         .apartment-list {
             display: none; /* Inicialmente oculto */
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            gap: 10px;
             margin-top: 20px;
+        }
+
+        .floor {
+            margin-bottom: 20px;
         }
 
         .apartment {
             background: #007bff;
             color: white;
-            padding: 15px;
+            padding: 10px; /* Reduzido para 50% menor */
             text-align: center;
             border-radius: 5px;
             cursor: pointer;
             transition: background 0.3s;
+            margin: 5px; /* Espaçamento entre os botões */
+            font-size: 14px; /* Tamanho da fonte reduzido */
         }
 
         .apartment:hover {
@@ -77,34 +80,52 @@
     <script>
         const apartments = [];
         for (let floor = 3; floor <= 9; floor++) {
+            const floorDiv = document.createElement('div');
+            floorDiv.classList.add('floor');
+            const floorTitle = document.createElement('h2');
+            floorTitle.textContent = `Andar ${floor}`;
+            floorDiv.appendChild(floorTitle);
+
             for (let room = 1; room <= 8; room++) {
-                apartments.push(`${floor}0${room}`);
+                const apartment = `${floor}0${room}`;
+                const apartmentDiv = document.createElement('div');
+                apartmentDiv.classList.add('apartment');
+                apartmentDiv.textContent = apartment;
+                apartmentDiv.onclick = () => {
+                    alert(`Você selecionou o apartamento ${apartment}`);
+                    document.getElementById('apartment-list').style.display = 'none'; // Esconde a lista após a seleção
+                };
+                floorDiv.appendChild(apartmentDiv);
             }
-        }
-        for (let room = 1; room <= 7; room++) {
-            apartments.push(`10${room}`);
+
+            // Adiciona apartamentos do 10º andar
+            if (floor === 10) {
+                for (let room = 1; room <= 7; room++) {
+                    const apartment = `10${room}`;
+                    const apartmentDiv = document.createElement('div');
+                    apartmentDiv.classList.add('apartment');
+                    apartmentDiv.textContent = apartment;
+                    apartmentDiv.onclick = () => {
+                        alert(`Você selecionou o apartamento ${apartment}`);
+                        document.getElementById('apartment-list').style.display = 'none'; // Esconde a lista após a seleção
+                    };
+                    floorDiv.appendChild(apartmentDiv);
+                }
+            }
+
+            document.getElementById('apartment-list').appendChild(floorDiv);
         }
 
         const apartmentList = document.getElementById('apartment-list');
         const showButton = document.getElementById('show-apartments');
 
-        apartments.forEach(apartment => {
-            const apartmentDiv = document.createElement('div');
-            apartmentDiv.classList.add('apartment');
-            apartmentDiv.textContent = apartment;
-            apartmentDiv.onclick = () => {
-                alert(`Você selecionou o apartamento ${apartment}`);
-                apartmentList.style.display = 'none'; // Esconde a lista após a seleção
-            };
-            apartmentList.appendChild(apartmentDiv);
-        });
-
         showButton.onclick = () => {
             // Alterna a exibição da lista de apartamentos
             if (apartmentList.style.display === 'none' || apartmentList.style.display === '') {
-                apartmentList.style.display = 'grid'; // Mostra a lista
+                apartmentList.style.display = 'block'; // Mostra a lista
             } else {
                 apartmentList.style.display = 'none'; // Esconde a lista
+            }
             }
         };
     </script>
