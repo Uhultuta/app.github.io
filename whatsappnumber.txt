@@ -1,0 +1,17 @@
+           <!--
+
+
+            // Adiciona o custo total à mensagem
+            const totalCost = document.getElementById('totalCost').innerText;
+            message += `\n*Custo Total: R$ ${totalCost}*`;
+
+            // Codifica a mensagem para a URL
+            const encodedMessage = encodeURIComponent(message);
+            const phoneNumber = '552126125030'; // Número de telefone desejado
+            const whatsappUrl = `https://wa.me/${phoneNumber}?text=${encodedMessage}`;
+
+            // Abre o WhatsApp com a mensagem
+            window.open(whatsappUrl, '_blank');
+        }
+        
+>
