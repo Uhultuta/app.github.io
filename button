@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Frigobar</title>
+    <style>
+        #install-button {
+            display: block; /* Para que o botão seja exibido */
+            margin: 20px auto; /* Centraliza o botão */
+            padding: 10px 20px; /* Adiciona espaçamento interno */
+            font-size: 16px; /* Tamanho da fonte */
+            background-color: #4CAF50; /* Cor de fundo */
+            color: white; /* Cor do texto */
+            border: none; /* Remove bordas */
+            border-radius: 5px; /* Bordas arredondadas */
+            cursor: pointer; /* Muda o cursor ao passar o mouse */
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Seu conteúdo existente aqui -->
+
+    <button id="install-button">Instalar</button>
+
+    <script>
+        // Lógica para o botão de instalação do aplicativo
+        let deferredPrompt;
+
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deferredPrompt = event;
+            document.getElementById('install-button').style.display = 'block'; // Mostra o botão de instalação
+        });
+
+        document.getElementById('install-button').addEventListener('click', () => {
+            document.getElementById('install-button').style.display = 'none'; // Esconde o botão após o clique
+            deferredPrompt.prompt(); // Mostra o prompt de instalação
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('Usuário aceitou a instalação da aplicação');
+                } else {
+                    console.log('Usuário recusou a instalação da aplicação');
+                }
+                deferredPrompt = null; // Limpa a variável
+            });
+        });
+    </script>
+</body>
+</html>
