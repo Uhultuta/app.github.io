@@ -1,0 +1,307 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard de Reservas</title>
+    <style>
+        body {
+    font-family: Arial, sans-serif;
+    margin: 0; /* Remove margens do body */
+    padding: 0; /* Remove preenchimento do body */
+    font-size: 2em; /* Aumenta o tamanho da fonte em 50% */
+}
+
+.container {
+    max-width: 400px;
+    margin: auto;
+    padding: 20px; /* Você pode ajustar este valor se necessário */
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        select, input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+        }
+        button {
+            padding: 10px;
+            background-color: #28a745;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #218838;
+        }
+        .payment-icons {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .payment-icon {
+            cursor: pointer;
+            width: 50px;
+            height: 50px;
+            border: 2px solid transparent; /* Borda padrão */
+            border-radius: 5px;
+            transition: border 0.3s; /* Transição suave */
+        }
+        .payment-icon.selected {
+            border: 2px solid #28a745; /* Borda verde quando selecionado */
+        }
+
+/* Estilos de impressão */
+@media print {
+    @page {
+        size: 58mm 3276mm; /* Tamanho do papel */
+        margin: 5mm; /* Margens */
+    }
+    body {
+        margin: 0; /* Remove margens do corpo */
+    }
+    .container {
+        border: none; /* Remove borda na impressão */
+        padding: 0; /* Remove padding na impressão */
+    }
+    button {
+        display: none; /* Esconde botões na impressão */
+    }
+    pre {
+    white-space: pre-wrap; /* Permite quebra de linha */
+    font-size: 10px; /* Ajusta o tamanho da fonte */
+    margin: 0; /* Remove margens do elemento pre */
+    padding: 5mm; /* Adiciona padding interno para evitar corte */
+}
+
+
+}
+
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h2>Dashboard de Reservas</h2>
+    <div class="form-group">
+        <label for="reserva">Número da Reserva:</label>
+        <input type="text" id="reserva" required>
+    </div>
+    <div class="form-group">
+        <label for="valor">Valor:</label>
+        <input type="number" id="valor" required>
+    </div>
+    <div class="form-group">
+        <label>Forma de Pagamento:</label>
+        <div class="payment-icons">
+            <img src="dinheiro.ico" alt="Dinheiro" class="payment-icon" onclick="selectPayment('dinheiro', this)">
+            <img src="pix.ico" alt="Pix" class="payment-icon" onclick="selectPayment('pix', this)">
+            <img src="transferencia.ico" alt="Transferência" class="payment-icon" onclick="selectPayment('transferencia', this)">
+            <img src="amex.ico" alt="Amex" class="payment-icon" onclick="selectPayment('amex', this)">
+            <img src="visa.ico" alt="Visa" class="payment-icon" onclick="selectPayment('visa', this)">
+            <img src="master.ico" alt="Master" class="payment-icon" onclick="selectPayment('master', this)">
+            <img src="Elo_Cielo.ico" alt="Elo/Cielo" class="payment-icon" onclick="selectPayment('elo', this)">
+        </div>
+        <input type="hidden" id="pagamento">
+    </div>
+    <div id="cardDetails" style="display:none;">
+        <div class="form-group">
+            <label for="tipoCartao">Tipo de Cartão:</label>
+            <select id="tipoCartao" onchange="checkCredit()">
+                <option value="">Selecione</option>
+                                <option value="debito">Débito</option>
+                <option value="credito">Crédito</option>
+            </select>
+        </div>
+        <div id="creditoDetails" style="display:none;">
+            <div class="form-group">
+                <label for="ecommerce">É E-Commerce?</label>
+                <select id="ecommerce" onchange="checkParcelado()">
+                    <option value="">Selecione</option>
+                    <option value="sim">Sim</option>
+                    <option value="nao">Não</option>
+                </select>
+            </div>
+            <div id="parceladoDetails" style="display:none;">
+                <div class="form-group">
+                    <label for="parcelas">Parcelado em 2x?</label>
+                    <select id="parcelas">
+                        <option value="">Selecione</option>
+                        <option value="sim">Sim</option>
+                        <option value="nao">Não</option>
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="autorizacao">Número de Autorização do Cartão:</label>
+                <input type="text" id="autorizacao">
+            </div>
+        </div>
+    </div>
+    <button onclick="enviarMensagem()">Enviar Mensagem</button>
+    <button onclick="imprimir()">Imprimir</button>
+</div>
+
+<script>
+    function selectPayment(paymentMethod, element) {
+        document.getElementById('pagamento').value = paymentMethod;
+
+        const icons = document.querySelectorAll('.payment-icon');
+        icons.forEach(icon => {
+            icon.classList.remove('selected');
+        });
+
+        element.classList.add('selected');
+
+        checkCardType();
+    }
+
+    function checkCardType() {
+        const pagamento = document.getElementById('pagamento').value;
+        const cardDetails = document.getElementById('cardDetails');
+        cardDetails.style.display = (pagamento === 'amex' || pagamento === 'visa' || pagamento === 'master' || pagamento === 'elo') ? 'block' : 'none';
+    }
+
+    function checkCredit() {
+        const tipoCartao = document.getElementById('tipoCartao').value;
+        const creditoDetails = document.getElementById('creditoDetails');
+        creditoDetails.style.display = (tipoCartao === 'credito') ? 'block' : 'none';
+    }
+
+    function checkParcelado() {
+        const ecommerce = document.getElementById('ecommerce').value;
+        const parceladoDetails = document.getElementById('parceladoDetails');
+        parceladoDetails.style.display = (ecommerce === 'sim') ? 'block' : 'none';
+    }
+
+function gerarMensagem() {
+    const reserva = document.getElementById('reserva').value;
+    const valor = document.getElementById('valor').value;
+    const pagamento = document.getElementById('pagamento').value;
+    const tipoCartao = document.getElementById('tipoCartao').value;
+    const autorizacao = document.getElementById('autorizacao').value;
+    const parcelas = document.getElementById('parcelas').value;
+    const ecommerce = document.getElementById('ecommerce').value;
+
+    let mensagem = `RSV: ${reserva}\n\n`; // Alterado para "RSV"
+
+    if (ecommerce === 'sim') {
+        mensagem += `E-Commerce: Sim\n\n`; // Adiciona uma linha em branco
+    }
+
+    // Determina a modalidade de pagamento (Crédito ou Débito)
+    let modalidadePagamento = '';
+    if (tipoCartao === 'credito') {
+        modalidadePagamento = 'Crédito';
+    } else if (tipoCartao === 'debito') {
+        modalidadePagamento = 'Débito';
+    }
+
+    // Exibe a forma de pagamento
+    mensagem += `Forma de Pagamento: ${pagamento}\n\n`; // Adiciona uma linha em branco
+    mensagem += `Modalidade: ${modalidadePagamento}\n\n`; // Adiciona a modalidade de pagamento
+    mensagem += `Bandeira do Cartão: ${getBandeiraCartao(pagamento)}\n\n`; // Adiciona a bandeira do cartão
+    mensagem += `Número de parcelas: ${parcelas === 'sim' ? '2' : '1'}\n\n`; // Adiciona uma linha em branco
+    mensagem += `Número de autorização: ${autorizacao}\n\n`; // Adiciona uma linha em branco
+    mensagem += `Valor Total: R$ ${valor}`; // Adiciona "R$" ao valor total
+
+    return mensagem;
+}
+
+function gerarMensagem() {
+    const reserva = document.getElementById('reserva').value;
+    const valor = document.getElementById('valor').value;
+    const pagamento = document.getElementById('pagamento').value;
+    const tipoCartao = document.getElementById('tipoCartao').value;
+    const autorizacao = document.getElementById('autorizacao').value;
+    const parcelas = document.getElementById('parcelas').value;
+    const ecommerce = document.getElementById('ecommerce').value;
+
+    let mensagem = `RSV: ${reserva}\n\n`; // Alterado para "RSV"
+
+    if (ecommerce === 'sim') {
+        mensagem += `E-Commerce: Sim\n\n`; // Adiciona uma linha em branco
+    }
+
+    // Exibe a forma de pagamento como "Crédito" ou "Débito"
+    let formaPagamento = pagamento;
+    if (tipoCartao === 'credito') {
+        formaPagamento = 'Crédito';
+    } else if (tipoCartao === 'debito') {
+        formaPagamento = 'Débito';
+    }
+
+    mensagem += `Forma de Pagamento: ${formaPagamento}\n\n`; // Adiciona uma linha em branco
+    mensagem += `Bandeira do Cartão: ${getBandeiraCartao(pagamento)}\n\n`; // Adiciona a bandeira do cartão
+    mensagem += `Número de parcelas: ${parcelas === 'sim' ? '2' : '1'}\n\n`; // Adiciona uma linha em branco
+    mensagem += `Número de autorização: ${autorizacao}\n\n`; // Adiciona uma linha em branco
+    mensagem += `Valor Total: R$ ${valor}`; // Adiciona "R$" ao valor total
+
+    return mensagem;
+}
+
+// Função para obter a bandeira do cartão com base na forma de pagamento
+function getBandeiraCartao(pagamento) {
+    switch (pagamento) {
+        case 'amex':
+            return 'American Express';
+        case 'visa':
+            return 'Visa';
+        case 'master':
+            return 'MasterCard';
+        case 'elo':
+            return 'Elo';
+        case 'dinheiro':
+            return 'Dinheiro';
+        case 'pix':
+            return 'Pix';
+        case 'transferencia':
+            return 'Transferência';
+        default:
+            return 'Não especificado';
+    }
+}
+
+
+
+
+    function enviarMensagem() {
+    const reserva = document.getElementById('reserva').value;
+    const valor = document.getElementById('valor').value;
+    const pagamento = document.getElementById('pagamento').value;
+
+    if (!reserva || !valor || !pagamento) {
+        alert("Por favor, preencha todos os campos obrigatórios.");
+        return;
+    }
+
+    const mensagem = gerarMensagem();
+    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`;
+    window.open(whatsappUrl, '_blank');
+}
+
+
+    function imprimir() {
+    const mensagem = gerarMensagem();
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write('<pre>' + mensagem + '</pre>');
+    printWindow.document.close();
+    printWindow.print();
+}
+
+</script>
+
+</body>
+</html>
+
