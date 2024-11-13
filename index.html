@@ -444,8 +444,9 @@ document.getElementById('confirmCleaning').onclick = function() {
 };
 
 // Função para enviar a mensagem
+
 function sendMessage(isExit) {
-    const status = isExit ? '' : ' (Arrumação)';
+    const status = isExit ? ' (Saída)' : ' (Arrumação)'; // Atualiza o status para incluir "Saída"
 
     let message = `*Uh: ${apartmentNumber}${status} - Frigobar* \n\n`;
 
@@ -481,7 +482,6 @@ function sendMessage(isExit) {
     // Abre o WhatsApp com a mensagem
     window.open(whatsappUrl, '_blank');
 }
-
 
 
 
