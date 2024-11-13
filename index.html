@@ -185,6 +185,47 @@
     </style>
 </head>
 <body>
+
+    <!-- Modal de Confirmação -->
+<div id="confirmationModal" style="display: none;">
+    <div class="modal-content">
+        <p>Foi saída ou arrumação?</p>
+        <button id="confirmExit">Saída</button>
+        <button id="confirmCleaning">Arrumação</button>
+    </div>
+</div>
+
+<style>
+    /* Estilos do Modal */
+    #confirmationModal {
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background: white;
+        padding: 20px;
+        border-radius: 5px;
+        text-align: center;
+    }
+
+    button {
+        margin: 5px;
+        padding: 10px 20px;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+</style>
+
     <div class="container">
         <h1>Frigobar</h1>
 
@@ -370,37 +411,61 @@
             document.getElementById('totalCost').innerText = `R$ ${(totalBeverages + totalSnacks).toFixed(2)}`; // Adiciona o símbolo
         }
 
-        // Função para enviar via WhatsApp
-        function sendWhatsApp() {
-            const apartmentNumber = document.getElementById('apartmentNumber').value.trim();
+// Variáveis globais para armazenar o estado
+let apartmentNumber;
+let beverageItems;
+let snackItems;
 
-            if (!apartmentNumber) {
-                alert("Por favor, insira o número do apartamento.");
-                return;
-            }
+// Função para enviar via WhatsApp
+function sendWhatsApp() {
+    apartmentNumber = document.getElementById('apartmentNumber').value.trim();
 
-            const beverageItems = document.getElementById('beverages').getElementsByClassName('item');
-            const snackItems = document.getElementById('snacks').getElementsByClassName('item');
+    if (!apartmentNumber) {
+        alert("Por favor, insira o número do apartamento.");
+        return;
+    }
 
-            let message = `*Uh: ${apartmentNumber} - Frigobar* \n\n`;
+    // Exibe o modal de confirmação
+    document.getElementById('confirmationModal').style.display = 'flex';
 
-            // Coleta os itens de bebidas
-            for (let item of beverageItems) {
-                const name = item.getElementsByTagName('span')[0].innerText;
-                const quantity = item.getElementsByClassName('quantity')[0].innerText;
-                if (quantity > 0) {
-                    message += `*${quantity}* ${name}\n`;
-                }
-            }
+    // Armazena os itens de bebidas e snacks
+    beverageItems = document.getElementById('beverages').getElementsByClassName('item');
+    snackItems = document.getElementById('snacks').getElementsByClassName('item');
+}
 
-            // Coleta os itens de snacks
-            for (let item of snackItems) {
-                const name = item.getElementsByTagName('span')[0].innerText;
-                const quantity = item.getElementsByClassName('quantity')[0].innerText;
-                if (quantity > 0) {
-                    message += `*${quantity}* ${name}\n`;
-                }
-            }
+// Função para confirmar a saída
+document.getElementById('confirmExit').onclick = function() {
+    sendMessage(true); // Envia a mensagem como saída
+};
+
+// Função para confirmar a arrumação
+document.getElementById('confirmCleaning').onclick = function() {
+    sendMessage(false); // Envia a mensagem como arrumação
+};
+
+// Função para enviar a mensagem
+function sendMessage(isExit) {
+    const status = isExit ? '' : ' (Arrumação)';
+
+    let message = `*Uh: ${apartmentNumber}${status} - Frigobar* \n\n`;
+
+    // Coleta os itens de bebidas
+    for (let item of beverageItems) {
+        const name = item.getElementsByTagName('span')[0].innerText;
+        const quantity = item.getElementsByClassName('quantity')[0].innerText;
+        if (quantity > 0) {
+            message += `*${quantity}* ${name}\n`;
+        }
+    }
+
+    // Coleta os itens de snacks
+    for (let item of snackItems) {
+        const name = item.getElementsByTagName('span')[0].innerText;
+        const quantity = item.getElementsByClassName('quantity')[0].innerText;
+        if (quantity > 0) {
+            message += `*${quantity}* ${name}\n`;
+        }
+    }
 
     // Adiciona o custo total à mensagem
     const totalCost = document.getElementById('totalCost').innerText;
@@ -410,9 +475,15 @@
     const encodedMessage = encodeURIComponent(message);
     const whatsappUrl = 'whatsapp://send?text=' + encodedMessage;
 
+    // Fecha o modal
+    document.getElementById('confirmationModal').style.display = 'none';
+
     // Abre o WhatsApp com a mensagem
     window.open(whatsappUrl, '_blank');
 }
+
+
+
 
         // Geração da lista de apartamentos
         const apartmentList = document.getElementById('apartment-list');
