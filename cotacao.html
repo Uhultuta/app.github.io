@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Motor de Reservas</title>
+</head>
+<body>
+    <h1>Motor de Reservas</h1>
+    <form id="reservationForm">
+        <label for="clientName">Cliente:</label>
+        <input type="text" id="clientName" required>
+        <br>
+        <label for="startDate">Data de Início:</label>
+        <input type="date" id="startDate" required>
+        <br>
+        <label for="endDate">Data de Fim:</label>
+        <input type="date" id="endDate" required>
+        <br>
+        <label for="value">Valor:</label>
+        <input type="number" id="value" required>
+        <br>
+        <button type="submit">Calcular Cotação</button>
+    </form>
+    <p id="result"></p>
+
+    <script>
+        document.getElementById('reservationForm').addEventListener('submit', function(event) {
+            event.preventDefault();
+
+            const clientName = document.getElementById('clientName').value;
+            const startDate = new Date(document.getElementById('startDate').value);
+            const endDate = new Date(document.getElementById('endDate').value);
+            const value = parseFloat(document.getElementById('value').value);
+
+            // Calcular a diferença em dias
+            const timeDiff = endDate - startDate;
+            const daysDiff = timeDiff / (1000 * 3600 * 24);
+
+            // Calcular o valor total com 2% a mais
+            const totalValue = value * daysDiff * 1.02;
+
+            // Mensagem padrão
+            const message = `
+🏨 ICARAÍ PRAIA HOTEL
+
+✅ *Sua reserva foi confirmada*
+Quarto Standard
+👨‍👩‍👧‍👦 Cliente: ${clientName}
+▶️ Número de pessoas: (Adulto), 0 (Criança)
+🗓 Check-in: ${startDate.toLocaleDateString('pt-BR')} 🕑 14h00
+🗓 Check-out: ${endDate.toLocaleDateString('pt-BR')} 🕑 12h00
+✅ Número de dias: ${daysDiff} ✅ Estacionamento: 0
+• ☕ Café da manhã incluído 
+• 🍽️ Restaurante no local.
+• 🛜️ Internet (wi-fi) 
+• 🛏️ Quartos com Smart TV, ar-condicionado, telefone, minibar, internet e cofre individual. 
+• 🐶 Animais não aceitos
+• 🚗 Estacionamento a R$ 45,00 por dia, sujeito à disponibilidade, mediante solicitação e confirmação – vagas limitadas.
+
+• 👨‍👩‍👦 Acomodação de menores de 18 anos.
+
+Acompanhados pelos pais, apresentem no check-in um documento de identidade ou uma certidão de nascimento comprovando ser filho de um dos pais presentes.
+
+*Não acompanhados pelos pais,* apresentem no check-in um documento de identidade ou uma certidão de nascimento, bem como uma autorização dos dois pais reconhecida por um notário, conforme a regulamentação vigente.
+
+*Forma de pagamento:* PAGAMENTO DIRETO NO HOTEL 
+Tarifa diária média: R$ ${value.toFixed(2)}  Total com ISS: R$ ${totalValue.toFixed(2)}
+🟢 Observação:
+
+➡️ Para garantir sua reserva: Pedimos que você pague o valor da primeira noite - de ISS.
+Em caso de cancelamento fora do prazo estipulado, não haverá reembolso.
+As reservas não pré-pagas podem ser canceladas sem aviso prévio.
+🔴 *CONSULTE NOSSAS POLÍTICAS NO LINK:* ➡️ https://linktr.ee/POLITICAS
+
+Obrigado
+
+Atenciosamente,
+Serviço de Reservas
+ICARAÍ PRAIA HOTEL
+            `;
+
+            // Exibir o resultado
+            document.getElementById('result').innerText = message;
+        });
+    </script>
+</body>
+</html>
