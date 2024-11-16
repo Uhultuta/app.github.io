@@ -11,14 +11,27 @@
         <label for="clientName">Cliente:</label>
         <input type="text" id="clientName" required>
         <br>
+        <label for="numAdults">Número de Adultos:</label>
+        <input type="number" id="numAdults" min="1" required>
+        <br>
+        <label for="numChildren">Número de Crianças:</label>
+        <input type="number" id="numChildren" min="0" required>
+        <br>
         <label for="startDate">Data de Início:</label>
         <input type="date" id="startDate" required>
         <br>
         <label for="endDate">Data de Fim:</label>
         <input type="date" id="endDate" required>
         <br>
-        <label for="value">Valor:</label>
+        <label for="value">Valor por Dia:</label>
         <input type="number" id="value" required>
+        <br>
+        <label for="paymentMethod">Forma de Pagamento:</label>
+        <select id="paymentMethod" required>
+            <option value="pagamentoDireto">Pagamento Direto no Hotel</option>
+            <option value="cartaoCredito">Cartão de Crédito</option>
+            <option value="transferenciaBancaria">Transferência Bancária</option>
+        </select>
         <br>
         <button type="submit">Calcular Cotação</button>
     </form>
@@ -29,9 +42,12 @@
             event.preventDefault();
 
             const clientName = document.getElementById('clientName').value;
+            const numAdults = parseInt(document.getElementById('numAdults').value);
+            const numChildren = parseInt(document.getElementById('numChildren').value);
             const startDate = new Date(document.getElementById('startDate').value);
             const endDate = new Date(document.getElementById('endDate').value);
             const value = parseFloat(document.getElementById('value').value);
+            const paymentMethod = document.getElementById('paymentMethod').value;
 
             // Calcular a diferença em dias
             const timeDiff = endDate - startDate;
@@ -40,6 +56,10 @@
             // Calcular o valor total com 2% a mais
             const totalValue = value * daysDiff * 1.02;
 
+            // Data limite para pré-pagamento
+            const prePaymentDate = new Date(startDate);
+            prePaymentDate.setDate(prePaymentDate.getDate() - 1); // Um dia antes do check-in
+
             // Mensagem padrão
             const message = `
 🏨 ICARAÍ PRAIA HOTEL
@@ -47,7 +67,7 @@
 ✅ *Sua reserva foi confirmada*
 Quarto Standard
 👨‍👩‍👧‍👦 Cliente: ${clientName}
-▶️ Número de pessoas: (Adulto), 0 (Criança)
+▶️ Número de pessoas: ${numAdults} (Adultos), ${numChildren} (Crianças)
 🗓 Check-in: ${startDate.toLocaleDateString('pt-BR')} 🕑 14h00
 🗓 Check-out: ${endDate.toLocaleDateString('pt-BR')} 🕑 12h00
 ✅ Número de dias: ${daysDiff} ✅ Estacionamento: 0
