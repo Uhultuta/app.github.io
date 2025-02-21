@@ -6,20 +6,18 @@
     <title>Dashboard de Reservas</title>
     <style>
         body {
-    font-family: Arial, sans-serif;
-    margin: 0; /* Remove margens do body */
-    padding: 0; /* Remove preenchimento do body */
-    font-size: 2em; /* Aumenta o tamanho da fonte em 50% */
-}
-
-.container {
-    max-width: 400px;
-    margin: auto;
-    padding: 20px; /* Você pode ajustar este valor se necessário */
-    border: 1px solid #ccc;
-    border-radius: 5px;
-}
-
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            font-size: 2em;
+        }
+        .container {
+            max-width: 400px;
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
         .form-group {
             margin-bottom: 15px;
         }
@@ -54,40 +52,39 @@
             cursor: pointer;
             width: 50px;
             height: 50px;
-            border: 2px solid transparent; /* Borda padrão */
+            border: 2px solid transparent;
             border-radius: 5px;
-            transition: border 0.3s; /* Transição suave */
+            transition: border 0.3s;
         }
         .payment-icon.selected {
-            border: 2px solid #28a745; /* Borda verde quando selecionado */
+            border: 2px solid #28a745;
         }
-
-/* Estilos de impressão */
-@media print {
-    @page {
-        size: 58mm 3276mm; /* Tamanho do papel */
-        margin: 5mm; /* Margens */
-    }
-    body {
-        margin: 0; /* Remove margens do corpo */
-    }
-    .container {
-        border: none; /* Remove borda na impressão */
-        padding: 0; /* Remove padding na impressão */
-    }
-    button {
-        display: none; /* Esconde botões na impressão */
-    }
-    pre {
-    white-space: pre-wrap; /* Permite quebra de linha */
-    font-size: 10px; /* Ajusta o tamanho da fonte */
-    margin: 0; /* Remove margens do elemento pre */
-    padding: 5mm; /* Adiciona padding interno para evitar corte */
-}
-
-
-}
-
+        input:required:invalid, select:required:invalid {
+            border-color: #ff0000;
+        }
+        @media print {
+            @page {
+                size: A4;
+                margin: 10mm;
+            }
+            body {
+                font-size: 12px;
+            }
+            .container {
+                width: 100%;
+                border: none;
+                padding: 0;
+            }
+            button {
+                display: none;
+            }
+            pre {
+                white-space: pre-wrap;
+                font-family: Arial, sans-serif;
+                margin: 0;
+                padding: 0;
+            }
+        }
     </style>
 </head>
 <body>
@@ -120,7 +117,7 @@
             <label for="tipoCartao">Tipo de Cartão:</label>
             <select id="tipoCartao" onchange="checkCredit()">
                 <option value="">Selecione</option>
-                                <option value="debito">Débito</option>
+                <option value="debito">Débito</option>
                 <option value="credito">Crédito</option>
             </select>
         </div>
@@ -151,6 +148,7 @@
     </div>
     <button onclick="enviarMensagem()">Enviar Mensagem</button>
     <button onclick="imprimir()">Imprimir</button>
+    <button onclick="limparFormulario()">Limpar Formulário</button>
 </div>
 
 <script>
@@ -185,123 +183,160 @@
         parceladoDetails.style.display = (ecommerce === 'sim') ? 'block' : 'none';
     }
 
-function gerarMensagem() {
-    const reserva = document.getElementById('reserva').value;
-    const valor = document.getElementById('valor').value;
-    const pagamento = document.getElementById('pagamento').value;
-    const tipoCartao = document.getElementById('tipoCartao').value;
-    const autorizacao = document.getElementById('autorizacao').value;
-    const parcelas = document.getElementById('parcelas').value;
-    const ecommerce = document.getElementById('ecommerce').value;
+    function gerarMensagem() {
+        const reserva = document.getElementById('reserva').value;
+        const valor = document.getElementById('valor').value;
+        const pagamento = document.getElementById('pagamento').value;
+        const tipoCartao = document.getElementById('tipoCartao').value;
+        const autorizacao = document.getElementById('autorizacao').value;
+        const parcelas = document.getElementById('parcelas').value;
+        const ecommerce = document.getElementById('ecommerce').value;
 
-    let mensagem = `RSV: ${reserva}\n\n`; // Alterado para "RSV"
+        let mensagem = `RSV: ${reserva}\n\n`;
 
-    if (ecommerce === 'sim') {
-        mensagem += `E-Commerce: Sim\n\n`; // Adiciona uma linha em branco
+        if (ecommerce === 'sim') {
+            mensagem += `E-Commerce: Sim\n\n`;
+        }
+
+        let formaPagamento = pagamento;
+        if (tipoCartao === 'credito') {
+            formaPagamento = 'Crédito';
+        } else if (tipoCartao === 'debito') {
+            formaPagamento = 'Débito';
+        }
+
+        mensagem += `Forma de Pagamento: ${formaPagamento}\n\n`;
+        mensagem += `Bandeira do Cartão: ${getBandeiraCartao(pagamento)}\n\n`;
+        mensagem += `Número de parcelas: ${parcelas === 'sim' ? '2' : '1'}\n\n`;
+        mensagem += `Número de autorização: ${autorizacao}\n\n`;
+        mensagem += `Valor Total: R$ ${valor}\n\n`;
+        mensagem += `Data e Hora: ${new Date().toLocaleString()}`; // Adiciona a data e hora atual
+
+        return mensagem;
     }
 
-    // Determina a modalidade de pagamento (Crédito ou Débito)
-    let modalidadePagamento = '';
-    if (tipoCartao === 'credito') {
-        modalidadePagamento = 'Crédito';
-    } else if (tipoCartao === 'debito') {
-        modalidadePagamento = 'Débito';
+    function getBandeiraCartao(pagamento) {
+        switch (pagamento) {
+            case 'amex':
+                return 'American Express';
+            case 'visa':
+                return 'Visa';
+            case 'master':
+                return 'MasterCard';
+            case 'elo':
+                return 'Elo';
+            case 'dinheiro':
+                return 'Dinheiro';
+            case 'pix':
+                return 'Pix';
+            case 'transferencia':
+                return 'Transferência';
+            default:
+                return 'Não especificado';
+        }
     }
 
-    // Exibe a forma de pagamento
-    mensagem += `Forma de Pagamento: ${pagamento}\n\n`; // Adiciona uma linha em branco
-    mensagem += `Modalidade: ${modalidadePagamento}\n\n`; // Adiciona a modalidade de pagamento
-    mensagem += `Bandeira do Cartão: ${getBandeiraCartao(pagamento)}\n\n`; // Adiciona a bandeira do cartão
-    mensagem += `Número de parcelas: ${parcelas === 'sim' ? '2' : '1'}\n\n`; // Adiciona uma linha em branco
-    mensagem += `Número de autorização: ${autorizacao}\n\n`; // Adiciona uma linha em branco
-    mensagem += `Valor Total: R$ ${valor}`; // Adiciona "R$" ao valor total
+    function validarCampos() {
+        const reserva = document.getElementById('reserva').value;
+        const valor = document.getElementById('valor').value;
+        const pagamento = document.getElementById('pagamento').value;
 
-    return mensagem;
-}
+        if (!reserva || !valor || !pagamento) {
+            alert("Por favor, preencha todos os campos obrigatórios.");
+            return false;
+        }
 
-function gerarMensagem() {
-    const reserva = document.getElementById('reserva').value;
-    const valor = document.getElementById('valor').value;
-    const pagamento = document.getElementById('pagamento').value;
-    const tipoCartao = document.getElementById('tipoCartao').value;
-    const autorizacao = document.getElementById('autorizacao').value;
-    const parcelas = document.getElementById('parcelas').value;
-    const ecommerce = document.getElementById('ecommerce').value;
+        if (pagamento === 'amex' || pagamento === 'visa' || pagamento === 'master' || pagamento === 'elo') {
+            const tipoCartao = document.getElementById('tipoCartao').value;
+            const autorizacao = document.getElementById('autorizacao').value;
 
-    let mensagem = `RSV: ${reserva}\n\n`; // Alterado para "RSV"
+            if (!tipoCartao || !autorizacao) {
+                alert("Por favor, preencha os detalhes do cartão.");
+                return false;
+            }
+        }
 
-    if (ecommerce === 'sim') {
-        mensagem += `E-Commerce: Sim\n\n`; // Adiciona uma linha em branco
+        return true;
     }
-
-    // Exibe a forma de pagamento como "Crédito" ou "Débito"
-    let formaPagamento = pagamento;
-    if (tipoCartao === 'credito') {
-        formaPagamento = 'Crédito';
-    } else if (tipoCartao === 'debito') {
-        formaPagamento = 'Débito';
-    }
-
-    mensagem += `Forma de Pagamento: ${formaPagamento}\n\n`; // Adiciona uma linha em branco
-    mensagem += `Bandeira do Cartão: ${getBandeiraCartao(pagamento)}\n\n`; // Adiciona a bandeira do cartão
-    mensagem += `Número de parcelas: ${parcelas === 'sim' ? '2' : '1'}\n\n`; // Adiciona uma linha em branco
-    mensagem += `Número de autorização: ${autorizacao}\n\n`; // Adiciona uma linha em branco
-    mensagem += `Valor Total: R$ ${valor}`; // Adiciona "R$" ao valor total
-
-    return mensagem;
-}
-
-// Função para obter a bandeira do cartão com base na forma de pagamento
-function getBandeiraCartao(pagamento) {
-    switch (pagamento) {
-        case 'amex':
-            return 'American Express';
-        case 'visa':
-            return 'Visa';
-        case 'master':
-            return 'MasterCard';
-        case 'elo':
-            return 'Elo';
-        case 'dinheiro':
-            return 'Dinheiro';
-        case 'pix':
-            return 'Pix';
-        case 'transferencia':
-            return 'Transferência';
-        default:
-            return 'Não especificado';
-    }
-}
-
-
-
 
     function enviarMensagem() {
-    const reserva = document.getElementById('reserva').value;
-    const valor = document.getElementById('valor').value;
-    const pagamento = document.getElementById('pagamento').value;
+        if (!validarCampos()) return;
 
-    if (!reserva || !valor || !pagamento) {
-        alert("Por favor, preencha todos os campos obrigatórios.");
-        return;
+        const mensagem = gerarMensagem();
+        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`;
+        window.open(whatsappUrl, '_blank');
     }
 
-    const mensagem = gerarMensagem();
-    const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`;
-    window.open(whatsappUrl, '_blank');
-}
-
-
     function imprimir() {
-    const mensagem = gerarMensagem();
-    const printWindow = window.open('', '_blank');
-    printWindow.document.write('<pre>' + mensagem + '</pre>');
-    printWindow.document.close();
-    printWindow.print();
-}
+        if (!validarCampos()) return;
 
+        const mensagem = gerarMensagem();
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write('<pre>' + mensagem + '</pre>');
+        printWindow.document.close();
+        printWindow.print();
+    }
+
+    function limparFormulario() {
+        document.getElementById('reserva').value = '';
+        document.getElementById('valor').value = '';
+        document.getElementById('pagamento').value = '';
+        document.getElementById('tipoCartao').value = '';
+        document.getElementById('autorizacao').value = '';
+        document.getElementById('parcelas').value = '';
+        document.getElementById('ecommerce').value = '';
+
+        const icons = document.querySelectorAll('.payment-icon');
+        icons.forEach(icon => {
+            icon.classList.remove('selected');
+        });
+
+        document.getElementById('cardDetails').style.display = 'none';
+        document.getElementById('creditoDetails').style.display = 'none';
+        document.getElementById('parceladoDetails').style.display = 'none';
+    }
+
+    function salvarDados() {
+        const dados = {
+            reserva: document.getElementById('reserva').value,
+            valor: document.getElementById('valor').value,
+            pagamento: document.getElementById('pagamento').value,
+            tipoCartao: document.getElementById('tipoCartao').value,
+            autorizacao: document.getElementById('autorizacao').value,
+            parcelas: document.getElementById('parcelas').value,
+            ecommerce: document.getElementById('ecommerce').value
+        };
+
+        localStorage.setItem('dadosReserva', JSON.stringify(dados));
+    }
+
+    function carregarDados() {
+        const dados = JSON.parse(localStorage.getItem('dadosReserva'));
+
+        if (dados) {
+            document.getElementById('reserva').value = dados.reserva;
+            document.getElementById('valor').value = dados.valor;
+            document.getElementById('pagamento').value = dados.pagamento;
+            document.getElementById('tipoCartao').value = dados.tipoCartao;
+            document.getElementById('autorizacao').value = dados.autorizacao;
+            document.getElementById('parcelas').value = dados.parcelas;
+            document.getElementById('ecommerce').value = dados.ecommerce;
+
+            if (dados.pagamento) {
+                const icon = document.querySelector(`.payment-icon[alt="${dados.pagamento}"]`);
+                if (icon) {
+                    icon.classList.add('selected');
+                }
+            }
+
+            checkCardType();
+            checkCredit();
+            checkParcelado();
+        }
+    }
+
+    window.onload = carregarDados;
 </script>
 
 </body>
 </html>
-
