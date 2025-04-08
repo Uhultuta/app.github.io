@@ -4,7 +4,6 @@
     <link rel="manifest" href="manifest.json">
     <link rel="icon" href="logo.ico" type="image/x-icon">
     <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
-    <link rel="icon" type="image/png" sizes="192x192" href="logo.png">
     <meta name="mobile-web-app-capable" content="yes">
     <meta name="application-name" content="Frigobar">
     <meta name="theme-color" content="#ffffff">
@@ -14,16 +13,17 @@
     <style>
         body {
             font-family: Arial, sans-serif;
-            padding: 20px;
+            padding: 10px;
             background-color: #f5f5f5;
             margin: 0;
+            font-size: 14px;
         }
         
         .container {
-            max-width: 1000px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
-            padding: 20px;
+            padding: 15px;
             border-radius: 8px;
             box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
@@ -31,89 +31,60 @@
         h1 {
             text-align: center;
             color: #2c3e50;
-            margin-top: 0;
+            margin: 10px 0;
+            font-size: 24px;
         }
         
-        .floor-links {
-            text-align: center;
-            margin: 15px 0;
-            padding: 10px;
-            background: #f0f0f0;
-            border-radius: 5px;
+        .floors-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
         }
         
-        .floor-links a {
-            margin: 0 5px;
-            color: #3498db;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        
-        .floor-links a:hover {
-            text-decoration: underline;
-        }
-        
-        .floor-container {
-            margin-bottom: 25px;
+        .floor {
             border: 1px solid #e0e0e0;
             border-radius: 8px;
-            padding: 15px;
+            padding: 12px;
             background-color: #f9f9f9;
-            transition: all 0.3s ease;
-        }
-        
-        .floor-container:hover {
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-        }
-        
-        .floor-container:target {
-            border: 2px solid #3498db;
-            background-color: #e8f4fc;
         }
         
         .floor-title {
-            font-size: 18px;
             font-weight: bold;
-            margin-bottom: 10px;
+            margin-bottom: 12px;
             color: #2c3e50;
-            display: flex;
-            align-items: center;
-            cursor: pointer;
-        }
-        
-        .floor-title::before {
-            content: "▶";
-            margin-right: 8px;
-            font-size: 14px;
-            transition: transform 0.3s;
-        }
-        
-        .floor-title.collapsed::before {
-            transform: rotate(90deg);
+            text-align: center;
+            font-size: 16px;
+            padding: 8px;
+            background: #eaeaea;
+            border-radius: 6px;
         }
         
         .apartments-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
-            gap: 10px;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
         }
         
         .apartment {
             background: #3498db;
             color: white;
-            padding: 10px;
+            padding: 15px;
             text-align: center;
-            border-radius: 5px;
+            border-radius: 8px;
             cursor: pointer;
-            transition: all 0.3s;
-            position: relative;
-            font-weight: bold;
+            font-size: 16px;
+            min-height: 50px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
         .apartment:hover {
             background: #2980b9;
             transform: translateY(-2px);
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
         }
         
         .modal {
@@ -132,29 +103,27 @@
         .modal-content {
             background: white;
             padding: 25px;
-            border-radius: 8px;
+            border-radius: 10px;
             width: 90%;
             max-width: 350px;
             text-align: center;
-            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
         }
         
         .modal-options {
             margin-top: 20px;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
+            display: grid;
+            gap: 12px;
         }
         
         .modal-btn {
-            padding: 12px 15px;
-            margin: 5px 0;
+            padding: 12px;
             border: none;
-            border-radius: 5px;
+            border-radius: 6px;
             cursor: pointer;
             font-weight: bold;
-            transition: background 0.3s;
-            width: 100%;
+            font-size: 16px;
+            transition: background 0.2s;
         }
         
         .liberar-btn {
@@ -185,7 +154,7 @@
         }
         
         .input-modal {
-            margin-top: 20px;
+            margin-top: 15px;
         }
         
         .input-modal p {
@@ -197,37 +166,31 @@
             padding: 10px;
             width: 80px;
             text-align: center;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            margin: 10px 0;
             font-size: 16px;
-            margin-bottom: 15px;
         }
         
-        @media (max-width: 600px) {
+        @media (max-width: 768px) {
+            .floors-container {
+                grid-template-columns: 1fr;
+            }
+            
             .apartments-grid {
-                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .apartments-grid {
+                grid-template-columns: repeat(2, 1fr);
             }
             
             .apartment {
-                padding: 8px;
+                padding: 12px;
                 font-size: 14px;
-            }
-            
-            .floor-title {
-                font-size: 16px;
-            }
-            
-            .floor-links {
-                display: grid;
-                grid-template-columns: repeat(4, 1fr);
-                gap: 5px;
-            }
-            
-            .floor-links a {
-                margin: 0;
-                padding: 5px;
-                background: #e0e0e0;
-                border-radius: 3px;
+                min-height: 45px;
             }
         }
     </style>
@@ -236,33 +199,22 @@
     <div class="container">
         <h1>Controle de Apartamentos</h1>
         
-        <div class="floor-links">
-            <a href="#floor3">3º Andar</a>
-            <a href="#floor4">4º Andar</a>
-            <a href="#floor5">5º Andar</a>
-            <a href="#floor6">6º Andar</a>
-            <a href="#floor7">7º Andar</a>
-            <a href="#floor8">8º Andar</a>
-            <a href="#floor9">9º Andar</a>
-            <a href="#floor10">10º Andar</a>
-        </div>
-        
-        <div id="floors-container">
-            <!-- Andares serão gerados aqui pelo JavaScript em ordem crescente -->
+        <div class="floors-container" id="floors-container">
+            <!-- Andares serão gerados aqui em ordem crescente -->
         </div>
     </div>
     
     <!-- Modal de Opções -->
     <div class="modal" id="optionsModal">
         <div class="modal-content">
-            <h3 id="modalTitle">Deseja liberar a UH <span id="uhNumber"></span>?</h3>
+            <h3 id="modalTitle">UH <span id="uhNumber"></span></h3>
             <div class="modal-options" id="mainOptions">
                 <button class="modal-btn liberar-btn" id="liberarBtn">Liberar UH</button>
                 <button class="modal-btn kits-btn" id="kitsBtn">Pedir Kits</button>
                 <button class="modal-btn cancel-btn" id="cancelBtn">Cancelar</button>
             </div>
             <div class="input-modal" id="kitsInput" style="display:none;">
-                <p>Quantas pessoas tem no apartamento?</p>
+                <p>Quantas pessoas?</p>
                 <input type="number" id="qtdPessoas" min="1" value="1">
                 <button class="modal-btn liberar-btn" id="confirmKits">Confirmar</button>
                 <button class="modal-btn cancel-btn" id="backBtn">Voltar</button>
@@ -287,8 +239,7 @@
         function generateFloors() {
             for (let floor = 3; floor <= 10; floor++) {
                 const floorDiv = document.createElement('div');
-                floorDiv.className = 'floor-container';
-                floorDiv.id = `floor${floor}`;
+                floorDiv.className = 'floor';
                 
                 const floorTitle = document.createElement('div');
                 floorTitle.className = 'floor-title';
@@ -306,7 +257,6 @@
                     const aptElement = document.createElement('div');
                     aptElement.className = 'apartment';
                     aptElement.textContent = apartment;
-                    aptElement.title = `Apartamento ${apartment}`;
                     
                     aptElement.addEventListener('click', () => {
                         selectedApartment = apartment;
@@ -316,18 +266,6 @@
                     });
                     
                     apartmentsGrid.appendChild(aptElement);
-                }
-                
-                // Adiciona funcionalidade de expandir/recolher
-                floorTitle.addEventListener('click', () => {
-                    floorTitle.classList.toggle('collapsed');
-                    apartmentsGrid.style.display = apartmentsGrid.style.display === 'none' ? 'grid' : 'none';
-                });
-                
-                // Inicia com os andares recolhidos em mobile
-                if (window.innerWidth <= 600) {
-                    floorTitle.classList.add('collapsed');
-                    apartmentsGrid.style.display = 'none';
                 }
                 
                 floorDiv.appendChild(floorTitle);
@@ -345,7 +283,6 @@
         document.getElementById('kitsBtn').addEventListener('click', () => {
             mainOptions.style.display = 'none';
             kitsInput.style.display = 'block';
-            modalTitle.textContent = `Quantos kits para UH ${selectedApartment}?`;
         });
         
         document.getElementById('confirmKits').addEventListener('click', () => {
@@ -356,20 +293,14 @@
         });
         
         document.getElementById('backBtn').addEventListener('click', resetModal);
-        document.getElementById('cancelBtn').addEventListener('click', closeModal);
-        
-        // Fechar modal quando clicar fora
-        optionsModal.addEventListener('click', (e) => {
-            if (e.target === optionsModal) {
-                closeModal();
-            }
+        document.getElementById('cancelBtn').addEventListener('click', () => {
+            closeModal();
         });
         
         // Função para resetar o modal
         function resetModal() {
-            mainOptions.style.display = 'block';
+            mainOptions.style.display = 'grid';
             kitsInput.style.display = 'none';
-            modalTitle.textContent = `Deseja liberar a UH ${selectedApartment}?`;
             qtdPessoas.value = 1;
         }
         
@@ -386,20 +317,6 @@
             const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
             window.open(whatsappUrl, '_blank');
         }
-        
-        // Ajustar exibição dos andares quando a janela for redimensionada
-        window.addEventListener('resize', () => {
-            const floorTitles = document.querySelectorAll('.floor-title');
-            floorTitles.forEach(title => {
-                if (window.innerWidth <= 600 && !title.classList.contains('collapsed')) {
-                    title.classList.add('collapsed');
-                    title.nextElementSibling.style.display = 'none';
-                } else if (window.innerWidth > 600 && title.classList.contains('collapsed')) {
-                    title.classList.remove('collapsed');
-                    title.nextElementSibling.style.display = 'grid';
-                }
-            });
-        });
         
         // Gerar os andares quando a página carregar
         window.addEventListener('DOMContentLoaded', generateFloors);
