@@ -1,14 +1,22 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="logo.ico" type="image/x-icon">
+    <link rel="apple-touch-icon" sizes="180x180" href="logo.png">
+    <link rel="icon" type="image/png" sizes="192x192" href="logo.png">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Frigobar">
+    <meta name="theme-color" content="#ffffff">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Frigobar</title>
+    <title>Frigobar</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             padding: 20px;
             background-color: #f5f5f5;
+            margin: 0;
         }
         
         .container {
@@ -23,13 +31,71 @@
         h1 {
             text-align: center;
             color: #2c3e50;
+            margin-top: 0;
         }
         
-        .dashboard {
+        .floor-links {
+            text-align: center;
+            margin: 15px 0;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 5px;
+        }
+        
+        .floor-links a {
+            margin: 0 5px;
+            color: #3498db;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        
+        .floor-links a:hover {
+            text-decoration: underline;
+        }
+        
+        .floor-container {
+            margin-bottom: 25px;
+            border: 1px solid #e0e0e0;
+            border-radius: 8px;
+            padding: 15px;
+            background-color: #f9f9f9;
+            transition: all 0.3s ease;
+        }
+        
+        .floor-container:hover {
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+        }
+        
+        .floor-container:target {
+            border: 2px solid #3498db;
+            background-color: #e8f4fc;
+        }
+        
+        .floor-title {
+            font-size: 18px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #2c3e50;
+            display: flex;
+            align-items: center;
+            cursor: pointer;
+        }
+        
+        .floor-title::before {
+            content: "▶";
+            margin-right: 8px;
+            font-size: 14px;
+            transition: transform 0.3s;
+        }
+        
+        .floor-title.collapsed::before {
+            transform: rotate(90deg);
+        }
+        
+        .apartments-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
             gap: 10px;
-            margin-top: 20px;
         }
         
         .apartment {
@@ -41,11 +107,13 @@
             cursor: pointer;
             transition: all 0.3s;
             position: relative;
+            font-weight: bold;
         }
         
         .apartment:hover {
             background: #2980b9;
             transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         
         .modal {
@@ -63,23 +131,30 @@
         
         .modal-content {
             background: white;
-            padding: 20px;
+            padding: 25px;
             border-radius: 8px;
-            width: 300px;
+            width: 90%;
+            max-width: 350px;
             text-align: center;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.2);
         }
         
         .modal-options {
             margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
         }
         
         .modal-btn {
-            padding: 10px 15px;
-            margin: 0 5px;
+            padding: 12px 15px;
+            margin: 5px 0;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             font-weight: bold;
+            transition: background 0.3s;
+            width: 100%;
         }
         
         .liberar-btn {
@@ -87,9 +162,17 @@
             color: white;
         }
         
+        .liberar-btn:hover {
+            background: #27ae60;
+        }
+        
         .kits-btn {
             background: #e67e22;
             color: white;
+        }
+        
+        .kits-btn:hover {
+            background: #d35400;
         }
         
         .cancel-btn {
@@ -97,16 +180,55 @@
             color: white;
         }
         
+        .cancel-btn:hover {
+            background: #c0392b;
+        }
+        
         .input-modal {
-            margin-top: 15px;
+            margin-top: 20px;
+        }
+        
+        .input-modal p {
+            margin-bottom: 15px;
+            font-size: 16px;
         }
         
         .input-modal input {
-            padding: 8px;
-            width: 60px;
+            padding: 10px;
+            width: 80px;
             text-align: center;
             border: 1px solid #ddd;
             border-radius: 4px;
+            font-size: 16px;
+            margin-bottom: 15px;
+        }
+        
+        @media (max-width: 600px) {
+            .apartments-grid {
+                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            }
+            
+            .apartment {
+                padding: 8px;
+                font-size: 14px;
+            }
+            
+            .floor-title {
+                font-size: 16px;
+            }
+            
+            .floor-links {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                gap: 5px;
+            }
+            
+            .floor-links a {
+                margin: 0;
+                padding: 5px;
+                background: #e0e0e0;
+                border-radius: 3px;
+            }
         }
     </style>
 </head>
@@ -114,8 +236,19 @@
     <div class="container">
         <h1>Controle de Apartamentos</h1>
         
-        <div class="dashboard" id="dashboard">
-            <!-- Apartamentos serão gerados aqui pelo JavaScript -->
+        <div class="floor-links">
+            <a href="#floor3">3º Andar</a>
+            <a href="#floor4">4º Andar</a>
+            <a href="#floor5">5º Andar</a>
+            <a href="#floor6">6º Andar</a>
+            <a href="#floor7">7º Andar</a>
+            <a href="#floor8">8º Andar</a>
+            <a href="#floor9">9º Andar</a>
+            <a href="#floor10">10º Andar</a>
+        </div>
+        
+        <div id="floors-container">
+            <!-- Andares serão gerados aqui pelo JavaScript em ordem crescente -->
         </div>
     </div>
     
@@ -148,12 +281,23 @@
         const mainOptions = document.getElementById('mainOptions');
         const kitsInput = document.getElementById('kitsInput');
         const qtdPessoas = document.getElementById('qtdPessoas');
+        const floorsContainer = document.getElementById('floors-container');
         
-        // Gerar apartamentos
-        function generateApartments() {
-            const dashboard = document.getElementById('dashboard');
-            
+        // Gerar andares e apartamentos em ordem crescente (3º ao 10º)
+        function generateFloors() {
             for (let floor = 3; floor <= 10; floor++) {
+                const floorDiv = document.createElement('div');
+                floorDiv.className = 'floor-container';
+                floorDiv.id = `floor${floor}`;
+                
+                const floorTitle = document.createElement('div');
+                floorTitle.className = 'floor-title';
+                floorTitle.textContent = `${floor}º Andar`;
+                
+                const apartmentsGrid = document.createElement('div');
+                apartmentsGrid.className = 'apartments-grid';
+                
+                // 10º andar tem 7 apartamentos, outros têm 8
                 const roomCount = floor === 10 ? 7 : 8;
                 
                 for (let room = 1; room <= roomCount; room++) {
@@ -162,22 +306,40 @@
                     const aptElement = document.createElement('div');
                     aptElement.className = 'apartment';
                     aptElement.textContent = apartment;
+                    aptElement.title = `Apartamento ${apartment}`;
                     
                     aptElement.addEventListener('click', () => {
                         selectedApartment = apartment;
                         uhNumber.textContent = apartment;
                         optionsModal.style.display = 'flex';
+                        document.body.style.overflow = 'hidden';
                     });
                     
-                    dashboard.appendChild(aptElement);
+                    apartmentsGrid.appendChild(aptElement);
                 }
+                
+                // Adiciona funcionalidade de expandir/recolher
+                floorTitle.addEventListener('click', () => {
+                    floorTitle.classList.toggle('collapsed');
+                    apartmentsGrid.style.display = apartmentsGrid.style.display === 'none' ? 'grid' : 'none';
+                });
+                
+                // Inicia com os andares recolhidos em mobile
+                if (window.innerWidth <= 600) {
+                    floorTitle.classList.add('collapsed');
+                    apartmentsGrid.style.display = 'none';
+                }
+                
+                floorDiv.appendChild(floorTitle);
+                floorDiv.appendChild(apartmentsGrid);
+                floorsContainer.appendChild(floorDiv);
             }
         }
         
         // Configurar botões do modal
         document.getElementById('liberarBtn').addEventListener('click', () => {
             sendWhatsApp(`Liberar ${selectedApartment}`);
-            optionsModal.style.display = 'none';
+            closeModal();
         });
         
         document.getElementById('kitsBtn').addEventListener('click', () => {
@@ -187,17 +349,20 @@
         });
         
         document.getElementById('confirmKits').addEventListener('click', () => {
-            const pessoas = parseInt(qtdPessoas.value);
-            const kits = pessoas - 1; // Subtrai 1 pois já tem 1 kit no apartamento
+            const pessoas = parseInt(qtdPessoas.value) || 1;
+            const kits = Math.max(pessoas - 1, 0);
             sendWhatsApp(`Levar ${kits} kits para UH ${selectedApartment}`);
-            optionsModal.style.display = 'none';
-            resetModal();
+            closeModal();
         });
         
         document.getElementById('backBtn').addEventListener('click', resetModal);
-        document.getElementById('cancelBtn').addEventListener('click', () => {
-            optionsModal.style.display = 'none';
-            resetModal();
+        document.getElementById('cancelBtn').addEventListener('click', closeModal);
+        
+        // Fechar modal quando clicar fora
+        optionsModal.addEventListener('click', (e) => {
+            if (e.target === optionsModal) {
+                closeModal();
+            }
         });
         
         // Função para resetar o modal
@@ -208,6 +373,13 @@
             qtdPessoas.value = 1;
         }
         
+        // Função para fechar o modal
+        function closeModal() {
+            optionsModal.style.display = 'none';
+            document.body.style.overflow = 'auto';
+            resetModal();
+        }
+        
         // Função para enviar mensagem pelo WhatsApp
         function sendWhatsApp(message) {
             const encodedMessage = encodeURIComponent(message);
@@ -215,8 +387,22 @@
             window.open(whatsappUrl, '_blank');
         }
         
-        // Gerar os apartamentos quando a página carregar
-        window.onload = generateApartments;
+        // Ajustar exibição dos andares quando a janela for redimensionada
+        window.addEventListener('resize', () => {
+            const floorTitles = document.querySelectorAll('.floor-title');
+            floorTitles.forEach(title => {
+                if (window.innerWidth <= 600 && !title.classList.contains('collapsed')) {
+                    title.classList.add('collapsed');
+                    title.nextElementSibling.style.display = 'none';
+                } else if (window.innerWidth > 600 && title.classList.contains('collapsed')) {
+                    title.classList.remove('collapsed');
+                    title.nextElementSibling.style.display = 'grid';
+                }
+            });
+        });
+        
+        // Gerar os andares quando a página carregar
+        window.addEventListener('DOMContentLoaded', generateFloors);
     </script>
 </body>
 </html>
