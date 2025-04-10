@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cotação de Reserva - ICARAÍ PRAIA HOTEL</title>
+    <title>Reserva - ICARAÍ PRAIA HOTEL</title>
     <style>
         body {
             font-family: 'Segoe UI', Arial, sans-serif;
@@ -200,8 +200,16 @@
 </head>
 <body>
     <div class="container">
-        <h1>Cotação de Reserva</h1>
+        <h1 id="reservationTitle">Cotação de Reserva</h1>
         <h2>ICARAÍ PRAIA HOTEL</h2>
+        
+        <div class="form-group">
+            <label for="reservationType">Tipo:</label>
+            <select id="reservationType" onchange="updateReservationType()">
+                <option value="quotation" selected>Cotacao de Reserva</option>
+                <option value="confirmation">Confirmacao de Reserva</option>
+            </select>
+        </div>
         
         <div class="date-inputs">
             <div class="form-group">
@@ -262,7 +270,7 @@
         </div>
         
         <div class="form-group">
-            <label for="senderName" class="required-field">Emissor da cotação:</label>
+            <label for="senderName" class="required-field">Emissor da reserva:</label>
             <input type="text" id="senderName" required placeholder="Digite seu nome">
         </div>
         
@@ -273,9 +281,9 @@
             <div>Total Geral: R$ <span id="grandTotal">0,00</span></div>
         </div>
         
-        <button class="primary-btn" onclick="generateQuotation()">Gerar Cotação</button>
+        <button class="primary-btn" onclick="generateReservation()">Gerar Documento</button>
         
-        <div class="disclaimer">
+        <div class="disclaimer" id="disclaimerText">
             Esta é apenas uma cotação e não garante a disponibilidade até a confirmação do pagamento.
             Valores sujeitos a alteração sem aviso prévio.
         </div>
@@ -311,6 +319,20 @@
             // Trigger initial calculation
             updateCalculations();
         });
+
+        function updateReservationType() {
+            const reservationType = document.getElementById('reservationType').value;
+            const titleElement = document.getElementById('reservationTitle');
+            const disclaimerElement = document.getElementById('disclaimerText');
+            
+            if (reservationType === 'confirmation') {
+                titleElement.textContent = 'Confirmação de Reserva';
+                disclaimerElement.textContent = 'Reserva confirmada mediante pagamento. Valores sujeitos a alteração apenas antes da confirmação.';
+            } else {
+                titleElement.textContent = 'Cotação de Reserva';
+                disclaimerElement.textContent = 'Esta é apenas uma cotação e não garante a disponibilidade até a confirmação do pagamento. Valores sujeitos a alteração sem aviso prévio.';
+            }
+        }
 
         // Calculate days and update parking days when dates change
         document.getElementById('checkin').addEventListener('change', updateCalculations);
@@ -363,8 +385,9 @@
             }
         }
         
-        function generateQuotation() {
+        function generateReservation() {
             // Get input values
+            const reservationType = document.getElementById('reservationType').value;
             const senderName = document.getElementById('senderName').value;
             const checkin = document.getElementById('checkin').value;
             const checkout = document.getElementById('checkout').value;
@@ -411,9 +434,16 @@
             const formattedGrandTotal = grandTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
             const issValue = (dailyRate * issRate).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
             
-            // Build the quotation message
+            // Build the reservation message
             let message = `🏨 *ICARAÍ PRAIA HOTEL* \n\n`;
-            message += `📋 *COTAÇÃO DE RESERVA* (não é uma confirmação) \n\n`;
+            
+            if (reservationType === 'confirmation') {
+                message += `📋 *CONFIRMAÇÃO DE RESERVA* \n\n`;
+                message += `✅ Reserva confirmada para:\n\n`;
+            } else {
+                message += `📋 *COTAÇÃO DE RESERVA* (não é uma confirmação) \n\n`;
+            }
+            
             message += `🛏️ Tipo de Pensão: ${pensionType} \n`;
             message += `👨‍👩‍👧‍👦 Hóspedes: ${adults} Adulto(s), ${children} Criança(s) (até 5 anos) \n`;
             message += `🗓 Check-in: ${formattedCheckin} às 14hrs \n`;
@@ -445,8 +475,13 @@
             }
             message += `💳 *TOTAL GERAL:* R$ ${formattedGrandTotal} \n\n`;
             
-            message += `*CONDIÇÕES DE PAGAMENTO:* \n`;
-            message += `➡️ Pagamento antecipado até ${formattedPaymentDue} \n\n`;
+            if (reservationType === 'confirmation') {
+                message += `*RESERVA CONFIRMADA EM:* ${formatDate(new Date())}\n`;
+                message += `*PAGAMENTO REALIZADO EM:* ${formattedPaymentDue}\n\n`;
+            } else {
+                message += `*CONDIÇÕES DE PAGAMENTO:* \n`;
+                message += `➡️ Pagamento antecipado até ${formattedPaymentDue} \n\n`;
+            }
             
             message += `🟢 *OPÇÕES DE PAGAMENTO:* \n`;
             message += `➡️ *PIX:* reservas@icaraipraiahotel.com.br \n`;
@@ -457,8 +492,11 @@
             message += `\n`;
             
             message += `🔴 *IMPORTANTE:* \n`;
-            message += `- Esta é apenas uma cotação, não uma reserva confirmada \n`;
-            message += `- A disponibilidade está sujeita a confirmação após pagamento \n`;
+            if (reservationType === 'confirmation') {
+                message += `- Esta reserva já está confirmada \n`;
+            } else {
+                message += `- Esta é apenas uma cotação, não uma reserva confirmada \n`;
+            }
             message += `- Valores podem sofrer alterações sem aviso prévio \n`;
             message += `- Política de cancelamento: Reembolso de 100% apenas para cancelamentos com 48 horas de antecedência do check-in \n\n`;
             
@@ -477,7 +515,7 @@
         }
         
         function formatDate(dateString) {
-            const date = new Date(dateString);
+            const date = dateString instanceof Date ? dateString : new Date(dateString);
             const day = date.getDate().toString().padStart(2, '0');
             const month = (date.getMonth() + 1).toString().padStart(2, '0');
             const year = date.getFullYear();
@@ -487,7 +525,7 @@
         function copyToClipboard() {
             const resultText = document.getElementById('result').textContent;
             navigator.clipboard.writeText(resultText).then(() => {
-                alert('Cotação copiada para a área de transferência!');
+                alert('Documento copiado para a área de transferência!');
             }).catch(err => {
                 console.error('Erro ao copiar: ', err);
                 // Fallback for browsers that don't support clipboard API
@@ -497,7 +535,7 @@
                 textarea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textarea);
-                alert('Cotação copiada para a área de transferência!');
+                alert('Documento copiado para a área de transferência!');
             });
         }
         
