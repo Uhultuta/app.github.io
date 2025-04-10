@@ -101,6 +101,12 @@
         .whatsapp-btn:hover {
             background-color: #1da851;
         }
+        .direct-whatsapp-btn {
+            background-color: #128C7E;
+        }
+        .direct-whatsapp-btn:hover {
+            background-color: #0e796c;
+        }
         .toggle-container {
             display: flex;
             align-items: center;
@@ -196,6 +202,17 @@
                 gap: 8px;
             }
         }
+        .whatsapp-number-group {
+            display: flex;
+            gap: 10px;
+        }
+        .whatsapp-number-group input {
+            flex: 1;
+        }
+        .whatsapp-number-group button {
+            width: auto;
+            padding: 10px;
+        }
     </style>
 </head>
 <body>
@@ -272,6 +289,15 @@
         <div class="form-group">
             <label for="senderName" class="required-field">Emissor da reserva:</label>
             <input type="text" id="senderName" required placeholder="Digite seu nome">
+        </div>
+        
+        <div class="form-group">
+            <label for="whatsappNumber">Enviar para WhatsApp (opcional):</label>
+            <div class="whatsapp-number-group">
+                <input type="tel" id="whatsappNumber" placeholder="(21) 98765-4321" pattern="\([0-9]{2}\) [0-9]{5}-[0-9]{4}">
+                <button class="direct-whatsapp-btn" onclick="sendToSpecificWhatsApp()">Enviar</button>
+            </div>
+            <small>Formato: (DD) 99999-9999</small>
         </div>
         
         <div id="totalDisplay" class="total-box" style="display: none;">
@@ -512,6 +538,8 @@
             
             // Scroll to result
             resultDiv.scrollIntoView({ behavior: 'smooth' });
+            
+            return message;
         }
         
         function formatDate(dateString) {
@@ -543,6 +571,25 @@
             const resultText = document.getElementById('result').textContent;
             const whatsappText = encodeURIComponent(resultText);
             const whatsappUrl = `https://wa.me/?text=${whatsappText}`;
+            window.open(whatsappUrl, '_blank');
+        }
+        
+        function sendToSpecificWhatsApp() {
+            const phoneNumber = document.getElementById('whatsappNumber').value;
+            if (!phoneNumber) {
+                alert("Por favor, insira um número de WhatsApp válido");
+                return;
+            }
+            
+            // Clean phone number - remove non-numeric characters
+            const cleanedNumber = phoneNumber.replace(/\D/g, '');
+            
+            // Generate the reservation message
+            const message = generateReservation();
+            const whatsappText = encodeURIComponent(message);
+            
+            // Create WhatsApp URL with specific number
+            const whatsappUrl = `https://wa.me/55${cleanedNumber}?text=${whatsappText}`;
             window.open(whatsappUrl, '_blank');
         }
     </script>
