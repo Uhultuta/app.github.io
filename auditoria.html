@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calculadora de Movimentação Financeira</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: center;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .input-section {
+            margin-bottom: 20px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            background-color: #f9f9f9;
+        }
+        .input-group {
+            margin-bottom: 10px;
+        }
+        label {
+            display: inline-block;
+            width: 150px;
+        }
+        input, select {
+            padding: 5px;
+            width: 200px;
+        }
+        button {
+            padding: 8px 15px;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .result-section {
+            overflow-x: auto;
+        }
+        .total-row {
+            font-weight: bold;
+            background-color: #e6f7ff;
+        }
+        .status-correct {
+            color: green;
+        }
+        .status-incorrect {
+            color: red;
+        }
+    </style>
+</head>
+<body>
+    <h1>Calculadora de Movimentação Financeira</h1>
+    
+    <div class="input-section">
+        <h2>Dados de Entrada</h2>
+        <div class="input-group">
+            <label for="data">Data:</label>
+            <input type="text" id="data" placeholder="DD/MM/AAAA" value="01/04/2025">
+        </div>
+        <div class="input-group">
+            <label for="movimento">Movimento (R$):</label>
+            <input type="text" id="movimento" placeholder="12.992,40" value="12.992,40">
+        </div>
+        <div class="input-group">
+            <label for="faturamento">Faturamento (R$):</label>
+            <input type="text" id="faturamento" placeholder="4.755,68" value="4.755,68">
+        </div>
+        <div class="input-group">
+            <label for="pgto-direto">Pagamento Direto (R$):</label>
+            <input type="text" id="pgto-direto" placeholder="8.236,72" value="8.236,72">
+        </div>
+        
+        <h3>Pagamentos por Bandeira</h3>
+        <div id="bandeiras-container">
+            <!-- As bandeiras serão adicionadas dinamicamente aqui -->
+        </div>
+        
+        <button id="adicionar-bandeira">Adicionar Bandeira</button>
+        <button id="calcular">Calcular</button>
+    </div>
+    
+    <div class="result-section">
+        <h2>Resultado</h2>
+        <div id="resultado"></div>
+    </div>
+
+    <script>
+        // Bandeiras disponíveis
+        const bandeirasDisponiveis = ['AMEX', 'DINERS', 'ELO', 'HIPERCARD', 'MASTERCARD', 'VISA'];
+        const adquirentesDisponiveis = ['B2B', 'E-COMERCE', 'CIELO', 'GETNET'];
+        
+        // Elementos do DOM
+        const bandeirasContainer = document.getElementById('bandeiras-container');
+        const btnAdicionarBandeira = document.getElementById('adicionar-bandeira');
+        const btnCalcular = document.getElementById('calcular');
+        const resultadoDiv = document.getElementById('resultado');
+        
+        // Adicionar bandeira ao formulário
+        btnAdicionarBandeira.addEventListener('click', function() {
+            const bandeiraDiv = document.createElement('div');
+            bandeiraDiv.className = 'bandeira-input';
+            bandeiraDiv.innerHTML = `
+                <div class="input-group">
+                    <label>Bandeira:</label>
+                    <select class="bandeira">
+                        ${bandeirasDisponiveis.map(b => `<option value="${b}">${b}</option>`).join('')}
+                    </select>
+                </div>
+                ${adquirentesDisponiveis.map(a => `
+                    <div class="input-group">
+                        <label>${a} (R$):</label>
+                        <input type="text" class="adquirente" data-adquirente="${a}" placeholder="0,00" value="0,00">
+                    </div>
+                `).join('')}
+                <button class="remover-bandeira">Remover</button>
+                <hr>
+            `;
+            
+            bandeirasContainer.appendChild(bandeiraDiv);
+            
+            // Adicionar evento ao botão de remover
+            bandeiraDiv.querySelector('.remover-bandeira').addEventListener('click', function() {
+                bandeirasContainer.removeChild(bandeiraDiv);
+            });
+        });
+        
+        // Adicionar algumas bandeiras por padrão
+        function adicionarBandeiraPadrao(bandeira, valores) {
+            const bandeiraDiv = document.createElement('div');
+            bandeiraDiv.className = 'bandeira-input';
+            bandeiraDiv.innerHTML = `
+                <div class="input-group">
+                    <label>Bandeira:</label>
+                    <select class="bandeira">
+                        ${bandeirasDisponiveis.map(b => 
+                            `<option value="${b}" ${b === bandeira ? 'selected' : ''}>${b}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+                ${adquirentesDisponiveis.map(a => `
+                    <div class="input-group">
+                        <label>${a} (R$):</label>
+                        <input type="text" class="adquirente" data-adquirente="${a}" 
+                               placeholder="0,00" value="${valores[a] || '0,00'}">
+                    </div>
+                `).join('')}
+                <button class="remover-bandeira">Remover</button>
+                <hr>
+            `;
+            
+            bandeirasContainer.appendChild(bandeiraDiv);
+            
+            // Adicionar evento ao botão de remover
+            bandeiraDiv.querySelector('.remover-bandeira').addEventListener('click', function() {
+                bandeirasContainer.removeChild(bandeiraDiv);
+            });
+        }
+        
+        // Adicionar bandeiras de exemplo
+        document.addEventListener('DOMContentLoaded', function() {
+            adicionarBandeiraPadrao('AMEX', {'CIELO': '429,62'});
+            adicionarBandeiraPadrao('MASTERCARD', {'E-COMERCE': '446,29', 'CIELO': '3.162,18'});
+            adicionarBandeiraPadrao('VISA', {'CIELO': '1.136,12'});
+            adicionarBandeiraPadrao('ELO', {'CIELO': '43,00'});
+            adicionarBandeiraPadrao('MASTERCARD', {'CIELO': '1.235,90'});
+            adicionarBandeiraPadrao('VISA', {'CIELO': '161,00'});
+        });
+        
+        // Converter valor para número
+        function parseValor(valorStr) {
+            if (!valorStr) return 0;
+            return parseFloat(valorStr.replace(/\./g, '').replace(',', '.'));
+        }
+        
+        // Formatador de moeda
+        function formatarMoeda(valor) {
+            return valor.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+        }
+        
+        // Calcular totais
+        btnCalcular.addEventListener('click', function() {
+            const data = document.getElementById('data').value;
+            const movimento = parseValor(document.getElementById('movimento').value);
+            const faturamento = parseValor(document.getElementById('faturamento').value);
+            const pgtoDireto = parseValor(document.getElementById('pgto-direto').value);
+            
+            // Coletar dados das bandeiras
+            const bandeirasInput = document.querySelectorAll('.bandeira-input');
+            const bandeirasData = {};
+            
+            bandeirasInput.forEach(bandeiraDiv => {
+                const bandeira = bandeiraDiv.querySelector('.bandeira').value;
+                const inputs = bandeiraDiv.querySelectorAll('.adquirente');
+                
+                if (!bandeirasData[bandeira]) {
+                    bandeirasData[bandeira] = {};
+                }
+                
+                inputs.forEach(input => {
+                    const adquirente = input.dataset.adquirente;
+                    const valor = parseValor(input.value);
+                    
+                    if (!bandeirasData[bandeira][adquirente]) {
+                        bandeirasData[bandeira][adquirente] = 0;
+                    }
+                    
+                    bandeirasData[bandeira][adquirente] += valor;
+                });
+            });
+            
+            // Calcular totais por adquirente
+            const totaisAdquirentes = {};
+            adquirentesDisponiveis.forEach(a => {
+                totaisAdquirentes[a] = 0;
+            });
+            
+            Object.values(bandeirasData).forEach(bandeira => {
+                Object.entries(bandeira).forEach(([adquirente, valor]) => {
+                    if (totaisAdquirentes[adquirente] !== undefined) {
+                        totaisAdquirentes[adquirente] += valor;
+                    }
+                });
+            });
+            
+            // Calcular subtotal geral
+            const subtotalGeral = Object.values(totaisAdquirentes).reduce((sum, val) => sum + val, 0);
+            
+            // Calcular depósito, dinheiro e faturamento
+            const deposito = pgtoDireto - subtotalGeral;
+            const dinheiro = movimento - pgtoDireto - faturamento;
+            
+            // Verificar se o caixa está correto
+            const totalCalculado = subtotalGeral + deposito + dinheiro + faturamento;
+            const caixaCorreto = Math.abs(totalCalculado - movimento) < 0.01;
+            
+            // Gerar tabela de resultados
+            let html = `
+                <table>
+                    <tr>
+                        <th>DATA:</th>
+                        <td colspan="7">${data}</td>
+                    </tr>
+                    <tr>
+                        <th>MOVIMENTO</th>
+                        <td colspan="7">R$ ${formatarMoeda(movimento)}</td>
+                    </tr>
+                    <tr>
+                        <th>FATURAMENTO</th>
+                        <td colspan="7">R$ ${formatarMoeda(faturamento)}</td>
+                    </tr>
+                    <tr>
+                        <th>PGTO DIRETO</th>
+                        <td colspan="7">R$ ${formatarMoeda(pgtoDireto)}</td>
+                    </tr>
+                    <tr>
+                        <th>PAGAMENTO</th>
+                        <th>B2B</th>
+                        <th>E-COMERCE</th>
+                        <th>CIELO</th>
+                        <th>GETNET</th>
+                        <th>SUBTOTAL</th>
+                        <th>ERBON</th>
+                        <th>STATUS</th>
+                    </tr>
+            `;
+            
+            // Adicionar linhas para cada bandeira
+            Object.entries(bandeirasData).forEach(([bandeira, valores]) => {
+                const subtotal = Object.values(valores).reduce((sum, val) => sum + val, 0);
+                
+                html += `
+                    <tr>
+                        <td>${bandeira}</td>
+                        <td>R$ ${formatarMoeda(valores['B2B'] || 0)}</td>
+                        <td>R$ ${formatarMoeda(valores['E-COMERCE'] || 0)}</td>
+                        <td>R$ ${formatarMoeda(valores['CIELO'] || 0)}</td>
+                        <td>R$ ${formatarMoeda(valores['GETNET'] || 0)}</td>
+                        <td>R$ ${formatarMoeda(subtotal)}</td>
+                        <td>R$ ${formatarMoeda(subtotal)}</td>
+                        <td>R$ -</td>
+                    </tr>
+                `;
+            });
+            
+            // Adicionar subtotal geral
+            html += `
+                <tr class="total-row">
+                    <td>SUBTOTAL</td>
+                    <td>R$ ${formatarMoeda(totaisAdquirentes['B2B'])}</td>
+                    <td>R$ ${formatarMoeda(totaisAdquirentes['E-COMERCE'])}</td>
+                    <td>R$ ${formatarMoeda(totaisAdquirentes['CIELO'])}</td>
+                    <td>R$ ${formatarMoeda(totaisAdquirentes['GETNET'])}</td>
+                    <td>R$ ${formatarMoeda(subtotalGeral)}</td>
+                    <td>R$ ${formatarMoeda(subtotalGeral)}</td>
+                    <td>R$ -</td>
+                </tr>
+            `;
+            
+            // Adicionar depósito, dinheiro e faturamento
+            html += `
+                <tr>
+                    <td>DEPOSITO</td>
+                    <td>R$ ${formatarMoeda(deposito)}</td>
+                    <td colspan="5"></td>
+                    <td>R$ ${formatarMoeda(deposito)}</td>
+                    <td>R$ -</td>
+                </tr>
+                <tr>
+                    <td>DINHEIRO</td>
+                    <td>R$ ${formatarMoeda(dinheiro)}</td>
+                    <td colspan="5"></td>
+                    <td>R$ ${formatarMoeda(dinheiro)}</td>
+                    <td>R$ -</td>
+                </tr>
+                <tr>
+                    <td>FATURAMENTO</td>
+                    <td>R$ ${formatarMoeda(faturamento)}</td>
+                    <td colspan="5"></td>
+                    <td>R$ ${formatarMoeda(faturamento)}</td>
+                    <td>R$ -</td>
+                </tr>
+                <tr class="total-row">
+                    <td>TOTAL</td>
+                    <td>R$ ${formatarMoeda(movimento)}</td>
+                    <td colspan="5"></td>
+                    <td>R$ ${formatarMoeda(totalCalculado)}</td>
+                    <td class="${caixaCorreto ? 'status-correct' : 'status-incorrect'}">
+                        ${caixaCorreto ? 'CAIXA CORRETO' : 'CAIXA INCORRETO'}
+                    </td>
+                </tr>
+            `;
+            
+            html += `</table>`;
+            
+            // Adicionar campos de auditoria
+            html += `
+                <div style="margin-top: 20px;">
+                    <p><strong>AUDITOR:</strong> _________________________</p>
+                    <p><strong>OBSERVAÇÃO:</strong> _________________________</p>
+                </div>
+            `;
+            
+            resultadoDiv.innerHTML = html;
+        });
+    </script>
+</body>
+</html>
