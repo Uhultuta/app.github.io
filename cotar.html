@@ -6,64 +6,94 @@
     <title>Cotação de Reserva - ICARAÍ PRAIA HOTEL</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            max-width: 600px;
+            font-family: 'Segoe UI', Arial, sans-serif;
+            max-width: 650px;
             margin: 0 auto;
             padding: 20px;
-            background-color: #f5f5f5;
+            background-color: #f5f9ff;
+            color: #333;
+            line-height: 1.6;
         }
         .container {
             background-color: white;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.08);
         }
         h1 {
-            color: #0066cc;
+            color: #0056b3;
             text-align: center;
+            margin-bottom: 5px;
+            font-size: 24px;
+        }
+        h2 {
+            color: #0077cc;
+            text-align: center;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 20px;
+            font-weight: 600;
         }
         .form-group {
-            margin-bottom: 15px;
+            margin-bottom: 18px;
         }
         label {
             display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
+            margin-bottom: 6px;
+            font-weight: 600;
+            color: #444;
         }
         input, select {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
             box-sizing: border-box;
+            font-size: 15px;
+            transition: border-color 0.3s;
+        }
+        input:focus, select:focus {
+            border-color: #80bdff;
+            outline: 0;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
         }
         button {
-            background-color: #0066cc;
             color: white;
             border: none;
-            padding: 10px 15px;
-            border-radius: 4px;
+            padding: 12px 15px;
+            border-radius: 6px;
             cursor: pointer;
             width: 100%;
             font-size: 16px;
-            margin-top: 5px;
+            font-weight: 600;
+            transition: all 0.3s;
         }
         button:hover {
-            background-color: #0055aa;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
         }
         .result {
-            margin-top: 20px;
-            padding: 15px;
-            background-color: #e6f7ff;
-            border-radius: 5px;
+            margin-top: 25px;
+            padding: 20px;
+            background-color: #f0f8ff;
+            border-radius: 8px;
             white-space: pre-wrap;
-            font-family: monospace;
+            font-family: 'Consolas', monospace;
+            border: 1px solid #d1e7ff;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        .primary-btn {
+            background-color: #0066cc;
+        }
+        .primary-btn:hover {
+            background-color: #0052a3;
         }
         .copy-btn {
-            background-color: #4CAF50;
+            background-color: #28a745;
         }
         .copy-btn:hover {
-            background-color: #45a049;
+            background-color: #218838;
         }
         .whatsapp-btn {
             background-color: #25D366;
@@ -74,13 +104,13 @@
         .toggle-container {
             display: flex;
             align-items: center;
-            margin-bottom: 10px;
+            margin-bottom: 15px;
         }
         .toggle-switch {
             position: relative;
             display: inline-block;
             width: 50px;
-            height: 24px;
+            height: 26px;
             margin-right: 10px;
         }
         .toggle-switch input {
@@ -97,13 +127,13 @@
             bottom: 0;
             background-color: #ccc;
             transition: .4s;
-            border-radius: 24px;
+            border-radius: 34px;
         }
         .slider:before {
             position: absolute;
             content: "";
-            height: 16px;
-            width: 16px;
+            height: 18px;
+            width: 18px;
             left: 4px;
             bottom: 4px;
             background-color: white;
@@ -114,28 +144,57 @@
             background-color: #0066cc;
         }
         input:checked + .slider:before {
-            transform: translateX(26px);
+            transform: translateX(24px);
         }
         .disclaimer {
-            font-size: 12px;
+            font-size: 13px;
             color: #666;
-            margin-top: 20px;
+            margin-top: 25px;
             text-align: center;
+            padding: 10px;
+            background-color: #fff8e6;
+            border-radius: 6px;
+            border-left: 4px solid #ffc107;
         }
         .total-box {
-            background-color: #f0f8ff;
-            padding: 10px;
-            border-radius: 5px;
-            margin-top: 10px;
-            font-weight: bold;
+            background-color: #e7f5ff;
+            padding: 15px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-weight: 600;
+            border-left: 4px solid #0066cc;
+        }
+        .total-box div {
+            margin-bottom: 8px;
         }
         .button-group {
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            gap: 12px;
+            margin-top: 15px;
         }
         .button-group button {
             flex: 1;
+        }
+        .required-field::after {
+            content: " *";
+            color: #dc3545;
+        }
+        .date-inputs {
+            display: flex;
+            gap: 15px;
+        }
+        .date-inputs .form-group {
+            flex: 1;
+        }
+        @media (max-width: 600px) {
+            .date-inputs {
+                flex-direction: column;
+                gap: 0;
+            }
+            .button-group {
+                flex-direction: column;
+                gap: 8px;
+            }
         }
     </style>
 </head>
@@ -144,28 +203,38 @@
         <h1>Cotação de Reserva</h1>
         <h2>ICARAÍ PRAIA HOTEL</h2>
         
-        <div class="form-group">
-            <label for="checkin">Data de Check-in:</label>
-            <input type="date" id="checkin" required>
+        <div class="date-inputs">
+            <div class="form-group">
+                <label for="checkin" class="required-field">Data de Check-in:</label>
+                <input type="date" id="checkin" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="checkout" class="required-field">Data de Check-out:</label>
+                <input type="date" id="checkout" required>
+            </div>
         </div>
         
         <div class="form-group">
-            <label for="checkout">Data de Check-out:</label>
-            <input type="date" id="checkout" required>
+            <label for="pensionType">Tipo de Pensão:</label>
+            <select id="pensionType">
+                <option value="Com café" selected>Com café da manhã</option>
+                <option value="Sem café">Sem café da manhã</option>
+            </select>
         </div>
         
         <div class="form-group">
             <label for="adults">Número de Adultos:</label>
-            <input type="number" id="adults" min="1" value="1" required>
+            <input type="number" id="adults" min="1" value="2" required>
         </div>
         
         <div class="form-group">
-            <label for="children">Número de Crianças:</label>
-            <input type="number" id="children" min="0" value="0" required>
+            <label for="children">Número de Crianças (5-12 anos):</label>
+            <input type="number" id="children" min="0" value="0">
         </div>
         
         <div class="form-group">
-            <label for="dailyRate">Valor da Diária (R$):</label>
+            <label for="dailyRate" class="required-field">Valor da Diária (R$):</label>
             <input type="number" id="dailyRate" min="0" step="0.01" value="500.00" required>
         </div>
         
@@ -174,7 +243,7 @@
                 <input type="checkbox" id="parkingCheck">
                 <span class="slider"></span>
             </label>
-            <label for="parkingCheck">Solicitar Estacionamento?</label>
+            <label for="parkingCheck">Solicitar Estacionamento? (R$ 45/dia)</label>
         </div>
         
         <div class="form-group" id="parkingDaysGroup" style="display: none;">
@@ -183,7 +252,7 @@
         </div>
         
         <div class="form-group">
-            <label for="paymentDueDate">Prazo para Pagamento:</label>
+            <label for="paymentDueDate" class="required-field">Prazo para Pagamento:</label>
             <input type="date" id="paymentDueDate" required>
         </div>
         
@@ -193,19 +262,22 @@
         </div>
         
         <div class="form-group">
-            <label for="senderName">Emissor da cotação:</label>
+            <label for="senderName" class="required-field">Emissor da cotação:</label>
             <input type="text" id="senderName" required placeholder="Digite seu nome">
         </div>
         
         <div id="totalDisplay" class="total-box" style="display: none;">
             <div>Total de Diárias: <span id="totalDays">0</span> dias</div>
+            <div>Valor Hospedagem: R$ <span id="accommodationTotal">0,00</span></div>
+            <div id="parkingTotalLine" style="display: none;">Valor Estacionamento: R$ <span id="parkingTotal">0,00</span></div>
             <div>Total Geral: R$ <span id="grandTotal">0,00</span></div>
         </div>
         
-        <button onclick="generateQuotation()">Gerar Cotação</button>
+        <button class="primary-btn" onclick="generateQuotation()">Gerar Cotação</button>
         
         <div class="disclaimer">
             Esta é apenas uma cotação e não garante a disponibilidade até a confirmação do pagamento.
+            Valores sujeitos a alteração sem aviso prévio.
         </div>
         
         <div class="result" id="result" style="display: none;">
@@ -213,18 +285,40 @@
         </div>
         
         <div class="button-group" id="actionButtons" style="display: none;">
-            <button class="copy-btn" onclick="copyToClipboard()">Copiar</button>
+            <button class="copy-btn" onclick="copyToClipboard()">Copiar Texto</button>
             <button class="whatsapp-btn" onclick="sendToWhatsApp()">Enviar por WhatsApp</button>
         </div>
     </div>
 
     <script>
+        // Set default dates
+        document.addEventListener('DOMContentLoaded', function() {
+            const today = new Date();
+            const tomorrow = new Date(today);
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            
+            // Format dates as YYYY-MM-DD
+            const formatDate = (date) => date.toISOString().split('T')[0];
+            
+            document.getElementById('checkin').value = formatDate(today);
+            document.getElementById('checkout').value = formatDate(tomorrow);
+            
+            // Set payment due date to today + 2 days
+            const paymentDue = new Date(today);
+            paymentDue.setDate(paymentDue.getDate() + 2);
+            document.getElementById('paymentDueDate').value = formatDate(paymentDue);
+            
+            // Trigger initial calculation
+            updateCalculations();
+        });
+
         // Calculate days and update parking days when dates change
         document.getElementById('checkin').addEventListener('change', updateCalculations);
         document.getElementById('checkout').addEventListener('change', updateCalculations);
         document.getElementById('parkingCheck').addEventListener('change', function() {
             const parkingDaysGroup = document.getElementById('parkingDaysGroup');
             parkingDaysGroup.style.display = this.checked ? 'block' : 'none';
+            document.getElementById('parkingTotalLine').style.display = this.checked ? 'block' : 'none';
             updateCalculations();
         });
         document.getElementById('dailyRate').addEventListener('input', updateCalculations);
@@ -236,6 +330,14 @@
             if (checkin && checkout) {
                 const checkinDate = new Date(checkin);
                 const checkoutDate = new Date(checkout);
+                
+                // Ensure checkout is after checkin
+                if (checkoutDate <= checkinDate) {
+                    document.getElementById('checkout').value = '';
+                    alert("A data de check-out deve ser posterior à data de check-in");
+                    return;
+                }
+                
                 const timeDiff = checkoutDate - checkinDate;
                 const daysDiff = Math.max(1, timeDiff / (1000 * 60 * 60 * 24));
                 
@@ -254,7 +356,9 @@
                 const grandTotal = accommodationTotal + parkingTotal;
                 
                 document.getElementById('totalDays').textContent = daysDiff;
-                document.getElementById('grandTotal').textContent = grandTotal.toFixed(2);
+                document.getElementById('accommodationTotal').textContent = accommodationTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('parkingTotal').textContent = parkingTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+                document.getElementById('grandTotal').textContent = grandTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
                 document.getElementById('totalDisplay').style.display = 'block';
             }
         }
@@ -271,10 +375,11 @@
             const parkingRequested = document.getElementById('parkingCheck').checked;
             const parkingDays = parkingRequested ? parseInt(document.getElementById('parkingDays').value) : 0;
             const creditCardLink = document.getElementById('creditCardLink').value;
+            const pensionType = document.getElementById('pensionType').value;
             
             // Validate required fields
-            if (!checkin || !checkout || !senderName || !paymentDueDate) {
-                alert("Por favor, preencha todos os campos obrigatórios");
+            if (!checkin || !checkout || !senderName || !paymentDueDate || isNaN(dailyRate)) {
+                alert("Por favor, preencha todos os campos obrigatórios corretamente");
                 return;
             }
             
@@ -296,25 +401,33 @@
             const parkingTotal = parkingRequested ? parkingDays * parkingRate : 0;
             const grandTotal = accommodationTotal + parkingTotal;
             
-            // Format dates
+            // Format dates and values
             const formattedCheckin = formatDate(checkin);
             const formattedCheckout = formatDate(checkout);
+            const formattedDailyRate = dailyRate.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            const formattedTotalPerDay = totalPerDay.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            const formattedAccommodationTotal = accommodationTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            const formattedParkingTotal = parkingTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            const formattedGrandTotal = grandTotal.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
+            const issValue = (dailyRate * issRate).toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
             
             // Build the quotation message
             let message = `🏨 *ICARAÍ PRAIA HOTEL* \n\n`;
             message += `📋 *COTAÇÃO DE RESERVA* (não é uma confirmação) \n\n`;
-            message += `🛏️ Apartamento Standard \n`;
-            message += `👨‍👩‍👧‍👦 Hóspedes: ${adults} Adulto(s), ${children} Criança(s) \n`;
+            message += `🛏️ Tipo de Pensão: ${pensionType} \n`;
+            message += `👨‍👩‍👧‍👦 Hóspedes: ${adults} Adulto(s), ${children} Criança(s) (5-12 anos) \n`;
             message += `🗓 Check-in: ${formattedCheckin} às 14hrs \n`;
             message += `🗓 Check-out: ${formattedCheckout} às 12hrs \n`;
             message += `📅 Nº Diárias: ${daysDiff} \n`;
-            message += `🚗 Estacionamento: ${parkingRequested ? `${parkingDays} dia(s) - R$ ${parkingTotal.toFixed(2)}` : 'Não solicitado'} \n\n`;
+            message += `🚗 Estacionamento: ${parkingRequested ? `${parkingDays} dia(s) - R$ ${formattedParkingTotal}` : 'Não solicitado'} \n\n`;
             
-            message += `• ☕ Café da manhã incluso \n`;
+            if (pensionType === "Com café") {
+                message += `• ☕ Café da manhã incluso \n`;
+            }
             message += `• 🍽️ Restaurante próprio \n`;
             message += `• 🛜 Internet (wi-fi) \n`;
-            message += `• 🛏️ Apartamentos com Smart TV, ar, telefone, minibar, internet e cofre individual \n`;
-            message += `• 🐶 *Não aceitamos Pet* \n`;
+            message += `• 🛏️ Apartamentos com Smart TV, ar condicionado, telefone, minibar e cofre individual \n`;
+            message += `• 🐶 *Não aceitamos animais* \n`;
             message += `• 🚗 *Estacionamento R$ 45,00 por dia, mediante disponibilidade, solicitação e confirmação – vagas limitadas* \n\n`;
             
             message += `*POLÍTICA PARA MENORES:* \n`;
@@ -322,15 +435,18 @@
             message += `- *Acompanhado dos pais:* apresentar no check-in documento de identidade ou certidão de nascimento comprovando ser filho de um dos pais presente. \n`;
             message += `- *Desacompanhado dos pais:* apresentar no check-in documento de identidade ou certidão de nascimento e autorização de ambos os pais reconhecida em cartório, por determinação legal. \n\n`;
             
-            message += `*CONDIÇÕES DE PAGAMENTO:* \n`;
-            message += `➡️ Pagamento antecipado até ${formattedPaymentDue} \n`;
-            message += `💰 Diária: R$ ${dailyRate.toFixed(2)} \n`;
-            message += `📊 ISS (2%): R$ ${(dailyRate * issRate).toFixed(2)} \n`;
-            message += `💵 Total por dia: R$ ${totalPerDay.toFixed(2)} \n`;
+            message += `*DETALHES FINANCEIROS:* \n`;
+            message += `💰 Diária: R$ ${formattedDailyRate} \n`;
+            message += `📊 ISS (2%): R$ ${issValue} \n`;
+            message += `💵 Total por dia: R$ ${formattedTotalPerDay} \n`;
+            message += `🏨 Total Hospedagem (${daysDiff} diárias): R$ ${formattedAccommodationTotal} \n`;
             if (parkingRequested) {
-                message += `🚗 Estacionamento (${parkingDays} dia(s)): R$ ${parkingTotal.toFixed(2)} \n`;
+                message += `🚗 Estacionamento (${parkingDays} dia(s)): R$ ${formattedParkingTotal} \n`;
             }
-            message += `💳 *TOTAL GERAL:* R$ ${grandTotal.toFixed(2)} \n\n`;
+            message += `💳 *TOTAL GERAL:* R$ ${formattedGrandTotal} \n\n`;
+            
+            message += `*CONDIÇÕES DE PAGAMENTO:* \n`;
+            message += `➡️ Pagamento antecipado até ${formattedPaymentDue} \n\n`;
             
             message += `🟢 *OPÇÕES DE PAGAMENTO:* \n`;
             message += `➡️ *PIX:* reservas@icaraipraiahotel.com.br \n`;
@@ -343,9 +459,10 @@
             message += `🔴 *IMPORTANTE:* \n`;
             message += `- Esta é apenas uma cotação, não uma reserva confirmada \n`;
             message += `- A disponibilidade está sujeita a confirmação após pagamento \n`;
-            message += `- Valores podem sofrer alterações sem aviso prévio \n\n`;
+            message += `- Valores podem sofrer alterações sem aviso prévio \n`;
+            message += `- Política de cancelamento: Reembolso de 100% para cancelamentos com 7 dias de antecedência \n\n`;
             
-            message += `Atenciosamente,\n${senderName}\nSetor de Reservas\nICARAÍ PRAIA HOTEL`;
+            message += `Atenciosamente,\n${senderName}\nSetor de Reservas\nICARAÍ PRAIA HOTEL\n📞 (21) 1234-5678`;
             
             // Display the result
             const resultDiv = document.getElementById('result');
@@ -354,6 +471,9 @@
             
             // Show action buttons
             document.getElementById('actionButtons').style.display = 'flex';
+            
+            // Scroll to result
+            resultDiv.scrollIntoView({ behavior: 'smooth' });
         }
         
         function formatDate(dateString) {
