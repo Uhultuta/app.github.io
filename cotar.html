@@ -229,7 +229,7 @@
         </div>
         
         <div class="form-group">
-            <label for="children">Número de Crianças (5-12 anos):</label>
+            <label for="children">Número de Crianças (até 5 anos):</label>
             <input type="number" id="children" min="0" value="0">
         </div>
         
@@ -415,7 +415,7 @@
             let message = `🏨 *ICARAÍ PRAIA HOTEL* \n\n`;
             message += `📋 *COTAÇÃO DE RESERVA* (não é uma confirmação) \n\n`;
             message += `🛏️ Tipo de Pensão: ${pensionType} \n`;
-            message += `👨‍👩‍👧‍👦 Hóspedes: ${adults} Adulto(s), ${children} Criança(s) (5-12 anos) \n`;
+            message += `👨‍👩‍👧‍👦 Hóspedes: ${adults} Adulto(s), ${children} Criança(s) (até 5 anos) \n`;
             message += `🗓 Check-in: ${formattedCheckin} às 14hrs \n`;
             message += `🗓 Check-out: ${formattedCheckout} às 12hrs \n`;
             message += `📅 Nº Diárias: ${daysDiff} \n`;
@@ -460,7 +460,7 @@
             message += `- Esta é apenas uma cotação, não uma reserva confirmada \n`;
             message += `- A disponibilidade está sujeita a confirmação após pagamento \n`;
             message += `- Valores podem sofrer alterações sem aviso prévio \n`;
-            message += `- Política de cancelamento: Reembolso de 100% para cancelamentos com 7 dias de antecedência \n\n`;
+            message += `- Política de cancelamento: Reembolso de 100% apenas para cancelamentos com 48 horas de antecedência do check-in \n\n`;
             
             message += `Atenciosamente,\n${senderName}\nSetor de Reservas\nICARAÍ PRAIA HOTEL\n📞 (21) 1234-5678`;
             
