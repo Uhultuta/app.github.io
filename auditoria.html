@@ -112,6 +112,10 @@
         .whatsapp-btn:hover {
             background-color: #1DA851;
         }
+        .download-btn {
+            background-color: #3498db;
+            margin-top: 10px;
+        }
         .motivo-pendencia {
             display: none;
             margin-top: 10px;
@@ -123,6 +127,28 @@
         .required-field::after {
             content: " *";
             color: #e74c3c;
+        }
+        #image-container {
+            margin-top: 20px;
+            text-align: center;
+        }
+        #generated-image {
+            max-width: 100%;
+            border: 1px solid #ddd;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: #fff;
+            animation: spin 1s ease-in-out infinite;
+            margin-right: 10px;
+        }
+        @keyframes spin {
+            to { transform: rotate(360deg); }
         }
         @media (max-width: 600px) {
             body {
@@ -293,10 +319,16 @@
     <div id="result" style="display: none;">
         <h2>Relatório de Auditoria</h2>
         <div id="table-container"></div>
-        <button id="whatsapp-btn" class="whatsapp-btn">Compartilhar via WhatsApp</button>
+        <div id="image-container"></div>
+        <button id="whatsapp-btn" class="whatsapp-btn">
+            <span id="whatsapp-text">Compartilhar via WhatsApp</span>
+        </button>
+        <button id="download-btn" class="download-btn">Baixar Imagem</button>
         <button id="print-btn" style="background-color: #7f8c8d; margin-top: 10px;">Imprimir Relatório</button>
     </div>
 
+    <!-- Adicione a biblioteca html2canvas -->
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
         // Set default date to today
         document.addEventListener('DOMContentLoaded', function() {
@@ -360,31 +392,16 @@
             
             // Generate table
             const tableHtml = generateTable(data);
-            
-            // Display result
             document.getElementById('table-container').innerHTML = tableHtml;
             document.getElementById('result').style.display = 'block';
+
+            // Convert table to image
+            convertTableToImage();
             
             // Scroll to result
             document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
         });
-        
-        document.getElementById('whatsapp-btn').addEventListener('click', function() {
-            const tableHtml = document.getElementById('table-container').innerHTML;
-            const tableText = htmlToText(tableHtml);
-            const whatsappText = encodeURIComponent(tableText);
-            
-            // Create WhatsApp share link
-            const whatsappUrl = `https://wa.me/?text=${whatsappText}`;
-            
-            // Open in new tab
-            window.open(whatsappUrl, '_blank');
-        });
-        
-        document.getElementById('print-btn').addEventListener('click', function() {
-            window.print();
-        });
-        
+
         function formatDate(dateString) {
             if (!dateString) return 'Data não informada';
             
@@ -519,27 +536,129 @@
                 </table>
             `;
         }
-        
-        function htmlToText(html) {
-            // Create a temporary div element
-            const tempDiv = document.createElement('div');
-            tempDiv.innerHTML = html;
+
+        // Função para converter a tabela em imagem
+        function convertTableToImage() {
+            const tableContainer = document.getElementById('table-container');
+            const whatsappBtn = document.getElementById('whatsapp-btn');
+            const whatsappText = document.getElementById('whatsapp-text');
             
-            // Get text content and format it
-            let text = tempDiv.textContent || tempDiv.innerText || '';
+            // Show loading indicator
+            whatsappText.innerHTML = '<div class="loading"></div> Gerando imagem...';
+            whatsappBtn.disabled = true;
             
-            // Replace multiple spaces with single space
-            text = text.replace(/\s+/g, ' ').trim();
-            
-            // Add line breaks for better WhatsApp formatting
-            text = text.replace(/(Conferências)/g, '\n\n$1');
-            text = text.replace(/(Nome do Colaborador:)/g, '\n\n$1');
-            
-            // Add header
-            text = `*RELATÓRIO DE AUDITORIA HOTEL* - ${document.getElementById('date').value}\n\n${text}`;
-            
-            return text;
+            html2canvas(tableContainer, {
+                scale: 2, // Melhora a qualidade da imagem
+                logging: false,
+                useCORS: true,
+                allowTaint: true,
+                backgroundColor: '#ffffff'
+            }).then(canvas => {
+                const imageContainer = document.getElementById('image-container');
+                imageContainer.innerHTML = '';
+                
+                // Exibe a imagem gerada
+                const img = document.createElement('img');
+                img.id = 'generated-image';
+                img.src = canvas.toDataURL('image/jpeg', 0.9); // Qualidade 90%
+                imageContainer.appendChild(img);
+                
+                // Atualiza o botão do WhatsApp para compartilhar a imagem
+                updateWhatsAppButton(canvas);
+                
+                // Configura o botão de download
+                setupDownloadButton(canvas);
+                
+                // Restore button state
+                whatsappText.textContent = 'Compartilhar via WhatsApp';
+                whatsappBtn.disabled = false;
+            }).catch(err => {
+                console.error('Erro ao gerar imagem:', err);
+                whatsappText.textContent = 'Erro ao gerar imagem';
+                setTimeout(() => {
+                    whatsappText.textContent = 'Compartilhar via WhatsApp';
+                    whatsappBtn.disabled = false;
+                }, 2000);
+            });
         }
+
+        // Função para atualizar o botão do WhatsApp com a imagem
+        function updateWhatsAppButton(canvas) {
+            const whatsappBtn = document.getElementById('whatsapp-btn');
+            
+            whatsappBtn.onclick = function() {
+                // Mostra indicador de carregamento
+                const whatsappText = document.getElementById('whatsapp-text');
+                whatsappText.innerHTML = '<div class="loading"></div> Preparando...';
+                whatsappBtn.disabled = true;
+                
+                // Converte o canvas para blob
+                canvas.toBlob(function(blob) {
+                    // Cria um link temporário para o blob
+                    const url = URL.createObjectURL(blob);
+                    
+                    // Para dispositivos móveis
+                    if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
+                        // Cria um link temporário para compartilhar
+                        const link = document.createElement('a');
+                        link.href = url;
+                        link.download = 'auditoria-hotel.jpg';
+                        
+                        // Tenta usar a API do WhatsApp diretamente
+                        const shareUrl = `whatsapp://send?text=${encodeURIComponent('Relatório de Auditoria Hotel')}`;
+                        
+                        // Primeiro tenta abrir o WhatsApp diretamente
+                        window.location.href = shareUrl;
+                        
+                        // Se não funcionar, oferece para baixar a imagem
+                        setTimeout(() => {
+                            document.body.appendChild(link);
+                            link.click();
+                            document.body.removeChild(link);
+                            URL.revokeObjectURL(url);
+                        }, 500);
+                    } 
+                    // Para desktop
+                    else {
+                        // Abre o WhatsApp Web com a imagem
+                        const a = document.createElement('a');
+                        a.href = `https://web.whatsapp.com/send?text=${encodeURIComponent('Relatório de Auditoria Hotel')}`;
+                        a.target = '_blank';
+                        document.body.appendChild(a);
+                        a.click();
+                        document.body.removeChild(a);
+                    }
+                    
+                    // Restaura o botão
+                    setTimeout(() => {
+                        whatsappText.textContent = 'Compartilhar via WhatsApp';
+                        whatsappBtn.disabled = false;
+                        URL.revokeObjectURL(url);
+                    }, 1000);
+                    
+                }, 'image/jpeg', 0.9);
+            };
+        }
+
+        // Função para configurar o botão de download
+        function setupDownloadButton(canvas) {
+            const downloadBtn = document.getElementById('download-btn');
+            
+            downloadBtn.onclick = function() {
+                // Cria um link temporário para download
+                const link = document.createElement('a');
+                link.download = `auditoria-hotel-${new Date().toISOString().slice(0,10)}.jpg`;
+                link.href = canvas.toDataURL('image/jpeg', 0.9);
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            };
+        }
+
+        // Configura o botão de impressão
+        document.getElementById('print-btn').addEventListener('click', function() {
+            window.print();
+        });
     </script>
 </body>
 </html>
