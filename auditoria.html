@@ -34,7 +34,7 @@
         }
         label {
             display: inline-block;
-            width: 150px;
+            width: 200px;
         }
         input, select {
             padding: 5px;
@@ -47,6 +47,7 @@
             border: none;
             border-radius: 4px;
             cursor: pointer;
+            margin-right: 10px;
         }
         button:hover {
             background-color: #45a049;
@@ -64,6 +65,17 @@
         .status-incorrect {
             color: red;
         }
+        .forma-pagamento-group {
+            border: 1px solid #ddd;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            background-color: #fff;
+        }
+        .tipo-cartao {
+            margin-left: 20px;
+            margin-bottom: 10px;
+        }
     </style>
 </head>
 <body>
@@ -76,24 +88,17 @@
             <input type="text" id="data" placeholder="DD/MM/AAAA" value="01/04/2025">
         </div>
         <div class="input-group">
-            <label for="movimento">Movimento (R$):</label>
+            <label for="movimento">Movimento Total (R$):</label>
             <input type="text" id="movimento" placeholder="12.992,40" value="12.992,40">
         </div>
-        <div class="input-group">
-            <label for="faturamento">Faturamento (R$):</label>
-            <input type="text" id="faturamento" placeholder="4.755,68" value="4.755,68">
-        </div>
-        <div class="input-group">
-            <label for="pgto-direto">Pagamento Direto (R$):</label>
-            <input type="text" id="pgto-direto" placeholder="8.236,72" value="8.236,72">
+        
+        <h3>Formas de Pagamento</h3>
+        <div id="formas-pagamento-container">
+            <!-- As formas de pagamento serão adicionadas dinamicamente aqui -->
         </div>
         
-        <h3>Pagamentos por Bandeira</h3>
-        <div id="bandeiras-container">
-            <!-- As bandeiras serão adicionadas dinamicamente aqui -->
-        </div>
-        
-        <button id="adicionar-bandeira">Adicionar Bandeira</button>
+        <button id="adicionar-cartao">Adicionar Cartão</button>
+        <button id="adicionar-outra-forma">Adicionar Outra Forma</button>
         <button id="calcular">Calcular</button>
     </div>
     
@@ -103,86 +108,162 @@
     </div>
 
     <script>
-        // Bandeiras disponíveis
-        const bandeirasDisponiveis = ['AMEX', 'DINERS', 'ELO', 'HIPERCARD', 'MASTERCARD', 'VISA'];
-        const adquirentesDisponiveis = ['B2B', 'E-COMERCE', 'CIELO', 'GETNET'];
+        // Formas de pagamento disponíveis
+        const bandeirasCartao = ['AMEX', 'DINERS', 'ELO', 'HIPERCARD', 'MASTERCARD', 'VISA'];
+        const tiposCartao = ['Crédito', 'Débito', 'E-commerce'];
+        const outrasFormasPagamento = ['Cash', 'Transferência Bancária', 'Faturamento'];
+        const adquirentesDisponiveis = ['CIELO', 'GETNET', 'OUTROS'];
         
         // Elementos do DOM
-        const bandeirasContainer = document.getElementById('bandeiras-container');
-        const btnAdicionarBandeira = document.getElementById('adicionar-bandeira');
+        const formasPagamentoContainer = document.getElementById('formas-pagamento-container');
+        const btnAdicionarCartao = document.getElementById('adicionar-cartao');
+        const btnAdicionarOutraForma = document.getElementById('adicionar-outra-forma');
         const btnCalcular = document.getElementById('calcular');
         const resultadoDiv = document.getElementById('resultado');
         
-        // Adicionar bandeira ao formulário
-        btnAdicionarBandeira.addEventListener('click', function() {
-            const bandeiraDiv = document.createElement('div');
-            bandeiraDiv.className = 'bandeira-input';
-            bandeiraDiv.innerHTML = `
+        // Adicionar forma de pagamento com cartão
+        btnAdicionarCartao.addEventListener('click', function() {
+            const formaPagamentoDiv = document.createElement('div');
+            formaPagamentoDiv.className = 'forma-pagamento-group';
+            formaPagamentoDiv.innerHTML = `
                 <div class="input-group">
-                    <label>Bandeira:</label>
-                    <select class="bandeira">
-                        ${bandeirasDisponiveis.map(b => `<option value="${b}">${b}</option>`).join('')}
+                    <label>Forma de Pagamento:</label>
+                    <select class="forma-pagamento">
+                        <option value="">Selecione...</option>
+                        ${bandeirasCartao.map(b => `<option value="${b}">${b}</option>`).join('')}
                     </select>
                 </div>
-                ${adquirentesDisponiveis.map(a => `
+                <div class="tipo-cartao">
                     <div class="input-group">
-                        <label>${a} (R$):</label>
-                        <input type="text" class="adquirente" data-adquirente="${a}" placeholder="0,00" value="0,00">
+                        <label>Tipo:</label>
+                        <select class="tipo">
+                            ${tiposCartao.map(t => `<option value="${t}">${t}</option>`).join('')}
+                        </select>
                     </div>
-                `).join('')}
-                <button class="remover-bandeira">Remover</button>
-                <hr>
+                    ${adquirentesDisponiveis.map(a => `
+                        <div class="input-group">
+                            <label>${a} (R$):</label>
+                            <input type="text" class="adquirente" data-adquirente="${a}" placeholder="0,00" value="0,00">
+                        </div>
+                    `).join('')}
+                </div>
+                <button class="remover-forma">Remover</button>
             `;
             
-            bandeirasContainer.appendChild(bandeiraDiv);
+            formasPagamentoContainer.appendChild(formaPagamentoDiv);
             
             // Adicionar evento ao botão de remover
-            bandeiraDiv.querySelector('.remover-bandeira').addEventListener('click', function() {
-                bandeirasContainer.removeChild(bandeiraDiv);
+            formaPagamentoDiv.querySelector('.remover-forma').addEventListener('click', function() {
+                formasPagamentoContainer.removeChild(formaPagamentoDiv);
             });
         });
         
-        // Adicionar algumas bandeiras por padrão
-        function adicionarBandeiraPadrao(bandeira, valores) {
-            const bandeiraDiv = document.createElement('div');
-            bandeiraDiv.className = 'bandeira-input';
-            bandeiraDiv.innerHTML = `
+        // Adicionar outras formas de pagamento
+        btnAdicionarOutraForma.addEventListener('click', function() {
+            const formaPagamentoDiv = document.createElement('div');
+            formaPagamentoDiv.className = 'forma-pagamento-group';
+            formaPagamentoDiv.innerHTML = `
                 <div class="input-group">
-                    <label>Bandeira:</label>
-                    <select class="bandeira">
-                        ${bandeirasDisponiveis.map(b => 
+                    <label>Forma de Pagamento:</label>
+                    <select class="forma-pagamento">
+                        <option value="">Selecione...</option>
+                        ${outrasFormasPagamento.map(f => `<option value="${f}">${f}</option>`).join('')}
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Valor (R$):</label>
+                    <input type="text" class="valor-outra-forma" placeholder="0,00" value="0,00">
+                </div>
+                <button class="remover-forma">Remover</button>
+            `;
+            
+            formasPagamentoContainer.appendChild(formaPagamentoDiv);
+            
+            // Adicionar evento ao botão de remover
+            formaPagamentoDiv.querySelector('.remover-forma').addEventListener('click', function() {
+                formasPagamentoContainer.removeChild(formaPagamentoDiv);
+            });
+        });
+        
+        // Adicionar formas de pagamento de exemplo
+        document.addEventListener('DOMContentLoaded', function() {
+            // Exemplo de cartões
+            adicionarCartaoExemplo('MASTERCARD', 'Crédito', {'CIELO': '3.162,18'});
+            adicionarCartaoExemplo('VISA', 'Débito', {'CIELO': '1.136,12'});
+            adicionarCartaoExemplo('ELO', 'E-commerce', {'GETNET': '429,62'});
+            
+            // Exemplo de outras formas
+            adicionarOutraFormaExemplo('Cash', '1.500,00');
+            adicionarOutraFormaExemplo('Transferência Bancária', '2.300,00');
+            adicionarOutraFormaExemplo('Faturamento', '4.755,68');
+        });
+        
+        function adicionarCartaoExemplo(bandeira, tipo, valores) {
+            const formaPagamentoDiv = document.createElement('div');
+            formaPagamentoDiv.className = 'forma-pagamento-group';
+            formaPagamentoDiv.innerHTML = `
+                <div class="input-group">
+                    <label>Forma de Pagamento:</label>
+                    <select class="forma-pagamento">
+                        <option value="">Selecione...</option>
+                        ${bandeirasCartao.map(b => 
                             `<option value="${b}" ${b === bandeira ? 'selected' : ''}>${b}</option>`
                         ).join('')}
                     </select>
                 </div>
-                ${adquirentesDisponiveis.map(a => `
+                <div class="tipo-cartao">
                     <div class="input-group">
-                        <label>${a} (R$):</label>
-                        <input type="text" class="adquirente" data-adquirente="${a}" 
-                               placeholder="0,00" value="${valores[a] || '0,00'}">
+                        <label>Tipo:</label>
+                        <select class="tipo">
+                            ${tiposCartao.map(t => 
+                                `<option value="${t}" ${t === tipo ? 'selected' : ''}>${t}</option>`
+                            ).join('')}
+                        </select>
                     </div>
-                `).join('')}
-                <button class="remover-bandeira">Remover</button>
-                <hr>
+                    ${adquirentesDisponiveis.map(a => `
+                        <div class="input-group">
+                            <label>${a} (R$):</label>
+                            <input type="text" class="adquirente" data-adquirente="${a}" 
+                                   placeholder="0,00" value="${valores[a] || '0,00'}">
+                        </div>
+                    `).join('')}
+                </div>
+                <button class="remover-forma">Remover</button>
             `;
             
-            bandeirasContainer.appendChild(bandeiraDiv);
+            formasPagamentoContainer.appendChild(formaPagamentoDiv);
             
-            // Adicionar evento ao botão de remover
-            bandeiraDiv.querySelector('.remover-bandeira').addEventListener('click', function() {
-                bandeirasContainer.removeChild(bandeiraDiv);
+            formaPagamentoDiv.querySelector('.remover-forma').addEventListener('click', function() {
+                formasPagamentoContainer.removeChild(formaPagamentoDiv);
             });
         }
         
-        // Adicionar bandeiras de exemplo
-        document.addEventListener('DOMContentLoaded', function() {
-            adicionarBandeiraPadrao('AMEX', {'CIELO': '429,62'});
-            adicionarBandeiraPadrao('MASTERCARD', {'E-COMERCE': '446,29', 'CIELO': '3.162,18'});
-            adicionarBandeiraPadrao('VISA', {'CIELO': '1.136,12'});
-            adicionarBandeiraPadrao('ELO', {'CIELO': '43,00'});
-            adicionarBandeiraPadrao('MASTERCARD', {'CIELO': '1.235,90'});
-            adicionarBandeiraPadrao('VISA', {'CIELO': '161,00'});
-        });
+        function adicionarOutraFormaExemplo(forma, valor) {
+            const formaPagamentoDiv = document.createElement('div');
+            formaPagamentoDiv.className = 'forma-pagamento-group';
+            formaPagamentoDiv.innerHTML = `
+                <div class="input-group">
+                    <label>Forma de Pagamento:</label>
+                    <select class="forma-pagamento">
+                        <option value="">Selecione...</option>
+                        ${outrasFormasPagamento.map(f => 
+                            `<option value="${f}" ${f === forma ? 'selected' : ''}>${f}</option>`
+                        ).join('')}
+                    </select>
+                </div>
+                <div class="input-group">
+                    <label>Valor (R$):</label>
+                    <input type="text" class="valor-outra-forma" placeholder="0,00" value="${valor}">
+                </div>
+                <button class="remover-forma">Remover</button>
+            `;
+            
+            formasPagamentoContainer.appendChild(formaPagamentoDiv);
+            
+            formaPagamentoDiv.querySelector('.remover-forma').addEventListener('click', function() {
+                formasPagamentoContainer.removeChild(formaPagamentoDiv);
+            });
+        }
         
         // Converter valor para número
         function parseValor(valorStr) {
@@ -199,56 +280,67 @@
         btnCalcular.addEventListener('click', function() {
             const data = document.getElementById('data').value;
             const movimento = parseValor(document.getElementById('movimento').value);
-            const faturamento = parseValor(document.getElementById('faturamento').value);
-            const pgtoDireto = parseValor(document.getElementById('pgto-direto').value);
             
-            // Coletar dados das bandeiras
-            const bandeirasInput = document.querySelectorAll('.bandeira-input');
-            const bandeirasData = {};
+            // Coletar dados das formas de pagamento
+            const formasPagamento = document.querySelectorAll('.forma-pagamento-group');
+            const cartoesData = {};
+            const outrasFormasData = {};
             
-            bandeirasInput.forEach(bandeiraDiv => {
-                const bandeira = bandeiraDiv.querySelector('.bandeira').value;
-                const inputs = bandeiraDiv.querySelectorAll('.adquirente');
+            formasPagamento.forEach(formaDiv => {
+                const formaPagamento = formaDiv.querySelector('.forma-pagamento').value;
                 
-                if (!bandeirasData[bandeira]) {
-                    bandeirasData[bandeira] = {};
-                }
+                // Verificar se é cartão ou outra forma
+                const valorOutraFormaInput = formaDiv.querySelector('.valor-outra-forma');
                 
-                inputs.forEach(input => {
-                    const adquirente = input.dataset.adquirente;
-                    const valor = parseValor(input.value);
+                if (valorOutraFormaInput) {
+                    // É outra forma de pagamento
+                    const valor = parseValor(valorOutraFormaInput.value);
+                    outrasFormasData[formaPagamento] = (outrasFormasData[formaPagamento] || 0) + valor;
+                } else {
+                    // É cartão
+                    const tipo = formaDiv.querySelector('.tipo').value;
+                    const bandeira = formaPagamento;
+                    const inputs = formaDiv.querySelectorAll('.adquirente');
                     
-                    if (!bandeirasData[bandeira][adquirente]) {
-                        bandeirasData[bandeira][adquirente] = 0;
+                    const chave = `${bandeira} (${tipo})`;
+                    
+                    if (!cartoesData[chave]) {
+                        cartoesData[chave] = {total: 0, adquirentes: {}};
                     }
                     
-                    bandeirasData[bandeira][adquirente] += valor;
-                });
+                    inputs.forEach(input => {
+                        const adquirente = input.dataset.adquirente;
+                        const valor = parseValor(input.value);
+                        
+                        cartoesData[chave].total += valor;
+                        cartoesData[chave].adquirentes[adquirente] = 
+                            (cartoesData[chave].adquirentes[adquirente] || 0) + valor;
+                    });
+                }
             });
             
-            // Calcular totais por adquirente
+            // Calcular totais por adquirente para cartões
             const totaisAdquirentes = {};
             adquirentesDisponiveis.forEach(a => {
                 totaisAdquirentes[a] = 0;
             });
             
-            Object.values(bandeirasData).forEach(bandeira => {
-                Object.entries(bandeira).forEach(([adquirente, valor]) => {
+            Object.values(cartoesData).forEach(cartao => {
+                Object.entries(cartao.adquirentes).forEach(([adquirente, valor]) => {
                     if (totaisAdquirentes[adquirente] !== undefined) {
                         totaisAdquirentes[adquirente] += valor;
                     }
                 });
             });
             
-            // Calcular subtotal geral
-            const subtotalGeral = Object.values(totaisAdquirentes).reduce((sum, val) => sum + val, 0);
+            // Calcular total cartões
+            const totalCartoes = Object.values(cartoesData).reduce((sum, cartao) => sum + cartao.total, 0);
             
-            // Calcular depósito, dinheiro e faturamento
-            const deposito = pgtoDireto - subtotalGeral;
-            const dinheiro = movimento - pgtoDireto - faturamento;
+            // Calcular total outras formas
+            const totalOutrasFormas = Object.values(outrasFormasData).reduce((sum, val) => sum + val, 0);
             
             // Verificar se o caixa está correto
-            const totalCalculado = subtotalGeral + deposito + dinheiro + faturamento;
+            const totalCalculado = totalCartoes + totalOutrasFormas;
             const caixaCorreto = Math.abs(totalCalculado - movimento) < 0.01;
             
             // Gerar tabela de resultados
@@ -256,91 +348,65 @@
                 <table>
                     <tr>
                         <th>DATA:</th>
-                        <td colspan="7">${data}</td>
+                        <td colspan="5">${data}</td>
                     </tr>
                     <tr>
-                        <th>MOVIMENTO</th>
-                        <td colspan="7">R$ ${formatarMoeda(movimento)}</td>
+                        <th>MOVIMENTO TOTAL</th>
+                        <td colspan="5">R$ ${formatarMoeda(movimento)}</td>
                     </tr>
                     <tr>
-                        <th>FATURAMENTO</th>
-                        <td colspan="7">R$ ${formatarMoeda(faturamento)}</td>
-                    </tr>
-                    <tr>
-                        <th>PGTO DIRETO</th>
-                        <td colspan="7">R$ ${formatarMoeda(pgtoDireto)}</td>
-                    </tr>
-                    <tr>
-                        <th>PAGAMENTO</th>
-                        <th>B2B</th>
-                        <th>E-COMERCE</th>
+                        <th>FORMA DE PAGAMENTO</th>
                         <th>CIELO</th>
                         <th>GETNET</th>
-                        <th>SUBTOTAL</th>
-                        <th>ERBON</th>
+                        <th>OUTROS</th>
+                        <th>TOTAL</th>
                         <th>STATUS</th>
                     </tr>
             `;
             
-            // Adicionar linhas para cada bandeira
-            Object.entries(bandeirasData).forEach(([bandeira, valores]) => {
-                const subtotal = Object.values(valores).reduce((sum, val) => sum + val, 0);
-                
+            // Adicionar linhas para cada cartão
+            Object.entries(cartoesData).forEach(([descricao, dados]) => {
                 html += `
                     <tr>
-                        <td>${bandeira}</td>
-                        <td>R$ ${formatarMoeda(valores['B2B'] || 0)}</td>
-                        <td>R$ ${formatarMoeda(valores['E-COMERCE'] || 0)}</td>
-                        <td>R$ ${formatarMoeda(valores['CIELO'] || 0)}</td>
-                        <td>R$ ${formatarMoeda(valores['GETNET'] || 0)}</td>
-                        <td>R$ ${formatarMoeda(subtotal)}</td>
-                        <td>R$ ${formatarMoeda(subtotal)}</td>
-                        <td>R$ -</td>
+                        <td>${descricao}</td>
+                        <td>R$ ${formatarMoeda(dados.adquirentes['CIELO'] || 0)}</td>
+                        <td>R$ ${formatarMoeda(dados.adquirentes['GETNET'] || 0)}</td>
+                        <td>R$ ${formatarMoeda(dados.adquirentes['OUTROS'] || 0)}</td>
+                        <td>R$ ${formatarMoeda(dados.total)}</td>
+                        <td></td>
                     </tr>
                 `;
             });
             
-            // Adicionar subtotal geral
+            // Adicionar subtotal cartões
             html += `
                 <tr class="total-row">
-                    <td>SUBTOTAL</td>
-                    <td>R$ ${formatarMoeda(totaisAdquirentes['B2B'])}</td>
-                    <td>R$ ${formatarMoeda(totaisAdquirentes['E-COMERCE'])}</td>
+                    <td>TOTAL CARTÕES</td>
                     <td>R$ ${formatarMoeda(totaisAdquirentes['CIELO'])}</td>
                     <td>R$ ${formatarMoeda(totaisAdquirentes['GETNET'])}</td>
-                    <td>R$ ${formatarMoeda(subtotalGeral)}</td>
-                    <td>R$ ${formatarMoeda(subtotalGeral)}</td>
-                    <td>R$ -</td>
+                    <td>R$ ${formatarMoeda(totaisAdquirentes['OUTROS'])}</td>
+                    <td>R$ ${formatarMoeda(totalCartoes)}</td>
+                    <td></td>
                 </tr>
             `;
             
-            // Adicionar depósito, dinheiro e faturamento
+            // Adicionar outras formas de pagamento
+            Object.entries(outrasFormasData).forEach(([forma, valor]) => {
+                html += `
+                    <tr>
+                        <td>${forma}</td>
+                        <td colspan="3"></td>
+                        <td>R$ ${formatarMoeda(valor)}</td>
+                        <td></td>
+                    </tr>
+                `;
+            });
+            
+            // Adicionar total geral
             html += `
-                <tr>
-                    <td>DEPOSITO</td>
-                    <td>R$ ${formatarMoeda(deposito)}</td>
-                    <td colspan="5"></td>
-                    <td>R$ ${formatarMoeda(deposito)}</td>
-                    <td>R$ -</td>
-                </tr>
-                <tr>
-                    <td>DINHEIRO</td>
-                    <td>R$ ${formatarMoeda(dinheiro)}</td>
-                    <td colspan="5"></td>
-                    <td>R$ ${formatarMoeda(dinheiro)}</td>
-                    <td>R$ -</td>
-                </tr>
-                <tr>
-                    <td>FATURAMENTO</td>
-                    <td>R$ ${formatarMoeda(faturamento)}</td>
-                    <td colspan="5"></td>
-                    <td>R$ ${formatarMoeda(faturamento)}</td>
-                    <td>R$ -</td>
-                </tr>
                 <tr class="total-row">
-                    <td>TOTAL</td>
-                    <td>R$ ${formatarMoeda(movimento)}</td>
-                    <td colspan="5"></td>
+                    <td>TOTAL GERAL</td>
+                    <td colspan="3"></td>
                     <td>R$ ${formatarMoeda(totalCalculado)}</td>
                     <td class="${caixaCorreto ? 'status-correct' : 'status-incorrect'}">
                         ${caixaCorreto ? 'CAIXA CORRETO' : 'CAIXA INCORRETO'}
