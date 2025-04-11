@@ -1,0 +1,452 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Auditoria Hotel - Logbook</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+        input, textarea, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+        textarea {
+            height: 100px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        #result {
+            margin-top: 20px;
+            border: 1px solid #ddd;
+            padding: 15px;
+            border-radius: 4px;
+            background-color: #f9f9f9;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        .status-ok {
+            color: green;
+        }
+        .status-pendente {
+            color: red;
+        }
+        .whatsapp-btn {
+            background-color: #25D366;
+        }
+        .whatsapp-btn:hover {
+            background-color: #1DA851;
+        }
+        .motivo-pendencia {
+            display: none;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <h1>AUDITORIA HOTEL - LOGBOOK</h1>
+    
+    <div id="form-container">
+        <div class="form-group">
+            <label for="date">Data:</label>
+            <input type="date" id="date" required>
+        </div>
+        
+        <div class="form-group">
+            <label for="caixa">Caixa (Valor):</label>
+            <input type="text" id="caixa" placeholder="R$ 1.000,00">
+        </div>
+        
+        <div class="form-group">
+            <label for="cadastro_frnh">Cadastro FRNH:</label>
+            <select id="cadastro_frnh" onchange="toggleMotivo('cadastro_frnh_motivo', this.value)">
+                <option value="ok">OK</option>
+                <option value="pendente">Pendente</option>
+            </select>
+            <div id="cadastro_frnh_motivo" class="motivo-pendencia">
+                <label for="cadastro_frnh_motivo_text">Motivo:</label>
+                <textarea id="cadastro_frnh_motivo_text"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="emails">E-Mails:</label>
+            <select id="emails" onchange="toggleMotivo('emails_motivo', this.value)">
+                <option value="respondidos">Respondidos</option>
+                <option value="pendentes">Pendentes</option>
+            </select>
+            <div id="emails_motivo" class="motivo-pendencia">
+                <label for="emails_motivo_text">Detalhes:</label>
+                <textarea id="emails_motivo_text" placeholder="Quais e-mails estão pendentes?"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="checkouts">Check-outs efetuados:</label>
+            <select id="checkouts" onchange="toggleMotivo('checkouts_motivo', this.value)">
+                <option value="ok">OK</option>
+                <option value="pendente">Pendente</option>
+            </select>
+            <div id="checkouts_motivo" class="motivo-pendencia">
+                <label for="checkouts_motivo_text">Motivo:</label>
+                <textarea id="checkouts_motivo_text"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="saldo_elevado">Saldo Elevado:</label>
+            <select id="saldo_elevado" onchange="toggleMotivo('saldo_elevado_motivo', this.value)">
+                <option value="ok">OK</option>
+                <option value="pendentes">Pendentes</option>
+            </select>
+            <div id="saldo_elevado_motivo" class="motivo-pendencia">
+                <label for="saldo_elevado_motivo_text">Detalhes:</label>
+                <textarea id="saldo_elevado_motivo_text" placeholder="Quais saldos estão pendentes?"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="lancamentos">Lançamentos:</label>
+            <select id="lancamentos" onchange="toggleMotivo('lancamentos_motivo', this.value)">
+                <option value="ok">OK</option>
+                <option value="pendente">Pendente</option>
+            </select>
+            <div id="lancamentos_motivo" class="motivo-pendencia">
+                <label for="lancamentos_motivo_text">Motivo:</label>
+                <textarea id="lancamentos_motivo_text"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="contas_pendentes">Contas Pendentes:</label>
+            <select id="contas_pendentes" onchange="toggleMotivo('contas_pendentes_motivo', this.value)">
+                <option value="ok">OK</option>
+                <option value="pendente">Pendente</option>
+            </select>
+            <div id="contas_pendentes_motivo" class="motivo-pendencia">
+                <label for="contas_pendentes_motivo_text">Motivo:</label>
+                <textarea id="contas_pendentes_motivo_text"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="objetos_emprestimo">Objetos de Empréstimo:</label>
+            <select id="objetos_emprestimo" onchange="toggleMotivo('objetos_emprestimo_motivo', this.value)">
+                <option value="ok">OK</option>
+                <option value="pendentes">Pendentes</option>
+            </select>
+            <div id="objetos_emprestimo_motivo" class="motivo-pendencia">
+                <label for="objetos_emprestimo_motivo_text">Detalhes:</label>
+                <textarea id="objetos_emprestimo_motivo_text" placeholder="Quais objetos estão pendentes?"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="situacao_hotel">Situação do Hotel Atual:</label>
+            <textarea id="situacao_hotel" placeholder="Check-ins/check-outs, estacionamento, no-shows..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="situacao_proximo_dia">Situação Prevista para Próximo Dia:</label>
+            <textarea id="situacao_proximo_dia" placeholder="Check-ins/check-outs/estacionamento/Reservas a confirmar..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="estornos">Estornos:</label>
+            <select id="estornos" onchange="toggleMotivo('estornos_motivo', this.value)">
+                <option value="sem estornos">Sem estornos</option>
+                <option value="com estornos">Com estornos</option>
+            </select>
+            <div id="estornos_motivo" class="motivo-pendencia">
+                <label for="estornos_motivo_text">Detalhes:</label>
+                <textarea id="estornos_motivo_text" placeholder="Descreva os estornos realizados"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="relatorio_seguranca">Relatório de Segurança:</label>
+            <select id="relatorio_seguranca" onchange="toggleMotivo('relatorio_seguranca_motivo', this.value)">
+                <option value="ok">OK</option>
+                <option value="pendente">Pendente</option>
+            </select>
+            <div id="relatorio_seguranca_motivo" class="motivo-pendencia">
+                <label for="relatorio_seguranca_motivo_text">Motivo:</label>
+                <textarea id="relatorio_seguranca_motivo_text"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="logbook">Logbook (Ocorrências):</label>
+            <select id="logbook" onchange="toggleMotivo('logbook_motivo', this.value)">
+                <option value="ok">OK</option>
+                <option value="ocorrencias">Ocorrências</option>
+            </select>
+            <div id="logbook_motivo" class="motivo-pendencia">
+                <label for="logbook_motivo_text">Detalhes:</label>
+                <textarea id="logbook_motivo_text" placeholder="Descreva as ocorrências"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="colaboradores">Nome dos Colaboradores:</label>
+            <input type="text" id="colaboradores" placeholder="Ex: Fabio Lima / Learo Taranto">
+        </div>
+        
+        <button id="generate-btn">Gerar Tabela</button>
+    </div>
+    
+    <div id="result" style="display: none;">
+        <h2>Resultado:</h2>
+        <div id="table-container"></div>
+        <button id="whatsapp-btn" class="whatsapp-btn">Compartilhar via WhatsApp</button>
+    </div>
+
+    <script>
+        // Função para mostrar/ocultar campo de motivo
+        function toggleMotivo(elementId, status) {
+            const motivoElement = document.getElementById(elementId);
+            if (status === 'pendente' || status === 'pendentes' || status === 'ocorrencias' || status === 'com estornos') {
+                motivoElement.style.display = 'block';
+            } else {
+                motivoElement.style.display = 'none';
+            }
+        }
+
+        document.getElementById('generate-btn').addEventListener('click', function() {
+            // Get form values
+            const date = document.getElementById('date').value || '10/04/2025';
+            const formattedDate = formatDate(date);
+            
+            // Função para formatar status e motivo
+            function getStatusInfo(selectId, motivoId) {
+                const status = document.getElementById(selectId).value;
+                const motivo = document.getElementById(motivoId).value;
+                
+                return {
+                    status: status,
+                    motivo: motivo
+                };
+            }
+
+            const data = {
+                caixa: document.getElementById('caixa').value || 'R$ 1.000,00',
+                cadastro_frnh: getStatusInfo('cadastro_frnh', 'cadastro_frnh_motivo_text'),
+                emails: getStatusInfo('emails', 'emails_motivo_text'),
+                checkouts: getStatusInfo('checkouts', 'checkouts_motivo_text'),
+                saldo_elevado: getStatusInfo('saldo_elevado', 'saldo_elevado_motivo_text'),
+                lancamentos: getStatusInfo('lancamentos', 'lancamentos_motivo_text'),
+                contas_pendentes: getStatusInfo('contas_pendentes', 'contas_pendentes_motivo_text'),
+                objetos_emprestimo: getStatusInfo('objetos_emprestimo', 'objetos_emprestimo_motivo_text'),
+                situacao_hotel: document.getElementById('situacao_hotel').value || 'Check-in: 09 // Check-out: 07 // Estacionamento: 05 // No-show - 25177',
+                situacao_proximo_dia: document.getElementById('situacao_proximo_dia').value || 'Check-in: 14 // Check-out: 18 // estacionamento: 04',
+                estornos: getStatusInfo('estornos', 'estornos_motivo_text'),
+                relatorio_seguranca: getStatusInfo('relatorio_seguranca', 'relatorio_seguranca_motivo_text'),
+                logbook: getStatusInfo('logbook', 'logbook_motivo_text'),
+                colaboradores: document.getElementById('colaboradores').value || 'Fabio Lima / Learo Taranto',
+                date: formattedDate
+            };
+            
+            // Generate table
+            const tableHtml = generateTable(data);
+            
+            // Display result
+            document.getElementById('table-container').innerHTML = tableHtml;
+            document.getElementById('result').style.display = 'block';
+            
+            // Scroll to result
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
+        });
+        
+        document.getElementById('whatsapp-btn').addEventListener('click', function() {
+            const tableHtml = document.getElementById('table-container').innerHTML;
+            const tableText = htmlToText(tableHtml);
+            const whatsappText = encodeURIComponent(tableText);
+            
+            // Create WhatsApp share link
+            const whatsappUrl = `https://wa.me/?text=${whatsappText}`;
+            
+            // Open in new tab
+            window.open(whatsappUrl, '_blank');
+        });
+        
+        function formatDate(dateString) {
+            if (!dateString) return '10/04/2025';
+            
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            
+            return `${day}/${month}/${year}`;
+        }
+        
+        function generateTable(data) {
+            // Função auxiliar para determinar classe de status
+            function getStatusClass(status) {
+                if (status.includes('pendente') || status.includes('pendentes') || 
+                    status.includes('ocorrencias') || status.includes('com estornos')) {
+                    return 'status-pendente';
+                }
+                return 'status-ok';
+            }
+
+            return `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Conferências</th>
+                            <th>Atividade</th>
+                            <th>Status</th>
+                            <th>${data.date}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Caixa</td>
+                            <td>Conferir o caixa</td>
+                            <td class="status-ok">ok</td>
+                            <td>${data.caixa}</td>
+                        </tr>
+                        <tr>
+                            <td>Cadastro FRNH</td>
+                            <td>Verificar se as fichas foram cadastradas (nomes cpf, telefone e-mail e endereço completo)</td>
+                            <td class="${getStatusClass(data.cadastro_frnh.status)}">${data.cadastro_frnh.status}</td>
+                            <td>${data.cadastro_frnh.motivo || ''}</td>
+                        </tr>
+                        <tr>
+                            <td>E-Mails</td>
+                            <td>Após as 17 horas, aos finais de semanas e feriados, a leitura e respostas das solicitações via email de reservas são de responsabilidade da recepção, devendo responder em tempo hábil as solicitações recebidas. Em caso de duvidas solicitar auxílio ao turno seguinte ou a central de reservas.</td>
+                            <td class="${getStatusClass(data.emails.status)}">${data.emails.status}</td>
+                            <td>${data.emails.motivo || ''}</td>
+                        </tr>
+                        <tr>
+                            <td>Check-outs efetuados</td>
+                            <td>Conferência das notas emitidas.</td>
+                            <td class="${getStatusClass(data.checkouts.status)}">${data.checkouts.status}</td>
+                            <td>${data.checkouts.motivo || ''}</td>
+                        </tr>
+                        <tr>
+                            <td>Saldo Elevado</td>
+                            <td>Verificar todos os recebimentos, faturamento e documentos).</td>
+                            <td class="${getStatusClass(data.saldo_elevado.status)}">${data.saldo_elevado.status}</td>
+                            <td>${data.saldo_elevado.motivo || ''}</td>
+                        </tr>
+                        <tr>
+                            <td>Lançamentos</td>
+                            <td>Conferência dos saldos: Particular R$ 500,00 e faturamento até 7 dias, exceto para empresas com acordos diferentes para faturamento.</td>
+                            <td class="${getStatusClass(data.lancamentos.status)}">${data.lancamentos.status}</td>
+                            <td>${data.lancamentos.motivo || ''}</td>
+                        </tr>
+                        <tr>
+                            <td>Contas Pendentes</td>
+                            <td>Conferir, todos os lançamentos do dia, (A&B, lavanderia, diária, iss, fechamento de contas, forma de pagamento), split de A&B exceendente, mantendo uma cópia da comanda. Caso seja encontrado algum erro corrigir antes da auditoria.</td>
+                            <td class="${getStatusClass(data.contas_pendentes.status)}">${data.contas_pendentes.status}</td>
+                            <td>${data.contas_pendentes.motivo || ''}</td>
+                        </tr>
+                        <tr>
+                            <td>Objeto de empréstimo</td>
+                            <td>Verificação das soluções para as contas em pendência</td>
+                            <td class="${getStatusClass(data.objetos_emprestimo.status)}">${data.objetos_emprestimo.status}</td>
+                            <td>${data.objetos_emprestimo.motivo || ''}</td>
+                        </tr>
+                        <tr>
+                            <td>Situação do Hotel atual</td>
+                            <td>Check-ins/check-outs, estacionamento, no-shows</td>
+                            <td class="status-ok">ok</td>
+                            <td>${data.situacao_hotel}</td>
+                        </tr>
+                        <tr>
+                            <td>Situação Prevista para próximo dia</td>
+                            <td>Check-ins/check-outs/estacionamento/ Reservas a confirmar</td>
+                            <td class="status-ok">ok</td>
+                            <td>${data.situacao_proximo_dia}</td>
+                        </tr>
+                        <tr>
+                            <td>Estornos</td>
+                            <td>Informar se houve estorno e motivo</td>
+                            <td class="${getStatusClass(data.estornos.status)}">${data.estornos.status}</td>
+                            <td>${data.estornos.motivo || ''}</td>
+                        </tr>
+                        <tr>
+                            <td>Relatório de Segurança</td>
+                            <td>SALVAR NA PASTA (DRIVE) 1ª PREVISÃO DE CHEGADAS- SALVAR LISTAGEM SIMPLES COM OBSERVAÇÕES. 2ª GERENCIAL/RELATORIOS/GOV +MANUT - SALVAR SAIDAS +PAX IN HOUSE. 8ª HÓSPEDES IN HOUSE - IMPRIMIR LISTAGEM SIMPLES COM OBS</td>
+                            <td class="${getStatusClass(data.relatorio_seguranca.status)}">${data.relatorio_seguranca.status}</td>
+                            <td>${data.relatorio_seguranca.motivo || ''}</td>
+                        </tr>
+                        <tr>
+                            <td>LOGBOOK</td>
+                            <td>Registros sobres a ocorrência de problemas e pendências acontecidas durante o turno.</td>
+                            <td class="${getStatusClass(data.logbook.status)}">${data.logbook.status}</td>
+                            <td>${data.logbook.motivo || ''}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2">Nome do Colaborador: ${data.colaboradores}</td>
+                            <td>Data</td>
+                            <td>${data.date}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            `;
+        }
+        
+        function htmlToText(html) {
+            // Create a temporary div element
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
+            
+            // Get text content and format it
+            let text = tempDiv.textContent || tempDiv.innerText || '';
+            
+            // Replace multiple spaces with single space
+            text = text.replace(/\s+/g, ' ').trim();
+            
+            // Add line breaks for better WhatsApp formatting
+            text = text.replace(/(Conferências)/g, '\n$1');
+            text = text.replace(/(Nome do Colaborador:)/g, '\n$1');
+            
+            return text;
+        }
+    </script>
+</body>
+</html>
