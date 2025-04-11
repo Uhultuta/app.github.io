@@ -3,429 +3,543 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Calculadora de Movimentação Financeira</title>
+    <title>Auditoria Hotel - Logbook</title>
     <style>
         body {
-            font-family: Arial, sans-serif;
-            margin: 20px;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
         }
-        table {
-            border-collapse: collapse;
-            width: 100%;
-            margin-bottom: 20px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 8px;
+        h1 {
             text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #3498db;
         }
-        th {
-            background-color: #f2f2f2;
-        }
-        .input-section {
+        .form-group {
             margin-bottom: 20px;
+            background-color: white;
             padding: 15px;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            background-color: #f9f9f9;
-        }
-        .input-group {
-            margin-bottom: 10px;
+            border-radius: 8px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         label {
-            display: inline-block;
-            width: 200px;
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #2c3e50;
         }
-        input, select {
-            padding: 5px;
-            width: 200px;
+        input, textarea, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 16px;
+            transition: border 0.3s;
+        }
+        input:focus, textarea:focus, select:focus {
+            border-color: #3498db;
+            outline: none;
+            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        }
+        textarea {
+            height: 100px;
+            resize: vertical;
         }
         button {
-            padding: 8px 15px;
-            background-color: #4CAF50;
+            background-color: #3498db;
             color: white;
+            padding: 12px 20px;
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            margin-right: 10px;
+            font-size: 16px;
+            margin: 15px 0;
+            transition: background-color 0.3s;
+            display: block;
+            width: 100%;
+            font-weight: bold;
         }
         button:hover {
-            background-color: #45a049;
+            background-color: #2980b9;
         }
-        .result-section {
-            overflow-x: auto;
+        #result {
+            margin-top: 30px;
+            border: 1px solid #ddd;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
         }
-        .total-row {
-            font-weight: bold;
-            background-color: #e6f7ff;
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            font-size: 14px;
         }
-        .status-correct {
-            color: green;
-        }
-        .status-incorrect {
-            color: red;
-        }
-        .forma-pagamento-group {
+        th, td {
             border: 1px solid #ddd;
             padding: 10px;
-            margin-bottom: 15px;
-            border-radius: 5px;
-            background-color: #fff;
+            text-align: left;
+            vertical-align: top;
         }
-        .tipo-cartao {
-            margin-left: 20px;
-            margin-bottom: 10px;
+        th {
+            background-color: #3498db;
+            color: white;
+            font-weight: bold;
+        }
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+        .status-ok {
+            color: #27ae60;
+            font-weight: bold;
+        }
+        .status-pendente {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+        .whatsapp-btn {
+            background-color: #25D366;
+            margin-top: 20px;
+        }
+        .whatsapp-btn:hover {
+            background-color: #1DA851;
+        }
+        .motivo-pendencia {
+            display: none;
+            margin-top: 10px;
+            padding: 10px;
+            background-color: #f8f9fa;
+            border-radius: 4px;
+            border-left: 4px solid #f39c12;
+        }
+        .required-field::after {
+            content: " *";
+            color: #e74c3c;
+        }
+        @media (max-width: 600px) {
+            body {
+                padding: 10px;
+            }
+            .form-group {
+                padding: 10px;
+            }
+            th, td {
+                padding: 8px 5px;
+                font-size: 12px;
+            }
         }
     </style>
 </head>
 <body>
-    <h1>Calculadora de Movimentação Financeira</h1>
+    <h1>AUDITORIA HOTEL - LOGBOOK</h1>
     
-    <div class="input-section">
-        <h2>Dados de Entrada</h2>
-        <div class="input-group">
-            <label for="data">Data:</label>
-            <input type="text" id="data" placeholder="DD/MM/AAAA" value="01/04/2025">
-        </div>
-        <div class="input-group">
-            <label for="movimento">Movimento Total (R$):</label>
-            <input type="text" id="movimento" placeholder="12.992,40" value="12.992,40">
+    <div id="form-container">
+        <div class="form-group">
+            <label for="date" class="required-field">Data:</label>
+            <input type="date" id="date" required>
         </div>
         
-        <h3>Formas de Pagamento</h3>
-        <div id="formas-pagamento-container">
-            <!-- As formas de pagamento serão adicionadas dinamicamente aqui -->
+        <div class="form-group">
+            <label for="caixa">Caixa (Valor):</label>
+            <input type="text" id="caixa" placeholder="R$ 1.000,00">
         </div>
         
-        <button id="adicionar-cartao">Adicionar Cartão</button>
-        <button id="adicionar-outra-forma">Adicionar Outra Forma</button>
-        <button id="calcular">Calcular</button>
+        <div class="form-group">
+            <label for="cadastro_frnh">Cadastro FRNH:</label>
+            <select id="cadastro_frnh" onchange="toggleMotivo('cadastro_frnh_motivo', this.value)">
+                <option value="ok">OK</option>
+                <option value="pendente">Pendente</option>
+            </select>
+            <div id="cadastro_frnh_motivo" class="motivo-pendencia">
+                <label for="cadastro_frnh_motivo_text">Motivo:</label>
+                <textarea id="cadastro_frnh_motivo_text"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="emails">E-Mails:</label>
+            <select id="emails" onchange="toggleMotivo('emails_motivo', this.value)">
+                <option value="respondidos">Respondidos</option>
+                <option value="pendentes">Pendentes</option>
+            </select>
+            <div id="emails_motivo" class="motivo-pendencia">
+                <label for="emails_motivo_text">Detalhes:</label>
+                <textarea id="emails_motivo_text" placeholder="Quais e-mails estão pendentes?"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="checkouts">Check-outs efetuados:</label>
+            <select id="checkouts" onchange="toggleMotivo('checkouts_motivo', this.value)">
+                <option value="ok">OK</option>
+                <option value="pendente">Pendente</option>
+            </select>
+            <div id="checkouts_motivo" class="motivo-pendencia">
+                <label for="checkouts_motivo_text">Motivo:</label>
+                <textarea id="checkouts_motivo_text"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="saldo_elevado">Saldo Elevado:</label>
+            <select id="saldo_elevado" onchange="toggleMotivo('saldo_elevado_motivo', this.value)">
+                <option value="ok">OK</option>
+                <option value="pendentes">Pendentes</option>
+            </select>
+            <div id="saldo_elevado_motivo" class="motivo-pendencia">
+                <label for="saldo_elevado_motivo_text">Detalhes:</label>
+                <textarea id="saldo_elevado_motivo_text" placeholder="Quais saldos estão pendentes?"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="lancamentos">Lançamentos:</label>
+            <select id="lancamentos" onchange="toggleMotivo('lancamentos_motivo', this.value)">
+                <option value="ok">OK</option>
+                <option value="pendente">Pendente</option>
+            </select>
+            <div id="lancamentos_motivo" class="motivo-pendencia">
+                <label for="lancamentos_motivo_text">Motivo:</label>
+                <textarea id="lancamentos_motivo_text"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="contas_pendentes">Contas Pendentes:</label>
+            <select id="contas_pendentes" onchange="toggleMotivo('contas_pendentes_motivo', this.value)">
+                <option value="ok">OK</option>
+                <option value="pendente">Pendente</option>
+            </select>
+            <div id="contas_pendentes_motivo" class="motivo-pendencia">
+                <label for="contas_pendentes_motivo_text">Motivo:</label>
+                <textarea id="contas_pendentes_motivo_text"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="objetos_emprestimo">Objetos de Empréstimo:</label>
+            <select id="objetos_emprestimo" onchange="toggleMotivo('objetos_emprestimo_motivo', this.value)">
+                <option value="ok">OK</option>
+                <option value="pendentes">Pendentes</option>
+            </select>
+            <div id="objetos_emprestimo_motivo" class="motivo-pendencia">
+                <label for="objetos_emprestimo_motivo_text">Detalhes:</label>
+                <textarea id="objetos_emprestimo_motivo_text" placeholder="Quais objetos estão pendentes?"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="situacao_hotel">Situação do Hotel Atual:</label>
+            <textarea id="situacao_hotel" placeholder="Check-ins/check-outs, estacionamento, no-shows..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="situacao_proximo_dia">Situação Prevista para Próximo Dia:</label>
+            <textarea id="situacao_proximo_dia" placeholder="Check-ins/check-outs/estacionamento/Reservas a confirmar..."></textarea>
+        </div>
+        
+        <div class="form-group">
+            <label for="estornos">Estornos:</label>
+            <select id="estornos" onchange="toggleMotivo('estornos_motivo', this.value)">
+                <option value="sem estornos">Sem estornos</option>
+                <option value="com estornos">Com estornos</option>
+            </select>
+            <div id="estornos_motivo" class="motivo-pendencia">
+                <label for="estornos_motivo_text">Detalhes:</label>
+                <textarea id="estornos_motivo_text" placeholder="Descreva os estornos realizados"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="relatorio_seguranca">Relatório de Segurança:</label>
+            <select id="relatorio_seguranca" onchange="toggleMotivo('relatorio_seguranca_motivo', this.value)">
+                <option value="ok">OK</option>
+                <option value="pendente">Pendente</option>
+            </select>
+            <div id="relatorio_seguranca_motivo" class="motivo-pendencia">
+                <label for="relatorio_seguranca_motivo_text">Motivo:</label>
+                <textarea id="relatorio_seguranca_motivo_text"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="logbook">Logbook (Ocorrências):</label>
+            <select id="logbook" onchange="toggleMotivo('logbook_motivo', this.value)">
+                <option value="ok">OK</option>
+                <option value="ocorrencias">Ocorrências</option>
+            </select>
+            <div id="logbook_motivo" class="motivo-pendencia">
+                <label for="logbook_motivo_text">Detalhes:</label>
+                <textarea id="logbook_motivo_text" placeholder="Descreva as ocorrências"></textarea>
+            </div>
+        </div>
+        
+        <div class="form-group">
+            <label for="colaboradores" class="required-field">Nome dos Colaboradores:</label>
+            <input type="text" id="colaboradores" placeholder="Digite os nomes dos colaboradores" required>
+        </div>
+        
+        <button id="generate-btn">Gerar Relatório de Auditoria</button>
     </div>
     
-    <div class="result-section">
-        <h2>Resultado</h2>
-        <div id="resultado"></div>
+    <div id="result" style="display: none;">
+        <h2>Relatório de Auditoria</h2>
+        <div id="table-container"></div>
+        <button id="whatsapp-btn" class="whatsapp-btn">Compartilhar via WhatsApp</button>
+        <button id="print-btn" style="background-color: #7f8c8d; margin-top: 10px;">Imprimir Relatório</button>
     </div>
 
     <script>
-        // Formas de pagamento disponíveis
-        const bandeirasCartao = ['AMEX', 'DINERS', 'ELO', 'HIPERCARD', 'MASTERCARD', 'VISA'];
-        const tiposCartao = ['Crédito', 'Débito', 'E-commerce'];
-        const outrasFormasPagamento = ['Cash', 'Transferência Bancária', 'Faturamento'];
-        const adquirentesDisponiveis = ['CIELO', 'GETNET', 'OUTROS'];
-        
-        // Elementos do DOM
-        const formasPagamentoContainer = document.getElementById('formas-pagamento-container');
-        const btnAdicionarCartao = document.getElementById('adicionar-cartao');
-        const btnAdicionarOutraForma = document.getElementById('adicionar-outra-forma');
-        const btnCalcular = document.getElementById('calcular');
-        const resultadoDiv = document.getElementById('resultado');
-        
-        // Adicionar forma de pagamento com cartão
-        btnAdicionarCartao.addEventListener('click', function() {
-            const formaPagamentoDiv = document.createElement('div');
-            formaPagamentoDiv.className = 'forma-pagamento-group';
-            formaPagamentoDiv.innerHTML = `
-                <div class="input-group">
-                    <label>Forma de Pagamento:</label>
-                    <select class="forma-pagamento">
-                        <option value="">Selecione...</option>
-                        ${bandeirasCartao.map(b => `<option value="${b}">${b}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="tipo-cartao">
-                    <div class="input-group">
-                        <label>Tipo:</label>
-                        <select class="tipo">
-                            ${tiposCartao.map(t => `<option value="${t}">${t}</option>`).join('')}
-                        </select>
-                    </div>
-                    ${adquirentesDisponiveis.map(a => `
-                        <div class="input-group">
-                            <label>${a} (R$):</label>
-                            <input type="text" class="adquirente" data-adquirente="${a}" placeholder="0,00" value="0,00">
-                        </div>
-                    `).join('')}
-                </div>
-                <button class="remover-forma">Remover</button>
-            `;
-            
-            formasPagamentoContainer.appendChild(formaPagamentoDiv);
-            
-            // Adicionar evento ao botão de remover
-            formaPagamentoDiv.querySelector('.remover-forma').addEventListener('click', function() {
-                formasPagamentoContainer.removeChild(formaPagamentoDiv);
-            });
-        });
-        
-        // Adicionar outras formas de pagamento
-        btnAdicionarOutraForma.addEventListener('click', function() {
-            const formaPagamentoDiv = document.createElement('div');
-            formaPagamentoDiv.className = 'forma-pagamento-group';
-            formaPagamentoDiv.innerHTML = `
-                <div class="input-group">
-                    <label>Forma de Pagamento:</label>
-                    <select class="forma-pagamento">
-                        <option value="">Selecione...</option>
-                        ${outrasFormasPagamento.map(f => `<option value="${f}">${f}</option>`).join('')}
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Valor (R$):</label>
-                    <input type="text" class="valor-outra-forma" placeholder="0,00" value="0,00">
-                </div>
-                <button class="remover-forma">Remover</button>
-            `;
-            
-            formasPagamentoContainer.appendChild(formaPagamentoDiv);
-            
-            // Adicionar evento ao botão de remover
-            formaPagamentoDiv.querySelector('.remover-forma').addEventListener('click', function() {
-                formasPagamentoContainer.removeChild(formaPagamentoDiv);
-            });
-        });
-        
-        // Adicionar formas de pagamento de exemplo
+        // Set default date to today
         document.addEventListener('DOMContentLoaded', function() {
-            // Exemplo de cartões
-            adicionarCartaoExemplo('MASTERCARD', 'Crédito', {'CIELO': '3.162,18'});
-            adicionarCartaoExemplo('VISA', 'Débito', {'CIELO': '1.136,12'});
-            adicionarCartaoExemplo('ELO', 'E-commerce', {'GETNET': '429,62'});
+            const today = new Date();
+            const formattedDate = today.toISOString().substr(0, 10);
+            document.getElementById('date').value = formattedDate;
+        });
+
+        // Função para mostrar/ocultar campo de motivo
+        function toggleMotivo(elementId, status) {
+            const motivoElement = document.getElementById(elementId);
+            if (status === 'pendente' || status === 'pendentes' || status === 'ocorrencias' || status === 'com estornos') {
+                motivoElement.style.display = 'block';
+            } else {
+                motivoElement.style.display = 'none';
+                document.getElementById(elementId + '_text').value = '';
+            }
+        }
+
+        document.getElementById('generate-btn').addEventListener('click', function() {
+            // Validate required fields
+            const date = document.getElementById('date').value;
+            const colaboradores = document.getElementById('colaboradores').value;
             
-            // Exemplo de outras formas
-            adicionarOutraFormaExemplo('Cash', '1.500,00');
-            adicionarOutraFormaExemplo('Transferência Bancária', '2.300,00');
-            adicionarOutraFormaExemplo('Faturamento', '4.755,68');
+            if (!date || !colaboradores) {
+                alert('Por favor, preencha todos os campos obrigatórios (Data e Nome dos Colaboradores).');
+                return;
+            }
+            
+            // Get form values
+            const formattedDate = formatDate(date);
+            
+            // Função para formatar status e motivo
+            function getStatusInfo(selectId, motivoId) {
+                const status = document.getElementById(selectId).value;
+                const motivo = document.getElementById(motivoId).value;
+                
+                return {
+                    status: status,
+                    motivo: motivo
+                };
+            }
+
+            const data = {
+                caixa: document.getElementById('caixa').value || 'R$ 1.000,00',
+                cadastro_frnh: getStatusInfo('cadastro_frnh', 'cadastro_frnh_motivo_text'),
+                emails: getStatusInfo('emails', 'emails_motivo_text'),
+                checkouts: getStatusInfo('checkouts', 'checkouts_motivo_text'),
+                saldo_elevado: getStatusInfo('saldo_elevado', 'saldo_elevado_motivo_text'),
+                lancamentos: getStatusInfo('lancamentos', 'lancamentos_motivo_text'),
+                contas_pendentes: getStatusInfo('contas_pendentes', 'contas_pendentes_motivo_text'),
+                objetos_emprestimo: getStatusInfo('objetos_emprestimo', 'objetos_emprestimo_motivo_text'),
+                situacao_hotel: document.getElementById('situacao_hotel').value || 'Nenhuma informação fornecida',
+                situacao_proximo_dia: document.getElementById('situacao_proximo_dia').value || 'Nenhuma informação fornecida',
+                estornos: getStatusInfo('estornos', 'estornos_motivo_text'),
+                relatorio_seguranca: getStatusInfo('relatorio_seguranca', 'relatorio_seguranca_motivo_text'),
+                logbook: getStatusInfo('logbook', 'logbook_motivo_text'),
+                colaboradores: colaboradores,
+                date: formattedDate
+            };
+            
+            // Generate table
+            const tableHtml = generateTable(data);
+            
+            // Display result
+            document.getElementById('table-container').innerHTML = tableHtml;
+            document.getElementById('result').style.display = 'block';
+            
+            // Scroll to result
+            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
         });
         
-        function adicionarCartaoExemplo(bandeira, tipo, valores) {
-            const formaPagamentoDiv = document.createElement('div');
-            formaPagamentoDiv.className = 'forma-pagamento-group';
-            formaPagamentoDiv.innerHTML = `
-                <div class="input-group">
-                    <label>Forma de Pagamento:</label>
-                    <select class="forma-pagamento">
-                        <option value="">Selecione...</option>
-                        ${bandeirasCartao.map(b => 
-                            `<option value="${b}" ${b === bandeira ? 'selected' : ''}>${b}</option>`
-                        ).join('')}
-                    </select>
-                </div>
-                <div class="tipo-cartao">
-                    <div class="input-group">
-                        <label>Tipo:</label>
-                        <select class="tipo">
-                            ${tiposCartao.map(t => 
-                                `<option value="${t}" ${t === tipo ? 'selected' : ''}>${t}</option>`
-                            ).join('')}
-                        </select>
-                    </div>
-                    ${adquirentesDisponiveis.map(a => `
-                        <div class="input-group">
-                            <label>${a} (R$):</label>
-                            <input type="text" class="adquirente" data-adquirente="${a}" 
-                                   placeholder="0,00" value="${valores[a] || '0,00'}">
-                        </div>
-                    `).join('')}
-                </div>
-                <button class="remover-forma">Remover</button>
-            `;
+        document.getElementById('whatsapp-btn').addEventListener('click', function() {
+            const tableHtml = document.getElementById('table-container').innerHTML;
+            const tableText = htmlToText(tableHtml);
+            const whatsappText = encodeURIComponent(tableText);
             
-            formasPagamentoContainer.appendChild(formaPagamentoDiv);
+            // Create WhatsApp share link
+            const whatsappUrl = `https://wa.me/?text=${whatsappText}`;
             
-            formaPagamentoDiv.querySelector('.remover-forma').addEventListener('click', function() {
-                formasPagamentoContainer.removeChild(formaPagamentoDiv);
-            });
+            // Open in new tab
+            window.open(whatsappUrl, '_blank');
+        });
+        
+        document.getElementById('print-btn').addEventListener('click', function() {
+            window.print();
+        });
+        
+        function formatDate(dateString) {
+            if (!dateString) return 'Data não informada';
+            
+            const date = new Date(dateString);
+            const day = String(date.getDate()).padStart(2, '0');
+            const month = String(date.getMonth() + 1).padStart(2, '0');
+            const year = date.getFullYear();
+            
+            return `${day}/${month}/${year}`;
         }
         
-        function adicionarOutraFormaExemplo(forma, valor) {
-            const formaPagamentoDiv = document.createElement('div');
-            formaPagamentoDiv.className = 'forma-pagamento-group';
-            formaPagamentoDiv.innerHTML = `
-                <div class="input-group">
-                    <label>Forma de Pagamento:</label>
-                    <select class="forma-pagamento">
-                        <option value="">Selecione...</option>
-                        ${outrasFormasPagamento.map(f => 
-                            `<option value="${f}" ${f === forma ? 'selected' : ''}>${f}</option>`
-                        ).join('')}
-                    </select>
-                </div>
-                <div class="input-group">
-                    <label>Valor (R$):</label>
-                    <input type="text" class="valor-outra-forma" placeholder="0,00" value="${valor}">
-                </div>
-                <button class="remover-forma">Remover</button>
-            `;
-            
-            formasPagamentoContainer.appendChild(formaPagamentoDiv);
-            
-            formaPagamentoDiv.querySelector('.remover-forma').addEventListener('click', function() {
-                formasPagamentoContainer.removeChild(formaPagamentoDiv);
-            });
-        }
-        
-        // Converter valor para número
-        function parseValor(valorStr) {
-            if (!valorStr) return 0;
-            return parseFloat(valorStr.replace(/\./g, '').replace(',', '.'));
-        }
-        
-        // Formatador de moeda
-        function formatarMoeda(valor) {
-            return valor.toLocaleString('pt-BR', {minimumFractionDigits: 2, maximumFractionDigits: 2});
-        }
-        
-        // Calcular totais
-        btnCalcular.addEventListener('click', function() {
-            const data = document.getElementById('data').value;
-            const movimento = parseValor(document.getElementById('movimento').value);
-            
-            // Coletar dados das formas de pagamento
-            const formasPagamento = document.querySelectorAll('.forma-pagamento-group');
-            const cartoesData = {};
-            const outrasFormasData = {};
-            
-            formasPagamento.forEach(formaDiv => {
-                const formaPagamento = formaDiv.querySelector('.forma-pagamento').value;
-                
-                // Verificar se é cartão ou outra forma
-                const valorOutraFormaInput = formaDiv.querySelector('.valor-outra-forma');
-                
-                if (valorOutraFormaInput) {
-                    // É outra forma de pagamento
-                    const valor = parseValor(valorOutraFormaInput.value);
-                    outrasFormasData[formaPagamento] = (outrasFormasData[formaPagamento] || 0) + valor;
-                } else {
-                    // É cartão
-                    const tipo = formaDiv.querySelector('.tipo').value;
-                    const bandeira = formaPagamento;
-                    const inputs = formaDiv.querySelectorAll('.adquirente');
-                    
-                    const chave = `${bandeira} (${tipo})`;
-                    
-                    if (!cartoesData[chave]) {
-                        cartoesData[chave] = {total: 0, adquirentes: {}};
-                    }
-                    
-                    inputs.forEach(input => {
-                        const adquirente = input.dataset.adquirente;
-                        const valor = parseValor(input.value);
-                        
-                        cartoesData[chave].total += valor;
-                        cartoesData[chave].adquirentes[adquirente] = 
-                            (cartoesData[chave].adquirentes[adquirente] || 0) + valor;
-                    });
+        function generateTable(data) {
+            // Função auxiliar para determinar classe de status
+            function getStatusClass(status) {
+                if (status.includes('pendente') || status.includes('pendentes') || 
+                    status.includes('ocorrencias') || status.includes('com estornos')) {
+                    return 'status-pendente';
                 }
-            });
-            
-            // Calcular totais por adquirente para cartões
-            const totaisAdquirentes = {};
-            adquirentesDisponiveis.forEach(a => {
-                totaisAdquirentes[a] = 0;
-            });
-            
-            Object.values(cartoesData).forEach(cartao => {
-                Object.entries(cartao.adquirentes).forEach(([adquirente, valor]) => {
-                    if (totaisAdquirentes[adquirente] !== undefined) {
-                        totaisAdquirentes[adquirente] += valor;
-                    }
-                });
-            });
-            
-            // Calcular total cartões
-            const totalCartoes = Object.values(cartoesData).reduce((sum, cartao) => sum + cartao.total, 0);
-            
-            // Calcular total outras formas
-            const totalOutrasFormas = Object.values(outrasFormasData).reduce((sum, val) => sum + val, 0);
-            
-            // Verificar se o caixa está correto
-            const totalCalculado = totalCartoes + totalOutrasFormas;
-            const caixaCorreto = Math.abs(totalCalculado - movimento) < 0.01;
-            
-            // Gerar tabela de resultados
-            let html = `
+                return 'status-ok';
+            }
+
+            // Função auxiliar para formatar o texto do status
+            function formatStatusText(status) {
+                const statusMap = {
+                    'ok': 'Concluído',
+                    'pendente': 'Pendente',
+                    'pendentes': 'Pendentes',
+                    'respondidos': 'Respondidos',
+                    'sem estornos': 'Sem estornos',
+                    'com estornos': 'Com estornos',
+                    'ocorrencias': 'Ocorrências registradas'
+                };
+                
+                return statusMap[status] || status;
+            }
+
+            return `
                 <table>
-                    <tr>
-                        <th>DATA:</th>
-                        <td colspan="5">${data}</td>
-                    </tr>
-                    <tr>
-                        <th>MOVIMENTO TOTAL</th>
-                        <td colspan="5">R$ ${formatarMoeda(movimento)}</td>
-                    </tr>
-                    <tr>
-                        <th>FORMA DE PAGAMENTO</th>
-                        <th>CIELO</th>
-                        <th>GETNET</th>
-                        <th>OUTROS</th>
-                        <th>TOTAL</th>
-                        <th>STATUS</th>
-                    </tr>
+                    <thead>
+                        <tr>
+                            <th>Conferências</th>
+                            <th>Atividade</th>
+                            <th>Status</th>
+                            <th>${data.date}</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Caixa</td>
+                            <td>Conferir o caixa</td>
+                            <td class="status-ok">Concluído</td>
+                            <td>${data.caixa}</td>
+                        </tr>
+                        <tr>
+                            <td>Cadastro FRNH</td>
+                            <td>Verificar se as fichas foram cadastradas (nomes cpf, telefone e-mail e endereço completo)</td>
+                            <td class="${getStatusClass(data.cadastro_frnh.status)}">${formatStatusText(data.cadastro_frnh.status)}</td>
+                            <td>${data.cadastro_frnh.motivo || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td>E-Mails</td>
+                            <td>Após as 17 horas, aos finais de semanas e feriados, a leitura e respostas das solicitações via email de reservas são de responsabilidade da recepção, devendo responder em tempo hábil as solicitações recebidas. Em caso de duvidas solicitar auxílio ao turno seguinte ou a central de reservas.</td>
+                            <td class="${getStatusClass(data.emails.status)}">${formatStatusText(data.emails.status)}</td>
+                            <td>${data.emails.motivo || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td>Check-outs efetuados</td>
+                            <td>Conferência das notas emitidas.</td>
+                            <td class="${getStatusClass(data.checkouts.status)}">${formatStatusText(data.checkouts.status)}</td>
+                            <td>${data.checkouts.motivo || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td>Saldo Elevado</td>
+                            <td>Verificar todos os recebimentos, faturamento e documentos.</td>
+                            <td class="${getStatusClass(data.saldo_elevado.status)}">${formatStatusText(data.saldo_elevado.status)}</td>
+                            <td>${data.saldo_elevado.motivo || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td>Lançamentos</td>
+                            <td>Conferência dos saldos: Particular R$ 500,00 e faturamento até 7 dias, exceto para empresas com acordos diferentes para faturamento.</td>
+                            <td class="${getStatusClass(data.lancamentos.status)}">${formatStatusText(data.lancamentos.status)}</td>
+                            <td>${data.lancamentos.motivo || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td>Contas Pendentes</td>
+                            <td>Conferir, todos os lançamentos do dia, (A&B, lavanderia, diária, iss, fechamento de contas, forma de pagamento), split de A&B exceendente, mantendo uma cópia da comanda. Caso seja encontrado algum erro corrigir antes da auditoria.</td>
+                            <td class="${getStatusClass(data.contas_pendentes.status)}">${formatStatusText(data.contas_pendentes.status)}</td>
+                            <td>${data.contas_pendentes.motivo || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td>Objeto de empréstimo</td>
+                            <td>Verificação das soluções para as contas em pendência</td>
+                            <td class="${getStatusClass(data.objetos_emprestimo.status)}">${formatStatusText(data.objetos_emprestimo.status)}</td>
+                            <td>${data.objetos_emprestimo.motivo || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td>Situação do Hotel atual</td>
+                            <td>Check-ins/check-outs, estacionamento, no-shows</td>
+                            <td class="status-ok">Concluído</td>
+                            <td>${data.situacao_hotel}</td>
+                        </tr>
+                        <tr>
+                            <td>Situação Prevista para próximo dia</td>
+                            <td>Check-ins/check-outs/estacionamento/Reservas a confirmar</td>
+                            <td class="status-ok">Concluído</td>
+                            <td>${data.situacao_proximo_dia}</td>
+                        </tr>
+                        <tr>
+                            <td>Estornos</td>
+                            <td>Informar se houve estorno e motivo</td>
+                            <td class="${getStatusClass(data.estornos.status)}">${formatStatusText(data.estornos.status)}</td>
+                            <td>${data.estornos.motivo || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td>Relatório de Segurança</td>
+                            <td>SALVAR NA PASTA (DRIVE) 1ª PREVISÃO DE CHEGADAS- SALVAR LISTAGEM SIMPLES COM OBSERVAÇÕES. 2ª GERENCIAL/RELATORIOS/GOV +MANUT - SALVAR SAIDAS +PAX IN HOUSE. 8ª HÓSPEDES IN HOUSE - IMPRIMIR LISTAGEM SIMPLES COM OBS</td>
+                            <td class="${getStatusClass(data.relatorio_seguranca.status)}">${formatStatusText(data.relatorio_seguranca.status)}</td>
+                            <td>${data.relatorio_seguranca.motivo || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td>LOGBOOK</td>
+                            <td>Registros sobres a ocorrência de problemas e pendências acontecidas durante o turno.</td>
+                            <td class="${getStatusClass(data.logbook.status)}">${formatStatusText(data.logbook.status)}</td>
+                            <td>${data.logbook.motivo || '-'}</td>
+                        </tr>
+                        <tr>
+                            <td colspan="2"><strong>Nome do Colaborador:</strong> ${data.colaboradores}</td>
+                            <td><strong>Data</strong></td>
+                            <td><strong>${data.date}</strong></td>
+                        </tr>
+                    </tbody>
+                </table>
             `;
+        }
+        
+        function htmlToText(html) {
+            // Create a temporary div element
+            const tempDiv = document.createElement('div');
+            tempDiv.innerHTML = html;
             
-            // Adicionar linhas para cada cartão
-            Object.entries(cartoesData).forEach(([descricao, dados]) => {
-                html += `
-                    <tr>
-                        <td>${descricao}</td>
-                        <td>R$ ${formatarMoeda(dados.adquirentes['CIELO'] || 0)}</td>
-                        <td>R$ ${formatarMoeda(dados.adquirentes['GETNET'] || 0)}</td>
-                        <td>R$ ${formatarMoeda(dados.adquirentes['OUTROS'] || 0)}</td>
-                        <td>R$ ${formatarMoeda(dados.total)}</td>
-                        <td></td>
-                    </tr>
-                `;
-            });
+            // Get text content and format it
+            let text = tempDiv.textContent || tempDiv.innerText || '';
             
-            // Adicionar subtotal cartões
-            html += `
-                <tr class="total-row">
-                    <td>TOTAL CARTÕES</td>
-                    <td>R$ ${formatarMoeda(totaisAdquirentes['CIELO'])}</td>
-                    <td>R$ ${formatarMoeda(totaisAdquirentes['GETNET'])}</td>
-                    <td>R$ ${formatarMoeda(totaisAdquirentes['OUTROS'])}</td>
-                    <td>R$ ${formatarMoeda(totalCartoes)}</td>
-                    <td></td>
-                </tr>
-            `;
+            // Replace multiple spaces with single space
+            text = text.replace(/\s+/g, ' ').trim();
             
-            // Adicionar outras formas de pagamento
-            Object.entries(outrasFormasData).forEach(([forma, valor]) => {
-                html += `
-                    <tr>
-                        <td>${forma}</td>
-                        <td colspan="3"></td>
-                        <td>R$ ${formatarMoeda(valor)}</td>
-                        <td></td>
-                    </tr>
-                `;
-            });
+            // Add line breaks for better WhatsApp formatting
+            text = text.replace(/(Conferências)/g, '\n\n$1');
+            text = text.replace(/(Nome do Colaborador:)/g, '\n\n$1');
             
-            // Adicionar total geral
-            html += `
-                <tr class="total-row">
-                    <td>TOTAL GERAL</td>
-                    <td colspan="3"></td>
-                    <td>R$ ${formatarMoeda(totalCalculado)}</td>
-                    <td class="${caixaCorreto ? 'status-correct' : 'status-incorrect'}">
-                        ${caixaCorreto ? 'CAIXA CORRETO' : 'CAIXA INCORRETO'}
-                    </td>
-                </tr>
-            `;
+            // Add header
+            text = `*RELATÓRIO DE AUDITORIA HOTEL* - ${document.getElementById('date').value}\n\n${text}`;
             
-            html += `</table>`;
-            
-            // Adicionar campos de auditoria
-            html += `
-                <div style="margin-top: 20px;">
-                    <p><strong>AUDITOR:</strong> _________________________</p>
-                    <p><strong>OBSERVAÇÃO:</strong> _________________________</p>
-                </div>
-            `;
-            
-            resultadoDiv.innerHTML = html;
-        });
+            return text;
+        }
     </script>
 </body>
 </html>
