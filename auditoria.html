@@ -327,7 +327,6 @@
         <button id="print-btn" style="background-color: #7f8c8d; margin-top: 10px;">Imprimir Relatório</button>
     </div>
 
-    <!-- Adicione a biblioteca html2canvas -->
     <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <script>
         // Set default date to today
@@ -543,12 +542,11 @@
             const whatsappBtn = document.getElementById('whatsapp-btn');
             const whatsappText = document.getElementById('whatsapp-text');
             
-            // Show loading indicator
             whatsappText.innerHTML = '<div class="loading"></div> Gerando imagem...';
             whatsappBtn.disabled = true;
             
             html2canvas(tableContainer, {
-                scale: 2, // Melhora a qualidade da imagem
+                scale: 2,
                 logging: false,
                 useCORS: true,
                 allowTaint: true,
@@ -557,19 +555,17 @@
                 const imageContainer = document.getElementById('image-container');
                 imageContainer.innerHTML = '';
                 
-                // Exibe a imagem gerada
                 const img = document.createElement('img');
                 img.id = 'generated-image';
-                img.src = canvas.toDataURL('image/jpeg', 0.9); // Qualidade 90%
+                img.src = canvas.toDataURL('image/jpeg', 0.9);
                 imageContainer.appendChild(img);
                 
-                // Atualiza o botão do WhatsApp para compartilhar a imagem
-                updateWhatsAppButton(canvas);
+                // Configura o compartilhamento via WhatsApp
+                setupWhatsAppSharing(canvas);
                 
                 // Configura o botão de download
                 setupDownloadButton(canvas);
                 
-                // Restore button state
                 whatsappText.textContent = 'Compartilhar via WhatsApp';
                 whatsappBtn.disabled = false;
             }).catch(err => {
@@ -582,61 +578,90 @@
             });
         }
 
-        // Função para atualizar o botão do WhatsApp com a imagem
-        function updateWhatsAppButton(canvas) {
+        // Função para configurar o compartilhamento via WhatsApp
+        function setupWhatsAppSharing(canvas) {
             const whatsappBtn = document.getElementById('whatsapp-btn');
             
-            whatsappBtn.onclick = function() {
-                // Mostra indicador de carregamento
+            whatsappBtn.onclick = async function() {
                 const whatsappText = document.getElementById('whatsapp-text');
                 whatsappText.innerHTML = '<div class="loading"></div> Preparando...';
                 whatsappBtn.disabled = true;
                 
-                // Converte o canvas para blob
-                canvas.toBlob(function(blob) {
-                    // Cria um link temporário para o blob
-                    const url = URL.createObjectURL(blob);
+                try {
+                    // Converte canvas para blob
+                    const blob = await new Promise(resolve => {
+                        canvas.toBlob(resolve, 'image/jpeg', 0.9);
+                    });
                     
-                    // Para dispositivos móveis
-                    if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                        // Cria um link temporário para compartilhar
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.download = 'auditoria-hotel.jpg';
-                        
-                        // Tenta usar a API do WhatsApp diretamente
-                        const shareUrl = `whatsapp://send?text=${encodeURIComponent('Relatório de Auditoria Hotel')}`;
-                        
-                        // Primeiro tenta abrir o WhatsApp diretamente
-                        window.location.href = shareUrl;
-                        
-                        // Se não funcionar, oferece para baixar a imagem
-                        setTimeout(() => {
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                            URL.revokeObjectURL(url);
-                        }, 500);
-                    } 
-                    // Para desktop
-                    else {
-                        // Abre o WhatsApp Web com a imagem
+                    // Cria objeto para a imagem
+                    const imageFile = new File([blob], 'auditoria-hotel.jpg', { type: 'image/jpeg' });
+                    
+                    // Texto com formatação para negrito
+                    const message = encodeURIComponent('*RELATÓRIO DE AUDITORIA HOTEL*');
+                    
+                    // Verifica se é dispositivo móvel
+                    const isMobile = /Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+                    
+                    if (isMobile) {
+                        // Tenta usar a API Web Share se disponível
+                        if (navigator.share && navigator.canShare && navigator.canShare({ files: [imageFile] })) {
+                            await navigator.share({
+                                title: 'Relatório de Auditoria Hotel',
+                                text: 'RELATÓRIO DE AUDITORIA HOTEL',
+                                files: [imageFile]
+                            });
+                        } else {
+                            // Fallback para WhatsApp direct
+                            const url = URL.createObjectURL(blob);
+                            
+                            // Cria um link temporário para a imagem
+                            const a = document.createElement('a');
+                            a.href = url;
+                            a.download = 'auditoria-hotel.jpg';
+                            
+                            // Tenta abrir o WhatsApp com a mensagem
+                            window.location.href = `whatsapp://send?text=${message}`;
+                            
+                            // Fallback para download se não abrir o WhatsApp
+                            setTimeout(() => {
+                                document.body.appendChild(a);
+                                a.click();
+                                document.body.removeChild(a);
+                                URL.revokeObjectURL(url);
+                                alert('A imagem foi baixada. Por favor, compartilhe manualmente pelo WhatsApp.');
+                            }, 1000);
+                        }
+                    } else {
+                        // Computador - usa WhatsApp Web
+                        const url = canvas.toDataURL('image/jpeg');
                         const a = document.createElement('a');
-                        a.href = `https://web.whatsapp.com/send?text=${encodeURIComponent('Relatório de Auditoria Hotel')}`;
+                        a.href = `https://web.whatsapp.com/send?text=${message}`;
                         a.target = '_blank';
                         document.body.appendChild(a);
                         a.click();
                         document.body.removeChild(a);
+                        
+                        // Instruções para colar a imagem
+                        setTimeout(() => {
+                            const imgData = canvas.toDataURL('image/jpeg');
+                            const input = document.createElement('input');
+                            input.type = 'text';
+                            input.value = imgData;
+                            document.body.appendChild(input);
+                            input.select();
+                            document.execCommand('copy');
+                            document.body.removeChild(input);
+                            
+                            alert('1. A imagem foi copiada para sua área de transferência\n2. No WhatsApp Web, cole a imagem (Ctrl+V)\n3. Envie a mensagem');
+                        }, 1000);
                     }
-                    
-                    // Restaura o botão
-                    setTimeout(() => {
-                        whatsappText.textContent = 'Compartilhar via WhatsApp';
-                        whatsappBtn.disabled = false;
-                        URL.revokeObjectURL(url);
-                    }, 1000);
-                    
-                }, 'image/jpeg', 0.9);
+                } catch (error) {
+                    console.error('Erro ao compartilhar:', error);
+                    alert('Não foi possível compartilhar diretamente. Baixe a imagem e envie manualmente.');
+                } finally {
+                    whatsappText.textContent = 'Compartilhar via WhatsApp';
+                    whatsappBtn.disabled = false;
+                }
             };
         }
 
@@ -645,7 +670,6 @@
             const downloadBtn = document.getElementById('download-btn');
             
             downloadBtn.onclick = function() {
-                // Cria um link temporário para download
                 const link = document.createElement('a');
                 link.download = `auditoria-hotel-${new Date().toISOString().slice(0,10)}.jpg`;
                 link.href = canvas.toDataURL('image/jpeg', 0.9);
