@@ -14,16 +14,23 @@
         .reveal {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
+        .reveal .slides {
+            font-size: 28px;
+            width: 90% !important;
+            height: 90% !important;
+        }
         .reveal h1, 
         .reveal h2, 
         .reveal h3 {
             color: var(--hotel-gold);
             text-transform: uppercase;
+            margin-bottom: 0.5em;
         }
         .reveal section img {
             max-height: 300px;
             border: 3px solid var(--hotel-gold);
             border-radius: 5px;
+            margin: 10px 0;
         }
         .procedure-card {
             background: rgba(0, 91, 150, 0.7);
@@ -35,15 +42,16 @@
         .shift-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
+            margin: 10px 0;
+            font-size: 0.8em;
         }
         .shift-table th {
             background-color: var(--hotel-blue);
             color: white;
-            padding: 10px;
+            padding: 8px;
         }
         .shift-table td {
-            padding: 8px;
+            padding: 6px;
             border-bottom: 1px solid #ddd;
         }
         .shift-table tr:nth-child(even) {
@@ -55,32 +63,39 @@
         }
         .two-columns {
             display: flex;
-            gap: 20px;
+            gap: 15px;
         }
         .two-columns div {
             flex: 1;
         }
-        .checklist {
-            text-align: left;
+        .two-columns.compact {
+            gap: 10px;
+        }
+        .two-columns.compact div {
             font-size: 0.8em;
         }
+        .checklist {
+            text-align: left;
+            font-size: 0.75em;
+            line-height: 1.3;
+        }
         .checklist li {
-            margin-bottom: 10px;
+            margin-bottom: 8px;
         }
         .bad-good-table {
             width: 100%;
             border-collapse: collapse;
-            margin: 20px 0;
-            font-size: 0.7em;
+            margin: 10px 0;
+            font-size: 0.65em;
         }
         .bad-good-table th {
             background-color: var(--hotel-blue);
             color: white;
-            padding: 10px;
+            padding: 8px;
             text-align: center;
         }
         .bad-good-table td {
-            padding: 10px;
+            padding: 8px;
             border: 1px solid #ddd;
             vertical-align: top;
         }
@@ -95,9 +110,19 @@
         .roleplay-card {
             background: rgba(73, 204, 202, 0.2);
             border: 2px dashed var(--hotel-gold);
-            padding: 15px;
-            margin: 15px 0;
+            padding: 12px;
+            margin: 10px 0;
             border-radius: 5px;
+            font-size: 0.8em;
+        }
+        .scrollable-slide {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .compact-list {
+            font-size: 0.7em;
+            line-height: 1.3;
         }
     </style>
 </head>
@@ -150,7 +175,7 @@
                 <section>
                     <h3>Regras de Ouro</h3>
                     <div class="procedure-card">
-                        <ul>
+                        <ul class="compact-list">
                             <li>Levantar-se para atender</li>
                             <li>Chamar pelo nome (Sr./Sra. + sobrenome)</li>
                             <li>Manter contato visual e sorriso</li>
@@ -176,18 +201,18 @@
                         <p><span class="highlight">Estrutura Ideal:</span></p>
                         <p>"Entendemos sua necessidade, [agradeça]. Infelizmente, [negue com educação]. No entanto, [ofereça alternativa]."</p>
                     </div>
-                    <div class="two-columns" style="margin-top:20px;">
+                    <div class="two-columns compact" style="margin-top:15px;">
                         <div>
                             <p><span class="highlight">Regra de Ouro:</span></p>
-                            <ul>
+                            <ul class="compact-list">
                                 <li>Agradecer antes de negar</li>
                                 <li>Oferecer alternativas</li>
-                                <li>Usar palavras suaves ("lamentamos", "no momento")</li>
+                                <li>Usar palavras suaves</li>
                             </ul>
                         </div>
                         <div>
                             <p><span class="highlight">Evitar:</span></p>
-                            <ul>
+                            <ul class="compact-list">
                                 <li>Começar com "não"</li>
                                 <li>Linguagem impositiva</li>
                                 <li>Falta de alternativas</li>
@@ -198,59 +223,63 @@
 
                 <section>
                     <h3>Exemplos Práticos - Check-in</h3>
-                    <table class="bad-good-table">
-                        <tr>
-                            <th width="30%">Situação</th>
-                            <th width="35%" class="bad-example">❌ Não Ideal</th>
-                            <th width="35%" class="good-example">✅ Empático</th>
-                        </tr>
-                        <tr>
-                            <td>Sem vaga</td>
-                            <td class="bad-example">"Não temos vaga."</td>
-                            <td class="good-example">"Lamentamos informar que, no momento, estamos com lotação completa. Posso verificar outras datas ou indicar algum hotel parceiro próximo?"</td>
-                        </tr>
-                        <tr>
-                            <td>Early check-in</td>
-                            <td class="bad-example">"Não pode fazer check-in antes das 14h."</td>
-                            <td class="good-example">"Seu quarto ainda está em preparação, mas assim que estiver disponível, avisaremos. Enquanto isso, você pode deixar suas bagagens conosco e aproveitar nosso lounge."</td>
-                        </tr>
-                        <tr>
-                            <td>Upgrade</td>
-                            <td class="bad-example">"Não podemos fazer upgrade gratuito."</td>
-                            <td class="good-example">"Temos quartos superiores disponíveis por uma pequena diferença de valor. Posso verificar as opções para o(a) senhor(a)?"</td>
-                        </tr>
-                    </table>
+                    <div class="scrollable-slide">
+                        <table class="bad-good-table">
+                            <tr>
+                                <th width="25%">Situação</th>
+                                <th width="37%" class="bad-example">❌ Não Ideal</th>
+                                <th width="38%" class="good-example">✅ Empático</th>
+                            </tr>
+                            <tr>
+                                <td>Sem vaga</td>
+                                <td class="bad-example">"Não temos vaga."</td>
+                                <td class="good-example">"Lamentamos informar que, no momento, estamos com lotação completa. Posso verificar outras datas ou indicar algum hotel parceiro próximo?"</td>
+                            </tr>
+                            <tr>
+                                <td>Early check-in</td>
+                                <td class="bad-example">"Não pode fazer check-in antes das 14h."</td>
+                                <td class="good-example">"Seu quarto ainda está em preparação, mas assim que estiver disponível, avisaremos. Enquanto isso, você pode deixar suas bagagens conosco e aproveitar nosso lounge."</td>
+                            </tr>
+                            <tr>
+                                <td>Upgrade</td>
+                                <td class="bad-example">"Não podemos fazer upgrade gratuito."</td>
+                                <td class="good-example">"Temos quartos superiores disponíveis por uma pequena diferença de valor. Posso verificar as opções para o(a) senhor(a)?"</td>
+                            </tr>
+                        </table>
+                    </div>
                 </section>
 
                 <section>
                     <h3>Exemplos Práticos - Serviços</h3>
-                    <table class="bad-good-table">
-                        <tr>
-                            <th width="30%">Situação</th>
-                            <th width="35%" class="bad-example">❌ Não Ideal</th>
-                            <th width="35%" class="good-example">✅ Empático</th>
-                        </tr>
-                        <tr>
-                            <td>Restaurante fechado</td>
-                            <td class="bad-example">"O restaurante já fechou."</td>
-                            <td class="good-example">"Nosso restaurante encerrou, mas o room service está disponível até [horário]. Se preferir, posso indicar um delivery excelente na região."</td>
-                        </tr>
-                        <tr>
-                            <td>Fumar no quarto</td>
-                            <td class="bad-example">"Proibido fumar aqui."</td>
-                            <td class="good-example">"Sua segurança é prioridade, e nosso sistema é sensível à fumaça. Temos uma área externa aconchegante para fumantes. Posso lhe direcionar?"</td>
-                        </tr>
-                        <tr>
-                            <td>Late check-out</td>
-                            <td class="bad-example">"Impossível, estamos lotados."</td>
-                            <td class="good-example">"Nesta época, todos os quartos têm check-in previsto para logo após o check-out. Mas podemos guardar suas malas e oferecer um banho no spa para você se refrescar."</td>
-                        </tr>
-                    </table>
+                    <div class="scrollable-slide">
+                        <table class="bad-good-table">
+                            <tr>
+                                <th width="25%">Situação</th>
+                                <th width="37%" class="bad-example">❌ Não Ideal</th>
+                                <th width="38%" class="good-example">✅ Empático</th>
+                            </tr>
+                            <tr>
+                                <td>Restaurante fechado</td>
+                                <td class="bad-example">"O restaurante já fechou."</td>
+                                <td class="good-example">"Nosso restaurante encerrou, mas o room service está disponível até [horário]. Se preferir, posso indicar um delivery excelente na região."</td>
+                            </tr>
+                            <tr>
+                                <td>Fumar no quarto</td>
+                                <td class="bad-example">"Proibido fumar aqui."</td>
+                                <td class="good-example">"Sua segurança é prioridade, e nosso sistema é sensível à fumaça. Temos uma área externa aconchegante para fumantes. Posso lhe direcionar?"</td>
+                            </tr>
+                            <tr>
+                                <td>Late check-out</td>
+                                <td class="bad-example">"Impossível, estamos lotados."</td>
+                                <td class="good-example">"Nesta época, todos os quartos têm check-in previsto para logo após o check-out. Mas podemos guardar suas malas e oferecer um banho no spa para você se refrescar."</td>
+                            </tr>
+                        </table>
+                    </div>
                 </section>
 
                 <section>
                     <h3>Técnica ACALME para Hóspedes Insatisfeitos</h3>
-                    <div class="checklist" style="font-size:0.7em;">
+                    <div class="checklist">
                         <ol>
                             <li><span class="highlight">A</span>gradeça pelo feedback</li>
                             <li><span class="highlight">C</span>omunique empatia ("Entendo sua frustração")</li>
@@ -260,14 +289,14 @@
                             <li><span class="highlight">E</span>ncerre com cortesia ("Agradeço pela compreensão")</li>
                         </ol>
                     </div>
-                    <div class="procedure-card" style="margin-top:20px;">
+                    <div class="procedure-card" style="margin-top:15px;">
                         <p><span class="highlight">Exemplo:</span> "Sr. Silva, lamento pelo ocorrido. Vou chamar o gerente para ajudarmos juntos. Enquanto isso, deseja uma água ou café?"</p>
                     </div>
                 </section>
 
                 <section>
                     <h3>Comunicação em Situações Críticas</h3>
-                    <div class="two-columns">
+                    <div class="two-columns compact">
                         <div>
                             <p><span class="highlight">Sistema fora:</span></p>
                             <p class="fragment">"Estamos resolvendo uma instabilidade técnica. Vamos registrar manualmente e validar depois. Aceita um drink de cortesia enquanto esperamos?"</p>
@@ -300,64 +329,61 @@
 
                 <section>
                     <h3>Dicas de Ouro</h3>
-                    <div class="checklist" style="font-size:0.7em; column-count:2;">
-                        <ul>
-                            <li>Valide os sentimentos do hóspede</li>
-                            <li>Use "nós" em vez de "você"</li>
-                            <li>Ofereça escolhas (mesmo limitadas)</li>
-                            <li>Personalize a linguagem (use o nome)</li>
-                            <li>Antecipe-se aos problemas</li>
-                            <li>Use analogias para explicar políticas</li>
-                            <li>Abrace o silêncio após explicar</li>
-                            <li>Encerre com gesto de cortesia</li>
-                            <li>Mantenha linguagem corporal aberta</li>
-                            <li>Ofereça contrapartidas simbólicas</li>
-                        </ul>
-                    </div>
-                    <div class="procedure-card" style="margin-top:20px;">
-                        <p><span class="highlight">Frases-chave:</span> "Vou me empenhar para resolver", "Sua satisfação é importante", "Agradeço pela compreensão"</p>
+                    <div class="scrollable-slide">
+                        <div class="checklist" style="column-count:2;">
+                            <ul>
+                                <li>Valide os sentimentos do hóspede</li>
+                                <li>Use "nós" em vez de "você"</li>
+                                <li>Ofereça escolhas (mesmo limitadas)</li>
+                                <li>Personalize a linguagem (use o nome)</li>
+                                <li>Antecipe-se aos problemas</li>
+                                <li>Use analogias para explicar políticas</li>
+                                <li>Abrace o silêncio após explicar</li>
+                                <li>Encerre com gesto de cortesia</li>
+                                <li>Mantenha linguagem corporal aberta</li>
+                                <li>Ofereça contrapartidas simbólicas</li>
+                            </ul>
+                        </div>
+                        <div class="procedure-card" style="margin-top:15px;">
+                            <p><span class="highlight">Frases-chave:</span> "Vou me empenhar para resolver", "Sua satisfação é importante", "Agradeço pela compreensão"</p>
+                        </div>
                     </div>
                 </section>
 
                 <section>
                     <h3>Comunicação Interna Eficiente</h3>
-                    <div class="two-columns">
+                    <div class="two-columns compact">
                         <div>
                             <p><span class="highlight">Reservas Diretas:</span></p>
-                            <ul>
+                            <ul class="compact-list">
                                 <li>Confirmar todos os detalhes</li>
                                 <li>Anotar preferências especiais</li>
                                 <li>Comunicar proativamente mudanças</li>
                             </ul>
                             
                             <p><span class="highlight">Agências:</span></p>
-                            <ul>
+                            <ul class="compact-list">
                                 <li>Verificar voucher completo</li>
                                 <li>Confirmar método de pagamento</li>
                                 <li>Documentar solicitações especiais</li>
                             </ul>
                         </div>
                         <div>
-                            <p><span class="highlight">Entre Departamentos:</span></p>
-                            <ul>
-                                <li>Logbook atualizado diariamente</li>
-                                <li>Comunicação clara e objetiva</li>
-                                <li>Follow-up de todas solicitações</li>
-                            </ul>
-                            
                             <p><span class="highlight">Internet:</span></p>
-                            <ul>
+                            <ul class="compact-list">
                                 <li>Fornecer senha por escrito</li>
                                 <li>Explicar política de uso</li>
                                 <li>Oferecer alternativa se instável</li>
                             </ul>
+                            
+                            <p><span class="highlight">Logbook:</span></p>
+                            <ul class="compact-list">
+                                <li>Registrar ocorrências importantes</li>
+                                <li>Anotar pendências para próximo turno</li>
+                                <li>Manter linguagem objetiva</li>
+                            </ul>
                         </div>
                     </div>
-                </section>
-
-                <section data-background="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80">
-                    <h2 style="text-shadow: 2px 2px 4px #000;">Prática Leva à Excelência</h2>
-                    <p style="color: var(--hotel-gold);">Role-playing semanal para aperfeiçoamento contínuo</p>
                 </section>
             </section>
 
@@ -370,41 +396,47 @@
                 
                 <section>
                     <h3>Turno 1 (07h-19h)</h3>
-                    <table class="shift-table">
-                        <tr>
-                            <th>Atividade</th>
-                            <th>Detalhes</th>
-                        </tr>
-                        <tr>
-                            <td>Check-in</td>
-                            <td>
-                                <ul style="font-size:0.7em;">
-                                    <li>Verificar FNRH completa</li>
-                                    <li>Documentação de menores</li>
-                                    <li>Cobrança antecipada</li>
-                                </ul>
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>Check-out</td>
-                            <td>
-                                <ul style="font-size:0.7em;">
-                                    <li>Conferir consumos</li>
-                                    <li>Emitir nota fiscal</li>
-                                    <li>Processar pagamentos</li>
-                                </ul>
-                            </td>
-                        </tr>
-                    </table>
+                    <div class="scrollable-slide">
+                        <table class="shift-table">
+                            <tr>
+                                <th>Atividade</th>
+                                <th>Detalhes</th>
+                            </tr>
+                            <tr>
+                                <td>Check-in</td>
+                                <td>
+                                    <ul class="compact-list">
+                                        <li>Verificar FNRH completa</li>
+                                        <li>Documentação de menores</li>
+                                        <li>Cobrança antecipada</li>
+                                        <li>Atribuição de quartos</li>
+                                        <li>Orientações iniciais</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Check-out</td>
+                                <td>
+                                    <ul class="compact-list">
+                                        <li>Conferir consumos</li>
+                                        <li>Emitir nota fiscal</li>
+                                        <li>Processar pagamentos</li>
+                                        <li>Feedback rápido</li>
+                                        <li>Armazenar bagagens</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </section>
                 
                 <section>
                     <h3>Turno 2 - Auditoria (19h-07h)</h3>
-                    <div class="checklist" style="font-size:0.7em;">
+                    <div class="checklist">
                         <ol>
                             <li class="fragment">Fechamento de caixa e conferência de lançamentos</li>
                             <li class="fragment">Auditoria de reservas:
-                                <ul>
+                                <ul class="compact-list">
                                     <li>Verificar valores e tipos de pagamento</li>
                                     <li>Identificar no-shows</li>
                                     <li>Corrigir ISS quando aplicável</li>
@@ -412,6 +444,7 @@
                             </li>
                             <li class="fragment">Preparar check-ins do dia seguinte</li>
                             <li class="fragment">Gerar listas para governança e restaurante</li>
+                            <li class="fragment">Atualizar relatórios de ocupação</li>
                         </ol>
                     </div>
                 </section>
@@ -426,23 +459,34 @@
                 
                 <section>
                     <h3>Check-in Detalhado</h3>
-                    <div class="checklist" style="font-size:0.7em;">
-                        <ol>
-                            <li>Solicitar FNRH completa</li>
-                            <li>Documentação para menores:
-                                <ul>
-                                    <li>RG do responsável</li>
-                                    <li>Declaração autenticada se desacompanhado</li>
-                                </ul>
-                            </li>
-                            <li>Informar:
-                                <ul>
-                                    <li>Visitas pagas</li>
-                                    <li>Política de café da manhã</li>
-                                    <li>Cobrança semanal para longa estadia</li>
-                                </ul>
-                            </li>
-                        </ol>
+                    <div class="scrollable-slide">
+                        <div class="checklist">
+                            <ol>
+                                <li>Solicitar FNRH completa</li>
+                                <li>Documentação para menores:
+                                    <ul class="compact-list">
+                                        <li>RG do responsável</li>
+                                        <li>Declaração autenticada se desacompanhado</li>
+                                        <li>Autorização por escrito</li>
+                                    </ul>
+                                </li>
+                                <li>Informar:
+                                    <ul class="compact-list">
+                                        <li>Visitas pagas</li>
+                                        <li>Política de café da manhã</li>
+                                        <li>Cobrança semanal para longa estadia</li>
+                                        <li>Horários de serviços</li>
+                                    </ul>
+                                </li>
+                                <li>Procedimento de segurança:
+                                    <ul class="compact-list">
+                                        <li>Localização de saídas de emergência</li>
+                                        <li>Uso do cofre</li>
+                                        <li>Orientações sobre valores</li>
+                                    </ul>
+                                </li>
+                            </ol>
+                        </div>
                     </div>
                 </section>
                 
@@ -450,16 +494,18 @@
                     <h3>Empréstimo de Cofre</h3>
                     <div class="procedure-card">
                         <p><span class="highlight">Protocolo obrigatório:</span></p>
-                        <ol>
+                        <ol class="compact-list">
                             <li>Solicitar assinatura no formulário</li>
                             <li>Registrar no sistema (empréstimo + observações)</li>
                             <li>Verificar devolução no check-out</li>
+                            <li>Documentar qualquer irregularidade</li>
+                            <li>Manter cópia do formulário por 30 dias</li>
                         </ol>
                     </div>
                 </section>
             </section>
 
-            <!-- LOGBOOK E LIDERANÇA -->
+            <!-- LOGBOOK -->
             <section>
                 <section>
                     <h2>Gestão de Ocorrências</h2>
@@ -467,37 +513,28 @@
                 </section>
                 
                 <section>
-                    <h3>Logbook</h3>
-                    <div class="two-columns">
+                    <h3>Logbook - Melhores Práticas</h3>
+                    <div class="two-columns compact">
                         <div>
                             <p><span class="highlight">Registrar:</span></p>
-                            <ul>
+                            <ul class="compact-list">
                                 <li>Ocorrências do turno</li>
                                 <li>Ações corretivas</li>
                                 <li>Pendências para próximo turno</li>
+                                <li>Mudanças nas reservas</li>
+                                <li>Problemas técnicos</li>
                             </ul>
                         </div>
                         <div>
-                            <p><span class="highlight">Responsabilidades:</span></p>
-                            <ul>
-                                <li>Leitura obrigatória na troca de turno</li>
-                                <li>Assinatura de ciência</li>
-                                <li>Chefia deve verificar diariamente</li>
+                            <p><span class="highlight">Formato Ideal:</span></p>
+                            <ul class="compact-list">
+                                <li>Data e hora do registro</li>
+                                <li>Nome do responsável</li>
+                                <li>Descrição objetiva</li>
+                                <li>Número do quarto quando aplicável</li>
+                                <li>Assinatura de quem recebeu</li>
                             </ul>
                         </div>
-                    </div>
-                </section>
-                
-                <section>
-                    <h3>Funções do Chefe de Recepção</h3>
-                    <div class="checklist" style="font-size:0.7em;">
-                        <ul>
-                            <li>Elaborar escalas (folgas/férias)</li>
-                            <li>Mediar conflitos na equipe</li>
-                            <li>Avaliar desempenho e treinamentos</li>
-                            <li>Garantir cobertura permanente</li>
-                            <li>Assinar logbook diariamente</li>
-                        </ul>
                     </div>
                 </section>
             </section>
@@ -520,7 +557,12 @@
             hash: true,
             transition: 'convex',
             backgroundTransition: 'zoom',
-            pdfSeparateFragments: false
+            pdfSeparateFragments: false,
+            width: 1100,
+            height: 700,
+            margin: 0.1,
+            minScale: 0.2,
+            maxScale: 2.0
         });
     </script>
 </body>
