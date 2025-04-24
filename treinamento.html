@@ -6,11 +6,14 @@
     <title>Manual de Recepção Hoteleira</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/league.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         :root {
             --hotel-blue: #005b96;
             --hotel-gold: #49ccca;
             --lgpd-purple: #6a0dad;
+            --error-red: #ff6b6b;
+            --success-green: #51cf66;
         }
         .reveal {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -39,6 +42,11 @@
             padding: 15px;
             margin: 10px 0;
             border-radius: 0 5px 5px 0;
+            transition: all 0.3s ease;
+        }
+        .procedure-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
         .lgpd-card {
             background: rgba(106, 13, 173, 0.7);
@@ -66,9 +74,11 @@
             cursor: pointer;
             margin: 5px;
             font-size: 0.7em;
+            transition: all 0.2s;
         }
         .interactive-btn:hover {
             background-color: #8a2be2;
+            transform: scale(1.05);
         }
         .hidden-content {
             display: none;
@@ -76,6 +86,11 @@
             padding: 10px;
             background: rgba(255, 255, 255, 0.1);
             border-radius: 5px;
+            animation: fadeIn 0.5s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .shift-table {
             width: 100%;
@@ -119,6 +134,16 @@
         }
         .checklist li {
             margin-bottom: 8px;
+            position: relative;
+            padding-left: 25px;
+        }
+        .checklist li:before {
+            content: "•";
+            color: var(--hotel-gold);
+            font-size: 1.5em;
+            position: absolute;
+            left: 0;
+            top: -5px;
         }
         .bad-good-table {
             width: 100%;
@@ -139,11 +164,11 @@
         }
         .bad-example {
             background-color: rgba(255, 0, 0, 0.1);
-            border-left: 4px solid #ff0000;
+            border-left: 4px solid var(--error-red);
         }
         .good-example {
             background-color: rgba(0, 255, 0, 0.1);
-            border-left: 4px solid #00ff00;
+            border-left: 4px solid var(--success-green);
         }
         .roleplay-card {
             background: rgba(73, 204, 202, 0.2);
@@ -152,6 +177,11 @@
             margin: 10px 0;
             border-radius: 5px;
             font-size: 0.8em;
+            transition: all 0.3s ease;
+        }
+        .roleplay-card:hover {
+            background: rgba(73, 204, 202, 0.3);
+            transform: scale(1.02);
         }
         .scrollable-slide {
             max-height: 500px;
@@ -176,6 +206,118 @@
         }
         .laundry-card ul {
             padding-left: 20px;
+        }
+        .question-filter-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+        .question-card {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-left: 5px solid transparent;
+        }
+        .question-card:hover {
+            background: rgba(255,255,255,0.2);
+            transform: translateX(5px);
+        }
+        .question-card.active {
+            border-left: 5px solid var(--hotel-gold);
+            background: rgba(0,91,150,0.5);
+        }
+        .question-card h4 {
+            margin-top: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .question-card i {
+            transition: transform 0.3s ease;
+        }
+        .question-card.active i {
+            transform: rotate(90deg);
+        }
+        .question-content {
+            display: none;
+            padding-top: 10px;
+            animation: fadeIn 0.4s ease-out;
+        }
+        .pulse-animation {
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+        .interactive-flow {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin: 20px 0;
+        }
+        .flow-step {
+            text-align: center;
+            width: 80px;
+            opacity: 0.5;
+            transition: all 0.5s ease;
+        }
+        .flow-step.active {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+        .flow-step i {
+            font-size: 2em;
+            background: var(--hotel-blue);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto 10px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+        .flow-arrow {
+            font-size: 1.5em;
+            color: var(--hotel-gold);
+            opacity: 0.3;
+        }
+        .scenario-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin: 20px 0;
+        }
+        .scenario-btn {
+            background: var(--hotel-blue);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        .scenario-btn:hover {
+            background: var(--hotel-gold);
+            color: #333;
+        }
+        .scenario-btn.active {
+            background: var(--hotel-gold);
+            color: #333;
+            font-weight: bold;
+            box-shadow: 0 0 10px rgba(73,204,202,0.7);
+        }
+        .scenario-content {
+            display: none;
+            animation: fadeIn 0.5s ease-out;
+        }
+        .scenario-content.active {
+            display: block;
         }
     </style>
 </head>
@@ -439,6 +581,189 @@
                 </section>
             </section>
 
+            <!-- NOVA SEÇÃO: FILTRO DE PERGUNTAS -->
+            <section>
+                <section data-background="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80">
+                    <h2>O Poder das Perguntas Estratégicas</h2>
+                    <p>Como resolver 90% das reclamações na recepção</p>
+                </section>
+
+                <section>
+                    <h3>Por Que o Filtro é Essencial?</h3>
+                    <div class="procedure-card pulse-animation">
+                        <p>Pular direto para a solução sem entender o contexto causa:</p>
+                        <ul class="compact-list">
+                            <li><i class="fas fa-times-circle" style="color: var(--error-red);"></i> Confusão e retrabalho</li>
+                            <li><i class="fas fa-angry" style="color: var(--error-red);"></i> Insatisfação do hóspede</li>
+                            <li><i class="fas fa-exchange-alt" style="color: var(--error-red);"></i> Escalonamento desnecessário</li>
+                        </ul>
+                    </div>
+                    <div class="fragment">
+                        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Perguntas">
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Fluxo de Perguntas Estratégicas</h3>
+                    <div class="interactive-flow">
+                        <div class="flow-step active">
+                            <i class="fas fa-question"></i>
+                            <p>Perguntar</p>
+                        </div>
+                        <div class="flow-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <div class="flow-step">
+                            <i class="fas fa-search"></i>
+                            <p>Investigar</p>
+                        </div>
+                        <div class="flow-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <div class="flow-step">
+                            <i class="fas fa-check-circle"></i>
+                            <p>Resolver</p>
+                        </div>
+                        <div class="flow-arrow">
+                            <i class="fas fa-arrow-right"></i>
+                        </div>
+                        <div class="flow-step">
+                            <i class="fas fa-graduation-cap"></i>
+                            <p>Orientar</p>
+                        </div>
+                    </div>
+                    <div class="procedure-card fragment" style="margin-top:20px;">
+                        <p><span class="highlight">Resultado:</span> 90% dos casos resolvidos na recepção sem transferência</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Perguntas-Chave para Lavanderia</h3>
+                    <div class="question-filter-container">
+                        <div class="question-card" onclick="toggleQuestion(this)">
+                            <h4>1. Solicitação foi feita? <i class="fas fa-chevron-right"></i></h4>
+                            <div class="question-content">
+                                <p>"O senhor solicitou a coleta pelo telefone (110) ou direto na recepção?"</p>
+                                <p class="highlight">Dado importante: Coleta só ocorre mediante solicitação explícita</p>
+                            </div>
+                        </div>
+                        <div class="question-card" onclick="toggleQuestion(this)">
+                            <h4>2. Roupas estavam identificadas? <i class="fas fa-chevron-right"></i></h4>
+                            <div class="question-content">
+                                <p>"As roupas estavam com nome completo, número do quarto e quantidade de peças marcadas?"</p>
+                                <p class="highlight">Itens não identificados não são coletados por segurança</p>
+                            </div>
+                        </div>
+                        <div class="question-card" onclick="toggleQuestion(this)">
+                            <h4>3. Placa "Não Perturbe"? <i class="fas fa-chevron-right"></i></h4>
+                            <div class="question-content">
+                                <p>"A placa estava na porta durante o horário de coleta (7h-19h)?"</p>
+                                <p class="highlight">Com a placa, a equipe não entra no quarto</p>
+                            </div>
+                        </div>
+                        <div class="question-card" onclick="toggleQuestion(this)">
+                            <h4>4. Dia/Horário correto? <i class="fas fa-chevron-right"></i></h4>
+                            <div class="question-content">
+                                <p>"Em qual dia e horário o serviço foi solicitado?"</p>
+                                <p class="highlight">Serviço não opera aos domingos e feriados</p>
+                                <p>Coletas após 10h têm entrega em 48h</p>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Simulador de Cenários</h3>
+                    <div class="scenario-buttons">
+                        <button class="scenario-btn active" onclick="showScenario(1)">Lavanderia</button>
+                        <button class="scenario-btn" onclick="showScenario(2)">Arrumação</button>
+                        <button class="scenario-btn" onclick="showScenario(3)">Internet</button>
+                    </div>
+                    
+                    <div class="scenario-content active" id="scenario1">
+                        <div class="roleplay-card">
+                            <p><span class="highlight">Situação:</span> "Minhas roupas não foram lavadas!"</p>
+                            <div class="two-columns compact">
+                                <div>
+                                    <p class="highlight">❌ Sem Filtro:</p>
+                                    <p>"Vou acionar a lavanderia" (demora 2 dias para resposta)</p>
+                                </div>
+                                <div>
+                                    <p class="highlight">✅ Com Filtro:</p>
+                                    <p>"Vamos verificar: você solicitou pelo telefone? As roupas estavam identificadas?" (resolve em 2 minutos)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="procedure-card">
+                            <p><span class="highlight">Solução Típica:</span> "Entendi que não houve solicitação. Vou registrar agora mesmo. Lembre-se que para entrega em 24h, a solicitação deve ser feita antes das 10h em dias úteis."</p>
+                        </div>
+                    </div>
+                    
+                    <div class="scenario-content" id="scenario2">
+                        <div class="roleplay-card">
+                            <p><span class="highlight">Situação:</span> "Meu quarto não foi arrumado!"</p>
+                            <div class="two-columns compact">
+                                <div>
+                                    <p class="highlight">❌ Sem Filtro:</p>
+                                    <p>"Vou chamar a governança" (hóspede espera horas)</p>
+                                </div>
+                                <div>
+                                    <p class="highlight">✅ Com Filtro:</p>
+                                    <p>"A placa 'Não Perturbe' estava na porta? Que horas saiu do quarto?" (resolve imediatamente)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="procedure-card">
+                            <p><span class="highlight">Solução Típica:</span> "Percebi que a placa estava até as 15h. Nossa equipe fará a arrumação agora. Para serviço diário, basta retirar a placa até as 13h."</p>
+                        </div>
+                    </div>
+                    
+                    <div class="scenario-content" id="scenario3">
+                        <div class="roleplay-card">
+                            <p><span class="highlight">Situação:</span> "A internet não funciona!"</p>
+                            <div class="two-columns compact">
+                                <div>
+                                    <p class="highlight">❌ Sem Filtro:</p>
+                                    <p>"Vou chamar o TI" (demora desnecessária)</p>
+                                </div>
+                                <div>
+                                    <p class="highlight">✅ Com Filtro:</p>
+                                    <p>"Poderia descrever o que aparece? Já tentou reconectar na rede 'Hotel_Guest'?" (80% resolvido aqui)</p>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="procedure-card">
+                            <p><span class="highlight">Solução Típica:</span> "Vejo que estava conectado à rede errada. Vou ajudá-lo a conectar na rede correta. Precisa de ajuda para acessar algum site específico?"</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Fórmula de Ouro para Encerramento</h3>
+                    <div class="roleplay-card" style="background: rgba(73, 204, 202, 0.3); border: 2px solid var(--success-green);">
+                        <p>"Com essas informações, já entendi o que aconteceu. <span class="highlight">[Solução]</span>. No futuro, lembre-se de <span class="highlight">[dica preventiva]</span>. Posso ajudar em algo mais?"</p>
+                    </div>
+                    
+                    <div class="two-columns compact fragment" style="margin-top:20px;">
+                        <div>
+                            <p><span class="highlight">Exemplo Lavanderia:</span></p>
+                            <p>"Entendi que as roupas não foram coletadas porque o serviço não opera aos domingos. <span class="highlight">Vou solicitar a coleta agora mesmo</span>. Lembre-se que para entrega em 24h, a solicitação deve ser feita antes das 10h em dias úteis. <span class="highlight">Posso ajudar em algo mais?</span>"</p>
+                        </div>
+                        <div>
+                            <p><span class="highlight">Exemplo Quarto:</span></p>
+                            <p>"Percebi que a arrumação não foi feita porque a placa estava na porta até as 15h. <span class="highlight">Nossa equipe fará a arrumação agora</span>. Para garantir o serviço diário, basta retirar a placa até as 13h. <span class="highlight">Posso ajudar em algo mais?</span>"</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section data-background="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80">
+                    <h3 style="color: var(--hotel-gold); text-shadow: 2px 2px 4px #000;">Transforme Reclamações em Oportunidades</h3>
+                    <div class="procedure-card" style="background: rgba(0,0,0,0.7);">
+                        <p>Perguntas estratégicas + Solução rápida = <span class="highlight">Hóspede satisfeito e equipe eficiente</span></p>
+                    </div>
+                </section>
+            </section>
+
             <!-- TURNOS -->
             <section>
                 <section>
@@ -678,6 +1003,7 @@
     </div>
 
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
     <script>
         Reveal.initialize({
             controls: true,
@@ -694,6 +1020,7 @@
             maxScale: 2.0
         });
 
+        // Função para alternar conteúdo
         function toggleContent(id) {
             const content = document.getElementById(id);
             if (content.style.display === 'block') {
@@ -702,6 +1029,54 @@
                 content.style.display = 'block';
             }
         }
+
+        // Função para alternar perguntas
+        function toggleQuestion(card) {
+            card.classList.toggle('active');
+            const content = card.querySelector('.question-content');
+            const icon = card.querySelector('i');
+            
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+            } else {
+                content.style.display = 'block';
+            }
+        }
+
+        // Função para mostrar cenários
+        function showScenario(num) {
+            // Remove active de todos os botões e conteúdos
+            document.querySelectorAll('.scenario-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            document.querySelectorAll('.scenario-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            
+            // Adiciona active ao botão e conteúdo selecionado
+            document.querySelector(`.scenario-btn:nth-child(${num})`).classList.add('active');
+            document.getElementById(`scenario${num}`).classList.add('active');
+        }
+
+        // Animação do fluxo
+        Reveal.addEventListener('slidechanged', function(event) {
+            if (event.currentSlide.querySelector('.interactive-flow')) {
+                const steps = document.querySelectorAll('.flow-step');
+                let delay = 0;
+                
+                steps.forEach((step, index) => {
+                    setTimeout(() => {
+                        step.classList.add('active');
+                    }, delay);
+                    delay += 500;
+                });
+            }
+        });
+
+        // Inicializa o primeiro cenário como ativo
+        document.addEventListener('DOMContentLoaded', function() {
+            showScenario(1);
+        });
     </script>
 </body>
 </html>
