@@ -3,35 +3,141 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Treinamento para Recepção Hoteleira</title>
+    <title>Manual de Recepção Hoteleira</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/sky.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/theme/league.min.css">
     <style>
-        .slides section {
-            font-family: 'Arial', sans-serif;
+        :root {
+            --hotel-blue: #005b96;
+            --hotel-gold: #49ccca;
         }
-        .slides section h1, 
-        .slides section h2, 
-        .slides section h3 {
-            color: #2b7bba;
+        .reveal {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-        .slides section img {
+        .reveal .slides {
+            font-size: 28px;
+            width: 90% !important;
+            height: 90% !important;
+        }
+        .reveal h1, 
+        .reveal h2, 
+        .reveal h3 {
+            color: var(--hotel-gold);
+            text-transform: uppercase;
+            margin-bottom: 0.5em;
+        }
+        .reveal section img {
             max-height: 300px;
-            border-radius: 8px;
-            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: 3px solid var(--hotel-gold);
+            border-radius: 5px;
+            margin: 10px 0;
+        }
+        .procedure-card {
+            background: rgba(0, 91, 150, 0.7);
+            border-left: 5px solid var(--hotel-gold);
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+        }
+        .shift-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.8em;
+        }
+        .shift-table th {
+            background-color: var(--hotel-blue);
+            color: white;
+            padding: 8px;
+        }
+        .shift-table td {
+            padding: 6px;
+            border-bottom: 1px solid #ddd;
+        }
+        .shift-table tr:nth-child(even) {
+            background-color: rgba(0, 91, 150, 0.1);
         }
         .highlight {
-            background-color: #f5f5f5;
-            padding: 2px 8px;
-            border-radius: 4px;
-            color: #d35400;
+            color: var(--hotel-gold);
+            font-weight: bold;
         }
         .two-columns {
             display: flex;
-            gap: 20px;
+            gap: 15px;
         }
         .two-columns div {
             flex: 1;
+        }
+        .two-columns.compact {
+            gap: 10px;
+        }
+        .two-columns.compact div {
+            font-size: 0.8em;
+        }
+        .checklist {
+            text-align: left;
+            font-size: 0.75em;
+            line-height: 1.3;
+        }
+        .checklist li {
+            margin-bottom: 8px;
+        }
+        .bad-good-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 10px 0;
+            font-size: 0.65em;
+        }
+        .bad-good-table th {
+            background-color: var(--hotel-blue);
+            color: white;
+            padding: 8px;
+            text-align: center;
+        }
+        .bad-good-table td {
+            padding: 8px;
+            border: 1px solid #ddd;
+            vertical-align: top;
+        }
+        .bad-example {
+            background-color: rgba(255, 0, 0, 0.1);
+            border-left: 4px solid #ff0000;
+        }
+        .good-example {
+            background-color: rgba(0, 255, 0, 0.1);
+            border-left: 4px solid #00ff00;
+        }
+        .roleplay-card {
+            background: rgba(73, 204, 202, 0.2);
+            border: 2px dashed var(--hotel-gold);
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 0.8em;
+        }
+        .scrollable-slide {
+            max-height: 500px;
+            overflow-y: auto;
+            padding-right: 10px;
+        }
+        .compact-list {
+            font-size: 0.7em;
+            line-height: 1.3;
+        }
+        .laundry-card {
+            background: rgba(255, 255, 255, 0.1);
+            border: 2px solid var(--hotel-gold);
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 0.6em;
+            text-align: left;
+        }
+        .laundry-card h4 {
+            color: var(--hotel-gold);
+            margin-top: 0;
+        }
+        .laundry-card ul {
+            padding-left: 20px;
         }
     </style>
 </head>
@@ -39,144 +145,466 @@
     <div class="reveal">
         <div class="slides">
             <!-- CAPA -->
-            <section data-background="https://images.unsplash.com/photo-1566073771259-6a8506099945?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80">
-                <h1 style="color: white; text-shadow: 2px 2px 4px #000;">Melhores Práticas para a <span class="highlight">Recepção Hoteleira</span></h1>
-                <p style="color: white; font-size: 1.5em; text-shadow: 1px 1px 2px #000;">Treinamento para Excelência no Atendimento</p>
+            <section data-background="https://cf.bstatic.com/xdata/images/hotel/max1024x768/47322874.jpg?k=2aa176dc373fd3d821290e2664b9250af7ea72966adf480e0abe1d40289fa9e2&o=&hp=1">
+                <h1>Manual de Procedimentos</h1>
+                <h3>Recepção Hoteleira</h3>
             </section>
 
-            <!-- MÓDULO 1: INTRODUÇÃO -->
+            <!-- INTRODUÇÃO -->
             <section>
                 <section>
-                    <h2>Módulo 1: Introdução à Recepção</h2>
-                    <p>A recepção é o <span class="highlight">cartão de visitas</span> do hotel.</p>
-                    <img src="https://images.unsplash.com/photo-1522798514-97ceb8c4f1c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Balcão de recepção">
-                </section>
-                <section>
-                    <h3>Perfil do Profissional Ideal</h3>
+                    <h2>A Recepção como Centro do Hotel</h2>
                     <div class="two-columns">
                         <div>
-                            <ul>
-                                <li>Comunicação clara</li>
-                                <li>Empatia e paciência</li>
-                                <li>Domínio de PMS</li>
-                                <li>Postura profissional</li>
+                            <p class="fragment">"Entrada nobre do estabelecimento"</p>
+                            <p class="fragment">Ponto de referência para hóspedes</p>
+                            <p class="fragment">Funcionamento 24 horas</p>
+                        </div>
+                        <div>
+                            <img src="https://images.unsplash.com/photo-1522798514-97ceb8c4f1c8?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Recepção">
+                        </div>
+                    </div>
+                </section>
+                
+                <section>
+                    <h2>Padrões Profissionais</h2>
+                    <div class="checklist">
+                        <ol>
+                            <li class="fragment"><span class="highlight">Aparência:</span> Cabelo arrumado, uniforme impecável, higiene pessoal</li>
+                            <li class="fragment"><span class="highlight">Cortesia:</span> Sorriso, atenção plena, proibido celular/TV</li>
+                            <li class="fragment"><span class="highlight">Cooperação:</span> Trabalho em equipe e comunicação rápida</li>
+                            <li class="fragment"><span class="highlight">Discrição:</span> Sem comentários sobre hóspedes, voz baixa</li>
+                            <li class="fragment"><span class="highlight">Honestidade:</span> Responsabilidade com informações e valores</li>
+                        </ol>
+                    </div>
+                </section>
+            </section>
+
+            <!-- ATENDIMENTO -->
+            <section>
+                <section>
+                    <h2>Protocolos de Atendimento</h2>
+                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Atendimento">
+                </section>
+                
+                <section>
+                    <h3>Regras de Ouro</h3>
+                    <div class="procedure-card">
+                        <ul class="compact-list">
+                            <li>Levantar-se para atender</li>
+                            <li>Chamar pelo nome (Sr./Sra. + Nome)</li>
+                            <li>Manter contato visual e sorriso</li>
+                            <li>Interromper tarefas para atender</li>
+                        </ul>
+                    </div>
+                    <div class="procedure-card fragment">
+                        <p><span class="highlight">Nunca:</span> discutir, usar gírias ou demonstrar pressa</p>
+                    </div>
+                </section>
+            </section>
+
+            <!-- COMUNICAÇÃO EMPÁTICA -->
+            <section>
+                <section data-background="https://images.unsplash.com/photo-1579389083078-4e7018379f7e?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80">
+                    <h2>Comunicação Empática na Recepção</h2>
+                    <p>Transformando "nãos" em experiências positivas</p>
+                </section>
+
+                <section>
+                    <h3>Princípios da Comunicação Empática</h3>
+                    <div class="procedure-card">
+                        <p><span class="highlight">Estrutura Ideal:</span></p>
+                        <p>"Entendemos sua necessidade, [agradeça]. Infelizmente, [negue com educação]. No entanto, [ofereça alternativa]."</p>
+                    </div>
+                    <div class="two-columns compact" style="margin-top:15px;">
+                        <div>
+                            <p><span class="highlight">Regra de Ouro:</span></p>
+                            <ul class="compact-list">
+                                <li>Agradecer antes de negar</li>
+                                <li>Oferecer alternativas</li>
+                                <li>Usar palavras suaves</li>
                             </ul>
                         </div>
                         <div>
-                            <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Atendente">
+                            <p><span class="highlight">Evitar:</span></p>
+                            <ul class="compact-list">
+                                <li>Começar com "não"</li>
+                                <li>Linguagem impositiva</li>
+                                <li>Falta de alternativas</li>
+                            </ul>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Exemplos Práticos - Check-in</h3>
+                    <div class="scrollable-slide">
+                        <table class="bad-good-table">
+                            <tr>
+                                <th width="25%">Situação</th>
+                                <th width="37%" class="bad-example">❌ Não Ideal</th>
+                                <th width="38%" class="good-example">✅ Empático</th>
+                            </tr>
+                            <tr>
+                                <td>Sem vaga</td>
+                                <td class="bad-example">"Não temos vaga."</td>
+                                <td class="good-example">"Lamentamos informar que, no momento, estamos com lotação completa. Posso verificar outras datas ou indicar algum hotel parceiro próximo?"</td>
+                            </tr>
+                            <tr>
+                                <td>Early check-in</td>
+                                <td class="bad-example">"Não pode fazer check-in antes das 14h."</td>
+                                <td class="good-example">"Seu quarto ainda está em preparação, mas assim que estiver disponível, avisaremos. Enquanto isso, você pode deixar suas bagagens conosco e aproveitar nosso lounge."</td>
+                            </tr>
+                            <tr>
+                                <td>Sem possibilidade de prorrogar</td>
+                                <td class="bad-example">"Não podemos prorrogar, não há vagas."</td>
+                                <td class="good-example">"Gostaríamos de poder prorrogar, mas no momento não há apartamentos disponiveis, podemos adicioná-lo a lista de espera e dar prioridade caso surja vaga ?"</td>
+                            </tr>
+                        </table>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Exemplos Práticos - Serviços</h3>
+                    <div class="scrollable-slide">
+                        <table class="bad-good-table">
+                            <tr>
+                                <th width="25%">Situação</th>
+                                <th width="37%" class="bad-example">❌ Não Ideal</th>
+                                <th width="38%" class="good-example">✅ Empático</th>
+                            </tr>
+                            <tr>
+                                <td>Restaurante fechado</td>
+                                <td class="bad-example">"O restaurante já fechou."</td>
+                                <td class="good-example">"Nosso restaurante encerrou, mas podemos verificar a possibilidade de preparar um lanche, (Ex: Misto Quente). Ou posso indicar um delivery excelente na região."</td>
+                            </tr>
+                            <tr>
+                                <td>Fumar no quarto</td>
+                                <td class="bad-example">"Proibido fumar aqui."</td>
+                                <td class="good-example">"Temos uma área externa para fumantes. Posso lhe direcionar?"</td>
+                            </tr>
+                            <tr>
+                                <td>Late check-out</td>
+                                <td class="bad-example">"Impossível, estamos lotados."</td>
+                                <td class="good-example">"Nesta época, todos os quartos têm check-in previsto para logo após o check-out. Mas podemos guardar suas malas e oferecer um banho no spa para você se refrescar."</td>
+                            </tr>
+                        </table>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Técnica ACALME para Hóspedes Insatisfeitos</h3>
+                    <div class="checklist">
+                        <ol>
+                            <li><span class="highlight">A</span>gradeça pelo feedback</li>
+                            <li><span class="highlight">C</span>omunique empatia ("Entendo sua frustração")</li>
+                            <li><span class="highlight">A</span>ja proativamente ("Vou resolver pessoalmente")</li>
+                            <li><span class="highlight">L</span>imite-se às regras ("Por questões de segurança...")</li>
+                            <li><span class="highlight">M</span>antenha a calma (tom firme mas educado)</li>
+                            <li><span class="highlight">E</span>ncerre com cortesia ("Agradeço pela compreensão")</li>
+                        </ol>
+                    </div>
+                    <div class="procedure-card" style="margin-top:15px;">
+                        <p><span class="highlight">Exemplo:</span> "Sr. Silva, lamento pelo ocorrido. Vou comunicar o gestor para que possamos verificar."</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Comunicação em Situações Críticas</h3>
+                    <div class="two-columns compact">
+                        <div>
+                            <p><span class="highlight">Sistema fora:</span></p>
+                            <p class="fragment">"Estamos resolvendo uma instabilidade técnica. Vamos registrar manualmente e validar posteriormente. Podemos entrar em contato quando for resolvido?"</p>
+                            
+                            <p><span class="highlight">Cartão recusado:</span></p>
+                            <p class="fragment">"Parece que houve uma falha ao processar a transação com o cartão. Deseja utilizar outra forma de pagamento ou podemos tentar novamente em alguns minutos?"</p>
+                        </div>
+                        <div>
+                            <p><span class="highlight">Hóspede bêbado:</span></p>
+                            <p class="fragment">"Noto que está bastante animado. Para sua segurança, que tal descansar no quarto? Podemos levar uma água."</p>
+                            
+                            <p><span class="highlight">Reclamação de barulho:</span></p>
+                            <p class="fragment">"Agradeço por nos alertar. Podemos verificar se há outro apartamento disponível em um andar mais silencioso."</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Dinâmica Prática: Role-Playing</h3>
+                    <div class="roleplay-card">
+                        <p><span class="highlight">Cenário 1:</span> Hóspede exige arrumação imediata do apartamento</p>
+                        <p class="fragment"><span class="highlight">Resposta Ideal:</span> "Vamos repassar a solicitão para o setor responsável imediatamente e pedir prioridade"</p>
+                    </div>
+                    
+                    <div class="roleplay-card fragment">
+                        <p><span class="highlight">Cenário 2:</span> Sistema do hotel cai durante check-in</p>
+                        <p class="fragment"><span class="highlight">Resposta Ideal:</span> "Lamentamos o inconveniente. Estamos resolvendo com prioridade. Enquanto isso, faremos seu registro manualmente para agilizar ao máximo o Check-in."</p>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Dicas de Ouro</h3>
+                    <div class="scrollable-slide">
+                        <div class="checklist" style="column-count:2;">
+                            <ul>
+                                <li>Valide os sentimentos do hóspede</li>
+                                <li>Use "nós" em vez de "você"</li>
+                                <li>Ofereça escolhas (mesmo limitadas)</li>
+                                <li>Personalize a linguagem (use o nome)</li>
+                                <li>Antecipe-se aos problemas</li>
+                                <li>Use analogias para explicar políticas</li>
+                                <li>Abrace o silêncio após explicar</li>
+                                <li>Encerre com gesto de cortesia</li>
+                                <li>Mantenha linguagem corporal aberta</li>
+                            </ul>
+                        </div>
+                        <div class="procedure-card" style="margin-top:15px;">
+                            <p><span class="highlight">Frases-chave:</span> "Vou me empenhar para resolver", "Sua satisfação é importante", "Agradeço pela compreensão"</p>
+                        </div>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Comunicação Interna Eficiente</h3>
+                    <div class="two-columns compact">
+                        <div>
+                            <p><span class="highlight">Reservas Diretas:</span></p>
+                            <ul class="compact-list">
+                                <li>Confirmar todos os detalhes</li>
+                                <li>Anotar preferências especiais</li>
+                                <li>Comunicar proativamente mudanças</li>
+                            </ul>
+                            
+                            <p><span class="highlight">Agências:</span></p>
+                            <ul class="compact-list">
+                                <li>Verificar voucher completo</li>
+                                <li>Confirmar método de pagamento</li>
+                                <li>Documentar solicitações especiais</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p><span class="highlight">Internet:</span></p>
+                            <ul class="compact-list">
+                                <li>Orientar sobre procedimentos de loggin</li>
+                                <li>Identificar se o hóspede realmente está conectado a rede correta</li>
+                                <li>Caso esteja realmente com alguma instabilidade na rede, informar ao hóspede que o setor responsável será comunicado imediatamente</li>
+                            </ul>
+                            
+                            <p><span class="highlight">Logbook:</span></p>
+                            <ul class="compact-list">
+                                <li>Registrar ocorrências importantes</li>
+                                <li>Anotar pendências para próximo turno</li>
+                                <li>Manter linguagem objetiva</li>
+                            </ul>
                         </div>
                     </div>
                 </section>
             </section>
 
-            <!-- MÓDULO 2: CHECK-IN/CHECK-OUT -->
+            <!-- TURNOS -->
             <section>
                 <section>
-                    <h2>Módulo 2: Check-in e Check-out</h2>
-                    <p>Processos que definem a primeira e última impressão.</p>
-                    <img src="https://images.unsplash.com/photo-1596178065887-1198b6148b2b?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Check-in">
+                    <h2>Procedimentos por Turno</h2>
+                    <img src="https://images.unsplash.com/photo-1507679799987-c73779587ccf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Turnos">
                 </section>
+                
                 <section>
-                    <h3>Check-in sem erros</h3>
-                    <ol>
-                        <li class="fragment">Saudação calorosa</li>
-                        <li class="fragment">Verificação rápida de documentos</li>
-                        <li class="fragment">Confirmação de reserva e preferências</li>
-                        <li class="fragment">Entrega de chave com orientações</li>
-                    </ol>
+                    <h3>Turno 1 (07h-19h)</h3>
+                    <div class="scrollable-slide">
+                        <table class="shift-table">
+                            <tr>
+                                <th>Atividade</th>
+                                <th>Detalhes</th>
+                            </tr>
+                            <tr>
+                                <td>Check-in</td>
+                                <td>
+                                    <ul class="compact-list">
+                                        <li>Verificar FNRH completa</li>
+                                        <li>Documentação de menores</li>
+                                        <li>Cobrança antecipada</li>
+                                        <li>Atribuição de quartos</li>
+                                        <li>Orientações iniciais</li>
+                                        <li class="highlight">Solicitar telefone de emergência: "Gostaria de informar um telefone para contato emergencial?"</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                            <tr>
+                                <td>Check-out</td>
+                                <td>
+                                    <ul class="compact-list">
+                                        <li>Conferir consumos</li>
+                                        <li>Emitir nota fiscal</li>
+                                        <li>Processar pagamentos</li>
+                                        <li>Feedback rápido</li>
+                                        <li>Armazenar bagagens</li>
+                                    </ul>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
                 </section>
+                
                 <section>
-                    <h3>Check-out ágil</h3>
-                    <img src="https://images.unsplash.com/photo-1558642084-fd07fae5282c?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Check-out">
-                    <p>Conferir consumos, oferecer transporte e solicitar feedback.</p>
+                    <h3>Turno 2 - Auditoria (19h-07h)</h3>
+                    <div class="checklist">
+                        <ol>
+                            <li class="fragment">Fechamento de caixa e conferência de lançamentos</li>
+                            <li class="fragment">Auditoria de reservas:
+                                <ul class="compact-list">
+                                    <li>Verificar valores e tipos de pagamento</li>
+                                    <li>Identificar no-shows</li>
+                                    <li>Realizar Check-list completo antes de abrir No-Show: Houve cancelamento ou alteração? Pax in-house ? Possui garantia ?</li>
+                                    <li>Corrigir ISS quando aplicável</li>
+                                </ul>
+                            </li>
+                            <li class="fragment">Preparar check-ins do dia seguinte</li>
+                            <li class="fragment">Gerar listas para governança e restaurante</li>
+                            <li class="fragment">Atualizar relatórios de ocupação</li>
+                        </ol>
+                    </div>
                 </section>
             </section>
 
-            <!-- MÓDULO 3: ATENDIMENTO AO CLIENTE -->
+            <!-- PROCESSOS CRÍTICOS -->
             <section>
                 <section>
-                    <h2>Módulo 3: Atendimento de Excelência</h2>
-                    <p>Transformando hóspedes em clientes fiéis.</p>
-                    <img src="https://images.unsplash.com/photo-1552664730-d307ca884978?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Atendimento">
+                    <h2>Processos Especiais</h2>
+                    <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Processos">
                 </section>
+                
                 <section>
-                    <h3>Técnicas de Comunicação</h3>
-                    <ul>
-                        <li class="fragment">Telefone: tom de voz claro e sorridente</li>
-                        <li class="fragment">E-mail: resposta em até <span class="highlight">2 horas</span></li>
-                        <li class="fragment">Presencial: contato visual e postura aberta</li>
-                    </ul>
-                </section>
-            </section>
-
-            <!-- MÓDULO 4: RESOLUÇÃO DE CONFLITOS -->
-            <section>
-                <section>
-                    <h2>Módulo 4: Resolução de Conflitos</h2>
-                    <p>Lidando com situações difíceis.</p>
-                    <img src="https://images.unsplash.com/photo-1582213782179-e0d53f98f2ca?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Conflito">
-                </section>
-                <section>
-                    <h3>Método LAER</h3>
-                    <div class="two-columns">
-                        <div>
+                    <h3>Check-in Detalhado</h3>
+                    <div class="scrollable-slide">
+                        <div class="checklist">
                             <ol>
-                                <li><span class="highlight">L</span>istar (ouvir ativamente)</li>
-                                <li><span class="highlight">A</span>colher (empatia)</li>
-                                <li><span class="highlight">E</span>xplicar (solução)</li>
-                                <li><span class="highlight">R</span>esolver (ação)</li>
+                                <li>Solicitar FNRH completa</li>
+                                <li class="highlight">Pedir contato emergencial: "Há alguém que possamos contatar em caso de emergência?"</li>
+                                <li>Documentação para menores:
+                                    <ul class="compact-list">
+                                        <li>RG do responsável</li>
+                                        <li>Declaração autenticada se desacompanhado</li>
+                                        <li>Autorização por escrito</li>
+                                    </ul>
+                                </li>
+                                <li>Informar:
+                                    <ul class="compact-list">
+                                        <li>Visitas pagas</li>
+                                        <li>Política de café da manhã</li>
+                                        <li>Cobrança semanal para longa estadia</li>
+                                        <li>Horários de serviços</li>
+                                    </ul>
+                                </li>
+                                <li>Procedimento de segurança:
+                                    <ul class="compact-list">
+                                        <li>Localização de saídas de emergência</li>
+                                        <li>Uso do cofre</li>
+                                        <li>Orientações sobre valores</li>
+                                    </ul>
+                                </li>
                             </ol>
                         </div>
+                    </div>
+                </section>
+                
+                <section>
+                    <h3>Empréstimo de Cofre</h3>
+                    <div class="procedure-card">
+                        <p><span class="highlight">Protocolo obrigatório:</span></p>
+                        <ol class="compact-list">
+                            <li>Solicitar assinatura no formulário</li>
+                            <li>Registrar no sistema (empréstimo + observações)</li>
+                            <li>Verificar devolução no check-out</li>
+                            <li>Documentar qualquer irregularidade</li>
+                            <li>Manter cópia do formulário por 30 dias</li>
+                        </ol>
+                    </div>
+                </section>
+
+                <section>
+                    <h3>Serviço de Lavanderia</h3>
+                    <div class="laundry-card">
+                        <h4>SERVIÇO DE LAVANDERIA / LAUNDRY SERVICE</h4>
+                        <p>⚠ Roupas só serão coletadas mediante solicitação.<br>
+                        Notice: Laundry collection requires prior request.</p>
+                        
+                        <h4>SOLICITAÇÃO DE SERVIÇO / SERVICE REQUEST</h4>
+                        <ul>
+                            <li>Ligue/Call: 110 • 100 • 154</li>
+                            <li>Atendimento/Service hours: 7h-19h (exceto domingos e feriados/except Sundays and holidays)</li>
+                        </ul>
+                        
+                        <h4>IDENTIFICAÇÃO OBRIGATÓRIA / MANDATORY IDENTIFICATION</h4>
+                        <ul>
+                            <li>Nome completo + Data + Nº do apartamento<br>
+                            Full name + Date + Room number</li>
+                            <li>Informe a quantidade de cada item na comanda.<br>
+                            Select the quantity for each item before submitting.</li>
+                            <li>Formulário preenchido/Completed form required</li>
+                        </ul>
+                        <p>Itens não identificados não serão coletados ou lavados.<br>
+                        Unidentified items won't be collected or washed.</p>
+                        
+                        <h4>PRAZOS DE ENTREGA / DELIVERY TIMES</h4>
+                        <ul>
+                            <li>Coletadas antes das 10h/Before 10am:<br>
+                            • Roupas comuns/Regular clothes → 24h (próximo dia até 12h/next day by 12pm)<br>
+                            • Macacões & tênis/Overalls & sneakers → 48h</li>
+                            <li>Coletadas após 10h/After 10am:<br>
+                            • Todos os itens/All items → 48h</li>
+                        </ul>
+                        
+                        <h4>INFORMAÇÕES ADICIONAIS / ADDITIONAL INFORMATION</h4>
+                        <p>Consulte o regulamento completo no cardápio.<br>
+                        Full regulations available in the room service menu<br>
+                        Dúvidas?/Questions? Ligue/Call: 110 • 100 • 154</p>
+                    </div>
+                </section>
+            </section>
+
+            <!-- LOGBOOK -->
+            <section>
+                <section>
+                    <h2>Gestão de Ocorrências</h2>
+                    <img src="https://images.unsplash.com/photo-1432888498266-38ffec3eaf0a?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Logbook">
+                </section>
+                
+                <section>
+                    <h3>Logbook - Melhores Práticas</h3>
+                    <div class="two-columns compact">
                         <div>
-                            <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Mediação">
+                            <p><span class="highlight">Registrar:</span></p>
+                            <ul class="compact-list">
+                                <li>Ocorrências do turno</li>
+                                <li>Ações corretivas</li>
+                                <li>Pendências para próximo turno</li>
+                                <li>Mudanças nas reservas</li>
+                                <li>Problemas técnicos</li>
+                            </ul>
+                        </div>
+                        <div>
+                            <p><span class="highlight">Formato Ideal:</span></p>
+                            <ul class="compact-list">
+                                <li>Data e hora do registro</li>
+                                <li>Nome do responsável</li>
+                                <li>Descrição objetiva</li>
+                                <li>Número do quarto quando aplicável</li>
+                                <li>Assinatura de quem recebeu</li>
+                            </ul>
                         </div>
                     </div>
                 </section>
-            </section>
-
-            <!-- MÓDULO 5: VENDAS -->
-            <section>
-                <section>
-                    <h2>Módulo 5: Vendas na Recepção</h2>
-                    <p>Oportunidades para aumentar receita.</p>
-                    <img src="https://images.unsplash.com/photo-1556740738-b6a63e27c4df?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Vendas">
-                </section>
-                <section>
-                    <h3>Exemplos de Upselling</h3>
-                    <ul>
-                        <li>"O senhor gostaria de um <span class="highlight">upgrade para suíte</span> com vista para o mar?"</li>
-                        <li>"Temos um <span class="highlight">pacote especial</span> com jantar incluso."</li>
-                    </ul>
-                </section>
-            </section>
-
-            <!-- MÓDULO 6: SEGURANÇA -->
-            <section>
-                <h2>Módulo 6: Segurança e Privacidade</h2>
-                <div class="two-columns">
-                    <div>
-                        <ul>
-                            <li>Não compartilhar dados de hóspedes</li>
-                            <li>Verificar identidade para entregar chaves</li>
-                            <li>Procedimentos de emergência</li>
-                        </ul>
-                    </div>
-                    <div>
-                        <img src="https://images.unsplash.com/photo-1584433144859-1fc3ab64a957?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80" alt="Segurança">
-                    </div>
-                </div>
             </section>
 
             <!-- ENCERRAMENTO -->
             <section data-background="https://images.unsplash.com/photo-1521791055366-0d553872125f?ixlib=rb-4.0.3&auto=format&fit=crop&w=1350&q=80">
-                <h2 style="color: white; text-shadow: 2px 2px 4px #000;">Obrigado!</h2>
-                <p style="color: white; font-size: 1.5em;">Vamos colocar em prática?</p>
-                <p style="color: white;"><small>Dúvidas: equipe@seudominio.com</small></p>
+                <h2 style="text-shadow: 2px 2px 4px #000;">Excelência no Atendimento</h2>
+                <p style="color: var(--hotel-gold); font-size: 1.5em;">Dúvidas? reservas@icaraipraiahotel.com.br</p>
+                <p style="font-size:0.8em;">Atualizado em: <span class="highlight">MAIO/2025</span></p>
             </section>
         </div>
     </div>
 
-    <!-- SCRIPTS -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.5.0/reveal.min.js"></script>
     <script>
         Reveal.initialize({
@@ -185,7 +613,13 @@
             center: true,
             hash: true,
             transition: 'convex',
-            backgroundTransition: 'slide'
+            backgroundTransition: 'zoom',
+            pdfSeparateFragments: false,
+            width: 1100,
+            height: 700,
+            margin: 0.1,
+            minScale: 0.2,
+            maxScale: 2.0
         });
     </script>
 </body>
