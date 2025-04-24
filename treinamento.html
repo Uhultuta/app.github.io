@@ -10,6 +10,7 @@
         :root {
             --hotel-blue: #005b96;
             --hotel-gold: #49ccca;
+            --lgpd-purple: #6a0dad;
         }
         .reveal {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -38,6 +39,43 @@
             padding: 15px;
             margin: 10px 0;
             border-radius: 0 5px 5px 0;
+        }
+        .lgpd-card {
+            background: rgba(106, 13, 173, 0.7);
+            border-left: 5px solid #b38bff;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 0 5px 5px 0;
+            text-align: left;
+            font-size: 0.8em;
+        }
+        .lgpd-card h4 {
+            color: #b38bff;
+            margin-top: 0;
+        }
+        .lgpd-highlight {
+            color: #b38bff;
+            font-weight: bold;
+        }
+        .interactive-btn {
+            background-color: var(--lgpd-purple);
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 0.7em;
+        }
+        .interactive-btn:hover {
+            background-color: #8a2be2;
+        }
+        .hidden-content {
+            display: none;
+            margin-top: 15px;
+            padding: 10px;
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 5px;
         }
         .shift-table {
             width: 100%;
@@ -560,6 +598,40 @@
                         Dúvidas?/Questions? Ligue/Call: 110 • 100 • 154</p>
                     </div>
                 </section>
+
+                <section>
+                    <h3>LGPD e Processamento de Pagamentos</h3>
+                    <div class="lgpd-card">
+                        <h4>NOSSO COMPROMISSO COM A SEGURANÇA E LGPD</h4>
+                        <p>A <span class="lgpd-highlight">LGPD regulamenta o tratamento de dados pessoais</span>, exigindo que hotéis ajustem seus processos, desde a reserva até o pós-venda. Em um mercado competitivo, a proteção de dados deixou de ser um diferencial e tornou-se obrigação, evitando multas e fortalecendo a confiança dos hóspedes.</p>
+                        
+                        <button class="interactive-btn" onclick="toggleContent('lgpd1')">Ver Procedimentos</button>
+                        <div id="lgpd1" class="hidden-content">
+                            <p>Em conformidade com a <span class="lgpd-highlight">LGPD (Lei Geral de Proteção de Dados)</span>, nosso hotel prioriza a segurança e privacidade dos hóspedes.</p>
+                            <ul>
+                                <li>Não solicitamos dados de cartão de crédito como garantia de reserva, eliminando riscos de armazenamento indevido.</li>
+                                <li>Pagamento 100% seguro: Enviamos um link exclusivo para que o hóspede insira seus dados de pagamento de forma protegida.</li>
+                            </ul>
+                        </div>
+
+                        <button class="interactive-btn" onclick="toggleContent('lgpd2')">Sobre o Bee2Pay</button>
+                        <div id="lgpd2" class="hidden-content">
+                            <p>Para reforçar ainda mais a segurança, adotamos o <span class="lgpd-highlight">Bee2Pay</span>, uma solução especializada que auxilia na adequação à LGPD, prevenindo vazamentos e uso indevido de informações.</p>
+                            <p>Desenvolvido pela Omnibees, o Bee2Pay simplifica e protege os pagamentos hoteleiros, garantindo:</p>
+                            <ul>
+                                <li>✔ Conformidade com a LGPD</li>
+                                <li>✔ Redução de riscos de fraudes</li>
+                                <li>✔ Processamento seguro de dados, mesmo em reservas de terceiros</li>
+                            </ul>
+                        </div>
+
+                        <button class="interactive-btn" onclick="toggleContent('lgpd3')">Reservas de Terceiros</button>
+                        <div id="lgpd3" class="hidden-content">
+                            <p><span class="lgpd-highlight">Processamento em conformidade:</span> Todos os cartões informados em sites parceiros (Booking, Expedia, etc.) são processados diretamente pela plataforma Bee2Pay, seguindo os mais altos padrões de segurança.</p>
+                            <p>Dessa forma, <span class="lgpd-highlight">não temos acesso aos dados completos do cartão</span> - apenas realizamos a transação com total conformidade à LGPD.</p>
+                        </div>
+                    </div>
+                </section>
             </section>
 
             <!-- LOGBOOK -->
@@ -621,6 +693,15 @@
             minScale: 0.2,
             maxScale: 2.0
         });
+
+        function toggleContent(id) {
+            const content = document.getElementById(id);
+            if (content.style.display === 'block') {
+                content.style.display = 'none';
+            } else {
+                content.style.display = 'block';
+            }
+        }
     </script>
 </body>
 </html>
