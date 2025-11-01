@@ -1,0 +1,807 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="logo.ico" type="image/ico">
+    <link rel="apple-touch-icon" sizes="192x192" href="logo.ico">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Frigobar">
+    <meta name="theme-color" content="#ffffff"> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frigobar</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        h1, h2 {
+            color: #2c3e50;
+            text-align: center;
+        }
+
+        .apartment-list {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .floor {
+            margin-bottom: 20px;
+        }
+
+        .apartment {
+            background: #007bff;
+            color: white;
+            padding: 8px;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin: 5px;
+            font-size: 12px;
+            display: inline-block;
+            width: calc(25% - 10px);
+        }
+
+        .apartment:hover {
+            background: #0056b3;
+        }
+
+        .item-container {
+            margin-bottom: 20px;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #ecf0f1;
+            transition: background-color 0.3s;
+        }
+
+        .item:hover {
+            background-color: #dfe6e9;
+        }
+
+        .item button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .item button.remove {
+            background-color: #e74c3c;
+        }
+
+        .item button:hover {
+            background-color: #2980b9;
+        }
+
+        .item button.remove:hover {
+            background-color: #c0392b;
+        }
+
+        .quantity, .total {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        #summary {
+            margin-top: 20px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .input-apartment {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .input-apartment input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: calc(100% - 22px);
+            max-width: 300px;
+        }
+
+        button.send-whatsapp {
+            background-color: #25D366;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            transition: background-color 0.3s;
+        }
+
+        button.send-whatsapp:hover {
+            background-color: #1da851;
+        }
+
+        h5 {
+            text-align: center;
+            font-size: 0.9em;
+            color: #7f8c8d;
+        }
+
+        .install-button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+        }
+
+        .install-button:hover {
+            background-color: #45a049;
+        }
+
+        #show-apartments {
+            background-color: blue;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            display: block;
+            margin: 20px auto;
+        }
+
+        /* Estilos do Modal */
+        #confirmationModal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            text-align: center;
+            width: 80%;
+            max-width: 400px;
+        }
+
+        .modal-content button {
+            margin: 5px;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #confirmExit {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        #confirmCleaning {
+            background-color: #3498db;
+            color: white;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .api-status {
+            text-align: center;
+            padding: 5px;
+            margin: 10px 0;
+            border-radius: 5px;
+            font-size: 0.9em;
+        }
+
+        .api-status.connected {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .api-status.disconnected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+    </style>
+</head>
+<body>
+    <!-- Modal de Confirmação -->
+    <div id="confirmationModal">
+        <div class="modal-content">
+            <p>Foi saída ou arrumação?</p>
+            <button id="confirmExit">Saída</button>
+            <button id="confirmCleaning">Arrumação</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <h1>Frigobar</h1>
+        
+        <div class="api-status" id="apiStatus"></div>
+        <div class="loading" id="loading">Carregando...</div>
+
+        <div class="input-apartment">
+            <label for="apartmentNumber"><strong>Número do Apartamento:</strong></label>
+            <input type="text" id="apartmentNumber" placeholder="Digite o número do apartamento" />
+        </div>
+
+        <button id="show-apartments">Selecionar Apartamentos</button>
+
+        <div class="apartment-list" id="apartment-list">
+            <!-- Apartamentos serão gerados aqui dinamicamente -->
+        </div>
+
+        <h2>Bebidas</h2>
+        <div class="item-container" id="beverages">
+            <!-- Itens serão carregados dinamicamente da API -->
+        </div>
+
+        <h2>Snacks</h2>
+        <div class="item-container" id="snacks">
+            <!-- Itens serão carregados dinamicamente da API -->
+        </div>
+
+        <h2>Resumo de Custos</h2>
+        <div id="summary">
+            <p>Total Bebidas (R$): <span id="totalBeverages">0</span></p>
+            <p>Total Snacks (R$): <span id="totalSnacks">0</span></p>
+            <p>Custo Total (R$): <span id="totalCost">0</span></p>
+        </div>
+
+        <h5>By Nellu</h5>
+        <button class="send-whatsapp" onclick="sendWhatsApp()">
+            Enviar via WhatsApp
+        </button>
+
+        <button class="install-button" id="install-button" style="display: none;">
+            +
+        </button>
+    </div>
+
+    <script>
+        // =============================================
+        // CONFIGURAÇÃO DA API
+        // =============================================
+        const apiConfig = {
+            // Altere esta URL para a sua API
+            baseURL: 'https://sua-api.com/api',
+            endpoints: {
+                saveConsumption: '/consumption',
+                getItems: '/items',
+                getApartments: '/apartments',
+                testConnection: '/test'
+            },
+            headers: {
+                'Content-Type': 'application/json',
+                // Adicione headers de autenticação se necessário
+                // 'Authorization': 'Bearer seu-token-aqui'
+            },
+            // Timeout em milissegundos
+            timeout: 10000
+        };
+
+        // =============================================
+        // FUNÇÕES DE COMUNICAÇÃO COM A API
+        // =============================================
+
+        // Função genérica para fazer requisições HTTP
+        async function apiRequest(url, method = 'GET', data = null) {
+            const controller = new AbortController();
+            const timeoutId = setTimeout(() => controller.abort(), apiConfig.timeout);
+            
+            const options = {
+                method: method,
+                headers: apiConfig.headers,
+                signal: controller.signal
+            };
+
+            if (data && (method === 'POST' || method === 'PUT')) {
+                options.body = JSON.stringify(data);
+            }
+
+            try {
+                const response = await fetch(`${apiConfig.baseURL}${url}`, options);
+                clearTimeout(timeoutId);
+                
+                if (!response.ok) {
+                    throw new Error(`Erro na requisição: ${response.status}`);
+                }
+                
+                return await response.json();
+            } catch (error) {
+                clearTimeout(timeoutId);
+                if (error.name === 'AbortError') {
+                    throw new Error('Timeout: A requisição demorou muito para responder');
+                }
+                console.error('Erro na comunicação com a API:', error);
+                throw error;
+            }
+        }
+
+        // Função para testar a conexão com a API
+        async function testAPIConnection() {
+            try {
+                const statusElement = document.getElementById('apiStatus');
+                statusElement.textContent = 'Conectando à API...';
+                statusElement.className = 'api-status';
+                
+                await apiRequest(apiConfig.endpoints.testConnection);
+                
+                statusElement.textContent = 'Conectado à API';
+                statusElement.className = 'api-status connected';
+                return true;
+            } catch (error) {
+                const statusElement = document.getElementById('apiStatus');
+                statusElement.textContent = 'API offline - Modo offline ativo';
+                statusElement.className = 'api-status disconnected';
+                console.warn('API offline, usando dados locais');
+                return false;
+            }
+        }
+
+        // Função para salvar o consumo na API
+        async function saveConsumptionToAPI(consumptionData) {
+            try {
+                const result = await apiRequest(apiConfig.endpoints.saveConsumption, 'POST', consumptionData);
+                console.log('Dados salvos com sucesso:', result);
+                return result;
+            } catch (error) {
+                console.error('Erro ao salvar consumo:', error);
+                
+                // Fallback: salvar localmente no localStorage
+                const localData = JSON.parse(localStorage.getItem('pendingConsumptions') || '[]');
+                localData.push({
+                    ...consumptionData,
+                    id: Date.now(),
+                    pending: true
+                });
+                localStorage.setItem('pendingConsumptions', JSON.stringify(localData));
+                
+                throw new Error('Dados salvos localmente. Serão sincronizados quando a conexão for restabelecida.');
+            }
+        }
+
+        // Função para buscar itens disponíveis da API
+        async function loadItemsFromAPI() {
+            try {
+                const items = await apiRequest(apiConfig.endpoints.getItems);
+                console.log('Itens carregados da API:', items);
+                return items;
+            } catch (error) {
+                console.error('Erro ao carregar itens da API:', error);
+                return getDefaultItems();
+            }
+        }
+
+        // Função para buscar apartamentos da API
+        async function loadApartmentsFromAPI() {
+            try {
+                const apartments = await apiRequest(apiConfig.endpoints.getApartments);
+                return apartments;
+            } catch (error) {
+                console.error('Erro ao carregar apartamentos da API:', error);
+                return generateDefaultApartments();
+            }
+        }
+
+        // =============================================
+        // FUNÇÕES AUXILIARES E FALLBACK
+        // =============================================
+
+        // Itens padrão caso a API não esteja disponível
+        function getDefaultItems() {
+            return {
+                beverages: [
+                    { id: 1, name: "Água Mineral s/Gás (500ml)", price: 8, image: "agua.ico", category: "beverage" },
+                    { id: 2, name: "Água Mineral c/Gás (310ml)", price: 8, image: "aguacomgas.ico", category: "beverage" },
+                    { id: 3, name: "Coca-cola (lata 350ml)", price: 9, image: "cocacola.ico", category: "beverage" },
+                    { id: 4, name: "Fanta (lata 350ml)", price: 9, image: "fanta.ico", category: "beverage" },
+                    { id: 5, name: "Guaraná (lata 350ml)", price: 9, image: "guarana.ico", category: "beverage" },
+                    { id: 6, name: "Toddynho (200ml)", price: 10, image: "toddynho.ico", category: "beverage" },
+                    { id: 7, name: "Antarctica (lata 350ml)", price: 12, image: "antarctica.ico", category: "beverage" }
+                ],
+                snacks: [
+                    { id: 8, name: "Castanha de Caju (50g)", price: 17, image: "castanhadecaju.ico", category: "snack" },
+                    { id: 9, name: "Batata (40g)", price: 11, image: "batata.ico", category: "snack" },
+                    { id: 10, name: "Chocolate Kit Kat (41,5g)", price: 10, image: "kitkat.ico", category: "snack" },
+                    { id: 11, name: "Bala Mentos crazyfruit (41,5g)", price: 8, image: "mentoscrazyfruit.ico", category: "snack" },
+                    { id: 12, name: "Bala Mentos mint (41,5g)", price: 8, image: "mentosmint.ico", category: "snack" }
+                ]
+            };
+        }
+
+        // Geração de apartamentos padrão
+        function generateDefaultApartments() {
+            const apartments = [];
+            for (let floor = 3; floor <= 10; floor++) {
+                const roomCount = floor === 10 ? 7 : 8;
+                for (let room = 1; room <= roomCount; room++) {
+                    apartments.push({
+                        number: floor === 10 ? `100${room}` : `${floor}0${room}`,
+                        floor: floor,
+                        status: 'available'
+                    });
+                }
+            }
+            return apartments;
+        }
+
+        // =============================================
+        // FUNÇÕES DE INTERFACE E LÓGICA DA APLICAÇÃO
+        // =============================================
+
+        // Função para renderizar itens na interface
+        function renderItems(itemsData) {
+            const beveragesContainer = document.getElementById('beverages');
+            const snacksContainer = document.getElementById('snacks');
+            
+            // Limpa containers
+            beveragesContainer.innerHTML = '';
+            snacksContainer.innerHTML = '';
+            
+            // Renderiza bebidas
+            itemsData.beverages.forEach(item => {
+                const itemElement = createItemElement(item);
+                beveragesContainer.appendChild(itemElement);
+            });
+            
+            // Renderiza snacks
+            itemsData.snacks.forEach(item => {
+                const itemElement = createItemElement(item);
+                snacksContainer.appendChild(itemElement);
+            });
+        }
+
+        // Função para criar elemento de item
+        function createItemElement(item) {
+            const itemDiv = document.createElement('div');
+            itemDiv.className = 'item';
+            itemDiv.dataset.id = item.id;
+            itemDiv.dataset.price = item.price;
+            
+            itemDiv.innerHTML = `
+                <img src="${item.image}" alt="${item.name}" style="width: 50px; cursor: pointer;" onclick="addItem(this, ${item.price})">
+                <span>${item.name}</span>
+                <button class="remove" onclick="removeItem(this, ${item.price})">Remover</button>
+                <span class="quantity">0</span>
+                <span class="total">R$ 0.00</span>
+            `;
+            
+            return itemDiv;
+        }
+
+        // Função para renderizar apartamentos
+        function renderApartments(apartments) {
+            const apartmentList = document.getElementById('apartment-list');
+            apartmentList.innerHTML = '';
+            
+            // Agrupa apartamentos por andar
+            const floors = {};
+            apartments.forEach(apartment => {
+                if (!floors[apartment.floor]) {
+                    floors[apartment.floor] = [];
+                }
+                floors[apartment.floor].push(apartment);
+            });
+            
+            // Cria elementos para cada andar
+            Object.keys(floors).sort().forEach(floor => {
+                const floorDiv = document.createElement('div');
+                floorDiv.className = 'floor';
+                
+                const floorTitle = document.createElement('h2');
+                floorTitle.textContent = `Andar ${floor}`;
+                floorDiv.appendChild(floorTitle);
+                
+                floors[floor].forEach(apartment => {
+                    const apartmentDiv = document.createElement('div');
+                    apartmentDiv.className = 'apartment';
+                    apartmentDiv.textContent = apartment.number;
+                    apartmentDiv.onclick = () => {
+                        document.getElementById('apartmentNumber').value = apartment.number;
+                        apartmentList.style.display = 'none';
+                    };
+                    floorDiv.appendChild(apartmentDiv);
+                });
+                
+                apartmentList.appendChild(floorDiv);
+            });
+        }
+
+        // Função para adicionar item
+        function addItem(button, price) {
+            const item = button.parentElement;
+            const quantityElement = item.getElementsByClassName('quantity')[0];
+            const totalElement = item.getElementsByClassName('total')[0];
+
+            let quantity = parseInt(quantityElement.innerText) + 1;
+            quantityElement.innerText = quantity;
+
+            let total = quantity * price;
+            totalElement.innerText = `R$ ${total.toFixed(2)}`;
+
+            updateSummary();
+        }
+
+        // Função para remover item
+        function removeItem(button, price) {
+            const item = button.parentElement;
+            const quantityElement = item.getElementsByClassName('quantity')[0];
+            const totalElement = item.getElementsByClassName('total')[0];
+
+            let quantity = parseInt(quantityElement.innerText);
+            if (quantity > 0) {
+                quantity -= 1;
+                quantityElement.innerText = quantity;
+
+                let total = quantity * price;
+                totalElement.innerText = `R$ ${total.toFixed(2)}`;
+            }
+
+            updateSummary();
+        }
+
+        // Função para atualizar o resumo
+        function updateSummary() {
+            const beverageItems = document.getElementById('beverages').getElementsByClassName('item');
+            const snackItems = document.getElementById('snacks').getElementsByClassName('item');
+
+            let totalBeverages = 0;
+            let totalSnacks = 0;
+
+            for (let item of beverageItems) {
+                totalBeverages += parseFloat(item.getElementsByClassName('total')[0].innerText.replace('R$ ', '').replace(',', '.'));
+            }
+
+            for (let item of snackItems) {
+                totalSnacks += parseFloat(item.getElementsByClassName('total')[0].innerText.replace('R$ ', '').replace(',', '.'));
+            }
+
+            document.getElementById('totalBeverages').innerText = `R$ ${totalBeverages.toFixed(2)}`;
+            document.getElementById('totalSnacks').innerText = `R$ ${totalSnacks.toFixed(2)}`;
+            document.getElementById('totalCost').innerText = `R$ ${(totalBeverages + totalSnacks).toFixed(2)}`;
+        }
+
+        // Variáveis globais para armazenar o estado
+        let apartmentNumber;
+        let beverageItems;
+        let snackItems;
+
+        // Função para enviar via WhatsApp
+        function sendWhatsApp() {
+            apartmentNumber = document.getElementById('apartmentNumber').value.trim();
+
+            if (!apartmentNumber) {
+                alert("Por favor, insira o número do apartamento.");
+                return;
+            }
+
+            beverageItems = document.getElementById('beverages').getElementsByClassName('item');
+            snackItems = document.getElementById('snacks').getElementsByClassName('item');
+
+            document.getElementById('confirmationModal').style.display = 'flex';
+        }
+
+        // Função para confirmar a saída
+        document.getElementById('confirmExit').onclick = function() {
+            sendMessage(true);
+        };
+
+        // Função para confirmar a arrumação
+        document.getElementById('confirmCleaning').onclick = function() {
+            sendMessage(false);
+        };
+
+        // Função para enviar a mensagem
+        async function sendMessage(isExit) {
+            const status = isExit ? ' (Saída)' : ' (Arrumação)';
+            
+            // Coleta os dados do consumo
+            const consumptionData = {
+                apartmentNumber: apartmentNumber,
+                status: isExit ? 'exit' : 'cleaning',
+                date: new Date().toISOString(),
+                beverages: [],
+                snacks: [],
+                totalCost: parseFloat(document.getElementById('totalCost').innerText.replace('R$ ', '').replace(',', '.'))
+            };
+
+            // Coleta os itens de bebidas
+            for (let item of beverageItems) {
+                const name = item.getElementsByTagName('span')[0].innerText;
+                const quantity = parseInt(item.getElementsByClassName('quantity')[0].innerText);
+                const price = parseFloat(item.getElementsByClassName('total')[0].innerText.replace('R$ ', '').replace(',', '.'));
+                
+                if (quantity > 0) {
+                    consumptionData.beverages.push({
+                        name: name,
+                        quantity: quantity,
+                        unitPrice: price / quantity,
+                        totalPrice: price
+                    });
+                }
+            }
+
+            // Coleta os itens de snacks
+            for (let item of snackItems) {
+                const name = item.getElementsByTagName('span')[0].innerText;
+                const quantity = parseInt(item.getElementsByClassName('quantity')[0].innerText);
+                const price = parseFloat(item.getElementsByClassName('total')[0].innerText.replace('R$ ', '').replace(',', '.'));
+                
+                if (quantity > 0) {
+                    consumptionData.snacks.push({
+                        name: name,
+                        quantity: quantity,
+                        unitPrice: price / quantity,
+                        totalPrice: price
+                    });
+                }
+            }
+
+            try {
+                // Mostra loading
+                document.getElementById('loading').style.display = 'block';
+                
+                // Salva os dados na API
+                await saveConsumptionToAPI(consumptionData);
+                
+                // Prepara mensagem para WhatsApp
+                let message = `*Uh: ${apartmentNumber}${status} - Frigobar* \n\n`;
+
+                for (let item of beverageItems) {
+                    const name = item.getElementsByTagName('span')[0].innerText;
+                    const quantity = item.getElementsByClassName('quantity')[0].innerText;
+                    if (quantity > 0) {
+                        message += `*${quantity}* ${name}\n`;
+                    }
+                }
+
+                for (let item of snackItems) {
+                    const name = item.getElementsByTagName('span')[0].innerText;
+                    const quantity = item.getElementsByClassName('quantity')[0].innerText;
+                    if (quantity > 0) {
+                        message += `*${quantity}* ${name}\n`;
+                    }
+                }
+
+                const totalCost = document.getElementById('totalCost').innerText;
+                message += `\n*Custo Total: ${totalCost}*`;
+
+                // Fecha o modal e esconde loading
+                document.getElementById('confirmationModal').style.display = 'none';
+                document.getElementById('loading').style.display = 'none';
+
+                // Abre o WhatsApp com a mensagem
+                const encodedMessage = encodeURIComponent(message);
+                const whatsappUrl = 'whatsapp://send?text=' + encodedMessage;
+                window.open(whatsappUrl, '_blank');
+                
+                // Reseta os contadores após envio bem-sucedido
+                resetCounters();
+                
+            } catch (error) {
+                document.getElementById('loading').style.display = 'none';
+                document.getElementById('confirmationModal').style.display = 'none';
+                
+                if (error.message.includes('localmente')) {
+                    alert('Dados salvos localmente. Serão sincronizados quando a conexão for restabelecida.');
+                    resetCounters();
+                } else {
+                    alert('Erro ao salvar os dados. Tente novamente.');
+                }
+                console.error('Erro:', error);
+            }
+        }
+
+        // Função para resetar os contadores
+        function resetCounters() {
+            const allItems = document.querySelectorAll('.item');
+            allItems.forEach(item => {
+                item.getElementsByClassName('quantity')[0].innerText = '0';
+                item.getElementsByClassName('total')[0].innerText = 'R$ 0.00';
+            });
+            updateSummary();
+        }
+
+        // =============================================
+        // INICIALIZAÇÃO DA APLICAÇÃO
+        // =============================================
+
+        // Função para inicializar o app
+        async function initializeApp() {
+            try {
+                // Testa conexão com a API
+                await testAPIConnection();
+                
+                // Carrega itens
+                const itemsData = await loadItemsFromAPI();
+                renderItems(itemsData);
+                
+                // Carrega apartamentos
+                const apartmentsData = await loadApartmentsFromAPI();
+                renderApartments(apartmentsData);
+                
+                // Configura botão de mostrar apartamentos
+                document.getElementById('show-apartments').onclick = () => {
+                    const apartmentList = document.getElementById('apartment-list');
+                    apartmentList.style.display = apartmentList.style.display === 'none' ? 'block' : 'none';
+                };
+                
+            } catch (error) {
+                console.error('Erro na inicialização:', error);
+            }
+        }
+
+        // Lógica para o botão de instalação do aplicativo
+        let deferredPrompt;
+        const installButton = document.getElementById('install-button');
+
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deferredPrompt = event;
+            installButton.style.display = 'block';
+        });
+
+        installButton.addEventListener('click', () => {
+            installButton.style.display = 'none';
+            deferredPrompt.prompt();
+            deferredPrompt.userChoice.then((choiceResult) => {
+                if (choiceResult.outcome === 'accepted') {
+                    console.log('Usuário aceitou a instalação da aplicação');
+                } else {
+                    console.log('Usuário recusou a instalação da aplicação');
+                }
+                deferredPrompt = null;
+            });
+        });
+
+        // Inicializa a aplicação quando a página carrega
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
