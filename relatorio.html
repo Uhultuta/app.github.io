@@ -1,0 +1,1303 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diário de Caixa - Gerador de Planilha</title>
+    <style>
+        :root {
+            --primary-color: #2c3e50;
+            --secondary-color: #3498db;
+            --light-color: #ecf0f1;
+            --border-color: #bdc3c7;
+            --success-color: #27ae60;
+            --warning-color: #e67e22;
+            --cielo-color: #009CDE;
+            --getnet-color: #ED1C24;
+            --b2b-color: #9b59b6;
+        }
+        
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        h1 {
+            color: var(--primary-color);
+            margin-bottom: 10px;
+        }
+        
+        .app-description {
+            color: #7f8c8d;
+            font-size: 1.1rem;
+        }
+        
+        .app-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        
+        .input-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        .preview-section {
+            flex: 2;
+            min-width: 600px;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 16px;
+        }
+        
+        .readonly-field {
+            background-color: #f8f9fa;
+            color: #6c757d;
+            cursor: not-allowed;
+        }
+        
+        .editable-field {
+            background-color: #fff;
+            color: #333;
+        }
+        
+        .btn-edit {
+            background-color: #f39c12;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        button {
+            background-color: var(--secondary-color);
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: background-color 0.3s;
+            margin-top: 10px;
+        }
+        
+        button:hover {
+            background-color: #2980b9;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        th, td {
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            text-align: left;
+        }
+        
+        th {
+            background-color: var(--primary-color);
+            color: white;
+            font-weight: 600;
+        }
+        
+        tr:nth-child(even) {
+            background-color: #f2f2f2;
+        }
+        
+        .total-row {
+            font-weight: bold;
+            background-color: #e8f4fc !important;
+        }
+        
+        .section-header {
+            background-color: #34495e !important;
+            color: white;
+        }
+        
+        .currency-input {
+            position: relative;
+        }
+        
+        .currency-input::before {
+            content: "R$";
+            position: absolute;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #7f8c8d;
+        }
+        
+        .currency-input input {
+            padding-left: 35px;
+        }
+        
+        .export-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .export-buttons button {
+            flex: 1;
+        }
+        
+        .btn-print {
+            background-color: var(--success-color);
+        }
+        
+        .btn-print:hover {
+            background-color: #219653;
+        }
+        
+        .btn-pdf {
+            background-color: #e74c3c;
+        }
+        
+        .btn-pdf:hover {
+            background-color: #c0392b;
+        }
+        
+        .btn-excel {
+            background-color: #27ae60;
+        }
+        
+        .btn-excel:hover {
+            background-color: #219653;
+        }
+        
+        .btn-resumo {
+            background-color: #9b59b6;
+        }
+        
+        .btn-resumo:hover {
+            background-color: #8e44ad;
+        }
+        
+        .btn-adicionar {
+            background-color: var(--success-color);
+            width: 100%;
+        }
+        
+        .btn-adicionar:hover {
+            background-color: #219653;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: 30px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal h3 {
+            margin-bottom: 20px;
+            color: var(--primary-color);
+            text-align: center;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .modal-buttons button {
+            flex: 1;
+            margin-top: 0;
+        }
+        
+        .btn-credito {
+            background-color: var(--success-color);
+        }
+        
+        .btn-debito {
+            background-color: var(--warning-color);
+        }
+        
+        .btn-cielo {
+            background-color: var(--cielo-color);
+        }
+        
+        .btn-getnet {
+            background-color: var(--getnet-color);
+        }
+        
+        .btn-b2b {
+            background-color: var(--b2b-color);
+        }
+        
+        .cartao-item {
+            background-color: #f8f9fa;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            position: relative;
+        }
+        
+        .cartao-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+        
+        .cartao-titulo {
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .btn-remover, .btn-editar-cartao {
+            background-color: #e74c3c;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+        
+        .btn-editar-cartao {
+            background-color: #3498db;
+        }
+        
+        .cartao-info {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        
+        .info-badge {
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .badge-bandeira {
+            background-color: #d4e6f1;
+            color: var(--secondary-color);
+        }
+        
+        .badge-credito {
+            background-color: #d4f1d4;
+            color: var(--success-color);
+        }
+        
+        .badge-debito {
+            background-color: #fbe5c9;
+            color: var(--warning-color);
+        }
+        
+        .badge-cielo {
+            background-color: #d4e6f1;
+            color: var(--cielo-color);
+        }
+        
+        .badge-getnet {
+            background-color: #f9d6d8;
+            color: var(--getnet-color);
+        }
+        
+        .badge-ecommerce {
+            background-color: #e8d4f1;
+            color: #8e44ad;
+        }
+        
+        .badge-b2b {
+            background-color: #e8d4f1;
+            color: var(--b2b-color);
+        }
+        
+        .cartoes-container {
+            max-height: 400px;
+            overflow-y: auto;
+            margin-bottom: 15px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 10px;
+        }
+        
+        .senha-modal {
+            text-align: center;
+        }
+        
+        .senha-input {
+            margin: 15px 0;
+        }
+        
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            .preview-section, .preview-section * {
+                visibility: visible;
+            }
+            .preview-section {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                box-shadow: none;
+            }
+            .export-buttons {
+                display: none;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .app-container {
+                flex-direction: column;
+            }
+            
+            .input-section, .preview-section {
+                min-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Diário de Caixa - Gerador de Planilha</h1>
+            <p class="app-description">Preencha os valores abaixo para gerar automaticamente o relatório financeiro</p>
+        </header>
+        
+        <div class="app-container">
+            <section class="input-section">
+                <h2>Entrada de Dados</h2>
+                
+                <div class="form-group">
+                    <label for="data">Data:</label>
+                    <input type="date" id="data" value="2025-11-06">
+                </div>
+                
+                <div class="form-group">
+                    <label for="movimento">Movimento: <button class="btn-edit" data-field="movimento">Editar</button></label>
+                    <div class="currency-input">
+                        <input type="number" id="movimento" step="0.01" placeholder="0,00" class="readonly-field" readonly>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="faturamento">Faturamento:</label>
+                    <div class="currency-input">
+                        <input type="number" id="faturamento" step="0.01" placeholder="0,00">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="pgto-direto">Pagamento Direto: <button class="btn-edit" data-field="pgto-direto">Editar</button></label>
+                    <div class="currency-input">
+                        <input type="number" id="pgto-direto" step="0.01" placeholder="0,00" class="readonly-field" readonly>
+                    </div>
+                </div>
+                
+                <h3 style="margin-top: 20px; margin-bottom: 10px;">Pagamentos com Cartão</h3>
+                
+                <button id="btn-adicionar-cartao" class="btn-adicionar">+ Adicionar Pagamento com Cartão</button>
+                
+                <div class="cartoes-container" id="cartoes-container">
+                    <!-- Os cartões adicionados aparecerão aqui -->
+                </div>
+                
+                <h3 style="margin-top: 20px; margin-bottom: 10px;">Outros Pagamentos</h3>
+                
+                <div class="form-group">
+                    <label for="deposito">Depósito:</label>
+                    <div class="currency-input">
+                        <input type="number" id="deposito" step="0.01" placeholder="0,00">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="dinheiro">Dinheiro:</label>
+                    <div class="currency-input">
+                        <input type="number" id="dinheiro" step="0.01" placeholder="0,00">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="faturamento-total">Faturamento Total:</label>
+                    <div class="currency-input">
+                        <input type="number" id="faturamento-total" step="0.01" placeholder="0,00">
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="auditor">Auditor:</label>
+                    <input type="text" id="auditor" placeholder="Nome do auditor">
+                </div>
+                
+                <div class="form-group">
+                    <label for="observacao">Observação:</label>
+                    <textarea id="observacao" rows="3" style="width: 100%; padding: 10px; border: 1px solid #bdc3c7; border-radius: 4px;"></textarea>
+                </div>
+                
+                <button id="gerar-planilha">Gerar Planilha</button>
+            </section>
+            
+            <section class="preview-section">
+                <h2>Visualização da Planilha</h2>
+                <div id="planilha-container">
+                    <!-- A planilha será gerada aqui -->
+                </div>
+                
+                <div class="export-buttons">
+                    <button id="btn-resumo" class="btn-resumo">Imprimir Resumo</button>
+                    <button id="btn-excel" class="btn-excel">Exportar Excel</button>
+                </div>
+            </section>
+        </div>
+    </div>
+
+    <!-- Modal para adicionar cartão -->
+    <div class="modal" id="modal-adicionar-cartao">
+        <div class="modal-content">
+            <h3 id="modal-titulo-cartao">Adicionar Pagamento com Cartão</h3>
+            
+            <div class="form-group">
+                <label for="bandeira-cartao">Bandeira do Cartão:</label>
+                <select id="bandeira-cartao">
+                    <option value="">Selecione a bandeira</option>
+                    <option value="VISA">VISA</option>
+                    <option value="MASTERCARD">MASTERCARD</option>
+                    <option value="ELO">ELO</option>
+                    <option value="AMEX">AMEX</option>
+                    <option value="DINERS">DINERS</option>
+                    <option value="HIPERCARD">HIPERCARD</option>
+                </select>
+            </div>
+            
+            <div class="form-group">
+                <label for="valor-cartao">Valor:</label>
+                <div class="currency-input">
+                    <input type="number" id="valor-cartao" step="0.01" placeholder="0,00">
+                </div>
+            </div>
+            
+            <div class="modal-buttons">
+                <button id="btn-confirmar-cartao">Confirmar</button>
+                <button id="btn-cancelar-cartao" style="background-color: #95a5a6;">Cancelar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para seleção da maquineta -->
+    <div class="modal" id="modal-maquineta">
+        <div class="modal-content">
+            <h3>Selecionar Maquineta</h3>
+            <p>Qual maquineta foi utilizada para o pagamento?</p>
+            
+            <div class="modal-buttons">
+                <button id="btn-cielo" class="btn-cielo">CIELO</button>
+                <button id="btn-getnet" class="btn-getnet">GETNET</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para seleção B2B -->
+    <div class="modal" id="modal-b2b">
+        <div class="modal-content">
+            <h3>Plataforma B2B</h3>
+            <p>O cartão é da plataforma B2B?</p>
+            
+            <div class="modal-buttons">
+                <button id="btn-sim-b2b" class="btn-b2b">Sim</button>
+                <button id="btn-nao-b2b">Não</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para seleção do tipo de cartão -->
+    <div class="modal" id="modal-tipo-cartao">
+        <div class="modal-content">
+            <h3>Selecionar Tipo de Cartão</h3>
+            <p>Selecione o tipo de transação:</p>
+            
+            <div class="modal-buttons">
+                <button id="btn-credito" class="btn-credito">Crédito</button>
+                <button id="btn-debito" class="btn-debito">Débito</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para seleção de e-commerce -->
+    <div class="modal" id="modal-ecommerce">
+        <div class="modal-content">
+            <h3>Transação E-commerce?</h3>
+            <p>A transação foi realizada via e-commerce?</p>
+            
+            <div class="modal-buttons">
+                <button id="btn-sim-ecommerce">Sim</button>
+                <button id="btn-nao-ecommerce">Não</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal para senha de edição -->
+    <div class="modal" id="modal-senha">
+        <div class="modal-content senha-modal">
+            <h3 id="modal-titulo-senha">Digite a Senha para Editar</h3>
+            <p id="modal-descricao-senha">Para editar este campo, digite a senha:</p>
+            
+            <div class="form-group senha-input">
+                <input type="password" id="senha-edicao" placeholder="Senha">
+            </div>
+            
+            <div class="modal-buttons">
+                <button id="btn-confirmar-senha">Confirmar</button>
+                <button id="btn-cancelar-senha" style="background-color: #95a5a6;">Cancelar</button>
+            </div>
+            
+            <p id="senha-erro" style="color: #e74c3c; margin-top: 10px; display: none;">Senha incorreta!</p>
+        </div>
+    </div>
+
+    <script>
+        // Dados da estrutura da planilha
+        const categorias = ['B2B', 'E-COMERCE', 'CIELO', 'GETNET', 'SUBTOTAL', 'ERBON', 'STATUS'];
+        
+        // Armazenar informações dos cartões
+        let cartoes = [];
+        let cartaoAtual = null;
+        let campoEditando = null;
+        let editandoCartaoId = null;
+        const SENHA_EDICAO = "edtar"; // Senha para editar campos protegidos
+        const SENHA_CARTAO = "cartao"; // Senha para editar cartões
+        
+        // Inicializar eventos
+        function inicializarEventos() {
+            // Botão para adicionar cartão
+            document.getElementById('btn-adicionar-cartao').addEventListener('click', function() {
+                abrirModalAdicionarCartao();
+            });
+            
+            // Eventos do modal de adicionar cartão
+            document.getElementById('btn-confirmar-cartao').addEventListener('click', confirmarCartao);
+            document.getElementById('btn-cancelar-cartao').addEventListener('click', function() {
+                document.getElementById('modal-adicionar-cartao').style.display = 'none';
+            });
+            
+            // Eventos do modal de maquineta
+            document.getElementById('btn-cielo').addEventListener('click', function() {
+                selecionarMaquineta('CIELO');
+            });
+            
+            document.getElementById('btn-getnet').addEventListener('click', function() {
+                selecionarMaquineta('GETNET');
+            });
+            
+            // Eventos do modal B2B
+            document.getElementById('btn-sim-b2b').addEventListener('click', function() {
+                selecionarB2B(true);
+            });
+            
+            document.getElementById('btn-nao-b2b').addEventListener('click', function() {
+                selecionarB2B(false);
+            });
+            
+            // Eventos do modal de tipo de cartão
+            document.getElementById('btn-credito').addEventListener('click', function() {
+                selecionarTipoCartao('credito');
+            });
+            
+            document.getElementById('btn-debito').addEventListener('click', function() {
+                selecionarTipoCartao('debito');
+            });
+            
+            // Eventos do modal de e-commerce
+            document.getElementById('btn-sim-ecommerce').addEventListener('click', function() {
+                selecionarEcommerce(true);
+            });
+            
+            document.getElementById('btn-nao-ecommerce').addEventListener('click', function() {
+                selecionarEcommerce(false);
+            });
+            
+            // Eventos do modal de senha
+            document.getElementById('btn-confirmar-senha').addEventListener('click', confirmarSenha);
+            document.getElementById('btn-cancelar-senha').addEventListener('click', function() {
+                document.getElementById('modal-senha').style.display = 'none';
+                document.getElementById('senha-edicao').value = '';
+                document.getElementById('senha-erro').style.display = 'none';
+            });
+            
+            // Eventos dos botões de edição
+            document.querySelectorAll('.btn-edit').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const field = this.dataset.field;
+                    abrirModalSenha(field, 'editar campo');
+                });
+            });
+            
+            // Atualizar campos calculados quando valores mudam
+            document.getElementById('faturamento').addEventListener('input', atualizarCamposCalculados);
+            document.getElementById('deposito').addEventListener('input', atualizarCamposCalculados);
+            document.getElementById('dinheiro').addEventListener('input', atualizarCamposCalculados);
+            document.getElementById('faturamento-total').addEventListener('input', atualizarCamposCalculados);
+            
+            // Botão para imprimir resumo
+            document.getElementById('btn-resumo').addEventListener('click', function() {
+                window.print();
+            });
+            
+            // Botão para exportar Excel
+            document.getElementById('btn-excel').addEventListener('click', exportarExcel);
+            
+            // Fechar modais ao clicar fora deles
+            window.addEventListener('click', function(event) {
+                const modals = [
+                    document.getElementById('modal-adicionar-cartao'),
+                    document.getElementById('modal-maquineta'),
+                    document.getElementById('modal-b2b'),
+                    document.getElementById('modal-tipo-cartao'),
+                    document.getElementById('modal-ecommerce'),
+                    document.getElementById('modal-senha')
+                ];
+                
+                modals.forEach(modal => {
+                    if (event.target === modal) {
+                        modal.style.display = 'none';
+                        if (modal.id === 'modal-senha') {
+                            document.getElementById('senha-edicao').value = '';
+                            document.getElementById('senha-erro').style.display = 'none';
+                        }
+                    }
+                });
+            });
+        }
+        
+        // Abrir modal para adicionar cartão
+        function abrirModalAdicionarCartao(cartao = null) {
+            if (cartao) {
+                // Modo edição
+                document.getElementById('modal-titulo-cartao').textContent = 'Editar Pagamento com Cartão';
+                document.getElementById('bandeira-cartao').value = cartao.bandeira;
+                document.getElementById('valor-cartao').value = cartao.valor;
+                editandoCartaoId = cartao.id;
+            } else {
+                // Modo adição
+                document.getElementById('modal-titulo-cartao').textContent = 'Adicionar Pagamento com Cartão';
+                document.getElementById('bandeira-cartao').value = '';
+                document.getElementById('valor-cartao').value = '';
+                editandoCartaoId = null;
+            }
+            document.getElementById('modal-adicionar-cartao').style.display = 'flex';
+        }
+        
+        // Confirmar dados do cartão
+        function confirmarCartao() {
+            const bandeira = document.getElementById('bandeira-cartao').value;
+            const valor = document.getElementById('valor-cartao').value;
+            
+            if (!bandeira) {
+                alert('Por favor, selecione a bandeira do cartão.');
+                return;
+            }
+            
+            if (!valor || parseFloat(valor) <= 0) {
+                alert('Por favor, insira um valor válido para o cartão.');
+                return;
+            }
+            
+            if (editandoCartaoId) {
+                // Modo edição - atualizar cartão existente
+                const cartaoIndex = cartoes.findIndex(c => c.id === editandoCartaoId);
+                if (cartaoIndex !== -1) {
+                    cartoes[cartaoIndex].bandeira = bandeira;
+                    cartoes[cartaoIndex].valor = valor;
+                    atualizarListaCartoes();
+                    atualizarCamposCalculados();
+                }
+                document.getElementById('modal-adicionar-cartao').style.display = 'none';
+                editandoCartaoId = null;
+            } else {
+                // Modo adição - criar novo cartão
+                cartaoAtual = {
+                    id: Date.now(), // ID único
+                    bandeira: bandeira,
+                    valor: valor,
+                    maquineta: null,
+                    b2b: false,
+                    tipo: null,
+                    ecommerce: false
+                };
+                
+                document.getElementById('modal-adicionar-cartao').style.display = 'none';
+                abrirModalB2B();
+            }
+        }
+        
+        // Abrir modal para seleção B2B
+        function abrirModalB2B() {
+            document.getElementById('modal-b2b').style.display = 'flex';
+        }
+        
+        // Selecionar se é B2B ou não
+        function selecionarB2B(b2b) {
+            cartaoAtual.b2b = b2b;
+            document.getElementById('modal-b2b').style.display = 'none';
+            abrirModalMaquineta();
+        }
+        
+        // Abrir modal para seleção da maquineta
+        function abrirModalMaquineta() {
+            document.getElementById('modal-maquineta').style.display = 'flex';
+        }
+        
+        // Selecionar maquineta (CIELO ou GETNET)
+        function selecionarMaquineta(maquineta) {
+            cartaoAtual.maquineta = maquineta;
+            document.getElementById('modal-maquineta').style.display = 'none';
+            abrirModalTipoCartao();
+        }
+        
+        // Abrir modal para seleção do tipo de cartão
+        function abrirModalTipoCartao() {
+            document.getElementById('modal-tipo-cartao').style.display = 'flex';
+        }
+        
+        // Selecionar tipo de cartão (crédito ou débito)
+        function selecionarTipoCartao(tipo) {
+            cartaoAtual.tipo = tipo;
+            document.getElementById('modal-tipo-cartao').style.display = 'none';
+            
+            // Se for crédito, perguntar se é e-commerce
+            if (tipo === 'credito') {
+                abrirModalEcommerce();
+            } else {
+                finalizarAdicaoCartao();
+            }
+        }
+        
+        // Abrir modal para seleção de e-commerce
+        function abrirModalEcommerce() {
+            document.getElementById('modal-ecommerce').style.display = 'flex';
+        }
+        
+        // Selecionar se é e-commerce ou não
+        function selecionarEcommerce(ecommerce) {
+            cartaoAtual.ecommerce = ecommerce;
+            document.getElementById('modal-ecommerce').style.display = 'none';
+            finalizarAdicaoCartao();
+        }
+        
+        // Finalizar a adição do cartão
+        function finalizarAdicaoCartao() {
+            cartoes.push(cartaoAtual);
+            atualizarListaCartoes();
+            atualizarCamposCalculados();
+            cartaoAtual = null;
+        }
+        
+        // Atualizar a lista de cartões na interface
+        function atualizarListaCartoes() {
+            const container = document.getElementById('cartoes-container');
+            container.innerHTML = '';
+            
+            if (cartoes.length === 0) {
+                container.innerHTML = '<p style="text-align: center; color: #7f8c8d; font-style: italic;">Nenhum pagamento com cartão adicionado</p>';
+                return;
+            }
+            
+            cartoes.forEach(cartao => {
+                const cartaoElement = document.createElement('div');
+                cartaoElement.className = 'cartao-item';
+                cartaoElement.dataset.id = cartao.id;
+                
+                let infoHTML = '';
+                if (cartao.tipo === 'credito') {
+                    infoHTML = `
+                        <span class="info-badge badge-credito">CRÉDITO</span>
+                        <span class="info-badge badge-ecommerce">${cartao.ecommerce ? 'E-COMMERCE' : 'PRESENCIAL'}</span>
+                    `;
+                } else {
+                    infoHTML = `<span class="info-badge badge-debito">DÉBITO</span>`;
+                }
+                
+                if (cartao.b2b) {
+                    infoHTML += `<span class="info-badge badge-b2b">B2B</span>`;
+                }
+                
+                cartaoElement.innerHTML = `
+                    <div class="cartao-header">
+                        <div class="cartao-titulo">${cartao.bandeira}</div>
+                        <div>
+                            <button class="btn-editar-cartao" data-id="${cartao.id}">Editar</button>
+                            <button class="btn-remover" data-id="${cartao.id}">Remover</button>
+                        </div>
+                    </div>
+                    <div>Valor: R$ ${formatarMoeda(cartao.valor)}</div>
+                    <div class="cartao-info">
+                        <span class="info-badge badge-bandeira">${cartao.bandeira}</span>
+                        <span class="info-badge ${cartao.maquineta === 'CIELO' ? 'badge-cielo' : 'badge-getnet'}">${cartao.maquineta}</span>
+                        ${infoHTML}
+                    </div>
+                `;
+                
+                container.appendChild(cartaoElement);
+            });
+            
+            // Adicionar eventos de remoção
+            document.querySelectorAll('.btn-remover').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    removerCartao(id);
+                });
+            });
+            
+            // Adicionar eventos de edição
+            document.querySelectorAll('.btn-editar-cartao').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = parseInt(this.dataset.id);
+                    abrirModalSenha(id, 'editar cartão');
+                });
+            });
+        }
+        
+        // Remover cartão da lista
+        function removerCartao(id) {
+            cartoes = cartoes.filter(cartao => cartao.id !== id);
+            atualizarListaCartoes();
+            atualizarCamposCalculados();
+        }
+        
+        // Abrir modal de senha para editar campo protegido
+        function abrirModalSenha(id, tipo) {
+            campoEditando = id;
+            
+            if (tipo === 'editar cartão') {
+                document.getElementById('modal-titulo-senha').textContent = 'Digite a Senha para Editar Cartão';
+                document.getElementById('modal-descricao-senha').textContent = 'Para editar este cartão, digite a senha:';
+            } else {
+                document.getElementById('modal-titulo-senha').textContent = 'Digite a Senha para Editar';
+                document.getElementById('modal-descricao-senha').textContent = 'Para editar este campo, digite a senha:';
+            }
+            
+            document.getElementById('modal-senha').style.display = 'flex';
+            document.getElementById('senha-edicao').focus();
+        }
+        
+        // Confirmar senha para editar campo
+        function confirmarSenha() {
+            const senha = document.getElementById('senha-edicao').value;
+            let senhaCorreta = false;
+            
+            // Verificar se é edição de cartão ou campo
+            if (typeof campoEditando === 'number') {
+                // Edição de cartão
+                senhaCorreta = senha === SENHA_CARTAO;
+                if (senhaCorreta) {
+                    const cartao = cartoes.find(c => c.id === campoEditando);
+                    if (cartao) {
+                        abrirModalAdicionarCartao(cartao);
+                    }
+                }
+            } else {
+                // Edição de campo
+                senhaCorreta = senha === SENHA_EDICAO;
+                if (senhaCorreta) {
+                    const campo = document.getElementById(campoEditando);
+                    campo.classList.remove('readonly-field');
+                    campo.classList.add('editable-field');
+                    campo.readOnly = false;
+                    campo.focus();
+                }
+            }
+            
+            if (senhaCorreta) {
+                document.getElementById('modal-senha').style.display = 'none';
+                document.getElementById('senha-edicao').value = '';
+                document.getElementById('senha-erro').style.display = 'none';
+                campoEditando = null;
+            } else {
+                // Senha incorreta
+                document.getElementById('senha-erro').style.display = 'block';
+                document.getElementById('senha-edicao').value = '';
+                document.getElementById('senha-edicao').focus();
+            }
+        }
+        
+        // Atualizar campos calculados automaticamente
+        function atualizarCamposCalculados() {
+            // Calcular Pagamento Direto (soma de todos os cartões + depósito + dinheiro)
+            let totalCartoes = 0;
+            cartoes.forEach(cartao => {
+                totalCartoes += parseFloat(cartao.valor) || 0;
+            });
+            
+            const deposito = parseFloat(document.getElementById('deposito').value) || 0;
+            const dinheiro = parseFloat(document.getElementById('dinheiro').value) || 0;
+            
+            const pgtoDireto = totalCartoes + deposito + dinheiro;
+            document.getElementById('pgto-direto').value = pgtoDireto.toFixed(2);
+            
+            // Calcular Movimento (Pagamento Direto + Faturamento)
+            const faturamento = parseFloat(document.getElementById('faturamento').value) || 0;
+            const movimento = pgtoDireto + faturamento;
+            document.getElementById('movimento').value = movimento.toFixed(2);
+        }
+        
+        // Exportar para Excel
+        function exportarExcel() {
+            // Criar dados para exportação
+            const data = document.getElementById('data').value;
+            const dataFormatada = formatarData(data);
+            const movimento = document.getElementById('movimento').value || '0';
+            const faturamento = document.getElementById('faturamento').value || '0';
+            const pgtoDireto = document.getElementById('pgto-direto').value || '0';
+            const deposito = document.getElementById('deposito').value || '0';
+            const dinheiro = document.getElementById('dinheiro').value || '0';
+            const faturamentoTotal = document.getElementById('faturamento-total').value || '0';
+            const auditor = document.getElementById('auditor').value || '';
+            const observacao = document.getElementById('observacao').value || '';
+            
+            // Criar conteúdo CSV
+            let csvContent = "DATA:," + dataFormatada + ",MOVIMENTO,R$ " + formatarMoeda(movimento) + "\r\n";
+            csvContent += ",,FATURAMENTO,R$ " + formatarMoeda(faturamento) + "\r\n";
+            csvContent += ",,PGTO DIRETO,R$ " + formatarMoeda(pgtoDireto) + "\r\n";
+            csvContent += "\r\n";
+            csvContent += "PAGAMENTO," + categorias.join(',') + "\r\n";
+            
+            // Adicionar cartões
+            const cartoesPorBandeira = {};
+            cartoes.forEach(cartao => {
+                if (!cartoesPorBandeira[cartao.bandeira]) {
+                    cartoesPorBandeira[cartao.bandeira] = [];
+                }
+                cartoesPorBandeira[cartao.bandeira].push(cartao);
+            });
+            
+            Object.keys(cartoesPorBandeira).forEach(bandeira => {
+                const cartoesBandeira = cartoesPorBandeira[bandeira];
+                
+                // Calcular totais por categoria
+                const totais = {
+                    'B2B': 0,
+                    'E-COMERCE': 0,
+                    'CIELO': 0,
+                    'GETNET': 0
+                };
+                
+                cartoesBandeira.forEach(cartao => {
+                    // Distribuir o valor pelas categorias apropriadas
+                    if (cartao.b2b) {
+                        totais['B2B'] += parseFloat(cartao.valor);
+                    } else if (cartao.ecommerce) {
+                        totais['E-COMERCE'] += parseFloat(cartao.valor);
+                    } else {
+                        totais[cartao.maquineta] += parseFloat(cartao.valor);
+                    }
+                });
+                
+                // Calcular subtotal
+                totais['SUBTOTAL'] = totais['B2B'] + totais['E-COMERCE'] + totais['CIELO'] + totais['GETNET'];
+                
+                csvContent += bandeira + ",";
+                csvContent += "R$ " + formatarMoeda(totais['B2B']) + ",";
+                csvContent += "R$ " + formatarMoeda(totais['E-COMERCE']) + ",";
+                csvContent += "R$ " + formatarMoeda(totais['CIELO']) + ",";
+                csvContent += "R$ " + formatarMoeda(totais['GETNET']) + ",";
+                csvContent += "R$ " + formatarMoeda(totais['SUBTOTAL']) + ",-\r\n";
+            });
+            
+            // Adicionar subtotal geral
+            const subtotalGeral = calcularSubtotalGeral();
+            csvContent += "SUBTOTAL,";
+            for (let i = 0; i < 5; i++) {
+                csvContent += "R$ " + formatarMoeda(subtotalGeral) + ",";
+            }
+            csvContent += "-\r\n";
+            
+            // Adicionar outras formas de pagamento
+            csvContent += "DEPOSITO,R$ " + formatarMoeda(deposito) + "\r\n";
+            csvContent += "DINHEIRO,R$ " + formatarMoeda(dinheiro) + "\r\n";
+            csvContent += "FATURAMENTO,R$ " + formatarMoeda(faturamentoTotal) + "\r\n";
+            
+            // Calcular total
+            const total = calcularTotal(deposito, dinheiro, faturamentoTotal);
+            csvContent += "TOTAL,R$ " + formatarMoeda(total) + "\r\n";
+            
+            // Adicionar auditor e observação
+            csvContent += "AUDITOR:," + auditor + "\r\n";
+            csvContent += "OBSERVAÇÃO:," + observacao + "\r\n";
+            csvContent += "\r\n";
+            csvContent += "DIARIO DE CAIXA\r\n";
+            csvContent += "C R É D I T O   D É B I T O   O U T R O S\r\n";
+            
+            // Criar e baixar arquivo
+            const blob = new Blob(["\uFEFF" + csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", "diario_caixa_" + dataFormatada.replace(/\//g, '-') + ".csv");
+            link.style.visibility = 'hidden';
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Gerar a planilha com base nos dados inseridos
+        function gerarPlanilha() {
+            const data = document.getElementById('data').value;
+            const movimento = document.getElementById('movimento').value || '0';
+            const faturamento = document.getElementById('faturamento').value || '0';
+            const pgtoDireto = document.getElementById('pgto-direto').value || '0';
+            const deposito = document.getElementById('deposito').value || '0';
+            const dinheiro = document.getElementById('dinheiro').value || '0';
+            const faturamentoTotal = document.getElementById('faturamento-total').value || '0';
+            const auditor = document.getElementById('auditor').value || '';
+            const observacao = document.getElementById('observacao').value || '';
+            
+            // Formatar data
+            const dataFormatada = formatarData(data);
+            
+            // Construir a tabela da planilha
+            let tabelaHTML = `
+                <table>
+                    <tr>
+                        <th>DATA:</th>
+                        <th>${dataFormatada}</th>
+                        <th>MOVIMENTO</th>
+                        <th>R$ ${formatarMoeda(movimento)}</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th>FATURAMENTO</th>
+                        <th>R$ ${formatarMoeda(faturamento)}</th>
+                    </tr>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                        <th>PGTO DIRETO</th>
+                        <th>R$ ${formatarMoeda(pgtoDireto)}</th>
+                    </tr>
+                    <tr class="section-header">
+                        <th>PAGAMENTO</th>
+                        ${categorias.map(cat => `<th>${cat}</th>`).join('')}
+                    </tr>
+            `;
+            
+            // Agrupar cartões por bandeira
+            const cartoesPorBandeira = {};
+            cartoes.forEach(cartao => {
+                if (!cartoesPorBandeira[cartao.bandeira]) {
+                    cartoesPorBandeira[cartao.bandeira] = [];
+                }
+                cartoesPorBandeira[cartao.bandeira].push(cartao);
+            });
+            
+            // Adicionar linhas para cada bandeira
+            Object.keys(cartoesPorBandeira).forEach(bandeira => {
+                const cartoesBandeira = cartoesPorBandeira[bandeira];
+                
+                // Calcular totais por categoria
+                const totais = {
+                    'B2B': 0,
+                    'E-COMERCE': 0,
+                    'CIELO': 0,
+                    'GETNET': 0
+                };
+                
+                cartoesBandeira.forEach(cartao => {
+                    // Distribuir o valor pelas categorias apropriadas
+                    if (cartao.b2b) {
+                        totais['B2B'] += parseFloat(cartao.valor);
+                    } else if (cartao.ecommerce) {
+                        totais['E-COMERCE'] += parseFloat(cartao.valor);
+                    } else {
+                        totais[cartao.maquineta] += parseFloat(cartao.valor);
+                    }
+                });
+                
+                // Calcular subtotal
+                totais['SUBTOTAL'] = totais['B2B'] + totais['E-COMERCE'] + totais['CIELO'] + totais['GETNET'];
+                
+                tabelaHTML += `
+                    <tr>
+                        <td>${bandeira}</td>
+                        <td>R$ ${formatarMoeda(totais['B2B'])}</td>
+                        <td>R$ ${formatarMoeda(totais['E-COMERCE'])}</td>
+                        <td>R$ ${formatarMoeda(totais['CIELO'])}</td>
+                        <td>R$ ${formatarMoeda(totais['GETNET'])}</td>
+                        <td>R$ ${formatarMoeda(totais['SUBTOTAL'])}</td>
+                        <td>-</td>
+                    </tr>
+                `;
+            });
+            
+            // Adicionar subtotal geral
+            const subtotalGeral = calcularSubtotalGeral();
+            tabelaHTML += `
+                <tr class="total-row">
+                    <td>SUBTOTAL</td>
+                    <td>R$ ${formatarMoeda(subtotalGeral)}</td>
+                    <td>R$ ${formatarMoeda(subtotalGeral)}</td>
+                    <td>R$ ${formatarMoeda(subtotalGeral)}</td>
+                    <td>R$ ${formatarMoeda(subtotalGeral)}</td>
+                    <td>R$ ${formatarMoeda(subtotalGeral)}</td>
+                    <td>-</td>
+                </tr>
+            `;
+            
+            // Adicionar outras formas de pagamento
+            tabelaHTML += `
+                <tr>
+                    <td>DEPOSITO</td>
+                    <td colspan="${categorias.length}">R$ ${formatarMoeda(deposito)}</td>
+                </tr>
+                <tr>
+                    <td>DINHEIRO</td>
+                    <td colspan="${categorias.length}">R$ ${formatarMoeda(dinheiro)}</td>
+                </tr>
+                <tr>
+                    <td>FATURAMENTO</td>
+                    <td colspan="${categorias.length}">R$ ${formatarMoeda(faturamentoTotal)}</td>
+                </tr>
+                <tr class="total-row">
+                    <td>TOTAL</td>
+                    <td colspan="${categorias.length}">R$ ${formatarMoeda(calcularTotal(deposito, dinheiro, faturamentoTotal))}</td>
+                </tr>
+                <tr>
+                    <td>AUDITOR:</td>
+                    <td colspan="${categorias.length}">${auditor}</td>
+                </tr>
+                <tr>
+                    <td>OBSERVAÇÃO:</td>
+                    <td colspan="${categorias.length}">${observacao}</td>
+                </tr>
+                <tr>
+                    <td colspan="${parseInt(categorias.length) + 1}" style="text-align: center; font-weight: bold;">
+                        DIÁRIO DE CAIXA
+                    </td>
+                </tr>
+                <tr>
+                    <td colspan="${parseInt(categorias.length) + 1}" style="text-align: center;">
+                        C R É D I T O &nbsp;&nbsp;&nbsp; D É B I T O &nbsp;&nbsp;&nbsp; O U T R O S
+                    </td>
+                </tr>
+            `;
+            
+            tabelaHTML += '</table>';
+            
+            document.getElementById('planilha-container').innerHTML = tabelaHTML;
+        }
+        
+        // Funções auxiliares
+        function formatarData(data) {
+            if (!data) return '';
+            const partes = data.split('-');
+            return `${partes[2]}/${partes[1]}/${partes[0]}`;
+        }
+        
+        function formatarMoeda(valor) {
+            return parseFloat(valor).toFixed(2).replace('.', ',');
+        }
+        
+        function calcularSubtotalGeral() {
+            let subtotal = 0;
+            cartoes.forEach(cartao => {
+                subtotal += parseFloat(cartao.valor) || 0;
+            });
+            return subtotal;
+        }
+        
+        function calcularTotal(deposito, dinheiro, faturamentoTotal) {
+            return calcularSubtotalGeral() + 
+                   (parseFloat(deposito) || 0) + 
+                   (parseFloat(dinheiro) || 0) + 
+                   (parseFloat(faturamentoTotal) || 0);
+        }
+        
+        // Event Listeners
+        document.getElementById('gerar-planilha').addEventListener('click', gerarPlanilha);
+        
+        // Inicializar a aplicação
+        document.addEventListener('DOMContentLoaded', function() {
+            inicializarEventos();
+            atualizarListaCartoes();
+            atualizarCamposCalculados();
+            
+            // Definir data atual como padrão
+            const hoje = new Date().toISOString().split('T')[0];
+            document.getElementById('data').value = hoje;
+            
+            // Gerar planilha inicial
+            gerarPlanilha();
+        });
+    </script>
+</body>
+</html>
