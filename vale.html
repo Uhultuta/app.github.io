@@ -5,8 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Solicitação de Vale</title>
     <meta name="description" content="Solicite seu vale mensal de forma simples e segura.">
-    <!-- PWA -->
-    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiU29saWNpdGHDp8OjbyBkZSBWYWxlIiwic2hvcnRfbmFtZSI6IlZhbGUgU29sIiwic3RhcnRfdXJsIjoiaHR0cHM6Ly95b3VyZG9tYWluLmNvbSIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QzlYZ2x3YjI5MWNtTjBiM0p3YjNKdmVHMXNhV1FpT3pFMU1EazNNekF3TkRjd0lpQjFhWDBzSUdOdmJTOWlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTla... (ícone completo)">
+    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiU29saWNpdGHDp8OjbyBkZSBWYWxlIiwic2hvcnRfbmFtZSI6IlZhbGUgU29sIiwic3RhcnRfdXJsIjoiaHR0cHM6Ly95b3VyZG9tYWluLmNvbSIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QzlYZ2x3YjI5MWNtTjBiM0p3YjNKdmVHMXNhV1FpT3pFMU1EazNNekF3TkRjd0lpQjFhWDBzSUdOdmJTOWlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0 standby...">
 
     <style>
         :root {
@@ -30,15 +29,15 @@
         .date-info { background:#f0f8ff; padding:15px; border-radius:10px; margin-bottom:25px; border-left:4px solid var(--primary); }
         .btn { background:var(--primary); color:#fff; border:none; padding:12px 25px; border-radius:8px; cursor:pointer; font-size:16px; font-weight:600; transition:all .3s ease; margin:8px 5px; width:100%; max-width:200px; }
         .btn:hover { background:var(--primary-dark); transform:translateY(-2px); box-shadow:0 5px 15px rgba(0,0,0,.1); }
-        .btn:disabled { background:#ccc; cursor:not-allowed; transform:none; box-shadow:none; }
+        .btn:disabled { background:#ccc; cursor:not-allowed; transform:none; box-shadow:none; opacity:0.7; }
         .btn-success { background:var(--success); }
         .btn-success:hover { background:#218838; }
         .btn-secondary { background:var(--gray); }
         .btn-secondary:hover { background:#5a6268; }
         .hidden { display:none; }
         .input-group { margin:20px 0; }
-        input[type=number] { width:100%; padding:12px; border:2px solid var(--border); border-radius:8px; font-size:16px; transition:border .3s; }
-        input[type=number]:focus { border-color:var(--primary); outline:none; }
+        input[type=text], input[type=number] { width:100%; padding:12px; border:2px solid var(--border); border-radius:8px; font-size:16px; transition:border .3s; }
+        input:focus { border-color:var(--primary); outline:none; }
         .message { padding:15px; border-radius:8px; margin:20px 0; font-weight:500; }
         .message-success { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
         .message-info { background:#d1ecf1; color:#0c5460; border:1px solid #bee5eb; }
@@ -51,7 +50,6 @@
         .modal { background:#fff; border-radius:15px; box-shadow:var(--shadow); width:90%; max-width:500px; padding:30px; text-align:center; animation:modalAppear .3s ease-out; }
         @keyframes modalAppear { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:none} }
         .days-left { font-weight:bold; color:var(--primary); font-size:18px; }
-        .login-screen { text-align:center; }
         .login-screen input { margin-bottom:15px; }
         .error { color:var(--danger); font-size:14px; margin-top:5px; display:none; }
         @media (max-width:480px){
@@ -68,7 +66,7 @@
     <div class="logo"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzJhNTI5OCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bS0yIDE1bC01LTUgMS40MS0xLjQxTDEwIDE0LjE3bDcuNTktNy41OUwxOSA4bC05IDl6Ii8+PC9zdmc+" alt="Logo"></div>
     <h1>Sistema de Solicitação de Vale</h1>
 
-    <!-- Login (opcional) -->
+    <!-- Login -->
     <div id="login-screen" class="login-screen">
         <p>Identifique-se para continuar:</p>
         <div class="input-group">
@@ -78,7 +76,7 @@
         <button id="login-btn" class="btn">Entrar</button>
     </div>
 
-    <!-- Tela principal (após login) -->
+    <!-- App Principal -->
     <div id="main-app" class="hidden">
         <div class="date-info">
             <p id="current-date">Carregando...</p>
@@ -86,7 +84,7 @@
             <p id="days-left"></p>
         </div>
 
-        <!-- Tela inicial -->
+        <!-- Tela Inicial -->
         <div id="initial-screen">
             <p>Clique no botão para solicitar seu vale deste mês.</p>
             <button id="request-btn" class="btn">Solicitar Vale</button>
@@ -150,8 +148,8 @@
 <script>
 /* ==================== CONFIGURAÇÃO ==================== */
 const CONFIG = {
-    WHATSAPP_NUMBER: "5511999999999", // <<< SUBSTITUA PELO NÚMERO DO RH (formato internacional)
-    DEADLINE_HOUR: 15,   // 15h30
+    WHATSAPP_NUMBER: "5511999999999", // SUBSTITUA AQUI
+    DEADLINE_HOUR: 15,
     DEADLINE_MIN: 30,
     MIN_VALUE: 0.01,
     REQUEST_DAYS: { start: 10, end: 20 }
@@ -230,171 +228,9 @@ function showError(el, show) {
 function checkDateAndUpdate() {
     const today = new Date();
     const day = today.getDate();
-    const monthKey = today.toISOString().slice(0,7); // YYYY-MM
+    const monthKey = today.toISOString().slice(0,7);
     state.currentMonthKey = monthKey;
 
-    // Data atual
     els.currentDate.textContent = `Hoje é ${formatDate(today)}`;
 
-    const inPeriod = day >= CONFIG.REQUEST_DAYS.start && day <= CONFIG.REQUEST_DAYS.end;
-    const daysRemaining = CONFIG.REQUEST_DAYS.end - day;
-
-    // Verifica se já solicitou neste mês
-    const savedMonth = localStorage.getItem('valeMonth');
-    const savedMade = localStorage.getItem('valeMade') === 'true';
-    state.requestMade = savedMade && savedMonth === monthKey;
-
-    if (inPeriod) {
-        els.dayStatus.textContent = day === 20 ? "Último dia para solicitar!" : "Período de solicitação aberto.";
-        els.daysLeft.innerHTML = `<span class="days-left">${daysRemaining} dia(s) restante(s)</span>`;
-        els.requestBtn.disabled = state.requestMade;
-
-        if (!state.requestMade && !els.reminderModal.classList.contains('hidden') === false) {
-            setTimeout(() => showReminder(daysRemaining), 800);
-        }
-    } else {
-        els.requestBtn.disabled = true;
-        if (day < CONFIG.REQUEST_DAYS.start) {
-            const until = CONFIG.REQUEST_DAYS.start - day;
-            els.dayStatus.textContent = "Período ainda não iniciado.";
-            els.daysLeft.textContent = `Faltam ${until} dia(s) para começar.`;
-        } else {
-            els.dayStatus.textContent = "Período encerrado.";
-            els.daysLeft.textContent = "Aguarde o próximo mês.";
-        }
-    }
-}
-
-/* ==================== MODAL LEMBRETE ==================== */
-function showReminder(days) {
-    els.modalDaysLeft.textContent = `Faltam ${days} dia(s) para solicitar.`;
-    els.reminderModal.classList.remove('hidden');
-}
-function closeReminder() {
-    els.reminderModal.classList.add('hidden');
-}
-
-/* ==================== ENVIO WHATSAPP ==================== */
-function sendWhatsApp(template) {
-    const now = new Date();
-    const msg = template
-        .replace('{NOME}', state.userName)
-        .replace('{VALOR}', formatCurrency(state.selectedValue))
-        .replace('{DATA}', formatDate(now))
-        .replace('{HORA}', formatTime(now));
-
-    const url = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-    window.open(url, '_blank');
-}
-
-/* ==================== EVENTOS ==================== */
-document.addEventListener('DOMContentLoaded', () => {
-    // Login
-    els.loginBtn.addEventListener('click', () => {
-        const name = els.nameInput.value.trim();
-        if (!name) {
-            showError(els.nameError, true);
-            return;
-        }
-        state.userName = name;
-        localStorage.setItem('userName', name);
-        els.loginScreen.classList.add('hidden');
-        els.mainApp.classList.remove('hidden');
-        checkDateAndUpdate();
-    });
-
-    // Carregar nome salvo
-    const savedName = localStorage.getItem('userName');
-    if (savedName) {
-        state.userName = savedName;
-        els.nameInput.value = savedName;
-        els.loginBtn.click();
-    }
-
-    // Botões principais
-    els.requestBtn.addEventListener('click', () => {
-        if (state.requestMade) return;
-        showScreen('confirm');
-        closeReminder();
-    });
-
-    els.modalRequestBtn.addEventListener('click', () => {
-        closeReminder();
-        showScreen('confirm');
-    });
-    els.modalCloseBtn.addEventListener('click', closeReminder);
-
-    els.yesBtn.addEventListener('click', () => {
-        showScreen('value');
-        setTimeout(() => els.valueInput.focus(), 100);
-    });
-
-    els.noBtn.addEventListener('click', () => {
-        showScreen('refusal');
-        const now = new Date();
-        const deadline = new Date();
-        deadline.setHours(CONFIG.DEADLINE_HOUR, CONFIG.DEADLINE_MIN, 0, 0);
-        els.refusalInfo.textContent = now < deadline
-            ? `Você pode mudar de ideia até às 15:30 de hoje.`
-            : `Prazo para mudança encerrado às 15:30.`;
-    });
-
-    els.confirmValueBtn.addEventListener('click', () => {
-        const val = parseFloat(els.valueInput.value);
-        if (isNaN(val) || val < CONFIG.MIN_VALUE) {
-            showError(els.valueError, true);
-            return;
-        }
-        state.selectedValue = val;
-        showScreen('final');
-
-        els.successMsg.textContent = `Você solicitou ${formatCurrency(val)}`;
-        const now = new Date();
-        const deadline = new Date();
-        deadline.setHours(CONFIG.DEADLINE_HOUR, CONFIG.DEADLINE_MIN, 0, 0);
-        els.infoMsg.textContent = now < deadline
-            ? `Você pode mudar de ideia até às 15:30 de hoje.`
-            : `Prazo para mudança encerrado às 15:30.`;
-
-        // Salvar solicitação
-        localStorage.setItem('valeMade', 'true');
-        localStorage.setItem('valeMonth', state.currentMonthKey);
-        state.requestMade = true;
-    });
-
-    els.whatsappBtn.addEventListener('click', () => {
-        const template = `*Solicitação de Vale*\n\n` +
-            `Colaborador: {NOME}\n` +
-            `Valor: {VALOR}\n` +
-            `Data: {DATA}\n` +
-            `Hora: {HORA}\n\n` +
-            `_Enviado automaticamente pelo sistema._`;
-        sendWhatsApp(template);
-    });
-
-    els.refusalWhatsappBtn.addEventListener('click', () => {
-        const template = `*Recusa de Vale*\n\n` +
-            `Colaborador: {NOME}\n` +
-            `Motivo: Não deseja solicitar neste mês.\n` +
-            `Data: {DATA}\n` +
-            `Hora: {HORA}\n\n` +
-            `_Enviado automaticamente pelo sistema._`;
-        sendWhatsApp(template);
-    });
-
-    els.backBtn.addEventListener('click', resetForm);
-    els.refusalBackBtn.addEventListener('click', resetForm);
-
-    // Reset automático no dia 1
-    const now = new Date();
-    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-    const msUntilReset = nextMonth - now;
-    setTimeout(() => {
-        localStorage.removeItem('valeMade');
-        localStorage.removeItem('valeMonth');
-        location.reload();
-    }, msUntilReset);
-});
-</script>
-</body>
-</html>
+    const inPeriod = day >= CONFIG.REQUEST_DAYS.sta
