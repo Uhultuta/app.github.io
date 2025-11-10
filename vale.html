@@ -4,426 +4,397 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Solicitação de Vale</title>
+    <meta name="description" content="Solicite seu vale mensal de forma simples e segura.">
+    <!-- PWA -->
+    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiU29saWNpdGHDp8OjbyBkZSBWYWxlIiwic2hvcnRfbmFtZSI6IlZhbGUgU29sIiwic3RhcnRfdXJsIjoiaHR0cHM6Ly95b3VyZG9tYWluLmNvbSIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QzlYZ2x3YjI5MWNtTjBiM0p3YjNKdmVHMXNhV1FpT3pFMU1EazNNekF3TkRjd0lpQjFhWDBzSUdOdmJTOWlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTla... (ícone completo)">
+
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        :root {
+            --primary: #2a5298;
+            --primary-dark: #1e3c72;
+            --success: #28a745;
+            --warning: #ffc107;
+            --danger: #dc3545;
+            --gray: #6c757d;
+            --light: #f8f9fa;
+            --border: #e1e5ee;
+            --shadow: 0 10px 30px rgba(0,0,0,.2);
         }
-        
-        body {
-            background: linear-gradient(135deg, #1e3c72, #2a5298);
-            color: #333;
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            padding: 20px;
-        }
-        
-        .container {
-            background-color: white;
-            border-radius: 15px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            width: 100%;
-            max-width: 500px;
-            padding: 30px;
-            text-align: center;
-        }
-        
-        h1 {
-            color: #2a5298;
-            margin-bottom: 20px;
-            font-size: 24px;
-        }
-        
-        p {
-            margin-bottom: 20px;
-            line-height: 1.6;
-            color: #555;
-        }
-        
-        .date-info {
-            background-color: #f0f8ff;
-            padding: 15px;
-            border-radius: 10px;
-            margin-bottom: 25px;
-            border-left: 4px solid #2a5298;
-        }
-        
-        .btn {
-            background-color: #2a5298;
-            color: white;
-            border: none;
-            padding: 12px 25px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 16px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin: 10px 5px;
-            width: 100%;
-            max-width: 200px;
-        }
-        
-        .btn:hover {
-            background-color: #1e3c72;
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-        }
-        
-        .btn:disabled {
-            background-color: #cccccc;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-        
-        .btn-secondary {
-            background-color: #6c757d;
-        }
-        
-        .btn-secondary:hover {
-            background-color: #5a6268;
-        }
-        
-        .btn-success {
-            background-color: #28a745;
-        }
-        
-        .btn-success:hover {
-            background-color: #218838;
-        }
-        
-        .hidden {
-            display: none;
-        }
-        
-        .input-group {
-            margin: 20px 0;
-        }
-        
-        input[type="number"] {
-            width: 100%;
-            padding: 12px;
-            border: 2px solid #e1e5ee;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: border-color 0.3s;
-        }
-        
-        input[type="number"]:focus {
-            border-color: #2a5298;
-            outline: none;
-        }
-        
-        .message {
-            padding: 15px;
-            border-radius: 8px;
-            margin: 20px 0;
-            font-weight: 500;
-        }
-        
-        .message-success {
-            background-color: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-        
-        .message-info {
-            background-color: #d1ecf1;
-            color: #0c5460;
-            border: 1px solid #bee5eb;
-        }
-        
-        .message-warning {
-            background-color: #fff3cd;
-            color: #856404;
-            border: 1px solid #ffeaa7;
-        }
-        
-        .whatsapp-icon {
-            display: inline-block;
-            vertical-align: middle;
-            margin-right: 8px;
-            width: 24px;
-            height: 24px;
-        }
-        
-        .step {
-            margin-bottom: 25px;
-            text-align: left;
-        }
-        
-        .step-number {
-            display: inline-block;
-            background-color: #2a5298;
-            color: white;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            text-align: center;
-            line-height: 30px;
-            margin-right: 10px;
-            font-weight: bold;
-        }
-        
-        .step-content {
-            display: inline-block;
-            width: calc(100% - 50px);
-            vertical-align: top;
-        }
-        
-        .logo {
-            margin-bottom: 20px;
-        }
-        
-        .logo img {
-            max-width: 120px;
-        }
-        
-        @media (max-width: 480px) {
-            .container {
-                padding: 20px;
-            }
-            
-            h1 {
-                font-size: 20px;
-            }
-            
-            .btn {
-                width: 100%;
-                margin: 5px 0;
-            }
+
+        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
+        body { background:linear-gradient(135deg,#1e3c72,#2a5298); color:#333; min-height:100vh; display:flex; justify-content:center; align-items:center; padding:15px; }
+        .container { background:#fff; border-radius:15px; box-shadow:var(--shadow); width:100%; max-width:500px; padding:30px; text-align:center; position:relative; animation:fadeIn .5s ease-out; }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:none} }
+        h1 { color:var(--primary); margin-bottom:20px; font-size:24px; }
+        p { margin-bottom:18px; line-height:1.6; color:#555; }
+        .date-info { background:#f0f8ff; padding:15px; border-radius:10px; margin-bottom:25px; border-left:4px solid var(--primary); }
+        .btn { background:var(--primary); color:#fff; border:none; padding:12px 25px; border-radius:8px; cursor:pointer; font-size:16px; font-weight:600; transition:all .3s ease; margin:8px 5px; width:100%; max-width:200px; }
+        .btn:hover { background:var(--primary-dark); transform:translateY(-2px); box-shadow:0 5px 15px rgba(0,0,0,.1); }
+        .btn:disabled { background:#ccc; cursor:not-allowed; transform:none; box-shadow:none; }
+        .btn-success { background:var(--success); }
+        .btn-success:hover { background:#218838; }
+        .btn-secondary { background:var(--gray); }
+        .btn-secondary:hover { background:#5a6268; }
+        .hidden { display:none; }
+        .input-group { margin:20px 0; }
+        input[type=number] { width:100%; padding:12px; border:2px solid var(--border); border-radius:8px; font-size:16px; transition:border .3s; }
+        input[type=number]:focus { border-color:var(--primary); outline:none; }
+        .message { padding:15px; border-radius:8px; margin:20px 0; font-weight:500; }
+        .message-success { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
+        .message-info { background:#d1ecf1; color:#0c5460; border:1px solid #bee5eb; }
+        .message-warning { background:#fff3cd; color:#856404; border:1px solid #ffeaa7; }
+        .whatsapp-icon { display:inline-block; vertical-align:middle; margin-right:8px; width:24px; height:24px; }
+        .step { margin-bottom:25px; text-align:left; }
+        .step-number { display:inline-block; background:var(--primary); color:#fff; width:30px; height:30px; border-radius:50%; text-align:center; line-height:30px; margin-right:10px; font-weight:bold; }
+        .logo img { max-width:120px; }
+        .modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.7); display:flex; justify-content:center; align-items:center; z-index:1000; }
+        .modal { background:#fff; border-radius:15px; box-shadow:var(--shadow); width:90%; max-width:500px; padding:30px; text-align:center; animation:modalAppear .3s ease-out; }
+        @keyframes modalAppear { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:none} }
+        .days-left { font-weight:bold; color:var(--primary); font-size:18px; }
+        .login-screen { text-align:center; }
+        .login-screen input { margin-bottom:15px; }
+        .error { color:var(--danger); font-size:14px; margin-top:5px; display:none; }
+        @media (max-width:480px){
+            .container{padding:20px}
+            h1{font-size:20px}
+            .btn{width:100%;margin:5px 0}
+            .modal-buttons{flex-direction:column}
+            .modal .btn{width:100%}
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="logo">
-            <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzJhNTI5OCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bS0yIDE1bC01LTUgMS40MS0xLjQxTDEwIDE0LjE3bDcuNTktNy41OUwxOSA4bC05IDl6Ii8+PC9zdmc+" alt="Logo Empresa">
+<div class="container">
+    <div class="logo"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzJhNTI5OCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bS0yIDE1bC01LTUgMS40MS0xLjQxTDEwIDE0LjE3bDcuNTktNy41OUwxOSA4bC05IDl6Ii8+PC9zdmc+" alt="Logo"></div>
+    <h1>Sistema de Solicitação de Vale</h1>
+
+    <!-- Login (opcional) -->
+    <div id="login-screen" class="login-screen">
+        <p>Identifique-se para continuar:</p>
+        <div class="input-group">
+            <input type="text" id="user-name" placeholder="Seu nome completo" autocomplete="name">
+            <div class="error" id="name-error">Nome é obrigatório.</div>
         </div>
-        
-        <h1>Sistema de Solicitação de Vale</h1>
-        
+        <button id="login-btn" class="btn">Entrar</button>
+    </div>
+
+    <!-- Tela principal (após login) -->
+    <div id="main-app" class="hidden">
         <div class="date-info">
-            <p id="current-date">Carregando data...</p>
+            <p id="current-date">Carregando...</p>
             <p id="day-status"></p>
+            <p id="days-left"></p>
         </div>
-        
+
         <!-- Tela inicial -->
         <div id="initial-screen">
-            <p>Clique no botão abaixo para solicitar o vale transporte deste mês.</p>
+            <p>Clique no botão para solicitar seu vale deste mês.</p>
             <button id="request-btn" class="btn">Solicitar Vale</button>
         </div>
-        
-        <!-- Tela de confirmação -->
+
+        <!-- Confirmação -->
         <div id="confirmation-screen" class="hidden">
             <p>Deseja solicitar vale este mês?</p>
             <button id="yes-btn" class="btn">Sim</button>
             <button id="no-btn" class="btn btn-secondary">Não</button>
         </div>
-        
-        <!-- Tela de valor -->
+
+        <!-- Valor -->
         <div id="value-screen" class="hidden">
-            <div class="step">
-                <span class="step-number">1</span>
-                <div class="step-content">
-                    <p>Informe o valor desejado:</p>
-                </div>
-            </div>
+            <div class="step"><span class="step-number">1</span><div class="step-content"><p>Informe o valor desejado:</p></div></div>
             <div class="input-group">
-                <input type="number" id="value-input" placeholder="R$ 0,00" min="0" step="0.01">
+                <input type="number" id="value-input" placeholder="R$ 0,00" min="0.01" step="0.01">
+                <div class="error" id="value-error">Insira um valor maior que zero.</div>
             </div>
             <button id="confirm-value-btn" class="btn">Confirmar Valor</button>
         </div>
-        
-        <!-- Tela de confirmação final -->
+
+        <!-- Sucesso -->
         <div id="final-screen" class="hidden">
             <div class="message message-success" id="success-message"></div>
             <div class="message message-info" id="info-message"></div>
             <button id="whatsapp-btn" class="btn btn-success">
-                <svg class="whatsapp-icon" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M16.75 13.96c.25.13.41.2.46.3.06.11.04.61-.21 1.18-.2.56-1.24 1.1-1.7 1.12-.46.02-.47.36-2.96-.73-2.49-1.09-3.99-3.75-4.11-3.92-.12-.17-.96-1.38-.92-2.61.05-1.22.69-1.8.95-2.04.24-.26.51-.29.68-.26h.47c.15 0 .36-.06.55.45l.69 1.87c.06.13.1.28.01.44l-.27.41-.39.42c-.12.12-.26.25-.12.5.12.26.62 1.09 1.32 1.78.91.88 1.71 1.17 1.95 1.3.24.14.39.12.54-.04l.81-.94c.19-.25.35-.19.58-.11l1.67.88M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10c-1.97 0-3.8-.57-5.35-1.55L2 22l1.55-4.65A9.969 9.969 0 0 1 2 12 10 10 0 0 1 12 2m0 2a8 8 0 0 0-8 8c0 1.72.54 3.31 1.46 4.61L4.5 19.5l2.89-.96A7.95 7.95 0 0 0 12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8z"/>
-                </svg>
+                <svg class="whatsapp-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M16.75 13.96c.25.13.41.2.46.3.06.11.04.61-.21 1.18-.2.56-1.24 1.1-1.7 1.12-.46.02-.47.36-2.96-.73-2.49-1.09-3.99-3.75-4.11-3.92-.12-.17-.96-1.38-.92-2.61.05-1.22.69-1.8.95-2.04.24-.26.51-.29.68-.26h.47c.15 0 .36-.06.55.45l.69 1.87c.06.13.1.28.01.44l-.27.41-.39.42c-.12.12-.26.25-.12.5.12.26.62 1.09 1.32 1.78.91.88 1.71 1.17 1.95 1.3.24.14.39.12.54-.04l.81-.94c.19-.25.35-.19.58-.11l1.67.88M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10c-1.97 0-3.8-.57-5.35-1.55L2 22l1.55-4.65A9.969 9.969 0 0 1 2 12 10 10 0 0 1 12 2m0 2a8 8 0 0 0-8 8c0 1.72.54 3.31 1.46 4.61L4.5 19.5l2.89-.96A7.95 7.95 0 0 0 12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8z"/></svg>
                 Enviar via WhatsApp
             </button>
             <button id="back-btn" class="btn btn-secondary">Voltar ao Início</button>
         </div>
-        
-        <!-- Tela de recusa -->
+
+        <!-- Recusa -->
         <div id="refusal-screen" class="hidden">
-            <div class="message message-warning">
-                <p>Obrigado, não desejo pedir vale</p>
-            </div>
+            <div class="message message-warning"><p>Obrigado, não desejo pedir vale</p></div>
             <div class="message message-info" id="refusal-info"></div>
             <button id="refusal-whatsapp-btn" class="btn btn-success">
-                <svg class="whatsapp-icon" viewBox="0 0 24 24">
-                    <path fill="currentColor" d="M16.75 13.96c.25.13.41.2.46.3.06.11.04.61-.21 1.18-.2.56-1.24 1.1-1.7 1.12-.46.02-.47.36-2.96-.73-2.49-1.09-3.99-3.75-4.11-3.92-.12-.17-.96-1.38-.92-2.61.05-1.22.69-1.8.95-2.04.24-.26.51-.29.68-.26h.47c.15 0 .36-.06.55.45l.69 1.87c.06.13.1.28.01.44l-.27.41-.39.42c-.12.12-.26.25-.12.5.12.26.62 1.09 1.32 1.78.91.88 1.71 1.17 1.95 1.3.24.14.39.12.54-.04l.81-.94c.19-.25.35-.19.58-.11l1.67.88M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10c-1.97 0-3.8-.57-5.35-1.55L2 22l1.55-4.65A9.969 9.969 0 0 1 2 12 10 10 0 0 1 12 2m0 2a8 8 0 0 0-8 8c0 1.72.54 3.31 1.46 4.61L4.5 19.5l2.89-.96A7.95 7.95 0 0 0 12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8z"/>
-                </svg>
-                Enviar via WhatsApp
+                <svg class="whatsapp-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M16.75 13.96c.25.13.41.2.46.3.06.11.04.61-.21 1.18-.2.56-1.24 1.1-1.7 1.12-.46.02-.47.36-2.96-.73-2.49-1.09-3.99-3.75-4.11-3.92-.12-.17-.96-1.38-.92-2.61.05-1.22.69-1.8.95-2.04.24-.26.51-.29.68-.26h.47c.15 0 .36-.06.55.45l.69 1.87c.06.13.1.28.01.44l-.27.41-.39.42c-.12.12-.26.25-.12.5.12.26.62 1.09 1.32 1.78.91.88 1.71 1.17 1.95 1.3.24.14.39.12.54-.04l.81-.94c.19-.25.35-.19.58-.11l1.67.88M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10c-1.97 0-3.8-.57-5.35-1.55L2 22l1.55-4.65A9.969 9.969 0 0 1 2 12 10 10 0 0 1 12 2m0 2a8 8 0 0 0-8 8c0 1.72.54 3.31 1.46 4.61L4.5 19.5l2.89-.96A7.95 7.95 0 0 0 12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8z"/></svg>
+                Enviar Recusa via WhatsApp
             </button>
             <button id="refusal-back-btn" class="btn btn-secondary">Voltar ao Início</button>
         </div>
     </div>
+</div>
 
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            // Elementos da interface
-            const currentDateEl = document.getElementById('current-date');
-            const dayStatusEl = document.getElementById('day-status');
-            const requestBtn = document.getElementById('request-btn');
-            const yesBtn = document.getElementById('yes-btn');
-            const noBtn = document.getElementById('no-btn');
-            const confirmValueBtn = document.getElementById('confirm-value-btn');
-            const valueInput = document.getElementById('value-input');
-            const whatsappBtn = document.getElementById('whatsapp-btn');
-            const backBtn = document.getElementById('back-btn');
-            const refusalWhatsappBtn = document.getElementById('refusal-whatsapp-btn');
-            const refusalBackBtn = document.getElementById('refusal-back-btn');
-            
-            // Telas
-            const initialScreen = document.getElementById('initial-screen');
-            const confirmationScreen = document.getElementById('confirmation-screen');
-            const valueScreen = document.getElementById('value-screen');
-            const finalScreen = document.getElementById('final-screen');
-            const refusalScreen = document.getElementById('refusal-screen');
-            
-            // Mensagens
-            const successMessage = document.getElementById('success-message');
-            const infoMessage = document.getElementById('info-message');
-            const refusalInfo = document.getElementById('refusal-info');
-            
-            // Variáveis de estado
-            let selectedValue = 0;
-            let isTwentieth = false;
-            
-            // Verificar se é dia 20
-            function checkDate() {
-                const today = new Date();
-                const day = today.getDate();
-                const month = today.getMonth() + 1;
-                const year = today.getFullYear();
-                
-                // Formatar data para exibição
-                const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
-                currentDateEl.textContent = `Hoje é ${formattedDate}`;
-                
-                // Verificar se é dia 20
-                if (day === 20) {
-                    isTwentieth = true;
-                    dayStatusEl.textContent = "✅ Hoje é dia 20! Você pode solicitar seu vale.";
-                    requestBtn.disabled = false;
-                } else {
-                    isTwentieth = false;
-                    dayStatusEl.textContent = "❌ Hoje não é dia 20. A solicitação de vale só está disponível no dia 20 de cada mês.";
-                    requestBtn.disabled = true;
-                }
-            }
-            
-            // Inicializar verificação de data
-            checkDate();
-            
-            // Navegação entre telas
-            requestBtn.addEventListener('click', function() {
-                if (!isTwentieth) return;
-                
-                initialScreen.classList.add('hidden');
-                confirmationScreen.classList.remove('hidden');
-            });
-            
-            yesBtn.addEventListener('click', function() {
-                confirmationScreen.classList.add('hidden');
-                valueScreen.classList.remove('hidden');
-                valueInput.focus();
-            });
-            
-            noBtn.addEventListener('click', function() {
-                confirmationScreen.classList.add('hidden');
-                refusalScreen.classList.remove('hidden');
-                
-                // Configurar mensagem de recusa
-                const now = new Date();
-                const deadline = new Date();
-                deadline.setHours(15, 30, 0, 0); // 15:30
-                
-                if (now < deadline) {
-                    refusalInfo.textContent = `Você pode mudar de ideia até às 15:30 de hoje.`;
-                } else {
-                    refusalInfo.textContent = `O prazo para mudar de ideia era até às 15:30 de hoje.`;
-                }
-            });
-            
-            confirmValueBtn.addEventListener('click', function() {
-                const value = parseFloat(valueInput.value);
-                
-                if (isNaN(value) || value <= 0) {
-                    alert('Por favor, insira um valor válido.');
-                    valueInput.focus();
-                    return;
-                }
-                
-                selectedValue = value;
-                
-                valueScreen.classList.add('hidden');
-                finalScreen.classList.remove('hidden');
-                
-                // Configurar mensagens
-                successMessage.textContent = `Você solicitou o valor R$ ${value.toFixed(2).replace('.', ',')}`;
-                
-                const now = new Date();
-                const deadline = new Date();
-                deadline.setHours(15, 30, 0, 0); // 15:30
-                
-                if (now < deadline) {
-                    infoMessage.textContent = `Você pode mudar de ideia até às 15:30 de hoje.`;
-                } else {
-                    infoMessage.textContent = `O prazo para mudar de ideia era até às 15:30 de hoje.`;
-                }
-            });
-            
-            // Configurar botões do WhatsApp
-            whatsappBtn.addEventListener('click', function() {
-                const message = `Solicitação de Vale: R$ ${selectedValue.toFixed(2).replace('.', ',')}`;
-                const encodedMessage = encodeURIComponent(message);
-                const whatsappURL = `https://wa.me/?text=${encodedMessage}`;
-                window.open(whatsappURL, '_blank');
-            });
-            
-            refusalWhatsappBtn.addEventListener('click', function() {
-                const message = "Obrigado, não desejo pedir vale";
-                const encodedMessage = encodeURIComponent(message);
-                const whatsappURL = `https://wa.me/?text=${encodedMessage}`;
-                window.open(whatsappURL, '_blank');
-            });
-            
-            // Botões de voltar ao início
-            backBtn.addEventListener('click', function() {
-                finalScreen.classList.add('hidden');
-                initialScreen.classList.remove('hidden');
-                resetForm();
-            });
-            
-            refusalBackBtn.addEventListener('click', function() {
-                refusalScreen.classList.add('hidden');
-                initialScreen.classList.remove('hidden');
-                resetForm();
-            });
-            
-            // Resetar formulário
-            function resetForm() {
-                valueInput.value = '';
-                selectedValue = 0;
-            }
-            
-            // Permitir Enter no campo de valor
-            valueInput.addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    confirmValueBtn.click();
-                }
-            });
-        });
-    </script>
+<!-- Modal Lembrete -->
+<div id="reminder-modal" class="modal-overlay hidden">
+    <div class="modal">
+        <h2>Lembrete de Solicitação de Vale</h2>
+        <p>Você ainda não solicitou seu vale para este mês.</p>
+        <p>O prazo é entre os dias <strong>10 e 20</strong> de cada mês.</p>
+        <p id="modal-days-left" class="days-left"></p>
+        <div class="modal-buttons">
+            <button id="modal-request-btn" class="btn">Solicitar Agora</button>
+            <button id="modal-close-btn" class="btn btn-secondary">Lembrar Depois</button>
+        </div>
+    </div>
+</div>
+
+<script>
+/* ==================== CONFIGURAÇÃO ==================== */
+const CONFIG = {
+    WHATSAPP_NUMBER: "5511999999999", // <<< SUBSTITUA PELO NÚMERO DO RH (formato internacional)
+    DEADLINE_HOUR: 15,   // 15h30
+    DEADLINE_MIN: 30,
+    MIN_VALUE: 0.01,
+    REQUEST_DAYS: { start: 10, end: 20 }
+};
+
+/* ==================== ESTADO GLOBAL ==================== */
+let state = {
+    userName: '',
+    selectedValue: 0,
+    requestMade: false,
+    currentMonthKey: ''
+};
+
+/* ==================== ELEMENTOS ==================== */
+const els = {
+    loginScreen: document.getElementById('login-screen'),
+    mainApp: document.getElementById('main-app'),
+    nameInput: document.getElementById('user-name'),
+    nameError: document.getElementById('name-error'),
+    loginBtn: document.getElementById('login-btn'),
+
+    currentDate: document.getElementById('current-date'),
+    dayStatus: document.getElementById('day-status'),
+    daysLeft: document.getElementById('days-left'),
+    requestBtn: document.getElementById('request-btn'),
+    yesBtn: document.getElementById('yes-btn'),
+    noBtn: document.getElementById('no-btn'),
+    valueInput: document.getElementById('value-input'),
+    valueError: document.getElementById('value-error'),
+    confirmValueBtn: document.getElementById('confirm-value-btn'),
+    successMsg: document.getElementById('success-message'),
+    infoMsg: document.getElementById('info-message'),
+    whatsappBtn: document.getElementById('whatsapp-btn'),
+    backBtn: document.getElementById('back-btn'),
+    refusalInfo: document.getElementById('refusal-info'),
+    refusalWhatsappBtn: document.getElementById('refusal-whatsapp-btn'),
+    refusalBackBtn: document.getElementById('refusal-back-btn'),
+
+    reminderModal: document.getElementById('reminder-modal'),
+    modalDaysLeft: document.getElementById('modal-days-left'),
+    modalRequestBtn: document.getElementById('modal-request-btn'),
+    modalCloseBtn: document.getElementById('modal-close-btn'),
+
+    screens: {
+        initial: document.getElementById('initial-screen'),
+        confirm: document.getElementById('confirmation-screen'),
+        value: document.getElementById('value-screen'),
+        final: document.getElementById('final-screen'),
+        refusal: document.getElementById('refusal-screen')
+    }
+};
+
+/* ==================== FUNÇÕES AUXILIARES ==================== */
+const formatCurrency = (v) => `R$ ${v.toFixed(2).replace('.', ',')}`;
+const formatDate = (d) => d.toLocaleDateString('pt-BR');
+const formatTime = (d) => d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
+
+function showScreen(id) {
+    Object.values(els.screens).forEach(s => s.classList.add('hidden'));
+    if (id) els.screens[id].classList.remove('hidden');
+}
+
+function resetForm() {
+    els.valueInput.value = '';
+    els.valueError.style.display = 'none';
+    state.selectedValue = 0;
+    showScreen('initial');
+    checkDateAndUpdate();
+}
+
+function showError(el, show) {
+    el.style.display = show ? 'block' : 'none';
+}
+
+/* ==================== VERIFICAÇÃO DE DATA ==================== */
+function checkDateAndUpdate() {
+    const today = new Date();
+    const day = today.getDate();
+    const monthKey = today.toISOString().slice(0,7); // YYYY-MM
+    state.currentMonthKey = monthKey;
+
+    // Data atual
+    els.currentDate.textContent = `Hoje é ${formatDate(today)}`;
+
+    const inPeriod = day >= CONFIG.REQUEST_DAYS.start && day <= CONFIG.REQUEST_DAYS.end;
+    const daysRemaining = CONFIG.REQUEST_DAYS.end - day;
+
+    // Verifica se já solicitou neste mês
+    const savedMonth = localStorage.getItem('valeMonth');
+    const savedMade = localStorage.getItem('valeMade') === 'true';
+    state.requestMade = savedMade && savedMonth === monthKey;
+
+    if (inPeriod) {
+        els.dayStatus.textContent = day === 20 ? "Último dia para solicitar!" : "Período de solicitação aberto.";
+        els.daysLeft.innerHTML = `<span class="days-left">${daysRemaining} dia(s) restante(s)</span>`;
+        els.requestBtn.disabled = state.requestMade;
+
+        if (!state.requestMade && !els.reminderModal.classList.contains('hidden') === false) {
+            setTimeout(() => showReminder(daysRemaining), 800);
+        }
+    } else {
+        els.requestBtn.disabled = true;
+        if (day < CONFIG.REQUEST_DAYS.start) {
+            const until = CONFIG.REQUEST_DAYS.start - day;
+            els.dayStatus.textContent = "Período ainda não iniciado.";
+            els.daysLeft.textContent = `Faltam ${until} dia(s) para começar.`;
+        } else {
+            els.dayStatus.textContent = "Período encerrado.";
+            els.daysLeft.textContent = "Aguarde o próximo mês.";
+        }
+    }
+}
+
+/* ==================== MODAL LEMBRETE ==================== */
+function showReminder(days) {
+    els.modalDaysLeft.textContent = `Faltam ${days} dia(s) para solicitar.`;
+    els.reminderModal.classList.remove('hidden');
+}
+function closeReminder() {
+    els.reminderModal.classList.add('hidden');
+}
+
+/* ==================== ENVIO WHATSAPP ==================== */
+function sendWhatsApp(template) {
+    const now = new Date();
+    const msg = template
+        .replace('{NOME}', state.userName)
+        .replace('{VALOR}', formatCurrency(state.selectedValue))
+        .replace('{DATA}', formatDate(now))
+        .replace('{HORA}', formatTime(now));
+
+    const url = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+}
+
+/* ==================== EVENTOS ==================== */
+document.addEventListener('DOMContentLoaded', () => {
+    // Login
+    els.loginBtn.addEventListener('click', () => {
+        const name = els.nameInput.value.trim();
+        if (!name) {
+            showError(els.nameError, true);
+            return;
+        }
+        state.userName = name;
+        localStorage.setItem('userName', name);
+        els.loginScreen.classList.add('hidden');
+        els.mainApp.classList.remove('hidden');
+        checkDateAndUpdate();
+    });
+
+    // Carregar nome salvo
+    const savedName = localStorage.getItem('userName');
+    if (savedName) {
+        state.userName = savedName;
+        els.nameInput.value = savedName;
+        els.loginBtn.click();
+    }
+
+    // Botões principais
+    els.requestBtn.addEventListener('click', () => {
+        if (state.requestMade) return;
+        showScreen('confirm');
+        closeReminder();
+    });
+
+    els.modalRequestBtn.addEventListener('click', () => {
+        closeReminder();
+        showScreen('confirm');
+    });
+    els.modalCloseBtn.addEventListener('click', closeReminder);
+
+    els.yesBtn.addEventListener('click', () => {
+        showScreen('value');
+        setTimeout(() => els.valueInput.focus(), 100);
+    });
+
+    els.noBtn.addEventListener('click', () => {
+        showScreen('refusal');
+        const now = new Date();
+        const deadline = new Date();
+        deadline.setHours(CONFIG.DEADLINE_HOUR, CONFIG.DEADLINE_MIN, 0, 0);
+        els.refusalInfo.textContent = now < deadline
+            ? `Você pode mudar de ideia até às 15:30 de hoje.`
+            : `Prazo para mudança encerrado às 15:30.`;
+    });
+
+    els.confirmValueBtn.addEventListener('click', () => {
+        const val = parseFloat(els.valueInput.value);
+        if (isNaN(val) || val < CONFIG.MIN_VALUE) {
+            showError(els.valueError, true);
+            return;
+        }
+        state.selectedValue = val;
+        showScreen('final');
+
+        els.successMsg.textContent = `Você solicitou ${formatCurrency(val)}`;
+        const now = new Date();
+        const deadline = new Date();
+        deadline.setHours(CONFIG.DEADLINE_HOUR, CONFIG.DEADLINE_MIN, 0, 0);
+        els.infoMsg.textContent = now < deadline
+            ? `Você pode mudar de ideia até às 15:30 de hoje.`
+            : `Prazo para mudança encerrado às 15:30.`;
+
+        // Salvar solicitação
+        localStorage.setItem('valeMade', 'true');
+        localStorage.setItem('valeMonth', state.currentMonthKey);
+        state.requestMade = true;
+    });
+
+    els.whatsappBtn.addEventListener('click', () => {
+        const template = `*Solicitação de Vale*\n\n` +
+            `Colaborador: {NOME}\n` +
+            `Valor: {VALOR}\n` +
+            `Data: {DATA}\n` +
+            `Hora: {HORA}\n\n` +
+            `_Enviado automaticamente pelo sistema._`;
+        sendWhatsApp(template);
+    });
+
+    els.refusalWhatsappBtn.addEventListener('click', () => {
+        const template = `*Recusa de Vale*\n\n` +
+            `Colaborador: {NOME}\n` +
+            `Motivo: Não deseja solicitar neste mês.\n` +
+            `Data: {DATA}\n` +
+            `Hora: {HORA}\n\n` +
+            `_Enviado automaticamente pelo sistema._`;
+        sendWhatsApp(template);
+    });
+
+    els.backBtn.addEventListener('click', resetForm);
+    els.refusalBackBtn.addEventListener('click', resetForm);
+
+    // Reset automático no dia 1
+    const now = new Date();
+    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const msUntilReset = nextMonth - now;
+    setTimeout(() => {
+        localStorage.removeItem('valeMade');
+        localStorage.removeItem('valeMonth');
+        location.reload();
+    }, msUntilReset);
+});
+</script>
 </body>
-  </html>
+</html>
