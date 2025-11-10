@@ -5,7 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Solicitação de Vale</title>
     <meta name="description" content="Solicite seu vale mensal de forma simples e segura.">
-    <link rel="manifest" href="data:application/manifest+json;base64,eyJuYW1lIjoiU29saWNpdGHDp8OjbyBkZSBWYWxlIiwic2hvcnRfbmFtZSI6IlZhbGUgU29sIiwic3RhcnRfdXJsIjoiaHR0cHM6Ly95b3VyZG9tYWluLmNvbSIsImRpc3BsYXkiOiJzdGFuZGFsb25lIiwiaWNvbnMiOlt7InNyYyI6ImRhdGE6aW1hZ2Uvc3ZnK3htbDtiYXNlNjQsUEhOMlp5QzlYZ2x3YjI5MWNtTjBiM0p3YjNKdmVHMXNhV1FpT3pFMU1EazNNekF3TkRjd0lpQjFhWDBzSUdOdmJTOWlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR0YwWlNJNkluQTlaR09060...">
 
     <style>
         :root {
@@ -15,7 +14,6 @@
             --warning: #ffc107;
             --danger: #dc3545;
             --gray: #6c757d;
-            --light: #f8f9fa;
             --border: #e1e5ee;
             --shadow: 0 10px 30px rgba(0,0,0,.2);
         }
@@ -23,7 +21,7 @@
         * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
         body { background:linear-gradient(135deg,#1e3c72,#2a5298); color:#333; min-height:100vh; display:flex; justify-content:center; align-items:center; padding:15px; }
         .container { background:#fff; border-radius:15px; box-shadow:var(--shadow); width:100%; max-width:500px; padding:30px; text-align:center; position:relative; animation:fadeIn .5s ease-out; }
-        @keyframes fadeIn { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:none} }
+        @keyframes fadeIn { from{opacity:0;transform:translateY(-20px)} to{opacity:1;,transform:none} }
         h1 { color:var(--primary); margin-bottom:20px; font-size:24px; }
         p { margin-bottom:18px; line-height:1.6; color:#555; }
         .date-info { background:#f0f8ff; padding:15px; border-radius:10px; margin-bottom:25px; border-left:4px solid var(--primary); }
@@ -34,7 +32,7 @@
         .btn-success:hover { background:#218838; }
         .btn-secondary { background:var(--gray); }
         .btn-secondary:hover { background:#5a6268; }
-        .hidden { display:none; }
+        .hidden { display:none !important; }
         .input-group { margin:20px 0; }
         input[type=text], input[type=number] { width:100%; padding:12px; border:2px solid var(--border); border-radius:8px; font-size:16px; transition:border .3s; }
         input:focus { border-color:var(--primary); outline:none; }
@@ -224,6 +222,11 @@ function showError(el, show) {
     el.style.display = show ? 'block' : 'none';
 }
 
+/* ==================== FECHAR MODAL (GARANTIDO) ==================== */
+function closeReminder() {
+    els.reminderModal.classList.add('hidden');
+}
+
 /* ==================== VERIFICAÇÃO DE DATA ==================== */
 function checkDateAndUpdate() {
     const today = new Date();
@@ -267,10 +270,6 @@ function showReminder(days) {
     els.reminderModal.classList.remove('hidden');
 }
 
-function closeReminder() {
-    els.reminderModal.classList.add('hidden');
-}
-
 /* ==================== ENVIO WHATSAPP ==================== */
 function sendWhatsApp(template) {
     const now = new Date();
@@ -284,7 +283,7 @@ function sendWhatsApp(template) {
     window.open(url, '_blank');
 }
 
-/* ==================== EVENTOS ==================== */
+/* ==================== EVENTOS (COM closeReminder() GARANTIDO) ==================== */
 document.addEventListener('DOMContentLoaded', () => {
     // Login
     els.loginBtn.addEventListener('click', () => {
@@ -307,23 +306,23 @@ document.addEventListener('DOMContentLoaded', () => {
         els.loginBtn.click();
     }
 
-    // Botão Solicitar Vale
+    // Botão Solicitar Vale (tela inicial)
     els.requestBtn.addEventListener('click', () => {
         if (state.requestMade || els.requestBtn.disabled) return;
-        closeReminder(); // FECHA O MODAL
+        closeReminder(); // GARANTE FECHAR
         showScreen('confirm');
     });
 
     // MODAL: Solicitar Agora
     els.modalRequestBtn.addEventListener('click', () => {
-        closeReminder(); // FECHA O MODAL
+        closeReminder(); // GARANTE FECHAR
         showScreen('confirm');
     });
 
     // MODAL: Lembrar Depois
     els.modalCloseBtn.addEventListener('click', () => {
-        closeReminder(); // FECHA O MODAL
-        showScreen('initial'); // Volta à tela inicial
+        closeReminder(); // GARANTE FECHAR
+        showScreen('initial');
     });
 
     // Sim
@@ -366,13 +365,12 @@ document.addEventListener('DOMContentLoaded', () => {
         state.requestMade = true;
     });
 
-    // WhatsApp Solicitação
+    // WhatsApp
     els.whatsappBtn.addEventListener('click', () => {
         const template = `*Solicitação de Vale*\n\nColaborador: {NOME}\nValor: {VALOR}\nData: {DATA}\nHora: {HORA}\n\n_Enviado automaticamente._`;
         sendWhatsApp(template);
     });
 
-    // WhatsApp Recusa
     els.refusalWhatsappBtn.addEventListener('click', () => {
         const template = `*Recusa de Vale*\n\nColaborador: {NOME}\nNão deseja solicitar neste mês.\nData: {DATA}\nHora: {HORA}\n\n_Enviado automaticamente._`;
         sendWhatsApp(template);
@@ -384,4 +382,14 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Reset no dia 1
     const now = new Date();
-    const nextMonth 
+    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
+    const msUntilReset = nextMonth - now;
+    setTimeout(() => {
+        localStorage.removeItem('valeMade');
+        localStorage.removeItem('valeMonth');
+        location.reload();
+    }, msUntilReset);
+});
+</script>
+</body>
+                </html>
