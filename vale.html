@@ -88,8 +88,17 @@
         
         .input-group {
             margin: 20px 0;
+            text-align: left;
         }
         
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2a5298;
+        }
+        
+        input[type="text"],
         input[type="number"] {
             width: 100%;
             padding: 12px;
@@ -98,6 +107,7 @@
             font-size: 16px;
         }
         
+        input[type="text"]:focus,
         input[type="number"]:focus {
             border-color: #2a5298;
             outline: none;
@@ -188,6 +198,30 @@
             margin: 10px 0;
         }
         
+        .step {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        
+        .step-number {
+            display: inline-block;
+            background-color: #2a5298;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+        
+        .step-content {
+            display: inline-block;
+            width: calc(100% - 50px);
+            vertical-align: top;
+        }
+        
         @media (max-width: 480px) {
             .container {
                 padding: 20px;
@@ -231,9 +265,28 @@
             <button id="no-btn" class="btn btn-secondary">Não</button>
         </div>
         
+        <!-- Tela de nome do funcionário -->
+        <div id="name-screen" class="hidden">
+            <div class="step">
+                <span class="step-number">1</span>
+                <div class="step-content">
+                    <p>Informe seu nome completo:</p>
+                </div>
+            </div>
+            <div class="input-group">
+                <input type="text" id="name-input" placeholder="Digite seu nome completo">
+            </div>
+            <button id="confirm-name-btn" class="btn">Confirmar Nome</button>
+        </div>
+        
         <!-- Tela de valor -->
         <div id="value-screen" class="hidden">
-            <p>Informe o valor desejado:</p>
+            <div class="step">
+                <span class="step-number">2</span>
+                <div class="step-content">
+                    <p>Informe o valor desejado:</p>
+                </div>
+            </div>
             <div class="input-group">
                 <input type="number" id="value-input" placeholder="R$ 0,00" min="0" step="0.01">
             </div>
@@ -281,6 +334,8 @@
         const requestBtn = document.getElementById('request-btn');
         const yesBtn = document.getElementById('yes-btn');
         const noBtn = document.getElementById('no-btn');
+        const confirmNameBtn = document.getElementById('confirm-name-btn');
+        const nameInput = document.getElementById('name-input');
         const confirmValueBtn = document.getElementById('confirm-value-btn');
         const valueInput = document.getElementById('value-input');
         const whatsappBtn = document.getElementById('whatsapp-btn');
@@ -297,6 +352,7 @@
         // Telas
         const initialScreen = document.getElementById('initial-screen');
         const confirmationScreen = document.getElementById('confirmation-screen');
+        const nameScreen = document.getElementById('name-screen');
         const valueScreen = document.getElementById('value-screen');
         const finalScreen = document.getElementById('final-screen');
         const refusalScreen = document.getElementById('refusal-screen');
@@ -308,6 +364,7 @@
         
         // Variáveis de estado
         let selectedValue = 0;
+        let employeeName = "";
         let isRequestPeriod = false;
         let daysRemaining = 0;
 
@@ -395,8 +452,8 @@
         yesBtn.addEventListener('click', function() {
             console.log("Botão Sim clicado");
             confirmationScreen.classList.add('hidden');
-            valueScreen.classList.remove('hidden');
-            valueInput.focus();
+            nameScreen.classList.remove('hidden');
+            nameInput.focus();
         });
         
         noBtn.addEventListener('click', function() {
@@ -416,6 +473,22 @@
             }
         });
         
+        confirmNameBtn.addEventListener('click', function() {
+            console.log("Botão Confirmar Nome clicado");
+            const name = nameInput.value.trim();
+            
+            if (name === "") {
+                alert('Por favor, insira seu nome completo.');
+                nameInput.focus();
+                return;
+            }
+            
+            employeeName = name;
+            nameScreen.classList.add('hidden');
+            valueScreen.classList.remove('hidden');
+            valueInput.focus();
+        });
+        
         confirmValueBtn.addEventListener('click', function() {
             console.log("Botão Confirmar Valor clicado");
             const value = parseFloat(valueInput.value);
@@ -431,7 +504,10 @@
             finalScreen.classList.remove('hidden');
             
             // Configurar mensagens
-            successMessage.textContent = `Você solicitou o valor R$ ${value.toFixed(2).replace('.', ',')}`;
+            successMessage.innerHTML = `
+                <strong>Funcionário:</strong> ${employeeName}<br>
+                <strong>Valor solicitado:</strong> R$ ${value.toFixed(2).replace('.', ',')}
+            `;
             
             const now = new Date();
             const deadline = new Date();
@@ -447,7 +523,7 @@
         // Configurar botões do WhatsApp
         whatsappBtn.addEventListener('click', function() {
             console.log("Botão WhatsApp (solicitação) clicado");
-            const message = `Solicitação de Vale: R$ ${selectedValue.toFixed(2).replace('.', ',')}`;
+            const message = `Solicitação de Vale\nFuncionário: ${employeeName}\nValor: R$ ${selectedValue.toFixed(2).replace('.', ',')}`;
             const encodedMessage = encodeURIComponent(message);
             const whatsappURL = `https://wa.me/?text=${encodedMessage}`;
             window.open(whatsappURL, '_blank');
@@ -478,11 +554,19 @@
         
         // Resetar formulário
         function resetForm() {
+            nameInput.value = '';
             valueInput.value = '';
             selectedValue = 0;
+            employeeName = "";
         }
         
-        // Permitir Enter no campo de valor
+        // Permitir Enter nos campos
+        nameInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                confirmNameBtn.click();
+            }
+        });
+        
         valueInput.addEventListener('keypress', function(e) {
             if (e.key === 'Enter') {
                 confirmValueBtn.click();
