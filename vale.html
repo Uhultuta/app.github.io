@@ -4,392 +4,497 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Solicitação de Vale</title>
-    <meta name="description" content="Solicite seu vale mensal de forma simples e segura.">
-
     <style>
-        :root {
-            --primary: #2a5298;
-            --primary-dark: #1e3c72;
-            --success: #28a745;
-            --warning: #ffc107;
-            --danger: #dc3545;
-            --gray: #6c757d;
-            --border: #e1e5ee;
-            --shadow: 0 10px 30px rgba(0,0,0,.2);
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
-        * { margin:0; padding:0; box-sizing:border-box; font-family:'Segoe UI',sans-serif; }
-        body { background:linear-gradient(135deg,#1e3c72,#2a5298); color:#333; min-height:100vh; display:flex; justify-content:center; align-items:center; padding:15px; }
-        .container { background:#fff; border-radius:15px; box-shadow:var(--shadow); width:100%; max-width:500px; padding:30px; text-align:center; position:relative; animation:fadeIn .5s ease-out; }
-        @keyframes fadeIn { from{opacity:0;transform:translateY(-20px)} to{opacity:1;,transform:none} }
-        h1 { color:var(--primary); margin-bottom:20px; font-size:24px; }
-        p { margin-bottom:18px; line-height:1.6; color:#555; }
-        .date-info { background:#f0f8ff; padding:15px; border-radius:10px; margin-bottom:25px; border-left:4px solid var(--primary); }
-        .btn { background:var(--primary); color:#fff; border:none; padding:12px 25px; border-radius:8px; cursor:pointer; font-size:16px; font-weight:600; transition:all .3s ease; margin:8px 5px; width:100%; max-width:200px; }
-        .btn:hover { background:var(--primary-dark); transform:translateY(-2px); box-shadow:0 5px 15px rgba(0,0,0,.1); }
-        .btn:disabled { background:#ccc; cursor:not-allowed; transform:none; box-shadow:none; opacity:0.7; }
-        .btn-success { background:var(--success); }
-        .btn-success:hover { background:#218838; }
-        .btn-secondary { background:var(--gray); }
-        .btn-secondary:hover { background:#5a6268; }
-        .hidden { display:none !important; }
-        .input-group { margin:20px 0; }
-        input[type=text], input[type=number] { width:100%; padding:12px; border:2px solid var(--border); border-radius:8px; font-size:16px; transition:border .3s; }
-        input:focus { border-color:var(--primary); outline:none; }
-        .message { padding:15px; border-radius:8px; margin:20px 0; font-weight:500; }
-        .message-success { background:#d4edda; color:#155724; border:1px solid #c3e6cb; }
-        .message-info { background:#d1ecf1; color:#0c5460; border:1px solid #bee5eb; }
-        .message-warning { background:#fff3cd; color:#856404; border:1px solid #ffeaa7; }
-        .whatsapp-icon { display:inline-block; vertical-align:middle; margin-right:8px; width:24px; height:24px; }
-        .step { margin-bottom:25px; text-align:left; }
-        .step-number { display:inline-block; background:var(--primary); color:#fff; width:30px; height:30px; border-radius:50%; text-align:center; line-height:30px; margin-right:10px; font-weight:bold; }
-        .logo img { max-width:120px; }
-        .modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,.7); display:flex; justify-content:center; align-items:center; z-index:1000; }
-        .modal { background:#fff; border-radius:15px; box-shadow:var(--shadow); width:90%; max-width:500px; padding:30px; text-align:center; animation:modalAppear .3s ease-out; }
-        @keyframes modalAppear { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:none} }
-        .days-left { font-weight:bold; color:var(--primary); font-size:18px; }
-        .login-screen input { margin-bottom:15px; }
-        .error { color:var(--danger); font-size:14px; margin-top:5px; display:none; }
-        @media (max-width:480px){
-            .container{padding:20px}
-            h1{font-size:20px}
-            .btn{width:100%;margin:5px 0}
-            .modal-buttons{flex-direction:column}
-            .modal .btn{width:100%}
+        
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+            z-index: 1;
+        }
+        
+        h1 {
+            color: #2a5298;
+            margin-bottom: 20px;
+        }
+        
+        .date-info {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #2a5298;
+        }
+        
+        .btn {
+            background-color: #2a5298;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+            width: 100%;
+            max-width: 200px;
+        }
+        
+        .btn:hover {
+            background-color: #1e3c72;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #5a6268;
+        }
+        
+        .btn-success {
+            background-color: #28a745;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        .input-group {
+            margin: 20px 0;
+        }
+        
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5ee;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+        
+        input[type="number"]:focus {
+            border-color: #2a5298;
+            outline: none;
+        }
+        
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+        
+        .message-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        
+        .message-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        
+        .message-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        
+        /* Modal de lembrete */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+        
+        .modal {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+            animation: modalAppear 0.3s ease-out;
+        }
+        
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .modal h2 {
+            color: #2a5298;
+            margin-bottom: 15px;
+        }
+        
+        .modal p {
+            margin-bottom: 15px;
+        }
+        
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+        
+        .modal .btn {
+            margin: 5px;
+        }
+        
+        .days-left {
+            font-weight: bold;
+            color: #2a5298;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+        
+        @media (max-width: 480px) {
+            .container {
+                padding: 20px;
+            }
+            
+            .btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            .modal-buttons {
+                flex-direction: column;
+            }
+            
+            .modal .btn {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
-<div class="container">
-    <div class="logo"><img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0iIzJhNTI5OCI+PHBhdGggZD0iTTEyIDJDNi40OCAyIDIgNi40OCAyIDEyczQuNDggMTAgMTAgMTAgMTAtNC40OCAxMC0xMFMxNy41MiAyIDEyIDJ6bS0yIDE1bC01LTUgMS40MS0xLjQxTDEwIDE0LjE3bDcuNTktNy41OUwxOSA4bC05IDl6Ii8+PC9zdmc+" alt="Logo"></div>
-    <h1>Sistema de Solicitação de Vale</h1>
-
-    <!-- Login -->
-    <div id="login-screen" class="login-screen">
-        <p>Identifique-se para continuar:</p>
-        <div class="input-group">
-            <input type="text" id="user-name" placeholder="Seu nome completo" autocomplete="name">
-            <div class="error" id="name-error">Nome é obrigatório.</div>
-        </div>
-        <button id="login-btn" class="btn">Entrar</button>
-    </div>
-
-    <!-- App Principal -->
-    <div id="main-app" class="hidden">
+    <div class="container">
+        <h1>Sistema de Solicitação de Vale</h1>
+        
         <div class="date-info">
-            <p id="current-date">Carregando...</p>
+            <p id="current-date">Carregando data...</p>
             <p id="day-status"></p>
             <p id="days-left"></p>
         </div>
-
-        <!-- Tela Inicial -->
+        
+        <!-- Tela inicial -->
         <div id="initial-screen">
-            <p>Clique no botão para solicitar seu vale deste mês.</p>
+            <p>Clique no botão abaixo para solicitar seu vale deste mês.</p>
             <button id="request-btn" class="btn">Solicitar Vale</button>
         </div>
-
-        <!-- Confirmação -->
+        
+        <!-- Tela de confirmação -->
         <div id="confirmation-screen" class="hidden">
             <p>Deseja solicitar vale este mês?</p>
             <button id="yes-btn" class="btn">Sim</button>
             <button id="no-btn" class="btn btn-secondary">Não</button>
         </div>
-
-        <!-- Valor -->
+        
+        <!-- Tela de valor -->
         <div id="value-screen" class="hidden">
-            <div class="step"><span class="step-number">1</span><div class="step-content"><p>Informe o valor desejado:</p></div></div>
+            <p>Informe o valor desejado:</p>
             <div class="input-group">
-                <input type="number" id="value-input" placeholder="R$ 0,00" min="0.01" step="0.01">
-                <div class="error" id="value-error">Insira um valor maior que zero.</div>
+                <input type="number" id="value-input" placeholder="R$ 0,00" min="0" step="0.01">
             </div>
             <button id="confirm-value-btn" class="btn">Confirmar Valor</button>
         </div>
-
-        <!-- Sucesso -->
+        
+        <!-- Tela de confirmação final -->
         <div id="final-screen" class="hidden">
             <div class="message message-success" id="success-message"></div>
             <div class="message message-info" id="info-message"></div>
-            <button id="whatsapp-btn" class="btn btn-success">
-                <svg class="whatsapp-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M16.75 13.96c.25.13.41.2.46.3.06.11.04.61-.21 1.18-.2.56-1.24 1.1-1.7 1.12-.46.02-.47.36-2.96-.73-2.49-1.09-3.99-3.75-4.11-3.92-.12-.17-.96-1.38-.92-2.61.05-1.22.69-1.8.95-2.04.24-.26.51-.29.68-.26h.47c.15 0 .36-.06.55.45l.69 1.87c.06.13.1.28.01.44l-.27.41-.39.42c-.12.12-.26.25-.12.5.12.26.62 1.09 1.32 1.78.91.88 1.71 1.17 1.95 1.3.24.14.39.12.54-.04l.81-.94c.19-.25.35-.19.58-.11l1.67.88M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10c-1.97 0-3.8-.57-5.35-1.55L2 22l1.55-4.65A9.969 9.969 0 0 1 2 12 10 10 0 0 1 12 2m0 2a8 8 0 0 0-8 8c0 1.72.54 3.31 1.46 4.61L4.5 19.5l2.89-.96A7.95 7.95 0 0 0 12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8z"/></svg>
-                Enviar via WhatsApp
-            </button>
+            <button id="whatsapp-btn" class="btn btn-success">Enviar via WhatsApp</button>
             <button id="back-btn" class="btn btn-secondary">Voltar ao Início</button>
         </div>
-
-        <!-- Recusa -->
+        
+        <!-- Tela de recusa -->
         <div id="refusal-screen" class="hidden">
-            <div class="message message-warning"><p>Obrigado, não desejo pedir vale</p></div>
+            <div class="message message-warning">
+                <p>Obrigado, não desejo pedir vale</p>
+            </div>
             <div class="message message-info" id="refusal-info"></div>
-            <button id="refusal-whatsapp-btn" class="btn btn-success">
-                <svg class="whatsapp-icon" viewBox="0 0 24 24"><path fill="currentColor" d="M16.75 13.96c.25.13.41.2.46.3.06.11.04.61-.21 1.18-.2.56-1.24 1.1-1.7 1.12-.46.02-.47.36-2.96-.73-2.49-1.09-3.99-3.75-4.11-3.92-.12-.17-.96-1.38-.92-2.61.05-1.22.69-1.8.95-2.04.24-.26.51-.29.68-.26h.47c.15 0 .36-.06.55.45l.69 1.87c.06.13.1.28.01.44l-.27.41-.39.42c-.12.12-.26.25-.12.5.12.26.62 1.09 1.32 1.78.91.88 1.71 1.17 1.95 1.3.24.14.39.12.54-.04l.81-.94c.19-.25.35-.19.58-.11l1.67.88M12 2a10 10 0 0 1 10 10 10 10 0 0 1-10 10c-1.97 0-3.8-.57-5.35-1.55L2 22l1.55-4.65A9.969 9.969 0 0 1 2 12 10 10 0 0 1 12 2m0 2a8 8 0 0 0-8 8c0 1.72.54 3.31 1.46 4.61L4.5 19.5l2.89-.96A7.95 7.95 0 0 0 12 20a8 8 0 0 0 8-8 8 8 0 0 0-8-8z"/></svg>
-                Enviar Recusa via WhatsApp
-            </button>
+            <button id="refusal-whatsapp-btn" class="btn btn-success">Enviar via WhatsApp</button>
             <button id="refusal-back-btn" class="btn btn-secondary">Voltar ao Início</button>
         </div>
     </div>
-</div>
 
-<!-- Modal Lembrete -->
-<div id="reminder-modal" class="modal-overlay hidden">
-    <div class="modal">
-        <h2>Lembrete de Solicitação de Vale</h2>
-        <p>Você ainda não solicitou seu vale para este mês.</p>
-        <p>O prazo é entre os dias <strong>10 e 20</strong> de cada mês.</p>
-        <p id="modal-days-left" class="days-left"></p>
-        <div class="modal-buttons">
-            <button id="modal-request-btn" class="btn">Solicitar Agora</button>
-            <button id="modal-close-btn" class="btn btn-secondary">Lembrar Depois</button>
+    <!-- Modal de Lembrete -->
+    <div id="reminder-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <h2>Lembrete de Solicitação de Vale</h2>
+            <p>Você ainda não solicitou seu vale para este mês.</p>
+            <p>O prazo para solicitação é entre os dias <strong>10 e 20</strong> de cada mês.</p>
+            <p id="modal-days-left" class="days-left"></p>
+            <div class="modal-buttons">
+                <button id="modal-request-btn" class="btn">Solicitar Agora</button>
+                <button id="modal-close-btn" class="btn btn-secondary">Lembrar Depois</button>
+            </div>
         </div>
     </div>
-</div>
 
-<script>
-/* ==================== CONFIGURAÇÃO ==================== */
-const CONFIG = {
-    WHATSAPP_NUMBER: "5511999999999", // SUBSTITUA AQUI
-    DEADLINE_HOUR: 15,
-    DEADLINE_MIN: 30,
-    MIN_VALUE: 0.01,
-    REQUEST_DAYS: { start: 10, end: 20 }
-};
+    <script>
+        // Elementos da interface
+        const currentDateEl = document.getElementById('current-date');
+        const dayStatusEl = document.getElementById('day-status');
+        const daysLeftEl = document.getElementById('days-left');
+        const requestBtn = document.getElementById('request-btn');
+        const yesBtn = document.getElementById('yes-btn');
+        const noBtn = document.getElementById('no-btn');
+        const confirmValueBtn = document.getElementById('confirm-value-btn');
+        const valueInput = document.getElementById('value-input');
+        const whatsappBtn = document.getElementById('whatsapp-btn');
+        const backBtn = document.getElementById('back-btn');
+        const refusalWhatsappBtn = document.getElementById('refusal-whatsapp-btn');
+        const refusalBackBtn = document.getElementById('refusal-back-btn');
+        
+        // Elementos do modal
+        const reminderModal = document.getElementById('reminder-modal');
+        const modalRequestBtn = document.getElementById('modal-request-btn');
+        const modalCloseBtn = document.getElementById('modal-close-btn');
+        const modalDaysLeft = document.getElementById('modal-days-left');
+        
+        // Telas
+        const initialScreen = document.getElementById('initial-screen');
+        const confirmationScreen = document.getElementById('confirmation-screen');
+        const valueScreen = document.getElementById('value-screen');
+        const finalScreen = document.getElementById('final-screen');
+        const refusalScreen = document.getElementById('refusal-screen');
+        
+        // Mensagens
+        const successMessage = document.getElementById('success-message');
+        const infoMessage = document.getElementById('info-message');
+        const refusalInfo = document.getElementById('refusal-info');
+        
+        // Variáveis de estado
+        let selectedValue = 0;
+        let isRequestPeriod = false;
+        let daysRemaining = 0;
 
-/* ==================== ESTADO GLOBAL ==================== */
-let state = {
-    userName: '',
-    selectedValue: 0,
-    requestMade: false,
-    currentMonthKey: ''
-};
-
-/* ==================== ELEMENTOS ==================== */
-const els = {
-    loginScreen: document.getElementById('login-screen'),
-    mainApp: document.getElementById('main-app'),
-    nameInput: document.getElementById('user-name'),
-    nameError: document.getElementById('name-error'),
-    loginBtn: document.getElementById('login-btn'),
-
-    currentDate: document.getElementById('current-date'),
-    dayStatus: document.getElementById('day-status'),
-    daysLeft: document.getElementById('days-left'),
-    requestBtn: document.getElementById('request-btn'),
-    yesBtn: document.getElementById('yes-btn'),
-    noBtn: document.getElementById('no-btn'),
-    valueInput: document.getElementById('value-input'),
-    valueError: document.getElementById('value-error'),
-    confirmValueBtn: document.getElementById('confirm-value-btn'),
-    successMsg: document.getElementById('success-message'),
-    infoMsg: document.getElementById('info-message'),
-    whatsappBtn: document.getElementById('whatsapp-btn'),
-    backBtn: document.getElementById('back-btn'),
-    refusalInfo: document.getElementById('refusal-info'),
-    refusalWhatsappBtn: document.getElementById('refusal-whatsapp-btn'),
-    refusalBackBtn: document.getElementById('refusal-back-btn'),
-
-    reminderModal: document.getElementById('reminder-modal'),
-    modalDaysLeft: document.getElementById('modal-days-left'),
-    modalRequestBtn: document.getElementById('modal-request-btn'),
-    modalCloseBtn: document.getElementById('modal-close-btn'),
-
-    screens: {
-        initial: document.getElementById('initial-screen'),
-        confirm: document.getElementById('confirmation-screen'),
-        value: document.getElementById('value-screen'),
-        final: document.getElementById('final-screen'),
-        refusal: document.getElementById('refusal-screen')
-    }
-};
-
-/* ==================== FUNÇÕES AUXILIARES ==================== */
-const formatCurrency = (v) => `R$ ${v.toFixed(2).replace('.', ',')}`;
-const formatDate = (d) => d.toLocaleDateString('pt-BR');
-const formatTime = (d) => d.toLocaleTimeString('pt-BR', {hour:'2-digit', minute:'2-digit'});
-
-function showScreen(id) {
-    Object.values(els.screens).forEach(s => s.classList.add('hidden'));
-    if (id) els.screens[id].classList.remove('hidden');
-}
-
-function resetForm() {
-    els.valueInput.value = '';
-    els.valueError.style.display = 'none';
-    state.selectedValue = 0;
-    showScreen('initial');
-    checkDateAndUpdate();
-}
-
-function showError(el, show) {
-    el.style.display = show ? 'block' : 'none';
-}
-
-/* ==================== FECHAR MODAL (GARANTIDO) ==================== */
-function closeReminder() {
-    els.reminderModal.classList.add('hidden');
-}
-
-/* ==================== VERIFICAÇÃO DE DATA ==================== */
-function checkDateAndUpdate() {
-    const today = new Date();
-    const day = today.getDate();
-    const monthKey = today.toISOString().slice(0,7);
-    state.currentMonthKey = monthKey;
-
-    els.currentDate.textContent = `Hoje é ${formatDate(today)}`;
-
-    const inPeriod = day >= CONFIG.REQUEST_DAYS.start && day <= CONFIG.REQUEST_DAYS.end;
-    const daysRemaining = CONFIG.REQUEST_DAYS.end - day;
-
-    const savedMonth = localStorage.getItem('valeMonth');
-    const savedMade = localStorage.getItem('valeMade') === 'true';
-    state.requestMade = savedMade && savedMonth === monthKey;
-
-    if (inPeriod) {
-        els.dayStatus.textContent = day === 20 ? "Último dia para solicitar!" : "Período de solicitação aberto.";
-        els.daysLeft.innerHTML = `<span class="days-left">${daysRemaining} dia(s) restante(s)</span>`;
-        els.requestBtn.disabled = state.requestMade;
-
-        if (!state.requestMade) {
-            setTimeout(() => showReminder(daysRemaining), 800);
+        // Verificar se está no período de solicitação (dias 10 a 20)
+        function checkDate() {
+            const today = new Date();
+            const day = today.getDate();
+            const month = today.getMonth() + 1;
+            const year = today.getFullYear();
+            
+            // Formatar data para exibição
+            const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+            currentDateEl.textContent = `Hoje é ${formattedDate}`;
+            
+            console.log("Dia detectado:", day);
+            
+            // Verificar se está no período de solicitação (dias 10 a 20)
+            if (day >= 10 && day <= 20) {
+                isRequestPeriod = true;
+                daysRemaining = 20 - day;
+                
+                if (day === 20) {
+                    dayStatusEl.textContent = "✅ Hoje é o último dia para solicitar o vale!";
+                } else {
+                    dayStatusEl.textContent = "✅ Estamos no período de solicitação de vale.";
+                }
+                
+                daysLeftEl.innerHTML = `<span class="days-left">${daysRemaining} dia(s) restante(s)</span> para solicitar seu vale.`;
+                requestBtn.disabled = false;
+                
+                // Mostrar modal de lembrete
+                setTimeout(showReminderModal, 1000);
+            } else {
+                isRequestPeriod = false;
+                
+                if (day < 10) {
+                    const daysUntilStart = 10 - day;
+                    dayStatusEl.textContent = "❌ O período de solicitação ainda não começou.";
+                    daysLeftEl.textContent = `Faltam ${daysUntilStart} dia(s) para o início do período.`;
+                } else {
+                    dayStatusEl.textContent = "❌ O período de solicitação já encerrou.";
+                    daysLeftEl.textContent = "Aguarde o próximo mês para solicitar seu vale.";
+                }
+                
+                requestBtn.disabled = true;
+            }
         }
-    } else {
-        els.requestBtn.disabled = true;
-        if (day < CONFIG.REQUEST_DAYS.start) {
-            const until = CONFIG.REQUEST_DAYS.start - day;
-            els.dayStatus.textContent = "Período ainda não iniciado.";
-            els.daysLeft.textContent = `Faltam ${until} dia(s) para começar.`;
-        } else {
-            els.dayStatus.textContent = "Período encerrado.";
-            els.daysLeft.textContent = "Aguarde o próximo mês.";
+        
+        // Mostrar modal de lembrete
+        function showReminderModal() {
+            modalDaysLeft.textContent = `Você tem ${daysRemaining} dia(s) para solicitar.`;
+            reminderModal.classList.remove('hidden');
         }
-    }
-}
-
-/* ==================== MODAL LEMBRETE ==================== */
-function showReminder(days) {
-    els.modalDaysLeft.textContent = `Faltam ${days} dia(s) para solicitar.`;
-    els.reminderModal.classList.remove('hidden');
-}
-
-/* ==================== ENVIO WHATSAPP ==================== */
-function sendWhatsApp(template) {
-    const now = new Date();
-    const msg = template
-        .replace('{NOME}', state.userName)
-        .replace('{VALOR}', formatCurrency(state.selectedValue))
-        .replace('{DATA}', formatDate(now))
-        .replace('{HORA}', formatTime(now));
-
-    const url = `https://wa.me/${CONFIG.WHATSAPP_NUMBER}?text=${encodeURIComponent(msg)}`;
-    window.open(url, '_blank');
-}
-
-/* ==================== EVENTOS (COM closeReminder() GARANTIDO) ==================== */
-document.addEventListener('DOMContentLoaded', () => {
-    // Login
-    els.loginBtn.addEventListener('click', () => {
-        const name = els.nameInput.value.trim();
-        if (!name) {
-            showError(els.nameError, true);
-            return;
+        
+        // Fechar modal de lembrete
+        function closeReminderModal() {
+            reminderModal.classList.add('hidden');
         }
-        state.userName = name;
-        localStorage.setItem('userName', name);
-        els.loginScreen.classList.add('hidden');
-        els.mainApp.classList.remove('hidden');
-        checkDateAndUpdate();
-    });
-
-    const savedName = localStorage.getItem('userName');
-    if (savedName) {
-        state.userName = savedName;
-        els.nameInput.value = savedName;
-        els.loginBtn.click();
-    }
-
-    // Botão Solicitar Vale (tela inicial)
-    els.requestBtn.addEventListener('click', () => {
-        if (state.requestMade || els.requestBtn.disabled) return;
-        closeReminder(); // GARANTE FECHAR
-        showScreen('confirm');
-    });
-
-    // MODAL: Solicitar Agora
-    els.modalRequestBtn.addEventListener('click', () => {
-        closeReminder(); // GARANTE FECHAR
-        showScreen('confirm');
-    });
-
-    // MODAL: Lembrar Depois
-    els.modalCloseBtn.addEventListener('click', () => {
-        closeReminder(); // GARANTE FECHAR
-        showScreen('initial');
-    });
-
-    // Sim
-    els.yesBtn.addEventListener('click', () => {
-        showScreen('value');
-        setTimeout(() => els.valueInput.focus(), 100);
-    });
-
-    // Não
-    els.noBtn.addEventListener('click', () => {
-        showScreen('refusal');
-        const now = new Date();
-        const deadline = new Date();
-        deadline.setHours(CONFIG.DEADLINE_HOUR, CONFIG.DEADLINE_MIN, 0, 0);
-        els.refusalInfo.textContent = now < deadline
-            ? `Você pode mudar de ideia até às 15:30 de hoje.`
-            : `Prazo para mudança encerrado às 15:30.`;
-    });
-
-    // Confirmar Valor
-    els.confirmValueBtn.addEventListener('click', () => {
-        const val = parseFloat(els.valueInput.value);
-        if (isNaN(val) || val < CONFIG.MIN_VALUE) {
-            showError(els.valueError, true);
-            return;
+        
+        // Inicializar verificação de data
+        checkDate();
+        
+        // Navegação entre telas
+        requestBtn.addEventListener('click', function() {
+            console.log("Botão Solicitar Vale clicado");
+            if (!isRequestPeriod) return;
+            
+            initialScreen.classList.add('hidden');
+            confirmationScreen.classList.remove('hidden');
+            closeReminderModal();
+        });
+        
+        modalRequestBtn.addEventListener('click', function() {
+            console.log("Botão Modal Solicitar clicado");
+            closeReminderModal();
+            initialScreen.classList.add('hidden');
+            confirmationScreen.classList.remove('hidden');
+        });
+        
+        modalCloseBtn.addEventListener('click', function() {
+            console.log("Botão Fechar Modal clicado");
+            closeReminderModal();
+        });
+        
+        yesBtn.addEventListener('click', function() {
+            console.log("Botão Sim clicado");
+            confirmationScreen.classList.add('hidden');
+            valueScreen.classList.remove('hidden');
+            valueInput.focus();
+        });
+        
+        noBtn.addEventListener('click', function() {
+            console.log("Botão Não clicado");
+            confirmationScreen.classList.add('hidden');
+            refusalScreen.classList.remove('hidden');
+            
+            // Configurar mensagem de recusa
+            const now = new Date();
+            const deadline = new Date();
+            deadline.setHours(15, 30, 0, 0);
+            
+            if (now < deadline) {
+                refusalInfo.textContent = `Você pode mudar de ideia até às 15:30 de hoje.`;
+            } else {
+                refusalInfo.textContent = `O prazo para mudar de ideia era até às 15:30 de hoje.`;
+            }
+        });
+        
+        confirmValueBtn.addEventListener('click', function() {
+            console.log("Botão Confirmar Valor clicado");
+            const value = parseFloat(valueInput.value);
+            
+            if (isNaN(value) || value <= 0) {
+                alert('Por favor, insira um valor válido.');
+                valueInput.focus();
+                return;
+            }
+            
+            selectedValue = value;
+            valueScreen.classList.add('hidden');
+            finalScreen.classList.remove('hidden');
+            
+            // Configurar mensagens
+            successMessage.textContent = `Você solicitou o valor R$ ${value.toFixed(2).replace('.', ',')}`;
+            
+            const now = new Date();
+            const deadline = new Date();
+            deadline.setHours(15, 30, 0, 0);
+            
+            if (now < deadline) {
+                infoMessage.textContent = `Você pode mudar de ideia até às 15:30 de hoje.`;
+            } else {
+                infoMessage.textContent = `O prazo para mudar de ideia era até às 15:30 de hoje.`;
+            }
+        });
+        
+        // Configurar botões do WhatsApp
+        whatsappBtn.addEventListener('click', function() {
+            console.log("Botão WhatsApp (solicitação) clicado");
+            const message = `Solicitação de Vale: R$ ${selectedValue.toFixed(2).replace('.', ',')}`;
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/?text=${encodedMessage}`;
+            window.open(whatsappURL, '_blank');
+        });
+        
+        refusalWhatsappBtn.addEventListener('click', function() {
+            console.log("Botão WhatsApp (recusa) clicado");
+            const message = "Obrigado, não desejo pedir vale";
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappURL = `https://wa.me/?text=${encodedMessage}`;
+            window.open(whatsappURL, '_blank');
+        });
+        
+        // Botões de voltar ao início
+        backBtn.addEventListener('click', function() {
+            console.log("Botão Voltar (solicitação) clicado");
+            finalScreen.classList.add('hidden');
+            initialScreen.classList.remove('hidden');
+            resetForm();
+        });
+        
+        refusalBackBtn.addEventListener('click', function() {
+            console.log("Botão Voltar (recusa) clicado");
+            refusalScreen.classList.add('hidden');
+            initialScreen.classList.remove('hidden');
+            resetForm();
+        });
+        
+        // Resetar formulário
+        function resetForm() {
+            valueInput.value = '';
+            selectedValue = 0;
         }
-        state.selectedValue = val;
-        showScreen('final');
-
-        els.successMsg.textContent = `Você solicitou ${formatCurrency(val)}`;
-        const now = new Date();
-        const deadline = new Date();
-        deadline.setHours(CONFIG.DEADLINE_HOUR, CONFIG.DEADLINE_MIN, 0, 0);
-        els.infoMsg.textContent = now < deadline
-            ? `Você pode mudar de ideia até às 15:30 de hoje.`
-            : `Prazo para mudança encerrado às 15:30.`;
-
-        localStorage.setItem('valeMade', 'true');
-        localStorage.setItem('valeMonth', state.currentMonthKey);
-        state.requestMade = true;
-    });
-
-    // WhatsApp
-    els.whatsappBtn.addEventListener('click', () => {
-        const template = `*Solicitação de Vale*\n\nColaborador: {NOME}\nValor: {VALOR}\nData: {DATA}\nHora: {HORA}\n\n_Enviado automaticamente._`;
-        sendWhatsApp(template);
-    });
-
-    els.refusalWhatsappBtn.addEventListener('click', () => {
-        const template = `*Recusa de Vale*\n\nColaborador: {NOME}\nNão deseja solicitar neste mês.\nData: {DATA}\nHora: {HORA}\n\n_Enviado automaticamente._`;
-        sendWhatsApp(template);
-    });
-
-    // Voltar
-    els.backBtn.addEventListener('click', resetForm);
-    els.refusalBackBtn.addEventListener('click', resetForm);
-
-    // Reset no dia 1
-    const now = new Date();
-    const nextMonth = new Date(now.getFullYear(), now.getMonth() + 1, 1);
-    const msUntilReset = nextMonth - now;
-    setTimeout(() => {
-        localStorage.removeItem('valeMade');
-        localStorage.removeItem('valeMonth');
-        location.reload();
-    }, msUntilReset);
-});
-</script>
+        
+        // Permitir Enter no campo de valor
+        valueInput.addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                confirmValueBtn.click();
+            }
+        });
+        
+        // Fechar modal ao clicar fora dele
+        reminderModal.addEventListener('click', function(e) {
+            if (e.target === reminderModal) {
+                closeReminderModal();
+            }
+        });
+    </script>
 </body>
-                </html>
+</html>
