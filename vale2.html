@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <link rel="manifest" href="manifest.json">
+    <link rel="icon" href="logo.ico" type="image/ico">
+    <link rel="apple-touch-icon" sizes="192x192" href="logo.ico">
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="application-name" content="Frigobar e Vale">
+    <meta name="theme-color" content="#ffffff"> 
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Frigobar e Vale</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Arial', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
+            color: #333;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .app-container {
+            max-width: 600px;
+            margin: 0 auto;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            color: white;
+            font-size: 2em;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        }
+
+        .nav-tabs {
+            display: flex;
+            background: white;
+            border-radius: 10px 10px 0 0;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        .nav-tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+
+        .nav-tab.active {
+            background: white;
+            border-bottom: 3px solid #007bff;
+            color: #007bff;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 0 0 10px 10px;
+            padding: 20px;
+            box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+            min-height: 500px;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Estilos do Frigobar */
+        .container {
+            position: relative;
+        }
+
+        .apartment-list {
+            display: none;
+            margin-top: 20px;
+        }
+
+        .floor {
+            margin-bottom: 20px;
+        }
+
+        .apartment {
+            background: #007bff;
+            color: white;
+            padding: 8px;
+            text-align: center;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+            margin: 5px;
+            font-size: 12px;
+            display: inline-block;
+            width: calc(25% - 10px);
+        }
+
+        .apartment:hover {
+            background: #0056b3;
+        }
+
+        .item-container {
+            margin-bottom: 20px;
+        }
+
+        .item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            background-color: #ecf0f1;
+            transition: background-color 0.3s;
+        }
+
+        .item:hover {
+            background-color: #dfe6e9;
+        }
+
+        .item button {
+            background-color: #3498db;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 8px 12px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        .item button.remove {
+            background-color: #e74c3c;
+        }
+
+        .item button:hover {
+            background-color: #2980b9;
+        }
+
+        .item button.remove:hover {
+            background-color: #c0392b;
+        }
+
+        .quantity, .total {
+            margin-left: 10px;
+            font-weight: bold;
+        }
+
+        #summary {
+            margin-top: 20px;
+            font-size: 1.2em;
+            text-align: center;
+        }
+
+        .input-apartment {
+            margin-bottom: 20px;
+            text-align: center;
+        }
+
+        .input-apartment input {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: calc(100% - 22px);
+            max-width: 300px;
+        }
+
+        button.send-whatsapp {
+            background-color: #25D366;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            display: block;
+            margin: 20px auto;
+            transition: background-color 0.3s;
+        }
+
+        button.send-whatsapp:hover {
+            background-color: #1da851;
+        }
+
+        #show-apartments {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            display: block;
+            margin: 20px auto;
+        }
+
+        /* Estilos do Sistema de Vale */
+        .date-info {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #2a5298;
+        }
+
+        .vale-btn {
+            background-color: #2a5298;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .vale-btn:hover {
+            background-color: #1e3c72;
+        }
+
+        .vale-btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .vale-btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .vale-btn-success {
+            background-color: #28a745;
+        }
+
+        .vale-btn-success:hover {
+            background-color: #218838;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .input-group {
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2a5298;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e5ee;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            border-color: #2a5298;
+            outline: none;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .message-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .message-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .message-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .message-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        /* Modal de lembrete */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+            animation: modalAppear 0.3s ease-out;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal h2 {
+            color: #2a5298;
+            margin-bottom: 15px;
+        }
+
+        .modal p {
+            margin-bottom: 15px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .modal .vale-btn {
+            margin: 5px;
+        }
+
+        .days-left {
+            font-weight: bold;
+            color: #2a5298;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .step {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .step-number {
+            display: inline-block;
+            background-color: #2a5298;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .step-content {
+            display: inline-block;
+            width: calc(100% - 50px);
+            vertical-align: top;
+        }
+
+        /* Botão de instalação */
+        .install-button {
+            background: #4CAF50;
+            color: white;
+            padding: 10px;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: background-color 0.3s;
+            z-index: 1001;
+        }
+
+        .install-button:hover {
+            background-color: #45a049;
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+            }
+            
+            .apartment {
+                width: calc(33% - 10px);
+                font-size: 11px;
+                padding: 6px;
+            }
+            
+            .vale-btn {
+                width: 100%;
+                margin: 5px 0;
+            }
+            
+            .modal-buttons {
+                flex-direction: column;
+            }
+            
+            .modal .vale-btn {
+                width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <div class="header">
+            <h1>Hotel App</h1>
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" data-tab="frigobar">Frigobar</button>
+            <button class="nav-tab" data-tab="vale">Solicitar Vale</button>
+        </div>
+
+        <!-- ABA FRIGOBAR -->
+        <div id="frigobar-tab" class="tab-content active">
+            <div class="container">
+                <h2>Frigobar</h2>
+
+                <!-- Modal de Confirmação Frigobar -->
+                <div id="confirmationModal" class="modal-overlay" style="display: none;">
+                    <div class="modal">
+                        <h3>Confirmação</h3>
+                        <p>Foi saída ou arrumação?</p>
+                        <div class="modal-buttons">
+                            <button id="confirmExit" class="vale-btn">Saída</button>
+                            <button id="confirmCleaning" class="vale-btn vale-btn-secondary">Arrumação</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-apartment">
+                    <label for="apartmentNumber"><strong>Número do Apartamento:</strong></label>
+                    <input type="text" id="apartmentNumber" placeholder="Digite o número do apartamento" />
+                </div>
+
+                <button id="show-apartments">Selecionar Apartamentos</button>
+
+                <div class="apartment-list" id="apartment-list">
+                    <!-- Apartamentos serão gerados aqui -->
+                </div>
+
+                <h3>Bebidas</h3>
+                <div class="item-container" id="beverages">
+                    <div class="item">
+                        <img src="agua.ico" alt="Água Mineral s/Gás" style="width: 50px; cursor: pointer;">
+                        <span>Água Mineral s/Gás (500ml)</span>
+                        <button class="remove">Remover</button>
+                        <span class="quantity">0</span>
+                        <span class="total">0</span>
+                    </div>
+                    <div class="item">
+                        <img src="aguacomgas.ico" alt="Água Mineral c/Gás" style="width: 50px; cursor: pointer;">
+                        <span>Água Mineral c/Gás (310ml)</span>
+                        <button class="remove">Remover</button>
+                        <span class="quantity">0</span>
+                        <span class="total">0</span>
+                    </div>
+                    <div class="item">
+                        <img src="cocacola.ico" alt="Coca-cola" style="width: 50px; cursor: pointer;">
+                        <span>Coca-cola (lata 350ml)</span>
+                        <button class="remove">Remover</button>
+                        <span class="quantity">0</span>
+                        <span class="total">0</span>
+                    </div>
+                    <div class="item">
+                        <img src="fanta.ico" alt="Fanta" style="width: 50px; cursor: pointer;">
+                        <span>Fanta (lata 350ml)</span>
+                        <button class="remove">Remover</button>
+                        <span class="quantity">0</span>
+                        <span class="total">0</span>
+                    </div>
+                    <div class="item">
+                        <img src="guarana.ico" alt="Guaraná" style="width: 50px; cursor: pointer;">
+                        <span>Guaraná (lata 350ml)</span>
+                        <button class="remove">Remover</button>
+                        <span class="quantity">0</span>
+                        <span class="total">0</span>
+                    </div>
+                    <div class="item">
+                        <img src="toddynho.ico" alt="Toddynho" style="width: 50px; cursor: pointer;">
+                        <span>Toddynho (200ml)</span>
+                        <button class="remove">Remover</button>
+                        <span class="quantity">0</span>
+                        <span class="total">0</span>
+                    </div>
+                    <div class="item">
+                        <img src="antarctica.ico" alt="Antarctica" style="width: 50px; cursor: pointer;">
+                        <span>Antarctica (lata 350ml)</span>
+                        <button class="remove">Remover</button>
+                        <span class="quantity">0</span>
+                        <span class="total">0</span>
+                    </div>
+                </div>
+
+                <h3>Snacks</h3>
+                <div class="item-container" id="snacks">
+                    <div class="item">
+                        <img src="castanhadecaju.ico" alt="Castanha de Caju" style="width: 50px; cursor: pointer;">
+                        <span>Castanha de Caju (50g)</span>
+                        <button class="remove">Remover</button>
+                        <span class="quantity">0</span>
+                        <span class="total">0</span>
+                    </div>
+                    <div class="item">
+                        <img src="batata.ico" alt="Batata" style="width: 50px; cursor: pointer;">
+                        <span>Batata (40g)</span>
+                        <button class="remove">Remover</button>
+                        <span class="quantity">0</span>
+                        <span class="total">0</span>
+                    </div>
+                    <div class="item">
+                        <img src="kitkat.ico" alt="Chocolate Kit Kat" style="width: 50px; cursor: pointer;">
+                        <span>Chocolate Kit Kat (41,5g)</span>
+                        <button class="remove">Remover</button>
+                        <span class="quantity">0</span>
+                        <span class="total">0</span>
+                    </div>
+                    <div class="item">
+                        <img src="mentoscrazyfruit.ico" alt="Bala Mentos crazyfruit" style="width: 50px; cursor: pointer;">
+                        <span>Bala Mentos crazyfruit (41,5g)</span>
+                        <button class="remove">Remover</button>
+                        <span class="quantity">0</span>
+                        <span class="total">0</span>
+                    </div>
+                    <div class="item">
+                        <img src="mentosmint.ico" alt="Bala Mentos mint" style="width: 50px; cursor: pointer;">
+                        <span>Bala Mentos mint (41,5g)</span>
+                        <button class="remove">Remover</button>
+                        <span class="quantity">0</span>
+                        <span class="total">0</span>
+                    </div>
+                </div>
+
+                <h3>Resumo de Custos</h3>
+                <div id="summary">
+                    <p>Total Bebidas (R$): <span id="totalBeverages">0</span></p>
+                    <p>Total Snacks (R$): <span id="totalSnacks">0</span></p>
+                    <p>Custo Total (R$): <span id="totalCost">0</span></p>
+                </div>
+
+                <button class="send-whatsapp" id="send-frigobar-whatsapp">
+                    Enviar via WhatsApp
+                </button>
+            </div>
+        </div>
+
+        <!-- ABA VALE -->
+        <div id="vale-tab" class="tab-content">
+            <div class="container">
+                <h2>Sistema de Solicitação de Vale</h2>
+                
+                <div class="date-info">
+                    <p id="current-date">Carregando data...</p>
+                    <p id="day-status"></p>
+                    <p id="days-left"></p>
+                </div>
+                
+                <!-- Mensagem de 13º salário -->
+                <div id="thirteenth-salary-message" class="message message-error hidden">
+                    <p><strong>Devido ao 13º salário não é possível solicitar vale este mês.</strong></p>
+                </div>
+                
+                <!-- Tela inicial -->
+                <div id="initial-screen">
+                    <p>Clique no botão abaixo para solicitar seu vale deste mês.</p>
+                    <button id="request-btn" class="vale-btn">Solicitar Vale</button>
+                </div>
+                
+                <!-- Tela de confirmação -->
+                <div id="confirmation-screen" class="hidden">
+                    <p>Deseja solicitar vale este mês?</p>
+                    <button id="yes-btn" class="vale-btn">Sim</button>
+                    <button id="no-btn" class="vale-btn vale-btn-secondary">Não</button>
+                </div>
+                
+                <!-- Tela de nome do funcionário -->
+                <div id="name-screen" class="hidden">
+                    <div class="step">
+                        <span class="step-number">1</span>
+                        <div class="step-content">
+                            <p>Informe seu nome completo:</p>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" id="name-input" placeholder="Digite seu nome completo">
+                    </div>
+                    <button id="confirm-name-btn" class="vale-btn">Confirmar Nome</button>
+                </div>
+                
+                <!-- Tela de valor -->
+                <div id="value-screen" class="hidden">
+                    <div class="step">
+                        <span class="step-number">2</span>
+                        <div class="step-content">
+                            <p>Informe o valor desejado:</p>
+                        </div>
+                    </div>
+                    <div class="input-group">
+                        <input type="number" id="value-input" placeholder="R$ 0,00" min="0" step="0.01">
+                    </div>
+                    <button id="confirm-value-btn" class="vale-btn">Confirmar Valor</button>
+                </div>
+                
+                <!-- Tela de confirmação final -->
+                <div id="final-screen" class="hidden">
+                    <div class="message message-success" id="success-message"></div>
+                    <div class="message message-info" id="info-message"></div>
+                    <button id="whatsapp-btn" class="vale-btn vale-btn-success">Enviar via WhatsApp</button>
+                    <button id="back-btn" class="vale-btn vale-btn-secondary">Voltar ao Frigobar</button>
+                </div>
+                
+                <!-- Tela de recusa -->
+                <div id="refusal-screen" class="hidden">
+                    <div class="message message-warning">
+                        <p>Obrigado, não desejo pedir vale</p>
+                    </div>
+                    <div class="message message-info" id="refusal-info"></div>
+                    <button id="refusal-whatsapp-btn" class="vale-btn vale-btn-success">Enviar via WhatsApp</button>
+                    <button id="refusal-back-btn" class="vale-btn vale-btn-secondary">Voltar ao Frigobar</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Modal de Lembrete do Vale -->
+        <div id="reminder-modal" class="modal-overlay hidden">
+            <div class="modal">
+                <h2>Lembrete de Solicitação de Vale</h2>
+                <p>Você ainda não solicitou seu vale para este mês.</p>
+                <p>O prazo para solicitação é entre os dias <strong>10 e 20</strong> de cada mês.</p>
+                <p id="modal-days-left" class="days-left"></p>
+                <div class="modal-buttons">
+                    <button id="modal-request-btn" class="vale-btn">Solicitar Agora</button>
+                    <button id="modal-close-btn" class="vale-btn vale-btn-secondary">Lembrar Depois</button>
+                </div>
+            </div>
+        </div>
+
+        <button class="install-button" id="install-button" style="display: none;">
+            +
+        </button>
+    </div>
+
+    <script>
+        // ========== SISTEMA DE NAVEGAÇÃO ENTRE ABAS ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            const tabs = document.querySelectorAll('.nav-tab');
+            const tabContents = document.querySelectorAll('.tab-content');
+            
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    // Remove active class from all tabs and contents
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tabContents.forEach(c => c.classList.remove('active'));
+                    
+                    // Add active class to clicked tab and corresponding content
+                    tab.classList.add('active');
+                    const tabId = tab.getAttribute('data-tab') + '-tab';
+                    document.getElementById(tabId).classList.add('active');
+                });
+            });
+            
+            // Inicializar ambos os sistemas
+            initializeFrigobar();
+            initializeValeSystem();
+        });
+
+        // ========== SISTEMA FRIGOBAR ==========
+        function initializeFrigobar() {
+            // Preços dos itens
+            const prices = {
+                'Água Mineral s/Gás (500ml)': 8,
+                'Água Mineral c/Gás (310ml)': 8,
+                'Coca-cola (lata 350ml)': 9,
+                'Fanta (lata 350ml)': 9,
+                'Guaraná (lata 350ml)': 9,
+                'Toddynho (200ml)': 10,
+                'Antarctica (lata 350ml)': 12,
+                'Castanha de Caju (50g)': 17,
+                'Batata (40g)': 11,
+                'Chocolate Kit Kat (41,5g)': 10,
+                'Bala Mentos crazyfruit (41,5g)': 8,
+                'Bala Mentos mint (41,5g)': 8
+            };
+
+            // Configurar eventos dos itens
+            document.querySelectorAll('.item').forEach(item => {
+                const img = item.querySelector('img');
+                const itemName = item.querySelector('span').textContent;
+                const price = prices[itemName];
+                
+                img.addEventListener('click', () => addItem(item, price));
+                item.querySelector('.remove').addEventListener('click', () => removeItem(item, price));
+            });
+
+            // Gerar apartamentos
+            const apartmentList = document.getElementById('apartment-list');
+            for (let floor = 3; floor <= 10; floor++) {
+                const floorDiv = document.createElement('div');
+                floorDiv.classList.add('floor');
+                const floorTitle = document.createElement('h4');
+                floorTitle.textContent = `Andar ${floor}`;
+                floorDiv.appendChild(floorTitle);
+
+                const roomCount = floor === 10 ? 7 : 8;
+                for (let room = 1; room <= roomCount; room++) {
+                    const apartment = floor === 10 ? `100${room}` : `${floor}0${room}`;
+                    const apartmentDiv = document.createElement('div');
+                    apartmentDiv.classList.add('apartment');
+                    apartmentDiv.textContent = apartment;
+                    apartmentDiv.addEventListener('click', () => {
+                        document.getElementById('apartmentNumber').value = apartment;
+                        apartmentList.style.display = 'none';
+                    });
+                    floorDiv.appendChild(apartmentDiv);
+                }
+                apartmentList.appendChild(floorDiv);
+            }
+
+            // Botão mostrar/ocultar apartamentos
+            document.getElementById('show-apartments').addEventListener('click', () => {
+                const list = document.getElementById('apartment-list');
+                list.style.display = list.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // WhatsApp do Frigobar
+            document.getElementById('send-frigobar-whatsapp').addEventListener('click', sendFrigobarWhatsApp);
+
+            // Modal do Frigobar
+            document.getElementById('confirmExit').addEventListener('click', () => sendFrigobarMessage(true));
+            document.getElementById('confirmCleaning').addEventListener('click', () => sendFrigobarMessage(false));
+        }
+
+        function addItem(item, price) {
+            const quantityElement = item.querySelector('.quantity');
+            const totalElement = item.querySelector('.total');
+
+            let quantity = parseInt(quantityElement.textContent) + 1;
+            quantityElement.textContent = quantity;
+
+            let total = quantity * price;
+            totalElement.textContent = total.toFixed(2);
+
+            updateFrigobarSummary();
+        }
+
+        function removeItem(item, price) {
+            const quantityElement = item.querySelector('.quantity');
+            const totalElement = item.querySelector('.total');
+
+            let quantity = parseInt(quantityElement.textContent);
+            if (quantity > 0) {
+                quantity -= 1;
+                quantityElement.textContent = quantity;
+                let total = quantity * price;
+                totalElement.textContent = total.toFixed(2);
+            }
+
+            updateFrigobarSummary();
+        }
+
+        function updateFrigobarSummary() {
+            const beverageItems = document.querySelectorAll('#beverages .item');
+            const snackItems = document.querySelectorAll('#snacks .item');
+
+            let totalBeverages = 0;
+            let totalSnacks = 0;
+
+            beverageItems.forEach(item => {
+                totalBeverages += parseFloat(item.querySelector('.total').textContent);
+            });
+
+            snackItems.forEach(item => {
+                totalSnacks += parseFloat(item.querySelector('.total').textContent);
+            });
+
+            const totalCost = totalBeverages + totalSnacks;
+
+            document.getElementById('totalBeverages').textContent = totalBeverages.toFixed(2);
+            document.getElementById('totalSnacks').textContent = totalSnacks.toFixed(2);
+            document.getElementById('totalCost').textContent = totalCost.toFixed(2);
+        }
+
+        function sendFrigobarWhatsApp() {
+            const apartmentNumber = document.getElementById('apartmentNumber').value.trim();
+
+            if (!apartmentNumber) {
+                alert("Por favor, insira o número do apartamento.");
+                return;
+            }
+
+            document.getElementById('confirmationModal').style.display = 'flex';
+        }
+
+        function sendFrigobarMessage(isExit) {
+            const apartmentNumber = document.getElementById('apartmentNumber').value.trim();
+            const status = isExit ? ' (Saída)' : ' (Arrumação)';
+
+            let message = `*Uh: ${apartmentNumber}${status} - Frigobar* \n\n`;
+
+            // Coleta os itens de bebidas
+            document.querySelectorAll('#beverages .item').forEach(item => {
+                const name = item.querySelector('span').textContent;
+                const quantity = item.querySelector('.quantity').textContent;
+                if (parseInt(quantity) > 0) {
+                    message += `*${quantity}* ${name}\n`;
+                }
+            });
+
+            // Coleta os itens de snacks
+            document.querySelectorAll('#snacks .item').forEach(item => {
+                const name = item.querySelector('span').textContent;
+                const quantity = item.querySelector('.quantity').textContent;
+                if (parseInt(quantity) > 0) {
+                    message += `*${quantity}* ${name}\n`;
+                }
+            });
+
+            // Adiciona o custo total à mensagem
+            const totalCost = document.getElementById('totalCost').textContent;
+            message += `\n*Custo Total: R$ ${totalCost}*`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = 'https://wa.me/?text=' + encodedMessage;
+
+            document.getElementById('confirmationModal').style.display = 'none';
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // ========== SISTEMA DE VALE ==========
+        function initializeValeSystem() {
+            // Elementos da interface
+            const currentDateEl = document.getElementById('current-date');
+            const dayStatusEl = document.getElementById('day-status');
+            const daysLeftEl = document.getElementById('days-left');
+            const thirteenthSalaryMessage = document.getElementById('thirteenth-salary-message');
+            const requestBtn = document.getElementById('request-btn');
+            const yesBtn = document.getElementById('yes-btn');
+            const noBtn = document.getElementById('no-btn');
+            const confirmNameBtn = document.getElementById('confirm-name-btn');
+            const nameInput = document.getElementById('name-input');
+            const confirmValueBtn = document.getElementById('confirm-value-btn');
+            const valueInput = document.getElementById('value-input');
+            const whatsappBtn = document.getElementById('whatsapp-btn');
+            const backBtn = document.getElementById('back-btn');
+            const refusalWhatsappBtn = document.getElementById('refusal-whatsapp-btn');
+            const refusalBackBtn = document.getElementById('refusal-back-btn');
+            
+            // Elementos do modal
+            const reminderModal = document.getElementById('reminder-modal');
+            const modalRequestBtn = document.getElementById('modal-request-btn');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+            const modalDaysLeft = document.getElementById('modal-days-left');
+            
+            // Telas
+            const initialScreen = document.getElementById('initial-screen');
+            const confirmationScreen = document.getElementById('confirmation-screen');
+            const nameScreen = document.getElementById('name-screen');
+            const valueScreen = document.getElementById('value-screen');
+            const finalScreen = document.getElementById('final-screen');
+            const refusalScreen = document.getElementById('refusal-screen');
+            
+            // Mensagens
+            const successMessage = document.getElementById('success-message');
+            const infoMessage = document.getElementById('info-message');
+            const refusalInfo = document.getElementById('refusal-info');
+            
+            // Variáveis de estado
+            let selectedValue = 0;
+            let employeeName = "";
+            let isRequestPeriod = false;
+            let daysRemaining = 0;
+            let isThirteenthSalaryMonth = false;
+
+            // Verificar se está no período de solicitação (dias 10 a 20) e se é novembro/dezembro
+            function checkDate() {
+                const today = new Date();
+                const day = today.getDate();
+                const month = today.getMonth() + 1; // Janeiro = 1, Dezembro = 12
+                const year = today.getFullYear();
+                
+                // Formatar data para exibição
+                const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+                currentDateEl.textContent = `Hoje é ${formattedDate}`;
+                
+                console.log("Mês detectado:", month);
+                
+                // Verificar se é novembro (11) ou dezembro (12) - meses do 13º salário
+                if (month === 11 || month === 12) {
+                    isThirteenthSalaryMonth = true;
+                    thirteenthSalaryMessage.classList.remove('hidden');
+                    initialScreen.classList.add('hidden');
+                    dayStatusEl.textContent = "❌ Período de 13º salário - Solicitações de vale suspensas.";
+                    daysLeftEl.textContent = "As solicitações retornarão em janeiro.";
+                    return;
+                } else {
+                    isThirteenthSalaryMonth = false;
+                    thirteenthSalaryMessage.classList.add('hidden');
+                    initialScreen.classList.remove('hidden');
+                }
+                
+                // Verificar se está no período de solicitação (dias 10 a 20)
+                if (day >= 10 && day <= 20) {
+                    isRequestPeriod = true;
+                    daysRemaining = 20 - day;
+                    
+                    if (day === 20) {
+                        dayStatusEl.textContent = "✅ Hoje é o último dia para solicitar o vale!";
+                    } else {
+                        dayStatusEl.textContent = "✅ Estamos no período de solicitação de vale.";
+                    }
+                    
+                    daysLeftEl.innerHTML = `<span class="days-left">${daysRemaining} dia(s) restante(s)</span> para solicitar seu vale.`;
+                    requestBtn.disabled = false;
+                    
+                    // Verificar se deve mostrar modal de lembrete (apenas se não solicitou este mês)
+                    const lastRequestMonth = localStorage.getItem('lastValeRequestMonth');
+                    const currentMonth = today.getMonth() + '_' + today.getFullYear();
+                    
+                    if (!lastRequestMonth || lastRequestMonth !== currentMonth) {
+                        setTimeout(showReminderModal, 1000);
+                    }
+                } else {
+                    isRequestPeriod = false;
+                    
+                    if (day < 10) {
+                        const daysUntilStart = 10 - day;
+                        dayStatusEl.textContent = "❌ O período de solicitação ainda não começou.";
+                        daysLeftEl.textContent = `Faltam ${daysUntilStart} dia(s) para o início do período.`;
+                    } else {
+                        dayStatusEl.textContent = "❌ O período de solicitação já encerrou.";
+                        daysLeftEl.textContent = "Aguarde o próximo mês para solicitar seu vale.";
+                    }
+                    
+                    requestBtn.disabled = true;
+                }
+            }
+            
+            // Mostrar modal de lembrete
+            function showReminderModal() {
+                modalDaysLeft.textContent = `Você tem ${daysRemaining} dia(s) para solicitar.`;
+                reminderModal.classList.remove('hidden');
+            }
+            
+            // Fechar modal de lembrete
+            function closeReminderModal() {
+                reminderModal.classList.add('hidden');
+            }
+            
+            // Marcar que o vale foi solicitado este mês
+            function markValeRequested() {
+                const today = new Date();
+                const currentMonth = today.getMonth() + '_' + today.getFullYear();
+                localStorage.setItem('lastValeRequestMonth', currentMonth);
+            }
+            
+            // Voltar para a aba frigobar
+            function goBackToFrigobar() {
+                // Ativar a aba frigobar
+                document.querySelectorAll('.nav-tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                document.querySelector('[data-tab="frigobar"]').classList.add('active');
+                document.getElementById('frigobar-tab').classList.add('active');
+                
+                // Resetar formulário do vale
+                resetForm();
+            }
+            
+            // Inicializar verificação de data
+            checkDate();
+            
+            // Navegação entre telas
+            requestBtn.addEventListener('click', function() {
+                console.log("Botão Solicitar Vale clicado");
+                if (!isRequestPeriod || isThirteenthSalaryMonth) return;
+                
+                initialScreen.classList.add('hidden');
+                confirmationScreen.classList.remove('hidden');
+                closeReminderModal();
+            });
+            
+            modalRequestBtn.addEventListener('click', function() {
+                console.log("Botão Modal Solicitar clicado");
+                closeReminderModal();
+                initialScreen.classList.add('hidden');
+                confirmationScreen.classList.remove('hidden');
+            });
+            
+            modalCloseBtn.addEventListener('click', function() {
+                console.log("Botão Fechar Modal clicado");
+                closeReminderModal();
+            });
+            
+            yesBtn.addEventListener('click', function() {
+                console.log("Botão Sim clicado");
+                confirmationScreen.classList.add('hidden');
+                nameScreen.classList.remove('hidden');
+                nameInput.focus();
+            });
+            
+            noBtn.addEventListener('click', function() {
+                console.log("Botão Não clicado");
+                confirmationScreen.classList.add('hidden');
+                refusalScreen.classList.remove('hidden');
+                
+                // Configurar mensagem de recusa
+                const now = new Date();
+                const deadline = new Date();
+                deadline.setHours(15, 30, 0, 0);
+                
+                if (now < deadline) {
+                    refusalInfo.textContent = `Você pode mudar de ideia até às 15:30 de hoje.`;
+                } else {
+                    refusalInfo.textContent = `O prazo para mudar de ideia era até às 15:30 de hoje.`;
+                }
+            });
+            
+            confirmNameBtn.addEventListener('click', function() {
+                console.log("Botão Confirmar Nome clicado");
+                const name = nameInput.value.trim();
+                
+                if (name === "") {
+                    alert('Por favor, insira seu nome completo.');
+                    nameInput.focus();
+                    return;
+                }
+                
+                employeeName = name;
+                nameScreen.classList.add('hidden');
+                valueScreen.classList.remove('hidden');
+                valueInput.focus();
+            });
+            
+            confirmValueBtn.addEventListener('click', function() {
+                console.log("Botão Confirmar Valor clicado");
+                const value = parseFloat(valueInput.value);
+                
+                if (isNaN(value) || value <= 0) {
+                    alert('Por favor, insira um valor válido.');
+                    valueInput.focus();
+                    return;
+                }
+                
+                selectedValue = value;
+                valueScreen.classList.add('hidden');
+                finalScreen.classList.remove('hidden');
+                
+                // Marcar que o vale foi solicitado este mês
+                markValeRequested();
+                
+                // Configurar mensagens
+                successMessage.innerHTML = `
+                    <strong>Funcionário:</strong> ${employeeName}<br>
+                    <strong>Valor solicitado:</strong> R$ ${value.toFixed(2).replace('.', ',')}
+                `;
+                
+                const now = new Date();
+                const deadline = new Date();
+                deadline.setHours(15, 30, 0, 0);
+                
+                if (now < deadline) {
+                    infoMessage.textContent = `Você pode mudar de ideia até às 15:30 de hoje.`;
+                } else {
+                    infoMessage.textContent = `O prazo para mudar de ideia era até às 15:30 de hoje.`;
+                }
+            });
+            
+            // Configurar botões do WhatsApp
+            whatsappBtn.addEventListener('click', function() {
+                console.log("Botão WhatsApp (solicitação) clicado");
+                const message = `Solicitação de Vale\nFuncionário: ${employeeName}\nValor: R$ ${selectedValue.toFixed(2).replace('.', ',')}`;
+                const encodedMessage = encodeURIComponent(message);
+                const whatsappURL = `https://wa.me/?text=${encodedMessage}`;
+                window.open(whatsappURL, '_blank');
+            });
+            
+            refusalWhatsappBtn.addEventListener('click', function() {
+                console.log("Botão WhatsApp (recusa) clicado");
+                const message = "Obrigado, não desejo pedir vale";
+                const encodedMessage = encodeURIComponent(message);
+                const whatsappURL = `https://wa.me/?text=${encodedMessage}`;
+                window.open(whatsappURL, '_blank');
+            });
+            
+            // Botões de voltar ao frigobar
+            backBtn.addEventListener('click', function() {
+                console.log("Botão Voltar (solicitação) clicado");
+                goBackToFrigobar();
+            });
+            
+            refusalBackBtn.addEventListener('click', function() {
+                console.log("Botão Voltar (recusa) clicado");
+                goBackToFrigobar();
+            });
+            
+            // Resetar formulário
+            function resetForm() {
+                nameInput.value = '';
+                valueInput.value = '';
+                selectedValue = 0;
+                employeeName = "";
+                
+                // Voltar para tela inicial do vale
+                initialScreen.classList.remove('hidden');
+                confirmationScreen.classList.add('hidden');
+                nameScreen.classList.add('hidden');
+                valueScreen.classList.add('hidden');
+                finalScreen.classList.add('hidden');
+                refusalScreen.classList.add('hidden');
+            }
+            
+            // Permitir Enter nos campos
+            nameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    confirmNameBtn.click();
+                }
+            });
+            
+            valueInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    confirmValueBtn.click();
+                }
+            });
+            
+            // Fechar modal ao clicar fora dele
+            reminderModal.addEventListener('click', function(e) {
+                if (e.target === reminderModal) {
+                    closeReminderModal();
+                }
+            });
+        }
+
+        // ========== PWA INSTALL BUTTON ==========
+        let deferredPrompt;
+        const installButton = document.getElementById('install-button');
+
+        window.addEventListener('beforeinstallprompt', (event) => {
+            event.preventDefault();
+            deferredPrompt = event;
+            installButton.style.display = 'block';
+        });
+
+        installButton.addEventListener('click', () => {
+            installButton.style.display = 'none';
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt = null;
+                });
+            }
+        });
+    </script>
+</body>
+</html>
