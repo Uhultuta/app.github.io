@@ -5,37 +5,123 @@
     <link rel="icon" href="logo.ico" type="image/ico">
     <link rel="apple-touch-icon" sizes="192x192" href="logo.ico">
     <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Frigobar">
+    <meta name="application-name" content="Hotel App">
     <meta name="theme-color" content="#ffffff"> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Frigobar</title>
+    <title>Hotel App - Completo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
         body {
             font-family: 'Arial', sans-serif;
-            background-color: #f4f4f4;
+            background: linear-gradient(135deg, #1e3c72, #2a5298);
             margin: 0;
-            padding: 20px;
+            padding: 0;
             color: #333;
+            min-height: 100vh;
         }
 
-        .container {
+        .app-container {
             max-width: 600px;
-            margin: auto;
+            margin: 0 auto;
             background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-            position: relative; /* Para posicionar o botão de instalação */
+            min-height: 100vh;
+            box-shadow: 0 0 20px rgba(0,0,0,0.1);
         }
 
-        h1, h2 {
+        /* Header */
+        .app-header {
+            background: white;
+            padding: 15px;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+
+        .app-header h1 {
             color: #2c3e50;
+            margin: 0;
+            font-size: 1.5em;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+            border-bottom: 3px solid transparent;
+            font-size: 14px;
+        }
+
+        .tab.active {
+            background: white;
+            border-bottom: 3px solid #007bff;
+            color: #007bff;
+        }
+
+        .tab-content {
+            display: none;
+            padding: 20px;
+            min-height: calc(100vh - 120px);
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        /* Estilos do Frigobar */
+        .input-apartment {
+            margin-bottom: 20px;
             text-align: center;
         }
 
+        .input-apartment input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 300px;
+            font-size: 16px;
+        }
+
+        #show-apartments {
+            background-color: #007bff;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+            display: block;
+            margin: 20px auto;
+            transition: background-color 0.3s;
+        }
+
+        #show-apartments:hover {
+            background-color: #0056b3;
+        }
+
         .apartment-list {
-            display: none; /* Inicialmente oculto */
+            display: none;
             margin-top: 20px;
         }
 
@@ -46,13 +132,13 @@
         .apartment {
             background: #007bff;
             color: white;
-            padding: 8px;
+            padding: 10px;
             text-align: center;
             border-radius: 5px;
             cursor: pointer;
             transition: background 0.3s;
             margin: 5px;
-            font-size: 12px;
+            font-size: 14px;
             display: inline-block;
             width: calc(25% - 10px);
         }
@@ -112,237 +198,899 @@
             margin-top: 20px;
             font-size: 1.2em;
             text-align: center;
-        }
-
-        .input-apartment {
-            margin-bottom: 20px;
-            text-align: center;
-        }
-
-        .input-apartment input {
-            padding: 10px;
-            border: 1px solid #ddd;
+            background: #f8f9fa;
+            padding: 15px;
             border-radius: 5px;
-            width: calc(100% - 22px);
-            max-width: 300px;
         }
 
         button.send-whatsapp {
             background-color: #25D366;
             color: white;
-            padding: 10px 20px;
+            padding: 15px 25px;
             border: none;
             border-radius: 5px;
             cursor: pointer;
             display: block;
             margin: 20px auto;
             transition: background-color 0.3s;
+            font-size: 16px;
+            font-weight: bold;
         }
 
         button.send-whatsapp:hover {
             background-color: #1da851;
         }
 
-        h5 {
+        /* Estilos da Lavanderia */
+        .lavanderia-header {
             text-align: center;
-            font-size: 0.9em;
-            color: #7f8c8d;
+            margin-bottom: 20px;
         }
 
+        .lavanderia-logo {
+            width: 200px;
+            margin: 0 auto 15px;
+            display: block;
+        }
+
+        .lavanderia-input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            text-align: center;
+            font-size: 16px;
+            margin-bottom: 10px;
+        }
+
+        .lavanderia-button {
+            width: 100%;
+            padding: 12px;
+            background: #007bff;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin-bottom: 15px;
+            transition: background 0.3s;
+        }
+
+        .lavanderia-button:hover {
+            background: #0056b3;
+        }
+
+        .lavanderia-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .lavanderia-apartment {
+            padding: 10px;
+            background: #37F2AD;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .lavanderia-apartment:hover {
+            background: #32d99c;
+        }
+
+        .lavanderia-table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 5px;
+            overflow: hidden;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .lavanderia-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            font-weight: bold;
+            border-bottom: 1px solid #ddd;
+        }
+
+        .lavanderia-table td {
+            padding: 12px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .lavanderia-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .service-badge {
+            background: #e3f2fd;
+            color: #1976d2;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+            margin-left: 5px;
+        }
+
+        .service-button {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            margin: 2px;
+            transition: background 0.3s;
+        }
+
+        .lavar-btn {
+            background: #4caf50;
+            color: white;
+        }
+
+        .lavar-btn:hover {
+            background: #45a049;
+        }
+
+        .passar-btn {
+            background: #2196f3;
+            color: white;
+        }
+
+        .passar-btn:hover {
+            background: #1e87db;
+        }
+
+        .resumo-section {
+            background: white;
+            padding: 20px;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .resumo-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .undo-btn {
+            background: #6c757d;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background 0.3s;
+        }
+
+        .undo-btn:hover {
+            background: #5a6268;
+        }
+
+        .servico-category {
+            margin-bottom: 20px;
+        }
+
+        .category-header {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 5px;
+            display: flex;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .item-info {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .item-icon {
+            width: 40px;
+            height: 40px;
+            object-fit: contain;
+            border-radius: 5px;
+            background: #f8f9fa;
+            padding: 5px;
+        }
+
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .quantity-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .qty-btn {
+            background: none;
+            border: none;
+            color: #6c757d;
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.3s;
+        }
+
+        .qty-btn:hover {
+            color: #007bff;
+        }
+
+        .item-total {
+            font-weight: bold;
+            color: #28a745;
+            min-width: 80px;
+            text-align: right;
+        }
+
+        .total-section {
+            text-align: right;
+            padding-top: 15px;
+            border-top: 2px solid #eee;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .whatsapp-btn {
+            background: #25d366;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .whatsapp-btn:hover {
+            background: #1da851;
+        }
+
+        .print-btn {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 15px;
+            border-radius: 5px;
+            cursor: pointer;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            font-size: 16px;
+            transition: background 0.3s;
+        }
+
+        .print-btn:hover {
+            background: #0056b3;
+        }
+
+        /* Estilos do Sistema de Vale */
+        .date-info {
+            background-color: #f0f8ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            border-left: 4px solid #2a5298;
+        }
+
+        .vale-btn {
+            background-color: #2a5298;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin: 10px 5px;
+            width: 100%;
+            max-width: 200px;
+        }
+
+        .vale-btn:hover {
+            background-color: #1e3c72;
+        }
+
+        .vale-btn-secondary {
+            background-color: #6c757d;
+        }
+
+        .vale-btn-secondary:hover {
+            background-color: #5a6268;
+        }
+
+        .vale-btn-success {
+            background-color: #28a745;
+        }
+
+        .vale-btn-success:hover {
+            background-color: #218838;
+        }
+
+        .hidden {
+            display: none !important;
+        }
+
+        .input-group {
+            margin: 20px 0;
+            text-align: left;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2a5298;
+        }
+
+        .message {
+            padding: 15px;
+            border-radius: 8px;
+            margin: 20px 0;
+        }
+
+        .message-success {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .message-info {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .message-warning {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+
+        .message-error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .days-left {
+            font-weight: bold;
+            color: #2a5298;
+            font-size: 18px;
+            margin: 10px 0;
+        }
+
+        .step {
+            margin-bottom: 25px;
+            text-align: left;
+        }
+
+        .step-number {
+            display: inline-block;
+            background-color: #2a5298;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            margin-right: 10px;
+            font-weight: bold;
+        }
+
+        .step-content {
+            display: inline-block;
+            width: calc(100% - 50px);
+            vertical-align: top;
+        }
+
+        /* Modal de Lembrete */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.7);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            width: 90%;
+            max-width: 500px;
+            padding: 30px;
+            text-align: center;
+            animation: modalAppear 0.3s ease-out;
+        }
+
+        @keyframes modalAppear {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .modal h2 {
+            color: #2a5298;
+            margin-bottom: 15px;
+        }
+
+        .modal p {
+            margin-bottom: 15px;
+        }
+
+        .modal-buttons {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+            margin-top: 20px;
+        }
+
+        .modal .vale-btn {
+            margin: 5px;
+        }
+
+        /* Modal de Confirmação Frigobar */
+        #confirmationModal {
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: none;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+            max-width: 300px;
+            width: 80%;
+        }
+
+        .modal-content button {
+            margin: 10px;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background-color 0.3s;
+        }
+
+        #confirmExit {
+            background-color: #e74c3c;
+            color: white;
+        }
+
+        #confirmExit:hover {
+            background-color: #c0392b;
+        }
+
+        #confirmCleaning {
+            background-color: #3498db;
+            color: white;
+        }
+
+        #confirmCleaning:hover {
+            background-color: #2980b9;
+        }
+
+        .floor-title {
+            text-align: center;
+            font-weight: bold;
+            margin: 15px 0 5px;
+            grid-column: 1 / -1;
+        }
+
+        /* Estilos para os ícones */
+        .item-with-icon {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .table-item-icon {
+            width: 35px;
+            height: 35px;
+            object-fit: contain;
+            border-radius: 4px;
+            background: #f8f9fa;
+            padding: 3px;
+        }
+
+        /* Botão de instalação */
         .install-button {
             background: #4CAF50;
             color: white;
             padding: 10px;
             border: none;
-                        border-radius: 50%; /* Faz o botão redondo */
+            border-radius: 50%;
             cursor: pointer;
-            position: absolute; /* Posiciona-o absolutamente */
-            top: 20px; /* Distância do topo */
-            left: 20px; /* Distância da esquerda */
-            width: 40px; /* Largura fixa */
-            height: 40px; /* Altura fixa */
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            width: 40px;
+            height: 40px;
             display: flex;
             justify-content: center;
             align-items: center;
             transition: background-color 0.3s;
+            z-index: 1000;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.2);
         }
 
         .install-button:hover {
             background-color: #45a049;
         }
 
-        #show-apartments {
-            background-color: blue; /* Cor do botão azul */
-            color: white; /* Cor do texto branco */
-            border: none; /* Remove a borda */
-            padding: 10px 20px; /* Adiciona padding */
-            font-size: 16px; /* Define o tamanho da fonte */
-            cursor: pointer; /* Muda o cursor para pointer */
-            border-radius: 5px; /* Adiciona borda arredondada */
-            display: block; /* Faz do botão um elemento de bloco */
-            margin: 20px auto; /* Centraliza o botão */
+        @media (max-width: 480px) {
+            .tab {
+                padding: 12px 8px;
+                font-size: 12px;
+            }
+            
+            .apartment {
+                width: calc(33% - 10px);
+                font-size: 11px;
+                padding: 6px;
+            }
+            
+            .lavanderia-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+            
+            .action-buttons {
+                flex-direction: column;
+            }
+            
+            .vale-btn {
+                width: 100%;
+                margin: 5px 0;
+            }
         }
     </style>
 </head>
 <body>
-
-    <!-- Modal de Confirmação -->
-<div id="confirmationModal" style="display: none;">
-    <div class="modal-content">
-        <p>Foi saída ou arrumação?</p>
-        <button id="confirmExit">Saída</button>
-        <button id="confirmCleaning">Arrumação</button>
+    <!-- Modal de Confirmação Frigobar -->
+    <div id="confirmationModal">
+        <div class="modal-content">
+            <p>Foi saída ou arrumação?</p>
+            <button id="confirmExit">Saída</button>
+            <button id="confirmCleaning">Arrumação</button>
+        </div>
     </div>
-</div>
 
-<style>
-    /* Estilos do Modal */
-    #confirmationModal {
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        background-color: rgba(0, 0, 0, 0.5);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-    }
-
-    .modal-content {
-        background: white;
-        padding: 20px;
-        border-radius: 5px;
-        text-align: center;
-    }
-
-    button {
-        margin: 5px;
-        padding: 10px 20px;
-        border: none;
-        border-radius: 5px;
-        cursor: pointer;
-    }
-</style>
-
-    <div class="container">
-        <h1>Frigobar</h1>
-
-        <div class="input-apartment">
-            <label for="apartmentNumber"><strong>Número do Apartamento:</strong></label>
-            <input type="text" id="apartmentNumber" placeholder="Digite o número do apartamento" />
-        </div>
-
-        <button id="show-apartments">Selecionar Apartamentos</button> <!-- Botão centralizado -->
-
-        <div class="apartment-list" id="apartment-list">
-            <!-- Apartamentos serão gerados aqui -->
-        </div>
-
-        <h2>Bebidas</h2>
-        <div class="item-container" id="beverages">
-            <div class="item">
-                <img src="agua.ico" alt="Água Mineral s/Gás" style="width: 50px; cursor: pointer;" onclick="addItem(this, 8)">
-                <span>Água Mineral s/Gás (500ml)</span>
-                <button class="remove" onclick="removeItem(this, 8)">Remover</button>
-                <span class="quantity">0</span>
-                <span class="total">0</span>
-            </div>
-            <div class="item">
-                <img src="aguacomgas.ico" alt="Água Mineral c/Gás" style="width: 50px; cursor: pointer;" onclick="addItem(this, 8)">
-                <span>Água Mineral c/Gás (310ml)</span>
-                <button class="remove" onclick="removeItem(this, 8)">Remover</button>
-                <span class="quantity">0</span>
-                <span class="total">0</span>
-            </div>
-            <div class="item">
-                <img src="cocacola.ico" alt="Coca-cola" style="width: 50px; cursor: pointer;" onclick="addItem(this, 9)">
-                <span>Coca-cola (lata 350ml)</span>
-                <button class="remove" onclick="removeItem(this, 9)">Remover</button>
-                <span class="quantity">0</span>
-                <span class="total">0</span>
-            </div>
-                        <div class="item">
-                <img src="fanta.ico" alt="Fanta" style="width: 50px; cursor: pointer;" onclick="addItem(this, 9)">
-                <span>Fanta (lata 350ml)</span>
-                <button class="remove" onclick="removeItem(this, 9)">Remover</button>
-                <span class="quantity">0</span>
-                <span class="total">0</span>
-            </div>
-                        <div class="item">
-                <img src="guarana.ico" alt="Guaraná" style="width: 50px; cursor: pointer;" onclick="addItem(this, 9)">
-                <span>Guaraná (lata 350ml)</span>
-                <button class="remove" onclick="removeItem(this, 9)">Remover</button>
-                <span class="quantity">0</span>
-                <span class="total">0</span>
-            </div>
-                        <div class="item">
-                <img src="toddynho.ico" alt="Toddynho" style="width: 50px; cursor: pointer;" onclick="addItem(this, 10)">
-                <span>Toddynho (200ml)</span>
-                <button class="remove" onclick="removeItem(this, 10)">Remover</button>
-                <span class="quantity">0</span>
-                <span class="total">0</span>
-            </div>
-                        <div class="item">
-                <img src="antarctica.ico" alt="Antarctica" style="width: 50px; cursor: pointer;" onclick="addItem(this, 12)">
-                <span>Antarctica (lata 350ml)</span>
-                <button class="remove" onclick="removeItem(this, 12)">Remover</button>
-                <span class="quantity">0</span>
-                <span class="total">0</span>
+    <!-- Modal de Lembrete do Vale -->
+    <div id="reminder-modal" class="modal-overlay hidden">
+        <div class="modal">
+            <h2>Lembrete de Solicitação de Vale</h2>
+            <p>Você ainda não solicitou seu vale para este mês.</p>
+            <p>O prazo para solicitação é entre os dias <strong>10 e 20</strong> de cada mês.</p>
+            <p id="modal-days-left" class="days-left"></p>
+            <div class="modal-buttons">
+                <button id="modal-request-btn" class="vale-btn">Solicitar Agora</button>
+                <button id="modal-close-btn" class="vale-btn vale-btn-secondary">Lembrar Depois</button>
             </div>
         </div>
+    </div>
 
-        <h2>Snacks</h2>
-        <div class="item-container" id="snacks">
-                        <div class="item">
-                <img src="castanhadecaju.ico" alt="Castanha de Caju" style="width: 50px; cursor: pointer;" onclick="addItem(this, 17)">
-                <span>Castanha de Caju (50g)</span>
-                <button class="remove" onclick="removeItem(this, 17)">Remover</button>
-                <span class="quantity">0</span>
-                <span class="total">0</span>
+    <div class="app-container">
+        <!-- Header -->
+        <div class="app-header">
+            <h1>Hotel App</h1>
+        </div>
+
+        <!-- Tabs -->
+        <div class="tabs">
+            <button class="tab active" onclick="openTab('frigobar')">Frigobar</button>
+            <button class="tab" onclick="openTab('lavanderia')">Lavanderia</button>
+            <button class="tab" onclick="openTab('vale')">Solicitar Vale</button>
+        </div>
+
+        <!-- Conteúdo Frigobar -->
+        <div id="frigobar" class="tab-content active">
+            <h2>Frigobar</h2>
+
+            <div class="input-apartment">
+                <label for="apartmentNumber"><strong>Número do Apartamento:</strong></label>
+                <input type="text" id="apartmentNumber" placeholder="Digite o número do apartamento" />
             </div>
-            <div class="item">
-                <img src="batata.ico" alt="Batata" style="width: 50px; cursor: pointer;" onclick="addItem(this, 11)">
-                <span>Batata (40g)</span>
-                <button class="remove" onclick="removeItem(this, 11)">Remover</button>
-                <span class="quantity">0</span>
-                <span class="total">0</span>
+
+            <button id="show-apartments">Selecionar Apartamentos</button>
+
+            <div class="apartment-list" id="apartment-list">
+                <!-- Apartamentos serão gerados aqui -->
             </div>
-            <div class="item">
-                <img src="kitkat.ico" alt="Chocolate Kit Kat" style="width: 50px; cursor: pointer;" onclick="addItem(this, 10)">
-                <span>Chocolate Kit Kat (41,5g)</span>
-                <button class="remove" onclick="removeItem(this, 10)">Remover</button>
-                <span class="quantity">0</span>
-                <span class="total">0</span>
+
+            <h3>Bebidas</h3>
+            <div class="item-container" id="beverages">
+                <div class="item">
+                    <img src="agua.ico" alt="Água Mineral s/Gás" style="width: 50px; cursor: pointer;">
+                    <span>Água Mineral s/Gás (500ml)</span>
+                    <button class="remove">Remover</button>
+                    <span class="quantity">0</span>
+                    <span class="total">0</span>
+                </div>
+                <div class="item">
+                    <img src="aguacomgas.ico" alt="Água Mineral c/Gás" style="width: 50px; cursor: pointer;">
+                    <span>Água Mineral c/Gás (310ml)</span>
+                    <button class="remove">Remover</button>
+                    <span class="quantity">0</span>
+                    <span class="total">0</span>
+                </div>
+                <div class="item">
+                    <img src="cocacola.ico" alt="Coca-cola" style="width: 50px; cursor: pointer;">
+                    <span>Coca-cola (lata 350ml)</span>
+                    <button class="remove">Remover</button>
+                    <span class="quantity">0</span>
+                    <span class="total">0</span>
+                </div>
+                <div class="item">
+                    <img src="fanta.ico" alt="Fanta" style="width: 50px; cursor: pointer;">
+                    <span>Fanta (lata 350ml)</span>
+                    <button class="remove">Remover</button>
+                    <span class="quantity">0</span>
+                    <span class="total">0</span>
+                </div>
+                <div class="item">
+                    <img src="guarana.ico" alt="Guaraná" style="width: 50px; cursor: pointer;">
+                    <span>Guaraná (lata 350ml)</span>
+                    <button class="remove">Remover</button>
+                    <span class="quantity">0</span>
+                    <span class="total">0</span>
+                </div>
+                <div class="item">
+                    <img src="toddynho.ico" alt="Toddynho" style="width: 50px; cursor: pointer;">
+                    <span>Toddynho (200ml)</span>
+                    <button class="remove">Remover</button>
+                    <span class="quantity">0</span>
+                    <span class="total">0</span>
+                </div>
+                <div class="item">
+                    <img src="antarctica.ico" alt="Antarctica" style="width: 50px; cursor: pointer;">
+                    <span>Antarctica (lata 350ml)</span>
+                    <button class="remove">Remover</button>
+                    <span class="quantity">0</span>
+                    <span class="total">0</span>
+                </div>
             </div>
-            <div class="item">
-                <img src="mentoscrazyfruit.ico" alt="Bala Mentos crazyfruit" style="width: 50px; cursor: pointer;" onclick="addItem(this, 8)">
-                <span>Bala Mentos crazyfruit (41,5g)</span>
-                <button class="remove" onclick="removeItem(this, 8)">Remover</button>
-                <span class="quantity">0</span>
-                <span class="total">0</span>
+
+            <h3>Snacks</h3>
+            <div class="item-container" id="snacks">
+                <div class="item">
+                    <img src="castanhadecaju.ico" alt="Castanha de Caju" style="width: 50px; cursor: pointer;">
+                    <span>Castanha de Caju (50g)</span>
+                    <button class="remove">Remover</button>
+                    <span class="quantity">0</span>
+                    <span class="total">0</span>
+                </div>
+                <div class="item">
+                    <img src="batata.ico" alt="Batata" style="width: 50px; cursor: pointer;">
+                    <span>Batata (40g)</span>
+                    <button class="remove">Remover</button>
+                    <span class="quantity">0</span>
+                    <span class="total">0</span>
+                </div>
+                <div class="item">
+                    <img src="kitkat.ico" alt="Chocolate Kit Kat" style="width: 50px; cursor: pointer;">
+                    <span>Chocolate Kit Kat (41,5g)</span>
+                    <button class="remove">Remover</button>
+                    <span class="quantity">0</span>
+                    <span class="total">0</span>
+                </div>
+                <div class="item">
+                    <img src="mentoscrazyfruit.ico" alt="Bala Mentos crazyfruit" style="width: 50px; cursor: pointer;">
+                    <span>Bala Mentos crazyfruit (41,5g)</span>
+                    <button class="remove">Remover</button>
+                    <span class="quantity">0</span>
+                    <span class="total">0</span>
+                </div>
+                <div class="item">
+                    <img src="mentosmint.ico" alt="Bala Mentos mint" style="width: 50px; cursor: pointer;">
+                    <span>Bala Mentos mint (41,5g)</span>
+                    <button class="remove">Remover</button>
+                    <span class="quantity">0</span>
+                    <span class="total">0</span>
+                </div>
             </div>
-                        <div class="item">
-                <img src="mentosmint.ico" alt="Bala Mentos mint" style="width: 50px; cursor: pointer;" onclick="addItem(this, 8)">
-                <span>Bala Mentos mint (41,5g)</span>
-                <button class="remove" onclick="removeItem(this, 8)">Remover</button>
-                <span class="quantity">0</span>
-                <span class="total">0</span>
+
+            <h3>Resumo de Custos</h3>
+            <div id="summary">
+                <p>Total Bebidas (R$): <span id="totalBeverages">0</span></p>
+                <p>Total Snacks (R$): <span id="totalSnacks">0</span></p>
+                <p>Custo Total (R$): <span id="totalCost">0</span></p>
+            </div>
+
+            <button class="send-whatsapp" id="send-frigobar-whatsapp">
+                Enviar via WhatsApp
+            </button>
+        </div>
+
+        <!-- Conteúdo Lavanderia -->
+        <div id="lavanderia" class="tab-content">
+            <div class="lavanderia-header">
+                <h2>Lavanderia</h2>
+                <img src="https://ucarecdn.com/44a159d9-8c80-471b-aba4-0562076e8193/-/format/auto/" alt="Logo do ICARAÍ PRAIA HOTEL" class="lavanderia-logo">
+                <input type="text" id="lavanderiaApartment" placeholder="Digite o apartamento" class="lavanderia-input">
+                <button onclick="toggleApartmentList()" class="lavanderia-button">Selecionar Apartamento</button>
+                
+                <div id="lavanderiaApartmentList" class="lavanderia-grid" style="display: none;">
+                    <!-- Apartamentos da lavanderia serão gerados aqui -->
+                </div>
+            </div>
+
+            <div id="lavanderiaContent" style="display: none;">
+                <table class="lavanderia-table">
+                    <thead>
+                        <tr>
+                            <th>Item</th>
+                            <th>Lavar</th>
+                            <th>Passar</th>
+                            <th>Serviço</th>
+                        </tr>
+                    </thead>
+                    <tbody id="lavanderiaItems">
+                        <!-- Itens da lavanderia serão gerados aqui -->
+                    </tbody>
+                </table>
+
+                <div id="lavanderiaResumo" class="resumo-section" style="display: none;">
+                    <div class="resumo-header">
+                        <h3>Resumo do Pedido</h3>
+                        <button class="undo-btn" onclick="undoLastAction()">
+                            <i class="fas fa-undo"></i> Desfazer
+                        </button>
+                    </div>
+                    
+                    <div id="resumoContent">
+                        <!-- Conteúdo do resumo será gerado aqui -->
+                    </div>
+                    
+                    <div class="total-section">
+                        <div style="font-size: 1.2em; font-weight: bold; color: #333;">
+                            Subtotal: R$ <span id="subtotal">0</span>,00
+                        </div>
+                        <div style="font-size: 1.1em; color: #666;">
+                            Taxa de ISS (5%): R$ <span id="iss">0.00</span>
+                        </div>
+                        <div style="font-size: 1.4em; font-weight: bold; color: #28a745;">
+                            Total: R$ <span id="totalLavanderia">0.00</span>
+                        </div>
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="whatsapp-btn" onclick="enviarWhatsAppLavanderia()">
+                            <i class="fab fa-whatsapp"></i> Enviar pedido pelo WhatsApp
+                        </button>
+                        <button class="print-btn" onclick="imprimirPedido()">
+                            <i class="fas fa-print"></i> Imprimir Pedido
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
-        <h2>Resumo de Custos</h2>
-        <div id="summary">
-            <p>Total Bebidas (R$): <span id="totalBeverages">0</span></p>
-            <p>Total Snacks (R$): <span id="totalSnacks">0</span></p>
-            <p>Custo Total (R$): <span id="totalCost">0</span></p>
+        <!-- Conteúdo Solicitação de Vale -->
+        <div id="vale" class="tab-content">
+            <h2>Sistema de Solicitação de Vale</h2>
+            
+            <div class="date-info">
+                <p id="current-date">Carregando data...</p>
+                <p id="day-status"></p>
+                <p id="days-left"></p>
+            </div>
+            
+            <!-- Mensagem de 13º salário -->
+            <div id="thirteenth-salary-message" class="message message-error hidden">
+                <p><strong>Devido ao 13º salário não é possível solicitar vale este mês.</strong></p>
+            </div>
+            
+            <!-- Tela inicial -->
+            <div id="initial-screen">
+                <p>Clique no botão abaixo para solicitar seu vale deste mês.</p>
+                <button id="request-btn" class="vale-btn">Solicitar Vale</button>
+            </div>
+            
+            <!-- Tela de confirmação -->
+            <div id="confirmation-screen" class="hidden">
+                <p>Deseja solicitar vale este mês?</p>
+                <button id="yes-btn" class="vale-btn">Sim</button>
+                <button id="no-btn" class="vale-btn vale-btn-secondary">Não</button>
+            </div>
+            
+            <!-- Tela de nome do funcionário -->
+            <div id="name-screen" class="hidden">
+                <div class="step">
+                    <span class="step-number">1</span>
+                    <div class="step-content">
+                        <p>Informe seu nome completo:</p>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <input type="text" id="name-input" placeholder="Digite seu nome completo">
+                </div>
+                <button id="confirm-name-btn" class="vale-btn">Confirmar Nome</button>
+            </div>
+            
+            <!-- Tela de valor -->
+            <div id="value-screen" class="hidden">
+                <div class="step">
+                    <span class="step-number">2</span>
+                    <div class="step-content">
+                        <p>Informe o valor desejado:</p>
+                    </div>
+                </div>
+                <div class="input-group">
+                    <input type="number" id="value-input" placeholder="R$ 0,00" min="0" step="0.01">
+                </div>
+                <button id="confirm-value-btn" class="vale-btn">Confirmar Valor</button>
+            </div>
+            
+            <!-- Tela de confirmação final -->
+            <div id="final-screen" class="hidden">
+                <div class="message message-success" id="success-message"></div>
+                <div class="message message-info" id="info-message"></div>
+                <button id="whatsapp-btn" class="vale-btn vale-btn-success">Enviar via WhatsApp</button>
+                <button id="back-btn" class="vale-btn vale-btn-secondary">Voltar ao Frigobar</button>
+            </div>
+            
+            <!-- Tela de recusa -->
+            <div id="refusal-screen" class="hidden">
+                <div class="message message-warning">
+                    <p>Obrigado, não desejo pedir vale</p>
+                </div>
+                <div class="message message-info" id="refusal-info"></div>
+                <button id="refusal-whatsapp-btn" class="vale-btn vale-btn-success">Enviar via WhatsApp</button>
+                <button id="refusal-back-btn" class="vale-btn vale-btn-secondary">Voltar ao Frigobar</button>
+            </div>
         </div>
-
-        <h5>By Nellu</h5>
-        <button class="send-whatsapp" onclick="sendWhatsApp()">
-            Enviar via WhatsApp
-        </button>
 
         <button class="install-button" id="install-button" style="display: none;">
             +
@@ -350,200 +1098,852 @@
     </div>
 
     <script>
-        // Função para adicionar item
-        function addItem(button, price) {
-            const item = button.parentElement; // Obtém o elemento pai (div.item)
-            const quantityElement = item.getElementsByClassName('quantity')[0];
-            const totalElement = item.getElementsByClassName('total')[0];
-
-            // Incrementa a quantidade
-            let quantity = parseInt(quantityElement.innerText) + 1;
-            quantityElement.innerText = quantity;
-
-            // Calcula o total para o item
-            let total = quantity * price;
-            totalElement.innerText = `R$ ${total.toFixed(2)}`; // Adiciona o símbolo R$
-
-            updateSummary();
+        // ========== SISTEMA DE NAVEGAÇÃO ENTRE ABAS ==========
+        function openTab(tabName) {
+            const tabs = document.querySelectorAll('.tab-content');
+            const tabButtons = document.querySelectorAll('.tab');
+            
+            tabs.forEach(tab => tab.classList.remove('active'));
+            tabButtons.forEach(button => button.classList.remove('active'));
+            
+            document.getElementById(tabName).classList.add('active');
+            event.currentTarget.classList.add('active');
+            
+            // Inicializar sistemas quando acessados pela primeira vez
+            if (tabName === 'lavanderia' && !lavanderiaInitialized) {
+                initializeLavanderia();
+                lavanderiaInitialized = true;
+            }
         }
 
-        // Função para remover item
-        function removeItem(button, price) {
-            const item = button.parentElement; // Obtém o elemento pai (div.item)
-            const quantityElement = item.getElementsByClassName('quantity')[0];
-            const totalElement = item.getElementsByClassName('total')[0];
+        // ========== SISTEMA FRIGOBAR ==========
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFrigobar();
+            initializeValeSystem();
+        });
 
-            // Decrementa a quantidade se for maior que zero
-            let quantity = parseInt(quantityElement.innerText);
-            if (quantity > 0) {
-                quantity -= 1;
-                quantityElement.innerText = quantity;
+        function initializeFrigobar() {
+            // Preços dos itens
+            const prices = {
+                'Água Mineral s/Gás (500ml)': 8,
+                'Água Mineral c/Gás (310ml)': 8,
+                'Coca-cola (lata 350ml)': 9,
+                'Fanta (lata 350ml)': 9,
+                'Guaraná (lata 350ml)': 9,
+                'Toddynho (200ml)': 10,
+                'Antarctica (lata 350ml)': 12,
+                'Castanha de Caju (50g)': 17,
+                'Batata (40g)': 11,
+                'Chocolate Kit Kat (41,5g)': 10,
+                'Bala Mentos crazyfruit (41,5g)': 8,
+                'Bala Mentos mint (41,5g)': 8
+            };
 
-                // Calcula o total para o item
-                let total = quantity * price;
-                totalElement.innerText = `R$ ${total.toFixed(2)}`; // Adiciona o símbolo R$
+            // Configurar eventos dos itens
+            document.querySelectorAll('.item').forEach(item => {
+                const img = item.querySelector('img');
+                const itemName = item.querySelector('span').textContent;
+                const price = prices[itemName];
+                
+                img.addEventListener('click', () => addItem(item, price));
+                item.querySelector('.remove').addEventListener('click', () => removeItem(item, price));
+            });
+
+            // Gerar apartamentos
+            const apartmentList = document.getElementById('apartment-list');
+            for (let floor = 3; floor <= 10; floor++) {
+                const floorDiv = document.createElement('div');
+                floorDiv.classList.add('floor');
+                const floorTitle = document.createElement('h4');
+                floorTitle.textContent = `Andar ${floor}`;
+                floorDiv.appendChild(floorTitle);
+
+                const roomCount = floor === 10 ? 7 : 8;
+                for (let room = 1; room <= roomCount; room++) {
+                    const apartment = floor === 10 ? `100${room}` : `${floor}0${room}`;
+                    const apartmentDiv = document.createElement('div');
+                    apartmentDiv.classList.add('apartment');
+                    apartmentDiv.textContent = apartment;
+                    apartmentDiv.addEventListener('click', () => {
+                        document.getElementById('apartmentNumber').value = apartment;
+                        apartmentList.style.display = 'none';
+                    });
+                    floorDiv.appendChild(apartmentDiv);
+                }
+                apartmentList.appendChild(floorDiv);
             }
 
-            updateSummary();
+            // Botão mostrar/ocultar apartamentos
+            document.getElementById('show-apartments').addEventListener('click', () => {
+                const list = document.getElementById('apartment-list');
+                list.style.display = list.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // WhatsApp do Frigobar
+            document.getElementById('send-frigobar-whatsapp').addEventListener('click', sendFrigobarWhatsApp);
+
+            // Modal do Frigobar
+            document.getElementById('confirmExit').addEventListener('click', () => sendFrigobarMessage(true));
+            document.getElementById('confirmCleaning').addEventListener('click', () => sendFrigobarMessage(false));
         }
 
-        // Função para atualizar o resumo
-        function updateSummary() {
-            const beverageItems = document.getElementById('beverages').getElementsByClassName('item');
-            const snackItems = document.getElementById('snacks').getElementsByClassName('item');
+        function addItem(item, price) {
+            const quantityElement = item.querySelector('.quantity');
+            const totalElement = item.querySelector('.total');
+
+            let quantity = parseInt(quantityElement.textContent) + 1;
+            quantityElement.textContent = quantity;
+
+            let total = quantity * price;
+            totalElement.textContent = total.toFixed(2);
+
+            updateFrigobarSummary();
+        }
+
+        function removeItem(item, price) {
+            const quantityElement = item.querySelector('.quantity');
+            const totalElement = item.querySelector('.total');
+
+            let quantity = parseInt(quantityElement.textContent);
+            if (quantity > 0) {
+                quantity -= 1;
+                quantityElement.textContent = quantity;
+                let total = quantity * price;
+                totalElement.textContent = total.toFixed(2);
+            }
+
+            updateFrigobarSummary();
+        }
+
+        function updateFrigobarSummary() {
+            const beverageItems = document.querySelectorAll('#beverages .item');
+            const snackItems = document.querySelectorAll('#snacks .item');
 
             let totalBeverages = 0;
             let totalSnacks = 0;
 
-                        // Calcula o total de bebidas
-            for (let item of beverageItems) {
-                totalBeverages += parseFloat(item.getElementsByClassName('total')[0].innerText.replace('R$ ', '').replace(',', '.'));
+            beverageItems.forEach(item => {
+                totalBeverages += parseFloat(item.querySelector('.total').textContent);
+            });
+
+            snackItems.forEach(item => {
+                totalSnacks += parseFloat(item.querySelector('.total').textContent);
+            });
+
+            const totalCost = totalBeverages + totalSnacks;
+
+            document.getElementById('totalBeverages').textContent = totalBeverages.toFixed(2);
+            document.getElementById('totalSnacks').textContent = totalSnacks.toFixed(2);
+            document.getElementById('totalCost').textContent = totalCost.toFixed(2);
+        }
+
+        function sendFrigobarWhatsApp() {
+            const apartmentNumber = document.getElementById('apartmentNumber').value.trim();
+
+            if (!apartmentNumber) {
+                alert("Por favor, insira o número do apartamento.");
+                return;
             }
 
-            // Calcula o total de snacks
-            for (let item of snackItems) {
-                totalSnacks += parseFloat(item.getElementsByClassName('total')[0].innerText.replace('R$ ', '').replace(',', '.'));
+            document.getElementById('confirmationModal').style.display = 'flex';
+        }
+
+        function sendFrigobarMessage(isExit) {
+            const apartmentNumber = document.getElementById('apartmentNumber').value.trim();
+            const status = isExit ? ' (Saída)' : ' (Arrumação)';
+
+            let message = `*Uh: ${apartmentNumber}${status} - Frigobar* \n\n`;
+
+            // Coleta os itens de bebidas
+            document.querySelectorAll('#beverages .item').forEach(item => {
+                const name = item.querySelector('span').textContent;
+                const quantity = item.querySelector('.quantity').textContent;
+                if (parseInt(quantity) > 0) {
+                    message += `*${quantity}* ${name}\n`;
+                }
+            });
+
+            // Coleta os itens de snacks
+            document.querySelectorAll('#snacks .item').forEach(item => {
+                const name = item.querySelector('span').textContent;
+                const quantity = item.querySelector('.quantity').textContent;
+                if (parseInt(quantity) > 0) {
+                    message += `*${quantity}* ${name}\n`;
+                }
+            });
+
+            // Adiciona o custo total à mensagem
+            const totalCost = document.getElementById('totalCost').textContent;
+            message += `\n*Custo Total: R$ ${totalCost}*`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = 'https://wa.me/?text=' + encodedMessage;
+
+            document.getElementById('confirmationModal').style.display = 'none';
+            window.open(whatsappUrl, '_blank');
+        }
+
+        // ========== SISTEMA LAVANDERIA ==========
+        let lavanderiaInitialized = false;
+        let lavanderiaItems = [];
+        let lavanderiaHistory = [];
+        let lavanderiaApartment = '';
+
+        // Lista de itens da lavanderia com ícones locais
+        const lavanderiaItemsList = [
+            { nome: "Bermuda", lavar: 18, passar: 10, icon: "Bermuda.ico" },
+            { nome: "Blusa", lavar: 18, passar: 14, icon: "Blusa.ico" },
+            { nome: "Calça comprida", lavar: 22, passar: 14, icon: "Calça comprida.ico" },
+            { nome: "Calcinha", lavar: 7, passar: 5, icon: "Calcinha.ico" },
+            { nome: "Camiseta", lavar: 14, passar: 8, icon: "Camiseta.ico" },
+            { nome: "Camiseta Regata", lavar: 12, passar: 7, icon: "Camiseta Regata.ico" },
+            { nome: "Camisa Social", lavar: 22, passar: 17, icon: "Camisa Social.ico" },
+            { nome: "Camisola", lavar: 22, passar: 14, icon: "Camisola.ico" },
+            { nome: "Cueca", lavar: 8, passar: 5, icon: "Cueca.ico" },
+            { nome: "Jaleco", lavar: 20, passar: 15, icon: "Jaleco.ico" },
+            { nome: "Jaqueta", lavar: 40, passar: 20, icon: "Jaqueta.ico" },
+            { nome: "Luvas", lavar: 20, passar: null, icon: "Luvas.ico" },
+            { nome: "Macacão", lavar: 48, passar: 30, icon: "Macacão.ico" },
+            { nome: "Meias (par)", lavar: 10, passar: 5, icon: "Meias.ico" },
+            { nome: "Pijama", lavar: 20, passar: 17, icon: "Pijama.ico" },
+            { nome: "Roupa de Bebê", lavar: 12, passar: 7, icon: "Roupa de Bebê.ico" },
+            { nome: "Roupa infantil", lavar: 18, passar: 15, icon: "Roupa infantil.ico" },
+            { nome: "Saia", lavar: 22, passar: 15, icon: "Saia.ico" },
+            { nome: "Saia Longa", lavar: 28, passar: 20, icon: "Saia Longa.ico" },
+            { nome: "Short", lavar: 12, passar: 10, icon: "Short.ico" },
+            { nome: "Sutiã", lavar: 10, passar: null, icon: "Sutiã.ico" },
+            { nome: "Toalha de banho", lavar: 20, passar: null, icon: "Toalha de banho.ico" },
+            { nome: "Toalha de Rosto", lavar: 15, passar: null, icon: "Toalha de Rosto.ico" },
+            { nome: "Tênis", lavar: 50, passar: null, icon: "Tênis.ico" },
+            { nome: "Vestido", lavar: 50, passar: 40, icon: "Vestido.ico" },
+            { nome: "Vestido Longo", lavar: 70, passar: 50, icon: "Vestido Longo.ico" }
+        ];
+
+        function initializeLavanderia() {
+            generateLavanderiaApartments();
+            renderLavanderiaItems();
+        }
+
+        function generateLavanderiaApartments() {
+            const container = document.getElementById('lavanderiaApartmentList');
+            container.innerHTML = '';
+            
+            for (let floor = 3; floor <= 10; floor++) {
+                // Adiciona título do andar
+                const floorTitle = document.createElement('div');
+                floorTitle.className = 'floor-title';
+                floorTitle.textContent = `${floor}º Andar`;
+                container.appendChild(floorTitle);
+                
+                const numApts = floor === 10 ? 7 : 8;
+                for (let apt = 1; apt <= numApts; apt++) {
+                    const apartmentNum = floor === 10 ? `10${apt.toString().padStart(2, '0')}` : `${floor}${apt.toString().padStart(2, '0')}`;
+                    const aptButton = document.createElement('button');
+                    aptButton.className = 'lavanderia-apartment';
+                    aptButton.textContent = apartmentNum;
+                    aptButton.onclick = () => {
+                        lavanderiaApartment = apartmentNum;
+                        document.getElementById('lavanderiaApartment').value = apartmentNum;
+                        document.getElementById('lavanderiaApartmentList').style.display = 'none';
+                        document.getElementById('lavanderiaContent').style.display = 'block';
+                    };
+                    container.appendChild(aptButton);
+                }
             }
-
-            // Atualiza o resumo
-            document.getElementById('totalBeverages').innerText = `R$ ${totalBeverages.toFixed(2)}`; // Adiciona o símbolo R$
-            document.getElementById('totalSnacks').innerText = `R$ ${totalSnacks.toFixed(2)}`; // Adiciona o símbolo R$
-            document.getElementById('totalCost').innerText = `R$ ${(totalBeverages + totalSnacks).toFixed(2)}`; // Adiciona o símbolo
         }
 
-// Variáveis globais para armazenar o estado
-let apartmentNumber;
-let beverageItems;
-let snackItems;
-
-// Função para enviar via WhatsApp
-function sendWhatsApp() {
-    apartmentNumber = document.getElementById('apartmentNumber').value.trim();
-
-    if (!apartmentNumber) {
-        alert("Por favor, insira o número do apartamento.");
-        return;
-    }
-
-    // Exibe o modal de confirmação
-    document.getElementById('confirmationModal').style.display = 'flex';
-
-    // Armazena os itens de bebidas e snacks
-    beverageItems = document.getElementById('beverages').getElementsByClassName('item');
-    snackItems = document.getElementById('snacks').getElementsByClassName('item');
-}
-
-// Função para confirmar a saída
-document.getElementById('confirmExit').onclick = function() {
-    sendMessage(true); // Envia a mensagem como saída
-};
-
-// Função para confirmar a arrumação
-document.getElementById('confirmCleaning').onclick = function() {
-    sendMessage(false); // Envia a mensagem como arrumação
-};
-
-// Função para enviar a mensagem
-
-function sendMessage(isExit) {
-    const status = isExit ? ' (Saída)' : ' (Arrumação)'; // Atualiza o status para incluir "Saída"
-
-    let message = `*Uh: ${apartmentNumber}${status} - Frigobar* \n\n`;
-
-    // Coleta os itens de bebidas
-    for (let item of beverageItems) {
-        const name = item.getElementsByTagName('span')[0].innerText;
-        const quantity = item.getElementsByClassName('quantity')[0].innerText;
-        if (quantity > 0) {
-            message += `*${quantity}* ${name}\n`;
+        function toggleApartmentList() {
+            const list = document.getElementById('lavanderiaApartmentList');
+            list.style.display = list.style.display === 'none' ? 'grid' : 'none';
         }
-    }
 
-    // Coleta os itens de snacks
-    for (let item of snackItems) {
-        const name = item.getElementsByTagName('span')[0].innerText;
-        const quantity = item.getElementsByClassName('quantity')[0].innerText;
-        if (quantity > 0) {
-            message += `*${quantity}* ${name}\n`;
+        function renderLavanderiaItems() {
+            const container = document.getElementById('lavanderiaItems');
+            container.innerHTML = '';
+            
+            lavanderiaItemsList.forEach(item => {
+                const lavarItem = lavanderiaItems.find(i => i.nome === item.nome && i.tipo === 'lavar');
+                const passarItem = lavanderiaItems.find(i => i.nome === item.nome && i.tipo === 'passar');
+                
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>
+                        <div class="item-with-icon">
+                            <img src="${item.icon}" alt="${item.nome}" class="table-item-icon">
+                            <span>${item.nome}</span>
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            <span>${item.lavar},00</span>
+                            ${lavarItem ? `<span class="service-badge">${lavarItem.quantidade}x</span>` : ''}
+                        </div>
+                    </td>
+                    <td>
+                        <div style="display: flex; align-items: center; gap: 5px;">
+                            ${item.passar ? `<span>${item.passar},00</span>` : '-'}
+                            ${passarItem ? `<span class="service-badge">${passarItem.quantidade}x</span>` : ''}
+                        </div>
+                    </td>
+                    <td>
+                        <button class="service-button lavar-btn" onclick="addLavanderiaItem('${item.nome}', 'lavar')">
+                            Lavar
+                        </button>
+                        ${item.passar ? `
+                        <button class="service-button passar-btn" onclick="addLavanderiaItem('${item.nome}', 'passar')">
+                            Passar
+                        </button>
+                        ` : ''}
+                    </td>
+                `;
+                container.appendChild(row);
+            });
         }
-    }
 
-    // Adiciona o custo total à mensagem
-    const totalCost = document.getElementById('totalCost').innerText;
-    message += `\n*Custo Total: R$ ${totalCost}*`;
-
-    // Codifica a mensagem para a URL
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = 'whatsapp://send?text=' + encodedMessage;
-
-    // Fecha o modal
-    document.getElementById('confirmationModal').style.display = 'none';
-
-    // Abre o WhatsApp com a mensagem
-    window.open(whatsappUrl, '_blank');
-}
-
-
-
-        // Geração da lista de apartamentos
-        const apartmentList = document.getElementById('apartment-list');
-        const showButton = document.getElementById('show-apartments');
-
-        showButton.onclick = () => {
-            // Alterna a exibição da lista de apartamentos
-            if (apartmentList.style.display === 'none' || apartmentList.style.display === '') {
-                apartmentList.style.display = 'block'; // Mostra a lista
+        function addLavanderiaItem(nome, tipo) {
+            const item = lavanderiaItemsList.find(i => i.nome === nome);
+            if (!item) return;
+            
+            const existingIndex = lavanderiaItems.findIndex(i => i.nome === nome && i.tipo === tipo);
+            
+            lavanderiaHistory.push({ type: 'add', previousItems: [...lavanderiaItems] });
+            
+            if (existingIndex !== -1) {
+                lavanderiaItems[existingIndex].quantidade += 1;
             } else {
-                apartmentList.style.display = 'none'; // Esconde a lista
+                lavanderiaItems.push({
+                    ...item,
+                    tipo,
+                    quantidade: 1
+                });
             }
-        };
-
-        // Gera os apartamentos
-        for (let floor = 3; floor <= 10; floor++) {
-            const floorDiv = document.createElement('div');
-            floorDiv.classList.add('floor');
-            const floorTitle = document.createElement('h2');
-            floorTitle.textContent = `Andar ${floor}`;
-            floorDiv.appendChild(floorTitle);
-
-            const roomCount = floor === 10 ? 7 : 8; // 10º andar tem 7 apartamentos, outros andares têm 8
-            for (let room = 1; room <= roomCount; room++) {
-                const apartment = floor === 10 ? `100${room}` : `${floor}0${room}`;
-                const apartmentDiv = document.createElement('div');
-                apartmentDiv.classList.add('apartment');
-                apartmentDiv.textContent = apartment;
-                apartmentDiv.onclick = () => {
-                    document.getElementById('apartmentNumber').value = apartment; // Preenche o número do apartamento
-                                        apartmentList.style.display = 'none'; // Esconde a lista após a seleção
-                };
-                floorDiv.appendChild(apartmentDiv);
-            }
-
-            apartmentList.appendChild(floorDiv);
+            
+            renderLavanderiaItems();
+            updateLavanderiaResumo();
+            document.getElementById('lavanderiaResumo').style.display = 'block';
         }
 
-        // Lógica para o botão de instalação do aplicativo
+        function removeLavanderiaItem(nome, tipo) {
+            const index = lavanderiaItems.findIndex(item => item.nome === nome && item.tipo === tipo);
+            if (index === -1) return;
+            
+            lavanderiaHistory.push({ type: 'remove', previousItems: [...lavanderiaItems] });
+            
+            lavanderiaItems[index].quantidade -= 1;
+            if (lavanderiaItems[index].quantidade === 0) {
+                lavanderiaItems.splice(index, 1);
+            }
+            
+            renderLavanderiaItems();
+            updateLavanderiaResumo();
+            
+            if (lavanderiaItems.length === 0) {
+                document.getElementById('lavanderiaResumo').style.display = 'none';
+            }
+        }
+
+        function undoLastAction() {
+            if (lavanderiaHistory.length === 0) return;
+            
+            const lastAction = lavanderiaHistory[lavanderiaHistory.length - 1];
+            lavanderiaItems = lastAction.previousItems;
+            lavanderiaHistory.pop();
+            
+            renderLavanderiaItems();
+            updateLavanderiaResumo();
+            
+            if (lavanderiaItems.length === 0) {
+                document.getElementById('lavanderiaResumo').style.display = 'none';
+            }
+        }
+
+        function updateLavanderiaResumo() {
+            const subtotal = lavanderiaItems.reduce((acc, item) => {
+                return acc + (item.tipo === 'lavar' ? item.lavar : item.passar) * item.quantidade;
+            }, 0);
+            
+            const iss = subtotal * 0.05;
+            const total = subtotal + iss;
+            
+            document.getElementById('subtotal').textContent = subtotal;
+            document.getElementById('iss').textContent = iss.toFixed(2);
+            document.getElementById('totalLavanderia').textContent = total.toFixed(2);
+            
+            // Agrupar itens por tipo
+            const groupedItems = lavanderiaItems.reduce((acc, item) => {
+                const key = item.tipo;
+                if (!acc[key]) acc[key] = [];
+                
+                const existing = acc[key].find(i => i.nome === item.nome);
+                if (existing) {
+                    existing.quantidade += item.quantidade;
+                } else {
+                    acc[key].push({ ...item });
+                }
+                return acc;
+            }, {});
+            
+            const resumoContent = document.getElementById('resumoContent');
+            resumoContent.innerHTML = '';
+            
+            Object.entries(groupedItems).forEach(([tipo, items]) => {
+                const categoryDiv = document.createElement('div');
+                categoryDiv.className = 'servico-category';
+                
+                const header = document.createElement('div');
+                header.className = 'category-header';
+                header.innerHTML = `
+                    <i class="fas ${tipo === 'lavar' ? 'fa-tshirt' : 'fa-iron'}" style="margin-right: 8px;"></i>
+                    ${tipo === 'lavar' ? 'Lavar' : 'Passar'}
+                    <span style="margin-left: auto; font-size: 0.9em; color: #666;">
+                        ${items.length} ${items.length === 1 ? 'item' : 'itens'}
+                    </span>
+                `;
+                
+                categoryDiv.appendChild(header);
+                
+                items.forEach(item => {
+                    const itemRow = document.createElement('div');
+                    itemRow.className = 'item-row';
+                    itemRow.innerHTML = `
+                        <div class="item-info">
+                            <img src="${item.icon}" alt="${item.nome}" class="item-icon">
+                            <div>
+                                <div style="font-weight: bold;">${item.nome}</div>
+                                <div style="font-size: 0.9em; color: #666;">
+                                    ${tipo === 'lavar' ? item.lavar : item.passar},00 cada
+                                </div>
+                            </div>
+                        </div>
+                        <div class="item-controls">
+                            <div class="quantity-controls">
+                                <button class="qty-btn" onclick="removeLavanderiaItem('${item.nome}', '${tipo}')">
+                                    <i class="fas fa-minus"></i>
+                                </button>
+                                <span style="width: 30px; text-align: center; font-weight: bold;">${item.quantidade}</span>
+                                <button class="qty-btn" onclick="addLavanderiaItem('${item.nome}', '${tipo}')">
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="item-total">
+                                R$ ${((tipo === 'lavar' ? item.lavar : item.passar) * item.quantidade)},00
+                            </div>
+                        </div>
+                    `;
+                    categoryDiv.appendChild(itemRow);
+                });
+                
+                resumoContent.appendChild(categoryDiv);
+            });
+        }
+
+        function enviarWhatsAppLavanderia() {
+            if (!lavanderiaApartment) {
+                alert('Por favor, selecione um apartamento.');
+                return;
+            }
+            
+            const groupedItems = lavanderiaItems.reduce((acc, item) => {
+                const key = item.tipo;
+                if (!acc[key]) acc[key] = [];
+                
+                const existing = acc[key].find(i => i.nome === item.nome);
+                if (existing) {
+                    existing.quantidade += item.quantidade;
+                } else {
+                    acc[key].push({ ...item });
+                }
+                return acc;
+            }, {});
+            
+            const subtotal = lavanderiaItems.reduce((acc, item) => {
+                return acc + (item.tipo === 'lavar' ? item.lavar : item.passar) * item.quantidade;
+            }, 0);
+            
+            const iss = subtotal * 0.05;
+            const total = subtotal + iss;
+            
+            let message = `*ICARAÍ PRAIA HOTEL LTDA*\n`;
+            message += `CNPJ: 27.890.847/0001-45\n`;
+            message += `RUA BELISARIO AUGUSTO 21,\n`;
+            message += `Bairro: Icaraí\n`;
+            message += `Cidade: NITERÓI\n`;
+            message += `24.230-200 RJ\n`;
+            message += `Data: ${new Date().toLocaleDateString('pt-BR')}\n\n`;
+            message += `*COMANDA DE LAVANDERIA*\n`;
+            message += `Apartamento: ${lavanderiaApartment}\n\n`;
+            
+            Object.entries(groupedItems).forEach(([tipo, items]) => {
+                message += `${tipo === 'lavar' ? 'LAVAR' : 'PASSAR'}:\n`;
+                items.forEach(item => {
+                    message += `${item.nome}\n`;
+                    message += `Quantidade: ${item.quantidade}x\n`;
+                    message += `Valor unitário: R$ ${tipo === 'lavar' ? item.lavar : item.passar},00\n`;
+                    message += `Total: R$ ${(tipo === 'lavar' ? item.lavar : item.passar) * item.quantidade},00\n\n`;
+                });
+            });
+            
+            message += `\nSubtotal: R$ ${subtotal},00\n`;
+            message += `ISS (5%): R$ ${iss.toFixed(2)}\n`;
+            message += `*Total: R$ ${total.toFixed(2)}*`;
+            
+            const encodedMessage = encodeURIComponent(message);
+            window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+        }
+
+        function imprimirPedido() {
+            if (!lavanderiaApartment) {
+                alert('Por favor, selecione um apartamento.');
+                return;
+            }
+            
+            const printContent = document.getElementById('lavanderiaResumo').innerHTML;
+            const printWindow = window.open('', '_blank');
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Comanda de Lavanderia</title>
+                        <style>
+                            body { font-family: Arial, sans-serif; padding: 20px; }
+                            .resumo-section { border: 1px solid #ddd; padding: 15px; }
+                            .item-row { display: flex; justify-content: space-between; margin: 10px 0; }
+                            .total-section { border-top: 2px solid #000; padding-top: 10px; margin-top: 20px; }
+                            .item-icon { width: 30px; height: 30px; margin-right: 10px; }
+                        </style>
+                    </head>
+                    <body>
+                        <h2>Comanda de Lavanderia - Apartamento ${lavanderiaApartment}</h2>
+                        ${printContent}
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+            printWindow.print();
+        }
+
+        // ========== SISTEMA DE VALE ==========
+        function initializeValeSystem() {
+            // Elementos da interface
+            const currentDateEl = document.getElementById('current-date');
+            const dayStatusEl = document.getElementById('day-status');
+            const daysLeftEl = document.getElementById('days-left');
+            const thirteenthSalaryMessage = document.getElementById('thirteenth-salary-message');
+            const requestBtn = document.getElementById('request-btn');
+            const yesBtn = document.getElementById('yes-btn');
+            const noBtn = document.getElementById('no-btn');
+            const confirmNameBtn = document.getElementById('confirm-name-btn');
+            const nameInput = document.getElementById('name-input');
+            const confirmValueBtn = document.getElementById('confirm-value-btn');
+            const valueInput = document.getElementById('value-input');
+            const whatsappBtn = document.getElementById('whatsapp-btn');
+            const backBtn = document.getElementById('back-btn');
+            const refusalWhatsappBtn = document.getElementById('refusal-whatsapp-btn');
+            const refusalBackBtn = document.getElementById('refusal-back-btn');
+            
+            // Elementos do modal
+            const reminderModal = document.getElementById('reminder-modal');
+            const modalRequestBtn = document.getElementById('modal-request-btn');
+            const modalCloseBtn = document.getElementById('modal-close-btn');
+            const modalDaysLeft = document.getElementById('modal-days-left');
+            
+            // Telas
+            const initialScreen = document.getElementById('initial-screen');
+            const confirmationScreen = document.getElementById('confirmation-screen');
+            const nameScreen = document.getElementById('name-screen');
+            const valueScreen = document.getElementById('value-screen');
+            const finalScreen = document.getElementById('final-screen');
+            const refusalScreen = document.getElementById('refusal-screen');
+            
+            // Mensagens
+            const successMessage = document.getElementById('success-message');
+            const infoMessage = document.getElementById('info-message');
+            const refusalInfo = document.getElementById('refusal-info');
+            
+            // Variáveis de estado
+            let selectedValue = 0;
+            let employeeName = "";
+            let isRequestPeriod = false;
+            let daysRemaining = 0;
+            let isThirteenthSalaryMonth = false;
+
+            // Verificar se está no período de solicitação (dias 10 a 20) e se é novembro/dezembro
+            function checkDate() {
+                const today = new Date();
+                const day = today.getDate();
+                const month = today.getMonth() + 1; // Janeiro = 1, Dezembro = 12
+                const year = today.getFullYear();
+                
+                // Formatar data para exibição
+                const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+                currentDateEl.textContent = `Hoje é ${formattedDate}`;
+                
+                console.log("Mês detectado:", month);
+                
+                // Verificar se é novembro (11) ou dezembro (12) - meses do 13º salário
+                if (month === 11 || month === 12) {
+                    isThirteenthSalaryMonth = true;
+                    thirteenthSalaryMessage.classList.remove('hidden');
+                    initialScreen.classList.add('hidden');
+                    dayStatusEl.textContent = "❌ Período de 13º salário - Solicitações de vale suspensas.";
+                    daysLeftEl.textContent = "As solicitações retornarão em janeiro.";
+                    return;
+                } else {
+                    isThirteenthSalaryMonth = false;
+                    thirteenthSalaryMessage.classList.add('hidden');
+                    initialScreen.classList.remove('hidden');
+                }
+                
+                // Verificar se está no período de solicitação (dias 10 a 20)
+                if (day >= 10 && day <= 20) {
+                    isRequestPeriod = true;
+                    daysRemaining = 20 - day;
+                    
+                    if (day === 20) {
+                        dayStatusEl.textContent = "✅ Hoje é o último dia para solicitar o vale!";
+                    } else {
+                        dayStatusEl.textContent = "✅ Estamos no período de solicitação de vale.";
+                    }
+                    
+                    daysLeftEl.innerHTML = `<span class="days-left">${daysRemaining} dia(s) restante(s)</span> para solicitar seu vale.`;
+                    requestBtn.disabled = false;
+                    
+                    // Verificar se deve mostrar modal de lembrete (apenas se não solicitou este mês)
+                    const lastRequestMonth = localStorage.getItem('lastValeRequestMonth');
+                    const currentMonth = today.getMonth() + '_' + today.getFullYear();
+                    
+                    if (!lastRequestMonth || lastRequestMonth !== currentMonth) {
+                        setTimeout(showReminderModal, 1000);
+                    }
+                } else {
+                    isRequestPeriod = false;
+                    
+                    if (day < 10) {
+                        const daysUntilStart = 10 - day;
+                        dayStatusEl.textContent = "❌ O período de solicitação ainda não começou.";
+                        daysLeftEl.textContent = `Faltam ${daysUntilStart} dia(s) para o início do período.`;
+                    } else {
+                        dayStatusEl.textContent = "❌ O período de solicitação já encerrou.";
+                        daysLeftEl.textContent = "Aguarde o próximo mês para solicitar seu vale.";
+                    }
+                    
+                    requestBtn.disabled = true;
+                }
+            }
+            
+            // Mostrar modal de lembrete
+            function showReminderModal() {
+                modalDaysLeft.textContent = `Você tem ${daysRemaining} dia(s) para solicitar.`;
+                reminderModal.classList.remove('hidden');
+            }
+            
+            // Fechar modal de lembrete
+            function closeReminderModal() {
+                reminderModal.classList.add('hidden');
+            }
+            
+            // Marcar que o vale foi solicitado este mês
+            function markValeRequested() {
+                const today = new Date();
+                const currentMonth = today.getMonth() + '_' + today.getFullYear();
+                localStorage.setItem('lastValeRequestMonth', currentMonth);
+            }
+            
+            // Voltar para a aba frigobar
+            function goBackToFrigobar() {
+                // Ativar a aba frigobar
+                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                document.querySelector('[onclick="openTab(\'frigobar\')"]').classList.add('active');
+                document.getElementById('frigobar').classList.add('active');
+                
+                // Resetar formulário do vale
+                resetForm();
+            }
+            
+            // Inicializar verificação de data
+            checkDate();
+            
+            // Navegação entre telas
+            requestBtn.addEventListener('click', function() {
+                console.log("Botão Solicitar Vale clicado");
+                if (!isRequestPeriod || isThirteenthSalaryMonth) return;
+                
+                initialScreen.classList.add('hidden');
+                confirmationScreen.classList.remove('hidden');
+                closeReminderModal();
+            });
+            
+            modalRequestBtn.addEventListener('click', function() {
+                console.log("Botão Modal Solicitar clicado");
+                closeReminderModal();
+                initialScreen.classList.add('hidden');
+                confirmationScreen.classList.remove('hidden');
+            });
+            
+            modalCloseBtn.addEventListener('click', function() {
+                console.log("Botão Fechar Modal clicado");
+                closeReminderModal();
+            });
+            
+            yesBtn.addEventListener('click', function() {
+                console.log("Botão Sim clicado");
+                confirmationScreen.classList.add('hidden');
+                nameScreen.classList.remove('hidden');
+                nameInput.focus();
+            });
+            
+            noBtn.addEventListener('click', function() {
+                console.log("Botão Não clicado");
+                confirmationScreen.classList.add('hidden');
+                refusalScreen.classList.remove('hidden');
+                
+                // Configurar mensagem de recusa
+                const now = new Date();
+                const deadline = new Date();
+                deadline.setHours(15, 30, 0, 0);
+                
+                if (now < deadline) {
+                    refusalInfo.textContent = `Você pode mudar de ideia até às 15:30 de hoje.`;
+                } else {
+                    refusalInfo.textContent = `O prazo para mudar de ideia era até às 15:30 de hoje.`;
+                }
+            });
+            
+            confirmNameBtn.addEventListener('click', function() {
+                console.log("Botão Confirmar Nome clicado");
+                const name = nameInput.value.trim();
+                
+                if (name === "") {
+                    alert('Por favor, insira seu nome completo.');
+                    nameInput.focus();
+                    return;
+                }
+                
+                employeeName = name;
+                nameScreen.classList.add('hidden');
+                valueScreen.classList.remove('hidden');
+                valueInput.focus();
+            });
+            
+            confirmValueBtn.addEventListener('click', function() {
+                console.log("Botão Confirmar Valor clicado");
+                const value = parseFloat(valueInput.value);
+                
+                if (isNaN(value) || value <= 0) {
+                    alert('Por favor, insira um valor válido.');
+                    valueInput.focus();
+                    return;
+                }
+                
+                selectedValue = value;
+                valueScreen.classList.add('hidden');
+                finalScreen.classList.remove('hidden');
+                
+                // Marcar que o vale foi solicitado este mês
+                markValeRequested();
+                
+                // Configurar mensagens
+                successMessage.innerHTML = `
+                    <strong>Funcionário:</strong> ${employeeName}<br>
+                    <strong>Valor solicitado:</strong> R$ ${value.toFixed(2).replace('.', ',')}
+                `;
+                
+                const now = new Date();
+                const deadline = new Date();
+                deadline.setHours(15, 30, 0, 0);
+                
+                if (now < deadline) {
+                    infoMessage.textContent = `Você pode mudar de ideia até às 15:30 de hoje.`;
+                } else {
+                    infoMessage.textContent = `O prazo para mudar de ideia era até às 15:30 de hoje.`;
+                }
+            });
+            
+            // Configurar botões do WhatsApp
+            whatsappBtn.addEventListener('click', function() {
+                console.log("Botão WhatsApp (solicitação) clicado");
+                const message = `Solicitação de Vale\nFuncionário: ${employeeName}\nValor: R$ ${selectedValue.toFixed(2).replace('.', ',')}`;
+                const encodedMessage = encodeURIComponent(message);
+                const whatsappURL = `https://wa.me/?text=${encodedMessage}`;
+                window.open(whatsappURL, '_blank');
+            });
+            
+            refusalWhatsappBtn.addEventListener('click', function() {
+                console.log("Botão WhatsApp (recusa) clicado");
+                const message = "Obrigado, não desejo pedir vale";
+                const encodedMessage = encodeURIComponent(message);
+                const whatsappURL = `https://wa.me/?text=${encodedMessage}`;
+                window.open(whatsappURL, '_blank');
+            });
+            
+            // Botões de voltar ao frigobar
+            backBtn.addEventListener('click', function() {
+                console.log("Botão Voltar (solicitação) clicado");
+                goBackToFrigobar();
+            });
+            
+            refusalBackBtn.addEventListener('click', function() {
+                console.log("Botão Voltar (recusa) clicado");
+                goBackToFrigobar();
+            });
+            
+            // Resetar formulário
+            function resetForm() {
+                nameInput.value = '';
+                valueInput.value = '';
+                selectedValue = 0;
+                employeeName = "";
+                
+                // Voltar para tela inicial do vale
+                initialScreen.classList.remove('hidden');
+                confirmationScreen.classList.add('hidden');
+                nameScreen.classList.add('hidden');
+                valueScreen.classList.add('hidden');
+                finalScreen.classList.add('hidden');
+                refusalScreen.classList.add('hidden');
+            }
+            
+            // Permitir Enter nos campos
+            nameInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    confirmNameBtn.click();
+                }
+            });
+            
+            valueInput.addEventListener('keypress', function(e) {
+                if (e.key === 'Enter') {
+                    confirmValueBtn.click();
+                }
+            });
+            
+            // Fechar modal ao clicar fora dele
+            reminderModal.addEventListener('click', function(e) {
+                if (e.target === reminderModal) {
+                    closeReminderModal();
+                }
+            });
+        }
+
+        // ========== PWA INSTALL BUTTON ==========
         let deferredPrompt;
         const installButton = document.getElementById('install-button');
 
         window.addEventListener('beforeinstallprompt', (event) => {
             event.preventDefault();
             deferredPrompt = event;
-            installButton.style.display = 'block'; // Mostra o botão de instalação
+            installButton.style.display = 'block';
         });
 
         installButton.addEventListener('click', () => {
-            installButton.style.display = 'none'; // Esconde o botão após o clique
-            deferredPrompt.prompt(); // Mostra o prompt de instalação
-            deferredPrompt.userChoice.then((choiceResult) => {
-                if (choiceResult.outcome === 'accepted') {
-                    console.log('Usuário aceitou a instalação da aplicação');
-                } else {
-                    console.log('Usuário recusou a instalação da aplicação');
-                }
-                deferredPrompt = null; // Limpa a variável
-            });
+            installButton.style.display = 'none';
+            if (deferredPrompt) {
+                deferredPrompt.prompt();
+                deferredPrompt.userChoice.then((choiceResult) => {
+                    deferredPrompt = null;
+                });
+            }
         });
     </script>
 </body>
-    </html>
+</html>
