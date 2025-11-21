@@ -1768,7 +1768,7 @@
                         
                         <!-- Opção para mostrar detalhes das refeições no voucher -->
                         <div class="show-meal-details-option">
-                            <input type="checkbox" id="showMealDetails" class="show-meal-details-checkbox" checked>
+                            <input type="checkbox" id="showMealDetails" class="show-meal-details-checkbox" checked onchange="calculateQuotation()">
                             <label for="showMealDetails" id="showMealDetailsLabel">Mostrar detalhes das refeições no voucher</label>
                         </div>
                     </div>
@@ -2905,7 +2905,7 @@
                 checkInOutDetails: "• Check-in: 14:00 / Check-out: 12:00<br>• No aceptamos Mascotas",
                 minorsPolicy: "Política para Menores",
                 minorsPolicyDetails: "Acompañado por los padres: Presentar DNI o certificado de nacimiento en el check-in que acredite ser hijo de uno de los padres presentes<br>No acompañado por los padres: Presentar DNI o certificado de nacimiento Y autorización de ambos padres reconocida en notaría, por exigencia legal",
-                guaranteeNotice: "Para garantizar su reserva, solicitamos el pago de la primera noche + 2% ISS, recordando que en caso de cancelación de su reserva fuera del plazo, no devolvemos el valor pagado.",
+                guaranteeNotice: "Para garantizar su reserva, solicitamos el pago de la primeira noche + 2% ISS, recordando que en caso de cancelación de su reserva fuera del plazo, no devolvemos el valor pagado.",
                 nonRefundableNotice: "Si ha hecho su reserva con condición de tarifa no reembolsable, cobraremos el valor total de la reserva y en caso de cancelación y/o alteraciones, no devolvemos el valor prepagado.",
                 reservationGuarantee: "GARANTÍA DE RESERVA",
                 bankDeposit: "Depósito Bancario o Pix",
@@ -3739,10 +3739,7 @@
             // Create WhatsApp message following the provided model
             const message = `🏨 *ICARAÍ PRAIA HOTEL*\n\n` +
                            
-                           `✅ ${currentLang === 'pt' ? 'COTAÇÃO DE RESERVA' : 
-                                 currentLang === 'en' ? 'RESERVATION QUOTATION' :
-                                 currentLang === 'fr' ? 'DEVIS DE RÉSERVATION' : 
-                                 'COTIZACIÓN DE RESERVA'}\n\n` +
+                           `✅ *COTAÇÃO DE RESERVA*\n\n` +
                            
                            `${currentLang === 'pt' ? 'Conforme sua solicitação, seguem nossas melhores tarifas e condições:' :
                              currentLang === 'en' ? 'As per your request, here are our best rates and conditions:' :
@@ -3830,6 +3827,12 @@
                                  currentLang === 'en' ? 'Payment method: DIRECT PAYMENT AT THE HOTEL' :
                                  currentLang === 'fr' ? 'Mode de paiement : PAIEMENT DIRECT À L\'HÔTEL' : 
                                  'Forma de pago: PAGO DIRECTO EN EL HOTEL'}*\n\n` +
+                           
+                           `🏠 *${currentLang === 'pt' ? 'Configuração de Quartos:' : 
+                                 currentLang === 'en' ? 'Room Configuration:' :
+                                 currentLang === 'fr' ? 'Configuration des Chambres :' : 
+                                 'Configuración de Habitaciones:'}*\n` +
+                           `${roomDetailsText}\n` +
                            
                            `💰 *${currentLang === 'pt' ? 'Tarifa média/noite:' : 
                                  currentLang === 'en' ? 'Average rate/night:' :
