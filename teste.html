@@ -2710,7 +2710,7 @@
                 cancellationPolicy: "Prazo para Cancelamento",
                 cancellationDetails: "Cancelamento da reserva sem ônus, até 72 horas antes do Check-in. Exceto para tarifas não reembolsáveis - estas não permitem cancelamento.<br><br>Os pedidos de cancelamento devem ser feitos somente por e-mail e só serão validados após a confirmação do hotel.",
                 taxNotes: "NOTAS FISCAIS",
-                taxNotesDetails: "As notas fiscais serão enviadas por e-mail em até 03 dias úteis após o check-out.<br><br>As notas fiscais de serviço serão emitidas de acordo com os serviços prestados, além da nota de F&B em caso de consumo.<br><br>As notas fiscais devem ser conferidas no recebimento, pois temos prazo para alterações, substituição e/ou cancelamento até o 5º dia útil do mês seguinte.<br><br>Caso o destinatário da nota não seja informado no pedido de reserva, a mesma será emitida em nome da empresa solicitante. Em caso de pessoa física, será emitida em nome do hóspede.<br><br>Caso haja algum erro/discrepância ou se não receber as notas dentro do prazo, favor entrar em contato imediatamente com o departamento financeiro.<br><br>Luciana Felix - Tel.(21) 2612-5030 ramal 3 - Whatsapp (21)2710-6142 - Email: financeiro@icaraipraiahotel.com.br<br><br>Mantenha sempre seu cadastro atualizado para evitar possíveis problemas no recebimento das notas fiscais."
+                taxNotesDetails: "As notas fiscais serão enviadas por e-mail em até 03 dias úteis após el check-out.<br><br>As notas fiscais de serviço serão emitidas de acordo com os serviços prestados, além da nota de F&B em caso de consumo.<br><br>As notas fiscais devem ser conferidas no recebimento, pois temos prazo para alterações, substituição e/ou cancelamento até o 5º dia útil do mês seguinte.<br><br>Caso o destinatário da nota não seja informado no pedido de reserva, a mesma será emitida em nome da empresa solicitante. Em caso de pessoa física, será emitida em nome do hóspede.<br><br>Caso haja algum erro/discrepância ou se não receber as notas dentro do prazo, favor entrar em contato imediatamente com o departamento financeiro.<br><br>Luciana Felix - Tel.(21) 2612-5030 ramal 3 - Whatsapp (21)2710-6142 - Email: financeiro@icaraipraiahotel.com.br<br><br>Mantenha sempre seu cadastro atualizado para evitar possíveis problemas no recebimento das notas fiscais."
             },
             en: {
                 calculatorTitle: "Reservation Information",
@@ -3699,19 +3699,31 @@
                 'fullBoard': translations[currentLang].fullBoardLabel
             };
             
-            // Generate room details for WhatsApp
+            // Generate room details for WhatsApp (PRIMEIRA MENCÃO - SEM PREÇO)
             let roomDetailsText = '';
             roomDetails.forEach((room, index) => {
                 roomDetailsText += `• ${room.quantity} ${currentLang === 'pt' ? 'apartamento(s)' : 
-                                                       currentLang === 'en' ? 'apartment(s)' :
-                                                       currentLang === 'fr' ? 'appartement(s)' : 
-                                                       'apartamento(s)'} • ${room.guests} ${currentLang === 'pt' ? 'hóspede(s)' : 
-                                                                                          currentLang === 'en' ? 'guest(s)' :
-                                                                                          currentLang === 'fr' ? 'client(s)' : 
-                                                                                          'huésped(es)'} • ${formatCurrency(room.rate)}/${currentLang === 'pt' ? 'dia' : 
-                                                                                                                                       currentLang === 'en' ? 'day' :
-                                                                                                                                       currentLang === 'fr' ? 'jour' : 
-                                                                                                                                       'día'}\n`;
+                                                   currentLang === 'en' ? 'apartment(s)' :
+                                                   currentLang === 'fr' ? 'appartement(s)' : 
+                                                   'apartamento(s)'} • ${room.guests} ${currentLang === 'pt' ? 'hóspede(s)' : 
+                                                                                      currentLang === 'en' ? 'guest(s)' :
+                                                                                      currentLang === 'fr' ? 'client(s)' : 
+                                                                                      'huésped(es)'}\n`;
+            });
+            
+            // Generate room details for WhatsApp (SEGUNDA MENCÃO - COM PREÇO)
+            let roomDetailsWithPriceText = '';
+            roomDetails.forEach((room, index) => {
+                roomDetailsWithPriceText += `• ${room.quantity} ${currentLang === 'pt' ? 'apartamento(s)' : 
+                                                         currentLang === 'en' ? 'apartment(s)' :
+                                                         currentLang === 'fr' ? 'appartement(s)' : 
+                                                         'apartamento(s)'} • ${room.guests} ${currentLang === 'pt' ? 'hóspede(s)' : 
+                                                                                            currentLang === 'en' ? 'guest(s)' :
+                                                                                            currentLang === 'fr' ? 'client(s)' : 
+                                                                                            'huésped(es)'} • ${formatCurrency(room.rate)}/${currentLang === 'pt' ? 'dia' : 
+                                                                                                                                         currentLang === 'en' ? 'day' :
+                                                                                                                                         currentLang === 'fr' ? 'jour' : 
+                                                                                                                                         'día'}\n`;
             });
             
             // Generate date periods for WhatsApp
@@ -3832,7 +3844,7 @@
                                  currentLang === 'en' ? 'Room Configuration:' :
                                  currentLang === 'fr' ? 'Configuration des Chambres :' : 
                                  'Configuración de Habitaciones:'}*\n` +
-                           `${roomDetailsText}\n` +
+                           `${roomDetailsWithPriceText}\n` +
                            
                            `💰 *${currentLang === 'pt' ? 'Tarifa média/noite:' : 
                                  currentLang === 'en' ? 'Average rate/night:' :
