@@ -1,12 +1,6 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <link rel="manifest" href="manifest.json">
-    <link rel="icon" href="logo.ico" type="image/ico">
-    <link rel="apple-touch-icon" sizes="192x192" href="logo.ico">
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="application-name" content="Hotel App">
-    <meta name="theme-color" content="#ffffff"> 
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Hotel App - Completo</title>
@@ -1263,6 +1257,61 @@
             color: #856404;
         }
 
+        /* Novos estilos para múltiplas datas */
+        .date-periods-container {
+            margin-bottom: 15px;
+        }
+
+        .date-period {
+            background: white;
+            padding: 12px;
+            border-radius: 6px;
+            margin-bottom: 8px;
+            border: 1px solid #e0e0e0;
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .date-period-input {
+            flex: 1;
+            padding: 6px 10px;
+            border: 1px solid #e0e0e0;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+
+        .add-date-period-btn {
+            background: #1a6bb3;
+            color: white;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            margin-bottom: 10px;
+        }
+
+        .add-date-period-btn:hover {
+            background: #155a9d;
+            transform: translateY(-1px);
+        }
+
+        /* Estilos para opção de mostrar detalhes das refeições */
+        .show-meal-details-option {
+            margin-top: 10px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .show-meal-details-checkbox {
+            width: 16px;
+            height: 16px;
+        }
+
         @media (max-width: 480px) {
             .tab {
                 padding: 12px 8px;
@@ -1312,6 +1361,15 @@
             .lang-btn {
                 padding: 6px 12px;
                 font-size: 10px;
+            }
+
+            .date-period {
+                flex-direction: column;
+                gap: 6px;
+            }
+            
+            .date-period-input {
+                width: 100%;
             }
         }
     </style>
@@ -1660,14 +1718,26 @@
                         </div>
                     </div>
                     
+                    <!-- Date Periods Section -->
                     <div class="form-group">
-                        <label class="form-label" id="checkInLabel">Check-in</label>
-                        <input type="date" class="form-input" id="checkIn">
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" id="checkOutLabel">Check-out</label>
-                        <input type="date" class="form-input" id="checkOut">
+                        <div class="room-config-title">
+                            <span id="datePeriodsLabel">Períodos de Estadia</span>
+                            <button class="add-date-period-btn" onclick="addDatePeriod()" id="addDatePeriodBtn">+ Adicionar Período</button>
+                        </div>
+                        
+                        <div id="datePeriodsContainer">
+                            <!-- Date periods will be added here dynamically -->
+                            <div class="date-period">
+                                <input type="date" class="date-period-input" id="checkIn0" onchange="calculateQuotation()">
+                                <span>até</span>
+                                <input type="date" class="date-period-input" id="checkOut0" onchange="calculateQuotation()">
+                                <button class="remove-room-btn" onclick="removeDatePeriod(this)" style="display: none;">×</button>
+                            </div>
+                        </div>
+                        
+                        <div class="rooms-summary" id="datePeriodsSummary">
+                            Total: 0 noite(s)
+                        </div>
                     </div>
                     
                     <div class="form-group">
@@ -1694,6 +1764,12 @@
                         <div class="meal-options" id="mealPriceSection" style="display: none;">
                             <label class="form-label" id="mealPriceLabel">Valor por Refeição (por pessoa)</label>
                             <input type="number" class="form-input" id="mealPrice" min="0" step="0.01" placeholder="R$ 0,00">
+                        </div>
+                        
+                        <!-- Opção para mostrar detalhes das refeições no voucher -->
+                        <div class="show-meal-details-option">
+                            <input type="checkbox" id="showMealDetails" class="show-meal-details-checkbox" checked>
+                            <label for="showMealDetails" id="showMealDetailsLabel">Mostrar detalhes das refeições no voucher</label>
                         </div>
                     </div>
                     
@@ -2572,6 +2648,7 @@
                 guestNameLabel: "Nome do Hóspede Principal",
                 roomConfigLabel: "Configuração de Quartos",
                 addRoomBtn: "+ Adicionar Quarto",
+                datePeriodsLabel: "Períodos de Estadia",
                 checkInLabel: "Check-in",
                 checkOutLabel: "Check-out",
                 mealTypeLabel: "Tipo de Refeição",
@@ -2580,6 +2657,7 @@
                 halfBoardLabel: "Meia Pensão (MAP)",
                 fullBoardLabel: "Pensão Completa (FAP)",
                 mealPriceLabel: "Valor por Refeição (por pessoa)",
+                showMealDetailsLabel: "Mostrar detalhes das refeições no voucher",
                 parkingLabel: "Estacionamento",
                 copyButtonText: "Copiar Cotação",
                 whatsappButtonText: "Enviar por WhatsApp",
@@ -2605,6 +2683,7 @@
                 subtotal: "Subtotal:",
                 issTax: "ISS (2%):",
                 total: "TOTAL:",
+                averageDailyRate: "Diária Média:",
                 includedServices: "SERVIÇOS INCLUSOS",
                 breakfastIncluded: "Café da manhã incluso das 6h às 10h, servido no restaurante",
                 wifi: "Internet (wi-fi)",
@@ -2638,6 +2717,7 @@
                 guestNameLabel: "Main Guest Name",
                 roomConfigLabel: "Room Configuration",
                 addRoomBtn: "+ Add Room",
+                datePeriodsLabel: "Stay Periods",
                 checkInLabel: "Check-in",
                 checkOutLabel: "Check-out",
                 mealTypeLabel: "Meal Type",
@@ -2646,6 +2726,7 @@
                 halfBoardLabel: "Half Board (MAP)",
                 fullBoardLabel: "Full Board (FAP)",
                 mealPriceLabel: "Price per Meal (per person)",
+                showMealDetailsLabel: "Show meal details in voucher",
                 parkingLabel: "Parking",
                 copyButtonText: "Copy Quotation",
                 whatsappButtonText: "Send via WhatsApp",
@@ -2671,6 +2752,7 @@
                 subtotal: "Subtotal:",
                 issTax: "ISS (2%):",
                 total: "TOTAL:",
+                averageDailyRate: "Average Daily Rate:",
                 includedServices: "INCLUDED SERVICES",
                 breakfastIncluded: "Breakfast included from 6am to 10am, served at the restaurant",
                 wifi: "Internet (wi-fi)",
@@ -2704,6 +2786,7 @@
                 guestNameLabel: "Nom du Client Principal",
                 roomConfigLabel: "Configuration des Chambres",
                 addRoomBtn: "+ Ajouter Chambre",
+                datePeriodsLabel: "Périodes de Séjour",
                 checkInLabel: "Arrivée",
                 checkOutLabel: "Départ",
                 mealTypeLabel: "Type de Repas",
@@ -2712,6 +2795,7 @@
                 halfBoardLabel: "Demi-Pension (MAP)",
                 fullBoardLabel: "Pension Complète (FAP)",
                 mealPriceLabel: "Prix par Repas (par personne)",
+                showMealDetailsLabel: "Afficher les détails des repas dans le bon",
                 parkingLabel: "Parking",
                 copyButtonText: "Copier le Devis",
                 whatsappButtonText: "Envoyer par WhatsApp",
@@ -2737,6 +2821,7 @@
                 subtotal: "Sous-total:",
                 issTax: "ISS (2%):",
                 total: "TOTAL:",
+                averageDailyRate: "Tarif Journalier Moyen:",
                 includedServices: "SERVICES INCLUS",
                 breakfastIncluded: "Petit déjeuner inclus de 6h à 10h, servi au restaurant",
                 wifi: "Internet (wi-fi)",
@@ -2770,6 +2855,7 @@
                 guestNameLabel: "Nombre del Huésped Principal",
                 roomConfigLabel: "Configuración de Habitaciones",
                 addRoomBtn: "+ Añadir Habitación",
+                datePeriodsLabel: "Períodos de Estancia",
                 checkInLabel: "Check-in",
                 checkOutLabel: "Check-out",
                 mealTypeLabel: "Tipo de Comida",
@@ -2778,6 +2864,7 @@
                 halfBoardLabel: "Media Pensión (MAP)",
                 fullBoardLabel: "Pensión Completa (FAP)",
                 mealPriceLabel: "Precio por Comida (por persona)",
+                showMealDetailsLabel: "Mostrar detalles de las comidas en el voucher",
                 parkingLabel: "Estacionamiento",
                 copyButtonText: "Copiar Cotización",
                 whatsappButtonText: "Enviar por WhatsApp",
@@ -2803,6 +2890,7 @@
                 subtotal: "Subtotal:",
                 issTax: "ISS (2%):",
                 total: "TOTAL:",
+                averageDailyRate: "Tarifa Diaria Promedio:",
                 includedServices: "SERVICIOS INCLUIDOS",
                 breakfastIncluded: "Desayuno incluido de 6h a 10h, servido en el restaurante",
                 wifi: "Internet (wi-fi)",
@@ -2857,6 +2945,7 @@
                 document.getElementById('guestNameLabel').textContent = langData.guestNameLabel;
                 document.getElementById('roomConfigLabel').textContent = langData.roomConfigLabel;
                 document.getElementById('addRoomBtn').textContent = langData.addRoomBtn;
+                document.getElementById('datePeriodsLabel').textContent = langData.datePeriodsLabel;
                 document.getElementById('checkInLabel').textContent = langData.checkInLabel;
                 document.getElementById('checkOutLabel').textContent = langData.checkOutLabel;
                 document.getElementById('mealTypeLabel').textContent = langData.mealTypeLabel;
@@ -2865,6 +2954,7 @@
                 document.getElementById('halfBoardLabel').textContent = langData.halfBoardLabel;
                 document.getElementById('fullBoardLabel').textContent = langData.fullBoardLabel;
                 document.getElementById('mealPriceLabel').textContent = langData.mealPriceLabel;
+                document.getElementById('showMealDetailsLabel').textContent = langData.showMealDetailsLabel;
                 document.getElementById('parkingLabel').textContent = langData.parkingLabel;
                 document.getElementById('copyButtonText').textContent = langData.copyButtonText;
                 document.getElementById('whatsappButtonText').textContent = langData.whatsappButtonText;
@@ -2945,6 +3035,7 @@
             
             // Initial calculation
             updateRoomsSummary();
+            updateDatePeriodsSummary();
             updateLanguage();
         }
 
@@ -3027,14 +3118,80 @@
             calculateQuotation();
         }
 
+        // Add new date period
+        function addDatePeriod() {
+            const datePeriodsContainer = document.getElementById('datePeriodsContainer');
+            const datePeriodIndex = datePeriodsContainer.children.length;
+            const datePeriod = document.createElement('div');
+            datePeriod.className = 'date-period';
+            
+            datePeriod.innerHTML = `
+                <input type="date" class="date-period-input" id="checkIn${datePeriodIndex}" onchange="calculateQuotation()">
+                <span>${currentLang === 'pt' ? 'até' : 
+                       currentLang === 'en' ? 'to' :
+                       currentLang === 'fr' ? 'à' : 
+                       'hasta'}</span>
+                <input type="date" class="date-period-input" id="checkOut${datePeriodIndex}" onchange="calculateQuotation()">
+                <button class="remove-room-btn" onclick="removeDatePeriod(this)">×</button>
+            `;
+            
+            datePeriodsContainer.appendChild(datePeriod);
+            updateDatePeriodsSummary();
+            
+            // Show remove buttons for all date periods if there's more than one
+            const removeButtons = document.querySelectorAll('.date-period .remove-room-btn');
+            if (removeButtons.length > 1) {
+                removeButtons.forEach(btn => btn.style.display = 'block');
+            }
+        }
+
+        // Remove date period
+        function removeDatePeriod(button) {
+            const datePeriod = button.closest('.date-period');
+            datePeriod.remove();
+            updateDatePeriodsSummary();
+            
+            // Hide remove buttons if there's only one date period left
+            const removeButtons = document.querySelectorAll('.date-period .remove-room-btn');
+            if (removeButtons.length === 1) {
+                removeButtons[0].style.display = 'none';
+            }
+        }
+
+        // Update date periods summary
+        function updateDatePeriodsSummary() {
+            const datePeriods = document.querySelectorAll('.date-period');
+            let totalNights = 0;
+            
+            datePeriods.forEach((period, index) => {
+                const checkIn = document.getElementById(`checkIn${index}`).value;
+                const checkOut = document.getElementById(`checkOut${index}`).value;
+                
+                if (checkIn && checkOut) {
+                    const checkInDate = new Date(checkIn);
+                    const checkOutDate = new Date(checkOut);
+                    const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
+                    const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    totalNights += nights;
+                }
+            });
+            
+            const summaryText = currentLang === 'pt' ? `Total: ${totalNights} noite(s)` :
+                              currentLang === 'en' ? `Total: ${totalNights} night(s)` :
+                              currentLang === 'fr' ? `Total: ${totalNights} nuit(s)` :
+                              `Total: ${totalNights} noche(s)`;
+            
+            document.getElementById('datePeriodsSummary').textContent = summaryText;
+            calculateQuotation();
+        }
+
         function calculateQuotation() {
             // Get input values
             const guestName = document.getElementById('guestName').value || '';
-            const checkIn = document.getElementById('checkIn').value;
-            const checkOut = document.getElementById('checkOut').value;
             const mealType = document.querySelector('input[name="mealType"]:checked').value;
             const mealPrice = parseFloat(document.getElementById('mealPrice').value) || 0;
             const parking = document.getElementById('parking').value;
+            const showMealDetails = document.getElementById('showMealDetails').checked;
             
             // Calculate room configurations
             const roomItems = document.querySelectorAll('.room-item');
@@ -3061,13 +3218,31 @@
                 }
             });
             
-            // Calculate nights
-            const checkInDate = new Date(checkIn);
-            const checkOutDate = new Date(checkOut);
-            const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
-            const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            // Calculate date periods
+            const datePeriods = document.querySelectorAll('.date-period');
+            let totalNights = 0;
+            const datePeriodDetails = [];
             
-            if (nights <= 0 || !checkIn || !checkOut || totalRooms === 0) {
+            datePeriods.forEach((period, index) => {
+                const checkIn = document.getElementById(`checkIn${index}`).value;
+                const checkOut = document.getElementById(`checkOut${index}`).value;
+                
+                if (checkIn && checkOut) {
+                    const checkInDate = new Date(checkIn);
+                    const checkOutDate = new Date(checkOut);
+                    const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
+                    const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    totalNights += nights;
+                    
+                    datePeriodDetails.push({
+                        checkIn: checkIn,
+                        checkOut: checkOut,
+                        nights: nights
+                    });
+                }
+            });
+            
+            if (totalNights <= 0 || totalRooms === 0) {
                 // Show empty preview if dates are invalid or no rooms
                 document.getElementById('quotationPreview').innerHTML = `
                     <div class="quotation-header">
@@ -3087,7 +3262,7 @@
             }
             
             // Calculate base amount
-            let baseAmount = totalDailyRate * nights;
+            let baseAmount = totalDailyRate * totalNights;
             
             // Calculate meal costs
             let mealDescription = '';
@@ -3112,13 +3287,13 @@
                 case 'halfBoard':
                     mealDescription = mealTypes.halfBoard;
                     mealsPerDay = 1;
-                    mealCost = mealPrice * totalGuests * mealsPerDay * nights;
+                    mealCost = mealPrice * totalGuests * mealsPerDay * totalNights;
                     mealInfoNotice = translations[currentLang].halfBoardNotice;
                     break;
                 case 'fullBoard':
                     mealDescription = mealTypes.fullBoard;
                     mealsPerDay = 2;
-                    mealCost = mealPrice * totalGuests * mealsPerDay * nights;
+                    mealCost = mealPrice * totalGuests * mealsPerDay * totalNights;
                     mealInfoNotice = translations[currentLang].fullBoardNotice;
                     break;
             }
@@ -3126,7 +3301,7 @@
             // Calculate parking cost
             let parkingCost = 0;
             if (parking === 'yes') {
-                parkingCost = 45 * totalRooms * nights;
+                parkingCost = 45 * totalRooms * totalNights;
             }
             
             // Calculate total before tax
@@ -3139,7 +3314,7 @@
             const total = subtotal + issTax;
             
             // Calculate average rate per night
-            const avgRatePerNight = total / nights;
+            const avgRatePerNight = total / totalNights;
             
             // Calculate first night payment (for guarantee)
             const firstNightPayment = totalDailyRate + (totalDailyRate * 0.02);
@@ -3179,6 +3354,26 @@
                 `;
             });
             
+            // Generate date periods HTML
+            let datePeriodsHTML = '';
+            datePeriodDetails.forEach((period, index) => {
+                datePeriodsHTML += `
+                    <div class="detail-row">
+                        <span class="detail-label">${currentLang === 'pt' ? 'Período' : 
+                                                   currentLang === 'en' ? 'Period' :
+                                                   currentLang === 'fr' ? 'Période' : 
+                                                   'Período'} ${index + 1}:</span>
+                        <span class="detail-value">${formatDateForDisplay(period.checkIn)} ${currentLang === 'pt' ? 'até' : 
+                                                                                           currentLang === 'en' ? 'to' :
+                                                                                           currentLang === 'fr' ? 'à' : 
+                                                                                           'hasta'} ${formatDateForDisplay(period.checkOut)} (${period.nights} ${currentLang === 'pt' ? 'noite(s)' : 
+                                                                                                                                                                currentLang === 'en' ? 'night(s)' :
+                                                                                                                                                                currentLang === 'fr' ? 'nuit(s)' : 
+                                                                                                                                                                'noche(s)'})</span>
+                    </div>
+                `;
+            });
+            
             // Generate quotation HTML
             const langData = translations[currentLang];
             const quotationHTML = `
@@ -3204,6 +3399,7 @@
                                                                       'No informado')}</span>
                         </div>
                         ${roomDetailsHTML}
+                        ${datePeriodsHTML}
                         <div class="detail-row">
                             <span class="detail-label">${langData.mealType}</span>
                             <span class="detail-value">${mealDescription}</span>
@@ -3222,23 +3418,10 @@
                         </div>
                         <div class="detail-row">
                             <span class="detail-label">${langData.period}</span>
-                            <span class="detail-value">${nights} ${currentLang === 'pt' ? 'Noite(s)' : 
-                                                                  currentLang === 'en' ? 'Night(s)' :
-                                                                  currentLang === 'fr' ? 'Nuit(s)' : 
-                                                                  'Noche(s)'}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="dates-container">
-                        <div class="date-column">
-                            <div class="date-label">${langData.checkIn}</div>
-                            <div class="date-value">${formatDateForDisplay(checkIn)}</div>
-                            <div class="date-time">${langData.fromTime}</div>
-                        </div>
-                        <div class="date-column">
-                            <div class="date-label">${langData.checkOut}</div>
-                            <div class="date-value">${formatDateForDisplay(checkOut)}</div>
-                            <div class="date-time">${langData.untilTime}</div>
+                            <span class="detail-value">${totalNights} ${currentLang === 'pt' ? 'Noite(s)' : 
+                                                                       currentLang === 'en' ? 'Night(s)' :
+                                                                       currentLang === 'fr' ? 'Nuit(s)' : 
+                                                                       'Noche(s)'}</span>
                         </div>
                     </div>
                     
@@ -3252,14 +3435,14 @@
                                        'Grupo'} ${index + 1} (${room.quantity} ${currentLang === 'pt' ? 'apto(s)' : 
                                                                                currentLang === 'en' ? 'room(s)' :
                                                                                currentLang === 'fr' ? 'chambre(s)' : 
-                                                                               'habitación(es)'} × ${nights} ${currentLang === 'pt' ? 'noite(s)' : 
-                                                                                                            currentLang === 'en' ? 'night(s)' :
-                                                                                                            currentLang === 'fr' ? 'nuit(s)' : 
-                                                                                                            'noche(s)'}):</span>
-                                <span>${formatCurrency(room.quantity * room.rate * nights)}</span>
+                                                                               'habitación(es)'} × ${totalNights} ${currentLang === 'pt' ? 'noite(s)' : 
+                                                                                                                    currentLang === 'en' ? 'night(s)' :
+                                                                                                                    currentLang === 'fr' ? 'nuit(s)' : 
+                                                                                                                    'noche(s)'}):</span>
+                                <span>${formatCurrency(room.quantity * room.rate * totalNights)}</span>
                             </div>
                         `).join('')}
-                        ${mealCost > 0 ? `
+                        ${mealCost > 0 && showMealDetails ? `
                         <div class="price-row">
                             <span>${langData.mealsIncluded}</span>
                             <span>${formatCurrency(mealCost)}</span>
@@ -3278,6 +3461,10 @@
                         <div class="price-row">
                             <span>${langData.issTax}</span>
                             <span>${formatCurrency(issTax)}</span>
+                        </div>
+                        <div class="price-row">
+                            <span>${langData.averageDailyRate}</span>
+                            <span>${formatCurrency(avgRatePerNight)}</span>
                         </div>
                         <div class="price-row total-row">
                             <span>${langData.total}</span>
@@ -3303,7 +3490,7 @@
                     </div>
                     ` : ''}
                     
-                    ${mealInfoNotice ? `
+                    ${mealInfoNotice && showMealDetails ? `
                     <div class="meal-info-notice">
                         ${mealInfoNotice}
                     </div>
@@ -3430,11 +3617,10 @@
         
         function shareWhatsApp() {
             const guestName = document.getElementById('guestName').value || '';
-            const checkIn = document.getElementById('checkIn').value;
-            const checkOut = document.getElementById('checkOut').value;
             const mealType = document.querySelector('input[name="mealType"]:checked').value;
             const mealPrice = document.getElementById('mealPrice').value || '0';
             const parking = document.getElementById('parking').value;
+            const showMealDetails = document.getElementById('showMealDetails').checked;
             
             // Calculate room configurations
             const roomItems = document.querySelectorAll('.room-item');
@@ -3461,25 +3647,36 @@
                 }
             });
             
-            // Calculate nights
-            const checkInDate = new Date(checkIn);
-            const checkOutDate = new Date(checkOut);
-            const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
-            const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+            // Calculate date periods
+            const datePeriods = document.querySelectorAll('.date-period');
+            let totalNights = 0;
+            
+            datePeriods.forEach((period, index) => {
+                const checkIn = document.getElementById(`checkIn${index}`).value;
+                const checkOut = document.getElementById(`checkOut${index}`).value;
+                
+                if (checkIn && checkOut) {
+                    const checkInDate = new Date(checkIn);
+                    const checkOutDate = new Date(checkOut);
+                    const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
+                    const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    totalNights += nights;
+                }
+            });
             
             // Calculate totals
-            const baseAmount = totalDailyRate * nights;
+            const baseAmount = totalDailyRate * totalNights;
             let mealCost = 0;
             if (mealType === 'halfBoard') {
-                mealCost = (parseFloat(mealPrice) || 0) * totalGuests * 1 * nights;
+                mealCost = (parseFloat(mealPrice) || 0) * totalGuests * 1 * totalNights;
             } else if (mealType === 'fullBoard') {
-                mealCost = (parseFloat(mealPrice) || 0) * totalGuests * 2 * nights;
+                mealCost = (parseFloat(mealPrice) || 0) * totalGuests * 2 * totalNights;
             }
-            const parkingCost = (parking === 'yes') ? 45 * totalRooms * nights : 0;
+            const parkingCost = (parking === 'yes') ? 45 * totalRooms * totalNights : 0;
             const subtotal = baseAmount + mealCost + parkingCost;
             const issTax = subtotal * 0.02;
             const total = subtotal + issTax;
-            const avgRatePerNight = total / nights;
+            const avgRatePerNight = total / totalNights;
             const firstNightPayment = totalDailyRate + (totalDailyRate * 0.02);
             
             // Format currency
@@ -3517,6 +3714,28 @@
                                                                                                                                        'día'}\n`;
             });
             
+            // Generate date periods for WhatsApp
+            let datePeriodsText = '';
+            datePeriods.forEach((period, index) => {
+                const checkIn = document.getElementById(`checkIn${index}`).value;
+                const checkOut = document.getElementById(`checkOut${index}`).value;
+                
+                if (checkIn && checkOut) {
+                    const checkInDate = new Date(checkIn);
+                    const checkOutDate = new Date(checkOut);
+                    const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
+                    const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    
+                    datePeriodsText += `• ${formatDateForMessage(checkIn)} ${currentLang === 'pt' ? 'até' : 
+                                                                           currentLang === 'en' ? 'to' :
+                                                                           currentLang === 'fr' ? 'à' : 
+                                                                           'hasta'} ${formatDateForMessage(checkOut)} (${nights} ${currentLang === 'pt' ? 'noite(s)' : 
+                                                                                                                              currentLang === 'en' ? 'night(s)' :
+                                                                                                                              currentLang === 'fr' ? 'nuit(s)' : 
+                                                                                                                              'noche(s)'})\n`;
+                }
+            });
+            
             // Create WhatsApp message following the provided model
             const message = `🏨 *ICARAÍ PRAIA HOTEL*\n\n` +
                            
@@ -3536,22 +3755,20 @@
                                  'Configuración de Habitaciones:'}*\n` +
                            `${roomDetailsText}\n` +
                            
+                           `🗓 *${currentLang === 'pt' ? 'Períodos de Estadia:' : 
+                                 currentLang === 'en' ? 'Stay Periods:' :
+                                 currentLang === 'fr' ? 'Périodes de Séjour :' : 
+                                 'Períodos de Estancia:'}*\n` +
+                           `${datePeriodsText}\n` +
+                           
                            `👨‍👩‍👧‍👦 *${currentLang === 'pt' ? 'Número total de hóspedes:' : 
                                  currentLang === 'en' ? 'Total number of guests:' :
                                  currentLang === 'fr' ? 'Nombre total d\'invités :' : 
                                  'Número total de huéspedes:'}* ${totalGuests}\n` +
-                           `🗓 *${currentLang === 'pt' ? 'Check-in:' : 
-                                 currentLang === 'en' ? 'Check-in:' :
-                                 currentLang === 'fr' ? 'Arrivée :' : 
-                                 'Check-in:'}* ${formatDateForMessage(checkIn)} 🕑14h\n` +
-                           `🗓 *${currentLang === 'pt' ? 'Check-out:' : 
-                                 currentLang === 'en' ? 'Check-out:' :
-                                 currentLang === 'fr' ? 'Départ :' : 
-                                 'Check-out:'}* ${formatDateForMessage(checkOut)} 🕑12h\n` +
                            `✅ *${currentLang === 'pt' ? 'Número de noites:' : 
                                  currentLang === 'en' ? 'Number of nights:' :
                                  currentLang === 'fr' ? 'Nombre de nuits :' : 
-                                 'Número de noches:'}* ${nights}\n` +
+                                 'Número de noches:'}* ${totalNights}\n` +
                            `✅ *${currentLang === 'pt' ? 'Estacionamento:' : 
                                  currentLang === 'en' ? 'Parking:' :
                                  currentLang === 'fr' ? 'Stationnement :' : 
