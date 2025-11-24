@@ -4,6 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cotador de Reservas - Icaraí Praia Hotel</title>
+    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
+    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -15,83 +17,124 @@
             flex-direction: column;
             align-items: center;
         }
-        .container { max-width: 1200px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
+        .container { width: 100%; max-width: 1200px; display: grid; grid-template-columns: 1fr 1fr; gap: 30px; margin-top: 20px; }
         .language-selector { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; justify-content: center; }
-        .lang-btn { padding: 8px 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 20px; background: rgba(255,255,255,0.1); color: white; font-weight: 600; cursor: pointer; transition: all 0.3s; }
+        .lang-btn { padding: 8px 16px; border: 2px solid rgba(255,255,255,0.3); border-radius: 20px; background: rgba(255,255,255,0.1); color: white; font-weight: 600; cursor: pointer; transition: all 0.3s ease; }
         .lang-btn.active { background: white; color: #1a6bb3; border-color: white; }
         .calculator { background: white; padding: 30px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.15); }
         .calculator-title { font-size: 24px; font-weight: 700; color: #1a6bb3; margin-bottom: 25px; text-align: center; }
         .form-group { margin-bottom: 20px; }
         .form-label { display: block; font-weight: 600; color: #333; margin-bottom: 8px; font-size: 14px; }
-        .form-input, .form-select { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px; transition: all 0.3s; }
-        .form-input:focus, .form-select:focus { outline: none; border-color: #1a6bb3; box-shadow: 0 0 0 3px rgba(26,107,179,0.1); }
-        .group-container { background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e0e0e0; }
+        .form-input, .form-select { width: 100%; padding: 12px 15px; border: 2px solid #e0e0e0; border-radius: 10px; font-size: 14px; transition: all 0.3s ease; }
+        .form-input:focus, .form-select:focus { outline: none; border-color: #1a6bb3; box-shadow: 0 0 0 3px rgba(26, 107, 179, 0.1); }
+        .group-container { background: #f8fafc; padding: 20px; border-radius: 12px; margin-bottom: 20px; border: 1px solid #e0e0e0; position: relative; }
         .group-title { font-size: 18px; font-weight: 700; color: #1a6bb3; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center; }
         .remove-group-btn { background: #ff6b6b; color: white; border: none; width: 32px; height: 32px; border-radius: 8px; cursor: pointer; font-size: 16px; }
         .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
-        .grid-3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 15px; }
-        .meal-options { background: #e7f3ff; padding: 12px; border-radius: 8px; margin-top: 10px; border-left: 4px solid #1a6bb3; }
-        .add-group-btn { background: #1a6bb3; color: white; border: none; padding: 12px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; width: 100%; margin-top: 10px; }
-        .checkbox-option { display: flex; align-items: center; gap: 10px; margin: 20px 0; font-weight: 600; color: #333; }
-        .checkbox-option input[type="checkbox"] { width: 18px; height: 18px; accent-color: #1a6bb3; cursor: pointer; }
-        .action-buttons { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-top: 20px; }
-        .action-btn { padding: 15px; border: none; border-radius: 10px; font-size: 14px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 8px; }
+        .grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; }
+        .meal-options { background: #e7f3ff; padding: 15px; border-radius: 10px; margin-top: 12px; border-left: 5px solid #1a6bb3; display: none; }
+        .add-group-btn { background: #1a6bb3; color: white; border: none; padding: 14px 20px; border-radius: 10px; cursor: pointer; font-weight: 600; width: 100%; margin: 15px 0; font-size: 16px; }
+        .checkbox-group { display: flex; align-items: center; gap: 10px; margin: 15px 0; font-weight: 600; color: #333; }
+        .action-buttons { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; margin-top: 20px; }
+        .action-btn { padding: 16px; border: none; border-radius: 12px; font-size: 15px; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 10px; }
         .copy-btn { background: linear-gradient(135deg, #1a6bb3, #2c8cda); color: white; }
         .whatsapp-btn { background: linear-gradient(135deg, #25D366, #128C7E); color: white; }
-        .preview { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); max-height: 80vh; overflow-y: auto; padding: 20px; white-space: pre-line; font-family: inherit; }
-        .whatsapp-input { display: flex; gap: 10px; margin-top: 10px; }
-        @media (max-width: 768px) { .container { grid-template-columns: 1fr; } .grid-2, .grid-3 { grid-template-columns: 1fr; } .action-buttons { grid-template-columns: 1fr; } }
+        .pdf-btn { background: linear-gradient(135deg, #e74c3c, #c0392b); color: white; }
+        .preview { background: white; border-radius: 20px; overflow: hidden; box-shadow: 0 15px 35px rgba(0,0,0,0.2); max-height: 80vh; overflow-y: auto; }
+        .quotation-header { background: linear-gradient(135deg, #1a6bb3, #2c8cda); padding: 35px; color: white; text-align: center; }
+        .hotel-name { font-size: 30px; font-weight: 900; text-shadow: 0 3px 8px rgba(0,0,0,0.5); }
+        .quotation-title { font-size: 22px; margin: 12px 0; opacity: 0.95; }
+        .quotation-badge { background: #ff4444; padding: 10px 25px; border-radius: 50px; font-weight: 700; font-size: 14px; }
+        .validity-notice { background: #fff8e1; border-left: 6px solid #ffc107; padding: 18px; margin: 20px; border-radius: 0 12px 12px 0; font-weight: 600; color: #856404; }
+        .quotation-body { padding: 35px; }
+        .group-box { background: #f8fdff; padding: 25px; border-radius: 16px; margin: 25px 0; border-left: 6px solid #1a6bb3; box-shadow: 0 4px 15px rgba(0,0,0,0.08); }
+        .meal-detail { background: #e3f2fd; padding: 14px; border-radius: 10px; margin: 12px 0; font-size: 14px; border-left: 5px solid #1a6bb3; }
+        .total-row { background: #1a6bb3; color: white; padding: 22px; border-radius: 14px; text-align: center; font-size: 22px; font-weight: 700; margin: 30px 0; }
+        .whatsapp-input { display: flex; gap: 10px; margin: 15px 0; }
+        .notification { position: fixed; top: 20px; right: 20px; padding: 15px 25px; border-radius: 10px; background: #4CAF50; color: white; font-weight: 600; box-shadow: 0 5px 15px rgba(0,0,0,0.2); z-index: 1000; opacity: 0; transition: opacity 0.3s; }
+        .notification.show { opacity: 1; }
+        @media (max-width: 768px) {
+            .container { grid-template-columns: 1fr; }
+            .action-buttons { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
     <h1 style="color: white; text-align: center; margin-bottom: 10px;">Cotador de Reservas</h1>
-    <p style="color: rgba(255,255,255,0.8); text-align: center; margin-bottom: 30px;">Icaraí Praia Hotel</p>
-    
+    <p style="color: rgba(255,255,255,0.9); text-align: center; margin-bottom: 30px;">Icaraí Praia Hotel</p>
+
+    <div class="notification" id="notification"></div>
+
+    <script>
+        const hotelConfig = {
+            name: "ICARAÍ PRAIA HOTEL",
+            email: "reservas@icaraipraiahotel.com.br",
+            phone: "(21) 2612-5030",
+            site: "www.icaraipraiahotel.com.br"
+        };
+    </script>
+
     <div class="language-selector">
         <button class="lang-btn active" data-lang="pt">Português</button>
         <button class="lang-btn" data-lang="en">English</button>
         <button class="lang-btn" data-lang="fr">Français</button>
         <button class="lang-btn" data-lang="es">Español</button>
     </div>
-    
+
     <div class="container">
         <div class="calculator">
-            <div class="calculator-title" id="title">Informações da Reserva</div>
-            
+            <div class="calculator-title">Informações da Reserva</div>
+
             <div class="form-group">
-                <label class="form-label" id="guestLabel">Nome do Hóspede Principal</label>
-                <input type="text" class="form-input" id="mainGuest" placeholder="Digite o nome completo" oninput="calculate()">
+                <label class="form-label">Nome do Hóspede Principal</label>
+                <input type="text" class="form-input" id="mainGuest" placeholder="Ex: João Silva" oninput="calculate()">
+            </div>
+
+            <div class="checkbox-group">
+                <input type="checkbox" id="showMealDetails" checked onchange="calculate()">
+                <label for="showMealDetails">Exibir detalhes das refeições no voucher</label>
             </div>
 
             <div id="groupsContainer">
+                <!-- Grupo Inicial -->
                 <div class="group-container" data-group="0">
-                    <div class="group-title"><span>Grupo 1</span><button class="remove-group-btn" style="display:none;">×</button></div>
+                    <div class="group-title">
+                        <span>Grupo 1</span>
+                        <button class="remove-group-btn" style="display:none;">×</button>
+                    </div>
+
                     <div class="grid-3">
                         <div><label class="form-label">Quantidade</label><input type="number" class="form-input qty" min="1" value="1" oninput="calculate()"></div>
                         <div><label class="form-label">Hóspedes</label>
                             <select class="form-select guests" oninput="calculate()">
-                                <option value="1">1</option><option value="2" selected>2</option><option value="3">3</option><option value="4">4</option>
+                                <option value="1" selected>1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
                             </select>
                         </div>
                         <div><label class="form-label">Diária (R$)</label><input type="number" class="form-input rate" step="0.01" value="0" placeholder="0,00" oninput="calculate()"></div>
                     </div>
+
                     <div class="grid-2" style="margin-top:15px;">
                         <div><label class="form-label">Check-in</label><input type="date" class="form-input checkin" oninput="calculate()"></div>
                         <div><label class="form-label">Check-out</label><input type="date" class="form-input checkout" oninput="calculate()"></div>
                     </div>
+
                     <div style="margin-top:15px;">
                         <label class="form-label">Tipo de Pensão</label>
                         <div style="display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; font-size:13px;">
-                            <label><input type="radio" name="meal-0" value="breakfast" checked onchange="toggleMeal(this)"> Com Café</label>
-                            <label><input type="radio" name="meal-0" value="noBreakfast" onchange="toggleMeal(this)"> Sem Café</label>
-                            <label><input type="radio" name="meal-0" value="halfBoard" onchange="toggleMeal(this)"> Meia Pensão</label>
-                            <label><input type="radio" name="meal-0" value="fullBoard" onchange="toggleMeal(this)"> Pensão Completa</label>
+                            <label><input type="radio" name="meal-0" value="breakfast" checked onchange="toggleMealOptions(this)"> Com Café</label>
+                            <label><input type="radio" name="meal-0" value="noBreakfast" onchange="toggleMealOptions(this)"> Sem Café</label>
+                            <label><input type="radio" name="meal-0" value="halfBoard" onchange="toggleMealOptions(this)"> Meia Pensão</label>
+                            <label><input type="radio" name="meal-0" value="fullBoard" onchange="toggleMealOptions(this)"> Pensão Completa</label>
                         </div>
-                        <div class="meal-options" style="display:none;">
-                            <label class="form-label">Valor refeição/pessoa</label>
-                            <input type="number" class="form-input meal-price" step="0.01" placeholder="R$ 0,00" oninput="calculate()">
+                        <div class="meal-options">
+                            <label class="form-label">Valor por refeição/pessoa (R$)</label>
+                            <input type="number" class="form-input meal-price" step="0.01" placeholder="0,00" value="0" oninput="calculate()">
                         </div>
                     </div>
+
                     <div style="margin-top:15px;">
                         <label class="form-label">Estacionamento</label>
                         <select class="form-select parking" oninput="calculate()">
@@ -102,130 +145,161 @@
                 </div>
             </div>
 
-            <div class="checkbox-option">
-                <input type="checkbox" id="showMealDetails" checked onchange="calculate()">
-                <label for="showMealDetails" id="showMealDetailsLabel">Exibir detalhes das refeições na cotação</label>
-            </div>
-
             <button class="add-group-btn" onclick="addGroup()">+ Adicionar Outro Grupo</button>
 
-            <div class="form-group whatsapp-input">
-                <input type="text" class="form-input" id="whatsappNumber" placeholder="Número do WhatsApp (com DDD)" style="flex:1;">
-                <button class="whatsapp-btn" onclick="shareWhatsApp()">Enviar via WhatsApp</button>
+            <div class="whatsapp-input">
+                <input type="text" class="form-input" id="whatsappNumber" placeholder="WhatsApp com DDD (21999999999)">
+                <button class="action-btn whatsapp-btn" onclick="shareWhatsApp()">Enviar via WhatsApp</button>
             </div>
 
             <div class="action-buttons">
                 <button class="action-btn copy-btn" onclick="copyQuotation()">Copiar Cotação</button>
+                <button class="action-btn pdf-btn" onclick="generatePDF()">Gerar PDF</button>
             </div>
         </div>
 
         <div class="preview" id="quotationPreview">
-            Preencha os dados para gerar a cotação
+            <div style="padding:80px 40px; text-align:center; color:#aaa; font-size:18px;">
+                Preencha os dados para gerar a cotação
+            </div>
         </div>
     </div>
 
     <script>
         const translations = {
-            pt: { title: "Informações da Reserva", guestLabel: "Nome do Hóspede Principal", group: "Grupo", showMealDetails: "Exibir detalhes das refeições na cotação",
-                template: `*ICARAÍ PRAIA HOTEL*
-
-*COTAÇÃO DE RESERVA*
-
-Conforme sua solicitação, seguem nossas melhores tarifas e condições:
-
-{DETAILS}
-
-*Serviços inclusos:*
-• Café da manhã incluso
-• Restaurante no local
-• Wi-Fi gratuito
-• Apartamentos com Smart TV, ar condicionado, telefone, frigobar, internet e cofre individual
-• Animais não aceitos
-• Estacionamento: R$ 45,00 por dia - sujeito à disponibilidade - vagas limitadas (reserva e confirmação necessárias)
-
-*Hospedagem de menores de 18 anos:*
-Acompanhado pelos pais: Apresentar RG ou certidão de nascimento no check-in comprovando ser filho de um dos pais presentes
-Desacompanhado dos pais: Apresentar RG ou certidão de nascimento E autorização de ambos os pais reconhecida em cartório, por exigência legal
-
-*Forma de pagamento: PAGAMENTO DIRETO NO HOTEL*
-
-*Tarifa média/noite:* R$ {AVG_RATE}
-*Total com ISS:* R$ {TOTAL}
-
-*Observações:*
-Cotação válida 24h (tarifas dinâmicas). Esta cotação não garante a disponibilidade.
-
-*Para confirmar sua reserva:*
-Pagamento da primeira diária (R$ {FIRST_NIGHT}) requerido. Cancelamento fora do prazo: Sem reembolso. Reservas não pré-pagas: Podem ser canceladas sem aviso prévio.
-
-*CONSULTE NOSSAS CONDIÇÕES AQUI:*
-https://linktr.ee/POLITICAS
-
-Agradecemos sua confiança!
-Atenciosamente,
-*Equipe de Reservas*
-*ICARAÍ PRAIA HOTEL*` },
-            en: { title: "Reservation Details", guestLabel: "Main Guest Name", group: "Group", showMealDetails: "Show meal details in quotation",
-                template: `*ICARAÍ PRAIA HOTEL*
-
-*RESERVATION QUOTATION*
-
-As per your request, here are our best rates and conditions:
-
-{DETAILS}
-
-*Included services:*
-• Breakfast included
-• On-site restaurant
-• Free Wi-Fi
-• Rooms with Smart TV, air conditioning, telephone, minibar, internet and personal safe
-• No pets allowed
-• Parking: R$ 45.00 per day - subject to availability - limited spaces
-
-*Children under 18:*
-With parents: Present ID or birth certificate at check-in
-Unaccompanied: ID + notarized authorization from both parents (legal requirement)
-
-*Payment: DIRECTLY AT THE HOTEL*
-
-*Average rate/night:* R$ {AVG_RATE}
-*Total with ISS:* R$ {TOTAL}
-
-*Notes:*
-Quotation valid for 24 hours. Availability not guaranteed.
-
-*To confirm:*
-First night payment required (R$ {FIRST_NIGHT}).
-
-*CHECK OUR POLICIES:*
-https://linktr.ee/POLITICAS
-
-Thank you!
-*Reservations Team*
-*ICARAÍ PRAIA HOTEL*` },
-            // fr e es seguem o mesmo padrão (abreviado aqui por espaço)
+            pt: {
+                title: "Cotação de Reserva",
+                validity: "Esta cotação é válida por 24 horas a partir da data de emissão.",
+                guest: "Hóspede Principal",
+                group: "Grupo",
+                quantity: "Quantidade",
+                guests: "Hóspedes",
+                rate: "Diária",
+                checkin: "Check-in",
+                checkout: "Check-out",
+                mealPlan: "Tipo de Pensão",
+                breakfast: "Com Café da Manhã",
+                noBreakfast: "Sem Café da Manhã",
+                halfBoard: "Meia Pensão",
+                fullBoard: "Pensão Completa",
+                parking: "Estacionamento",
+                yes: "Sim",
+                no: "Não",
+                mealPrice: "Valor por refeição",
+                total: "Total da Reserva",
+                copySuccess: "Cotação copiada para a área de transferência!",
+                pdfSuccess: "PDF gerado com sucesso!",
+                whatsappSuccess: "Cotação enviada via WhatsApp!"
+            },
+            en: {
+                title: "Booking Quotation",
+                validity: "This quotation is valid for 24 hours from the date of issue.",
+                guest: "Main Guest",
+                group: "Group",
+                quantity: "Quantity",
+                guests: "Guests",
+                rate: "Daily Rate",
+                checkin: "Check-in",
+                checkout: "Check-out",
+                mealPlan: "Meal Plan Type",
+                breakfast: "With Breakfast",
+                noBreakfast: "Without Breakfast",
+                halfBoard: "Half Board",
+                fullBoard: "Full Board",
+                parking: "Parking",
+                yes: "Yes",
+                no: "No",
+                mealPrice: "Meal price per person",
+                total: "Total Booking Amount",
+                copySuccess: "Quotation copied to clipboard!",
+                pdfSuccess: "PDF generated successfully!",
+                whatsappSuccess: "Quotation sent via WhatsApp!"
+            },
+            fr: {
+                title: "Devis de Réservation",
+                validity: "Ce devis est valable 24 heures à compter de la date d'émission.",
+                guest: "Client Principal",
+                group: "Groupe",
+                quantity: "Quantité",
+                guests: "Clients",
+                rate: "Tarif Journalier",
+                checkin: "Arrivée",
+                checkout: "Départ",
+                mealPlan: "Type de Pension",
+                breakfast: "Avec Petit-déjeuner",
+                noBreakfast: "Sans Petit-déjeuner",
+                halfBoard: "Demi-pension",
+                fullBoard: "Pension Complète",
+                parking: "Parking",
+                yes: "Oui",
+                no: "Non",
+                mealPrice: "Prix par repas/personne",
+                total: "Montant Total de la Réservation",
+                copySuccess: "Devis copié dans le presse-papiers!",
+                pdfSuccess: "PDF généré avec succès!",
+                whatsappSuccess: "Devis envoyé via WhatsApp!"
+            },
+            es: {
+                title: "Cotización de Reserva",
+                validity: "Esta cotización es válida por 24 horas a partir de la fecha de emisión.",
+                guest: "Huésped Principal",
+                group: "Grupo",
+                quantity: "Cantidad",
+                guests: "Huéspedes",
+                rate: "Tarifa Diaria",
+                checkin: "Check-in",
+                checkout: "Check-out",
+                mealPlan: "Tipo de Pensión",
+                breakfast: "Con Desayuno",
+                noBreakfast: "Sin Desayuno",
+                halfBoard: "Media Pensión",
+                fullBoard: "Pensión Completa",
+                parking: "Estacionamiento",
+                yes: "Sí",
+                no: "No",
+                mealPrice: "Precio por comida/persona",
+                total: "Importe Total de la Reserva",
+                copySuccess: "¡Cotización copiada al portapapeles!",
+                pdfSuccess: "¡PDF generado con éxito!",
+                whatsappSuccess: "¡Cotización enviada por WhatsApp!"
+            }
         };
 
         let currentLang = 'pt';
         let groupIndex = 0;
-        let lastWhatsappText = "";
 
-        function updateLanguage() {
-            document.getElementById('title').textContent = translations[currentLang].title;
-            document.getElementById('guestLabel').textContent = translations[currentLang].guestLabel;
-            document.getElementById('showMealDetailsLabel').textContent = translations[currentLang].showMealDetails;
-            document.querySelectorAll('.group-title span').forEach((el, i) => el.textContent = translations[currentLang].group + " " + (i+1));
-        }
-
-        document.querySelectorAll('.lang-btn').forEach(btn => {
-            btn.addEventListener('click', () => {
-                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-                btn.classList.add('active');
-                currentLang = btn.dataset.lang;
-                updateLanguage();
-                calculate();
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar data mínima para os campos de data (hoje)
+            const today = new Date().toISOString().split('T')[0];
+            document.querySelectorAll('.checkin, .checkout').forEach(input => {
+                input.min = today;
             });
+            
+            // Configurar eventos dos botões de idioma
+            document.querySelectorAll('.lang-btn').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                    this.classList.add('active');
+                    currentLang = this.dataset.lang;
+                    calculate();
+                });
+            });
+            
+            // Calcular inicialmente
+            calculate();
         });
+
+        function toggleMealOptions(radio) {
+            const groupContainer = radio.closest('.group-container');
+            const mealOptionsDiv = groupContainer.querySelector('.meal-options');
+            if (radio.value === 'halfBoard' || radio.value === 'fullBoard') {
+                mealOptionsDiv.style.display = 'block';
+            } else {
+                mealOptionsDiv.style.display = 'none';
+            }
+            calculate();
+        }
 
         function addGroup() {
             groupIndex++;
@@ -233,75 +307,260 @@ Thank you!
             const div = document.createElement('div');
             div.className = 'group-container';
             div.dataset.group = groupIndex;
-            div.innerHTML = `... (mesmo HTML do grupo inicial, só trocando meal-${groupIndex}) ...`;
+            div.innerHTML = `
+                <div class="group-title">
+                    <span>Grupo ${groupIndex + 1}</span>
+                    <button class="remove-group-btn" onclick="removeGroup(this)">×</button>
+                </div>
+                <div class="grid-3">
+                    <div><label class="form-label">Quantidade</label><input type="number" class="form-input qty" min="1" value="1" oninput="calculate()"></div>
+                    <div><label class="form-label">Hóspedes</label>
+                        <select class="form-select guests" oninput="calculate()">
+                            <option value="1" selected>1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
+                        </select>
+                    </div>
+                    <div><label class="form-label">Diária (R$)</label><input type="number" class="form-input rate" step="0.01" value="0" placeholder="0,00" oninput="calculate()"></div>
+                </div>
+                <div class="grid-2" style="margin-top:15px;">
+                    <div><label class="form-label">Check-in</label><input type="date" class="form-input checkin" oninput="calculate()"></div>
+                    <div><label class="form-label">Check-out</label><input type="date" class="form-input checkout" oninput="calculate()"></div>
+                </div>
+                <div style="margin-top:15px;">
+                    <label class="form-label">Tipo de Pensão</label>
+                    <div style="display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; font-size:13px;">
+                        <label><input type="radio" name="meal-${groupIndex}" value="breakfast" checked onchange="toggleMealOptions(this)"> Com Café</label>
+                        <label><input type="radio" name="meal-${groupIndex}" value="noBreakfast" onchange="toggleMealOptions(this)"> Sem Café</label>
+                        <label><input type="radio" name="meal-${groupIndex}" value="halfBoard" onchange="toggleMealOptions(this)"> Meia Pensão</label>
+                        <label><input type="radio" name="meal-${groupIndex}" value="fullBoard" onchange="toggleMealOptions(this)"> Pensão Completa</label>
+                    </div>
+                    <div class="meal-options" style="display:none;">
+                        <label class="form-label">Valor por refeição/pessoa (R$)</label>
+                        <input type="number" class="form-input meal-price" step="0.01" placeholder="0,00" oninput="calculate()">
+                    </div>
+                </div>
+                <div style="margin-top:15px;">
+                    <label class="form-label">Estacionamento</label>
+                    <select class="form-select parking" oninput="calculate()">
+                        <option value="no">Não</option>
+                        <option value="yes">Sim (R$ 45/dia)</option>
+                    </select>
+                </div>
+            `;
             container.appendChild(div);
+            
+            // Configurar data mínima para os novos campos de data
+            const today = new Date().toISOString().split('T')[0];
+            div.querySelectorAll('.checkin, .checkout').forEach(input => {
+                input.min = today;
+            });
+            
             updateRemoveButtons();
             calculate();
         }
 
+        function removeGroup(btn) {
+            btn.closest('.group-container').remove();
+            updateGroupTitles();
+            updateRemoveButtons();
+            calculate();
+        }
+
+        function updateGroupTitles() {
+            document.querySelectorAll('.group-container').forEach((g, i) => {
+                g.querySelector('.group-title span').textContent = `Grupo ${i + 1}`;
+            });
+        }
+
+        function updateRemoveButtons() {
+            const btns = document.querySelectorAll('.remove-group-btn');
+            btns.forEach(b => b.style.display = btns.length > 1 ? 'block' : 'none');
+        }
+
         function calculate() {
             const groups = document.querySelectorAll('.group-container');
+            const mainGuest = document.getElementById('mainGuest').value;
             const showMealDetails = document.getElementById('showMealDetails').checked;
-            let totalAmount = 0, totalNightsWeighted = 0, totalRoomNights = 0, firstNightTotal = 0;
-            let details = "";
-
-            groups.forEach((group, i) => {
+            
+            if (groups.length === 0 || !mainGuest) {
+                document.getElementById('quotationPreview').innerHTML = `
+                    <div style="padding:80px 40px; text-align:center; color:#aaa; font-size:18px;">
+                        Preencha os dados para gerar a cotação
+                    </div>
+                `;
+                return;
+            }
+            
+            let totalAmount = 0;
+            let groupHTML = '';
+            
+            groups.forEach((group, index) => {
                 const qty = parseInt(group.querySelector('.qty').value) || 0;
                 const guests = parseInt(group.querySelector('.guests').value) || 0;
                 const rate = parseFloat(group.querySelector('.rate').value) || 0;
                 const checkin = group.querySelector('.checkin').value;
                 const checkout = group.querySelector('.checkout').value;
-                const mealType = group.querySelector(`input[name="meal-${group.dataset.group}"]:checked`).value;
+                const mealType = group.querySelector(`input[name="meal-${index}"]:checked`).value;
                 const mealPrice = parseFloat(group.querySelector('.meal-price').value) || 0;
                 const parking = group.querySelector('.parking').value;
-
-                if (!checkin || !checkout || qty === 0 || rate === 0) return;
-
-                const nights = Math.max(1, Math.ceil((new Date(checkout) - new Date(checkin)) / 86400000));
-                const roomTotal = qty * rate * nights;
-                let mealTotal = 0;
-                let mealDesc = mealType === 'breakfast' ? 'Com Café da Manhã' : mealType === 'noBreakfast' ? 'Sem Café da Manhã' : mealType === 'halfBoard' ? 'Meia Pensão' : 'Pensão Completa';
-                if (mealType === 'halfBoard') mealTotal = mealPrice * guests * qty * nights;
-                if (mealType === 'fullBoard') mealTotal = mealPrice * guests * qty * nights * 2;
-
-                const parkingTotal = parking === 'yes' ? 45 * qty * nights : 0;
-                const subtotal = roomTotal + mealTotal + parkingTotal;
-                const groupTotal = subtotal * 1.02;
+                
+                // Calcular número de diárias
+                let nights = 0;
+                if (checkin && checkout) {
+                    const checkinDate = new Date(checkin);
+                    const checkoutDate = new Date(checkout);
+                    nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
+                }
+                
+                // Calcular custo da hospedagem
+                const accommodationCost = qty * guests * rate * nights;
+                
+                // Calcular custo das refeições
+                let mealCost = 0;
+                let mealDetails = '';
+                
+                if (mealType === 'breakfast') {
+                    mealCost = qty * guests * nights * mealPrice;
+                    mealDetails = `${translations[currentLang].breakfast} - ${qty} x ${guests} x ${nights} x R$ ${mealPrice.toFixed(2)}`;
+                } else if (mealType === 'halfBoard') {
+                    mealCost = qty * guests * nights * mealPrice * 2; // Café + Almoço ou Jantar
+                    mealDetails = `${translations[currentLang].halfBoard} - ${qty} x ${guests} x ${nights} x 2 x R$ ${mealPrice.toFixed(2)}`;
+                } else if (mealType === 'fullBoard') {
+                    mealCost = qty * guests * nights * mealPrice * 3; // Café + Almoço + Jantar
+                    mealDetails = `${translations[currentLang].fullBoard} - ${qty} x ${guests} x ${nights} x 3 x R$ ${mealPrice.toFixed(2)}`;
+                }
+                
+                // Calcular custo do estacionamento
+                let parkingCost = 0;
+                if (parking === 'yes') {
+                    parkingCost = qty * nights * 45;
+                }
+                
+                // Calcular total do grupo
+                const groupTotal = accommodationCost + mealCost + parkingCost;
                 totalAmount += groupTotal;
-                totalRoomNights += qty * nights;
-                totalNightsWeighted += groupTotal;
-                if (i === 0) firstNightTotal = (qty * rate + (parking === 'yes' ? 45 * qty : 0) + mealTotal / nights) * 1.02;
-
-                const mealPriceText = (mealTotal > 0 && showMealDetails) ? ` (R$ ${mealPrice.toFixed(2).replace('.',',')}/pessoa)` : '';
-                details += `*Configuração de Quartos${i>0?' '+(i+1):''}:*\n• ${qty} apartamento(s)\n• ${guests * qty} hóspede(s)\n• R$ ${rate.toFixed(2)}/dia\n*Período:* ${new Date(checkin).toLocaleDateString('pt-BR')} até ${new Date(checkout).toLocaleDateString('pt-BR')} (${nights} noite${nights>1?'s':''})\n*Pensão:* ${mealDesc}${mealPriceText}\n*Estacionamento:* ${parking === 'yes' ? 'Sim' : 'Não'}\n\n`;
+                
+                // Formatar datas
+                const formatDate = (dateStr) => {
+                    if (!dateStr) return '';
+                    const date = new Date(dateStr);
+                    return date.toLocaleDateString('pt-BR');
+                };
+                
+                // Gerar HTML do grupo
+                groupHTML += `
+                    <div class="group-box">
+                        <h3 style="color: #1a6bb3; margin-bottom: 15px;">${translations[currentLang].group} ${index + 1}</h3>
+                        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 15px;">
+                            <div><strong>${translations[currentLang].quantity}:</strong> ${qty}</div>
+                            <div><strong>${translations[currentLang].guests}:</strong> ${guests}</div>
+                            <div><strong>${translations[currentLang].rate}:</strong> R$ ${rate.toFixed(2)}</div>
+                            <div><strong>Noites:</strong> ${nights}</div>
+                            <div><strong>${translations[currentLang].checkin}:</strong> ${formatDate(checkin)}</div>
+                            <div><strong>${translations[currentLang].checkout}:</strong> ${formatDate(checkout)}</div>
+                        </div>
+                        <div style="margin-bottom: 15px;">
+                            <strong>${translations[currentLang].mealPlan}:</strong> ${translations[currentLang][mealType]}
+                        </div>
+                        ${showMealDetails && mealDetails ? `<div class="meal-detail">${mealDetails}</div>` : ''}
+                        <div style="margin-bottom: 15px;">
+                            <strong>${translations[currentLang].parking}:</strong> ${translations[currentLang][parking]} ${parking === 'yes' ? `(R$ ${parkingCost.toFixed(2)})` : ''}
+                        </div>
+                        <div style="text-align: right; font-weight: bold; font-size: 18px; color: #1a6bb3;">
+                            Subtotal: R$ ${groupTotal.toFixed(2)}
+                        </div>
+                    </div>
+                `;
             });
-
-            const avgRate = totalRoomNights > 0 ? totalNightsWeighted / totalRoomNights : 0;
-            const fmt = v => 'R$ ' + v.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
-
-            lastWhatsappText = translations[currentLang].template
-                .replace('{DETAILS}', details || 'Nenhum quarto configurado')
-                .replace('{AVG_RATE}', avgRate.toFixed(2).replace('.',','))
-                .replace('{TOTAL}', fmt(totalAmount))
-                .replace('{FIRST_NIGHT}', fmt(firstNightTotal));
-
-            document.getElementById('quotationPreview').textContent = lastWhatsappText;
+            
+            // Gerar HTML completo da cotação
+            const quotationHTML = `
+                <div class="quotation-header">
+                    <div class="hotel-name">${hotelConfig.name}</div>
+                    <div class="quotation-title">${translations[currentLang].title}</div>
+                    <div class="quotation-badge">COTAÇÃO</div>
+                </div>
+                
+                <div class="quotation-body">
+                    <div class="validity-notice">
+                        ${translations[currentLang].validity}
+                    </div>
+                    
+                    <div style="margin-bottom: 25px;">
+                        <strong>${translations[currentLang].guest}:</strong> ${mainGuest}
+                    </div>
+                    
+                    ${groupHTML}
+                    
+                    <div class="total-row">
+                        ${translations[currentLang].total}: R$ ${totalAmount.toFixed(2)}
+                    </div>
+                    
+                    <div style="text-align: center; margin-top: 30px; color: #666;">
+                        <p><strong>Contato:</strong> ${hotelConfig.email} | ${hotelConfig.phone}</p>
+                        <p><strong>Site:</strong> ${hotelConfig.site}</p>
+                    </div>
+                </div>
+            `;
+            
+            document.getElementById('quotationPreview').innerHTML = quotationHTML;
         }
 
-        function shareWhatsApp() {
-            const num = document.getElementById('whatsappNumber').value.replace(/\D/g, '');
-            if (!num || num.length < 10) return alert('Número inválido');
-            const text = encodeURIComponent(lastWhatsappText);
-            window.open(`https://wa.me/55${num}?text=${text}`, '_blank');
+        function showNotification(message, type = 'success') {
+            const notification = document.getElementById('notification');
+            notification.textContent = message;
+            notification.style.background = type === 'success' ? '#4CAF50' : '#f44336';
+            notification.classList.add('show');
+            
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
         }
 
         function copyQuotation() {
-            navigator.clipboard.writeText(lastWhatsappText).then(() => alert('Cotação copiada!'));
+            const quotationContent = document.getElementById('quotationPreview').innerText;
+            
+            navigator.clipboard.writeText(quotationContent)
+                .then(() => {
+                    showNotification(translations[currentLang].copySuccess);
+                })
+                .catch(err => {
+                    console.error('Erro ao copiar: ', err);
+                    showNotification('Erro ao copiar a cotação', 'error');
+                });
         }
 
-        // Funções auxiliares (addGroup, removeGroup, toggleMeal, etc.) permanecem iguais ao código original que já funcionava
+        function generatePDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const quotationElement = document.getElementById('quotationPreview');
+            
+            html2canvas(quotationElement).then(canvas => {
+                const imgData = canvas.toDataURL('image/png');
+                const imgWidth = doc.internal.pageSize.getWidth();
+                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+                
+                doc.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
+                doc.save(`cotacao-${hotelConfig.name}-${new Date().toISOString().slice(0,10)}.pdf`);
+                
+                showNotification(translations[currentLang].pdfSuccess);
+            });
+        }
 
-        calculate();
+        function shareWhatsApp() {
+            const phoneNumber = document.getElementById('whatsappNumber').value;
+            const quotationContent = document.getElementById('quotationPreview').innerText;
+            
+            if (!phoneNumber) {
+                showNotification('Por favor, insira um número de WhatsApp', 'error');
+                return;
+            }
+            
+            const message = encodeURIComponent(`Olá! Segue a cotação solicitada:\n\n${quotationContent}`);
+            const whatsappURL = `https://wa.me/55${phoneNumber}?text=${message}`;
+            
+            window.open(whatsappURL, '_blank');
+            showNotification(translations[currentLang].whatsappSuccess);
+        }
     </script>
 </body>
 </html>
