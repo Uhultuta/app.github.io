@@ -122,6 +122,20 @@
             width: 100%;
             margin-top: 10px;
         }
+        .checkbox-option {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin: 20px 0;
+            font-weight: 600;
+            color: #333;
+        }
+        .checkbox-option input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            accent-color: #1a6bb3;
+            cursor: pointer;
+        }
         .action-buttons {
             display: grid;
             grid-template-columns: 1fr 1fr;
@@ -170,14 +184,8 @@
         .validity-notice { background: linear-gradient(135deg, #fff3cd, #ffeaa7); border-left: 4px solid #ffc107; padding: 12px 20px; font-weight: 600; color: #856404; font-size: 13px; display: flex; align-items: center; gap: 8px; }
         .quotation-body { padding: 25px 30px; }
         .section-title { font-size: 16px; color: #1a6bb3; font-weight: 700; margin: 25px 0 15px; padding-bottom: 8px; border-bottom: 2px solid #eaeaea; }
-        .detail-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #f5f5f5; }
-        .detail-label { font-weight: 600; color: #555; }
-        .detail-value { color: #333; font-weight: 500; }
         .pricing-breakdown { background: #f8fafc; padding: 20px; border-radius: 10px; border: 1px solid #e0e0e0; margin: 20px 0; }
-        .price-row { display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid #eee; }
         .total-row { background: #1a6bb3; color: white; padding: 12px 15px; border-radius: 8px; margin-top: 10px; font-weight: 700; }
-        .amenities-list li { padding: 6px 0; font-size: 13px; color: #555; display: flex; align-items: center; }
-        .amenities-list li::before { content: 'Checkmark'; color: #4CAF50; font-weight: bold; margin-right: 8px; }
         .quotation-footer { background: #1a6bb3; padding: 20px 30px; color: white; text-align: center; }
         .whatsapp-input { display: flex; gap: 10px; margin-top: 10px; }
         @media (max-width: 768px) {
@@ -257,6 +265,12 @@
                 </div>
             </div>
 
+            <!-- CHECKBOX NOVO -->
+            <div class="checkbox-option">
+                <input type="checkbox" id="showMealDetails" checked onchange="calculate()">
+                <label for="showMealDetails" id="showMealDetailsLabel">Exibir detalhes das refeições na cotação</label>
+            </div>
+
             <button class="add-group-btn" onclick="addGroup()">+ Adicionar Outro Grupo</button>
 
             <div class="form-group whatsapp-input">
@@ -265,7 +279,7 @@
             </div>
 
             <div class="action-buttons">
-                <button class="action-btn copy-btn" onclick="copyQuotation()">Copiar Cotação</button>
+                <button class="action-btn copy-btn  onclick="copyQuotation()">Copiar Cotação</button>
             </div>
         </div>
 
@@ -278,22 +292,61 @@
 
     <script>
         const translations = {
-            pt: { title: "Informações da Reserva", guestLabel: "Nome do Hóspede Principal", group: "Grupo", addGroup: "+ Adicionar Outro Grupo", quotationTitle: "COTAÇÃO DE RESERVA", total: "TOTAL", nights: "noites", guests: "hóspedes", dailyRate: "Diária", mealType: "Pensão", parking: "Estacionamento", period: "Período", checkIn: "Check-in", checkOut: "Check-out", from: "a partir das 14h", to: "até 12h" },
-            en: { title: "Reservation Details", guestLabel: "Main Guest Name", group: "Group", addGroup: "+ Add Another Group", quotationTitle: "RESERVATION QUOTATION", total: "TOTAL", nights: "nights", guests: "guests", dailyRate: "Daily Rate", mealType: "Board", parking: "Parking", period: "Period", checkIn: "Check-in", checkOut: "Check-out", from: "from 2 PM", to: "until 12 PM" },
-            fr: { title: "Informations Réservation", guestLabel: "Nom du Client Principal", group: "Groupe", addGroup: "+ Ajouter un autre groupe", quotationTitle: "DEVIS RÉSERVATION", total: "TOTAL", nights: "nuits", guests: "clients", dailyRate: "Tarif journalier", mealType: "Pension", parking: "Parking", period: "Période", checkIn: "Arrivée", checkOut: "Départ", from: "à partir de 14h", to: "jusqu'à 12h" },
-            es: { title: "Información Reserva", guestLabel: "Nombre del Huésped Principal", group: "Grupo", addGroup: "+ Añadir otro grupo", quotationTitle: "COTIZACIÓN RESERVA", total: "TOTAL", nights: "noches", guests: "huéspedes", dailyRate: "Tarifa diaria", mealType: "Pensión", parking: "Estacionamiento", period: "Período", checkIn: "Check-in", checkOut: "Check-out", from: "desde las 14h", to: "hasta las 12h" }
+            pt: { 
+                title: "Informações da Reserva", 
+                guestLabel: "Nome do Hóspede Principal", 
+                group: "Grupo", 
+                addGroup: "+ Adicionar Outro Grupo", 
+                quotationTitle: "COTAÇÃO DE RESERVA", 
+                total: "TOTAL",
+                showMealDetails: "Exibir detalhes das refeições na cotação"
+            },
+            en: { 
+                title: "Reservation Details", 
+                guestLabel: "Main Guest Name", 
+                group: "Group", 
+                addGroup: "+ Add Another Group", 
+                quotationTitle: "RESERVATION QUOTATION", 
+                total: "TOTAL",
+                showMealDetails: "Show meal details in quotation"
+            },
+            fr: { 
+                title: "Informations Réservation", 
+                guestLabel: "Nom du Client Principal", 
+                group: "Groupe", 
+                addGroup: "+ Ajouter un autre groupe", 
+                quotationTitle: "DEVIS RÉSERVATION", 
+                total: "TOTAL",
+                showMealDetails: "Afficher les détails des repas dans le devis"
+            },
+            es: { 
+                title: "Información Reserva", 
+                guestLabel: "Nombre del Huésped Principal", 
+                group: "Grupo", 
+                addGroup: "+ Añadir otro grupo", 
+                quotationTitle: "COTIZACIÓN RESERVA", 
+                total: "TOTAL",
+                showMealDetails: "Mostrar detalles de comidas en la cotización"
+            }
         };
 
         let currentLang = 'pt';
         let groupIndex = 0;
+
+        // Atualiza textos ao trocar idioma
+        function updateLanguageTexts() {
+            document.getElementById('title').textContent = translations[currentLang].title;
+            document.getElementById('guestLabel').textContent = translations[currentLang].guestLabel;
+            document.getElementById('showMealDetailsLabel').textContent = translations[currentLang].showMealDetails;
+            updateGroupTitles();
+        }
 
         document.querySelectorAll('.lang-btn').forEach(btn => {
             btn.addEventListener('click', () => {
                 document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
                 btn.classList.add('active');
                 currentLang = btn.dataset.lang;
-                document.getElementById('title').textContent = translations[currentLang].title;
-                document.getElementById('guestLabel').textContent = translations[currentLang].guestLabel;
+                updateLanguageTexts();
                 calculate();
             });
         });
@@ -375,6 +428,7 @@
 
         function calculate() {
             const groups = document.querySelectorAll('.group-container');
+            const showMealDetails = document.getElementById('showMealDetails').checked;
             let totalAmount = 0;
             let html = `
                 <div class="quotation-header">
@@ -393,7 +447,7 @@
                 const rate = parseFloat(group.querySelector('.rate').value) || 0;
                 const checkin = group.querySelector('.checkin').value;
                 const checkout = group.querySelector('.checkout').value;
-                const mealType = group.querySelector('input[name="meal-' + group.dataset.group + '"]:checked').value;
+                const mealType = group.querySelector(`input[name="meal-${group.dataset.group}"]:checked`).value;
                 const mealPrice = parseFloat(group.querySelector('.meal-price').value) || 0;
                 const parking = group.querySelector('.parking').value;
 
@@ -408,8 +462,14 @@
                 let mealDesc = '';
                 if (mealType === 'breakfast') mealDesc = 'Com Café da Manhã';
                 else if (mealType === 'noBreakfast') mealDesc = 'Sem Café da Manhã';
-                else if (mealType === 'halfBoard') { mealTotal = mealPrice * guests * qty * nights; mealDesc = 'Meia Pensão'; }
-                else if (mealType === 'fullBoard') { mealTotal = mealPrice * guests * qty * nights * 2; mealDesc = 'Pensão Completa'; }
+                else if (mealType === 'halfBoard') { 
+                    mealTotal = mealPrice * guests * qty * nights; 
+                    mealDesc = 'Meia Pensão'; 
+                }
+                else if (mealType === 'fullBoard') { 
+                    mealTotal = mealPrice * guests * qty * nights * 2; 
+                    mealDesc = 'Pensão Completa'; 
+                }
 
                 const parkingTotal = parking === 'yes' ? 45 * qty * nights : 0;
                 const subtotal = roomTotal + mealTotal + parkingTotal;
@@ -420,12 +480,15 @@
                 const formatDate = d => new Date(d).toLocaleDateString('pt-BR');
                 const fmt = v => 'R$ ' + v.toFixed(2).replace('.', ',').replace(/\B(?=(\d{3})+(?!\d))/g, '.');
 
+                // Aqui está a lógica do checkbox
+                const mealPriceText = (mealTotal > 0 && showMealDetails) ? ` (R$ ${mealPrice.toFixed(2).replace('.', ',')}/pessoa)` : '';
+
                 html += `
                     <div style="background:#f0f8ff; padding:15px; border-radius:10px; margin:15px 0; border-left:4px solid #1a6bb3;">
                         <strong>${translations[currentLang].group} ${i+1}</strong><br>
                         ${qty} apto(s) × ${guests} hóspede(s) × R$ ${rate.toFixed(2)} × ${nights} noite(s)<br>
                         Período: ${formatDate(checkin)} a ${formatDate(checkout)}<br>
-                        Pensão: ${mealDesc}${mealTotal > 0 ? ` (R$ ${mealPrice}/pessoa)` : ''}<br>
+                        Pensão: ${mealDesc}${mealPriceText}<br>
                         Estacionamento: ${parking === 'yes' ? 'Sim' : 'Não'}<br>
                         <strong>Total Grupo: ${fmt(groupTotal)}</strong>
                     </div>
@@ -473,6 +536,7 @@
         }
 
         // Inicializa
+        updateLanguageTexts();
         calculate();
     </script>
 </body>
