@@ -291,6 +291,14 @@
         .notification.show { 
             opacity: 1; 
         }
+        .subtotal-row {
+            background: #e7f3ff;
+            padding: 15px;
+            border-radius: 10px;
+            margin: 15px 0;
+            border-left: 5px solid #1a6bb3;
+            font-weight: 600;
+        }
         @media (max-width: 768px) {
             .container { grid-template-columns: 1fr; }
             .action-buttons { grid-template-columns: 1fr; }
@@ -451,7 +459,8 @@
                 guestWord: "hóspede(s)",
                 perDay: "/dia",
                 mealDetails: "Detalhes das Refeições",
-                until: "até"
+                until: "até",
+                groupSubtotal: "Subtotal do Grupo"
             },
             en: {
                 title: "BOOKING QUOTATION",
@@ -490,7 +499,8 @@
                 guestWord: "guest(s)",
                 perDay: "/day",
                 mealDetails: "Meal Details",
-                until: "until"
+                until: "until",
+                groupSubtotal: "Group Subtotal"
             },
             fr: {
                 title: "DEVIS DE RÉSERVATION",
@@ -529,11 +539,12 @@
                 guestWord: "client(s)",
                 perDay: "/jour",
                 mealDetails: "Détails des Repas",
-                until: "jusqu'à"
+                until: "jusqu'à",
+                groupSubtotal: "Sous-total du Groupe"
             },
             es: {
                 title: "COTIZACIÓN DE RESERVA",
-                validity: "Esta cotización es válida por 24 horas. Las tarifas y disponibilidad pueden cambiar después de la expiración.",
+                validity: "Esta cotización es válida por 24 horas. Las tarifas y disponibilidad peuvent cambiar después de la expiración.",
                 guest: "Huésped Principal",
                 group: "Grupo",
                 quantity: "Cantidad",
@@ -568,7 +579,8 @@
                 guestWord: "huésped(es)",
                 perDay: "/día",
                 mealDetails: "Detalles de las Comidas",
-                until: "hasta"
+                until: "hasta",
+                groupSubtotal: "Subtotal del Grupo"
             }
         };
 
@@ -713,6 +725,7 @@
             let groupHTML = '';
             let totalNights = 0;
             let totalApartments = 0;
+            let groupSubtotals = [];
             
             groups.forEach((group, index) => {
                 const qty = parseInt(group.querySelector('.qty').value) || 0;
@@ -762,6 +775,10 @@
                 // Calcular total do grupo
                 const groupTotal = accommodationCost + mealCost + parkingCost;
                 totalAmount += groupTotal;
+                groupSubtotals.push({
+                    groupNumber: index + 1,
+                    subtotal: groupTotal
+                });
                 
                 // CORREÇÃO: Usar a função corrigida para datas
                 const formatDate = (dateStr) => {
@@ -925,7 +942,7 @@
                     cancellation: 'Prazo para Cancelamento',
                     cancellationText: [
                         'Cancelamento da reserva sem ônus, até 72 horas antes do Check-in. Exceto para tarifas não reembolsáveis - estas não permitem cancelamento.',
-                        'Os pedidos de cancelamento devem ser feitos somente por e-mail e só serão validados após a confirmação do hotel.'
+                        'Os pedidos de cancelamento devem ser feito somente por e-mail e só serão validados após a confirmação do hotel.'
                     ]
                 },
                 en: {
@@ -1073,10 +1090,14 @@
                     
                     <h2 style="color: #1a6bb3; margin: 25px 0 15px;">${translations[currentLang].financialDetails}</h2>
                     
-                    <div style="margin-bottom: 15px;">
-                        <strong>${translations[currentLang].group} 1 (${totalApartments} ${translations[currentLang].apartment} × ${totalNights} ${translations[currentLang].nights}):</strong><br>
-                        R$ ${totalAmount.toFixed(2)}
-                    </div>
+                    <!-- SUBTOTAIS POR GRUPO -->
+                    ${groupSubtotals.map(subtotal => `
+                        <div class="subtotal-row">
+                            <strong>${translations[currentLang].groupSubtotal} ${subtotal.groupNumber}:</strong><br>
+                            R$ ${subtotal.subtotal.toFixed(2)}
+                        </div>
+                    `).join('')}
+                    
                     <div style="margin-bottom: 15px;">
                         <strong>${translations[currentLang].subtotal}:</strong><br>
                         R$ ${totalAmount.toFixed(2)}
