@@ -170,6 +170,10 @@
             background: linear-gradient(135deg, #1a6bb3, #2c8cda); 
             color: white; 
         }
+        .email-btn { 
+            background: linear-gradient(135deg, #FFA500, #FF8C00); 
+            color: white; 
+        }
         .whatsapp-btn { 
             background: linear-gradient(135deg, #25D366, #128C7E); 
             color: white; 
@@ -340,11 +344,10 @@
             <div class="calculator-title">Informações da Reserva</div>
 
             <div class="form-group">
-                <label class="form-label">Nome do Hóspede Principal</label>
+                <label class="form-label">Responsável pelo Grupo</label>
                 <input type="text" class="form-input" id="mainGuest" placeholder="Ex: João Silva" oninput="calculate()">
             </div>
 
-            <!-- BOTÃO DE EXIBIR DETALHES DAS REFEIÇÕES ADICIONADO AQUI -->
             <div class="checkbox-group">
                 <input type="checkbox" id="showMealDetails" checked onchange="calculate()">
                 <label for="showMealDetails">Exibir detalhes das refeições no voucher</label>
@@ -409,6 +412,7 @@
 
             <div class="action-buttons">
                 <button class="action-btn copy-btn" onclick="copyQuotation()">Copiar Cotação</button>
+                <button class="action-btn email-btn" onclick="copyForEmail()">Copiar para E-mail</button>
                 <button class="action-btn pdf-btn" onclick="generatePDF()">Gerar PDF</button>
             </div>
         </div>
@@ -425,7 +429,7 @@
             pt: {
                 title: "COTAÇÃO DE RESERVA",
                 validity: "Esta cotação é válida por 24 horas. Tarifas e disponibilidade podem mudar após a expiração.",
-                guest: "Hóspede Principal",
+                guest: "Responsável pelo Grupo",
                 group: "Grupo",
                 quantity: "Quantidade",
                 guests: "Hóspedes",
@@ -443,6 +447,7 @@
                 mealPrice: "Valor por refeição",
                 total: "TOTAL",
                 copySuccess: "Cotação copiada para a área de transferência!",
+                emailSuccess: "Cotação formatada copiada para e-mail!",
                 pdfSuccess: "PDF gerado com sucesso!",
                 whatsappSuccess: "Cotação enviada via WhatsApp!",
                 services: "SERVIÇOS INCLUSOS",
@@ -460,12 +465,13 @@
                 perDay: "/dia",
                 mealDetails: "Detalhes das Refeições",
                 until: "até",
-                groupSubtotal: "Subtotal do Grupo"
+                groupSubtotal: "Subtotal do Grupo",
+                paymentNote: "⚠️ *PAGAMENTO INTEGRAL OBRIGATÓRIO PARA GRUPOS*"
             },
             en: {
                 title: "BOOKING QUOTATION",
                 validity: "This quotation is valid for 24 hours. Rates and availability may change after expiration.",
-                guest: "Main Guest",
+                guest: "Group Responsible",
                 group: "Group",
                 quantity: "Quantity",
                 guests: "Guests",
@@ -483,6 +489,7 @@
                 mealPrice: "Meal price per person",
                 total: "TOTAL",
                 copySuccess: "Quotation copied to clipboard!",
+                emailSuccess: "Formatted quotation copied for email!",
                 pdfSuccess: "PDF generated successfully!",
                 whatsappSuccess: "Quotation sent via WhatsApp!",
                 services: "INCLUDED SERVICES",
@@ -500,12 +507,13 @@
                 perDay: "/day",
                 mealDetails: "Meal Details",
                 until: "until",
-                groupSubtotal: "Group Subtotal"
+                groupSubtotal: "Group Subtotal",
+                paymentNote: "⚠️ *FULL PAYMENT REQUIRED FOR GROUPS*"
             },
             fr: {
                 title: "DEVIS DE RÉSERVATION",
                 validity: "Ce devis est valable 24 heures. Les tarifs et la disponibilité peuvent changer après expiration.",
-                guest: "Client Principal",
+                guest: "Responsable du Groupe",
                 group: "Groupe",
                 quantity: "Quantité",
                 guests: "Clients",
@@ -523,6 +531,7 @@
                 mealPrice: "Prix par repas/personne",
                 total: "TOTAL",
                 copySuccess: "Devis copié dans le presse-papiers!",
+                emailSuccess: "Devis formaté copié pour email!",
                 pdfSuccess: "PDF généré avec succès!",
                 whatsappSuccess: "Devis envoyé via WhatsApp!",
                 services: "SERVICES INCLUS",
@@ -540,12 +549,13 @@
                 perDay: "/jour",
                 mealDetails: "Détails des Repas",
                 until: "jusqu'à",
-                groupSubtotal: "Sous-total du Groupe"
+                groupSubtotal: "Sous-total du Groupe",
+                paymentNote: "⚠️ *PAIEMENT INTÉGRAL OBLIGATOIRE POUR LES GROUPES*"
             },
             es: {
                 title: "COTIZACIÓN DE RESERVA",
-                validity: "Esta cotización es válida por 24 horas. Las tarifas y disponibilidad peuvent cambiar después de la expiración.",
-                guest: "Huésped Principal",
+                validity: "Esta cotización es válida por 24 horas. Las tarifas y disponibilidad pueden cambiar después de la expiración.",
+                guest: "Responsable del Grupo",
                 group: "Grupo",
                 quantity: "Cantidad",
                 guests: "Huéspedes",
@@ -563,6 +573,7 @@
                 mealPrice: "Precio por comida/persona",
                 total: "TOTAL",
                 copySuccess: "¡Cotización copiada al portapapeles!",
+                emailSuccess: "¡Cotización formateada copiada para correo!",
                 pdfSuccess: "¡PDF generado con éxito!",
                 whatsappSuccess: "¡Cotización enviada por WhatsApp!",
                 services: "SERVICIOS INCLUIDOS",
@@ -580,31 +591,27 @@
                 perDay: "/día",
                 mealDetails: "Detalles de las Comidas",
                 until: "hasta",
-                groupSubtotal: "Subtotal del Grupo"
+                groupSubtotal: "Subtotal del Grupo",
+                paymentNote: "⚠️ *PAGO INTEGRAL OBLIGATORIO PARA GRUPOS*"
             }
         };
 
         let currentLang = 'pt';
         let groupIndex = 0;
 
-        // CORREÇÃO: Função para corrigir o problema das datas (fuso horário)
         function correctTimezone(dateStr) {
             if (!dateStr) return '';
             const date = new Date(dateStr);
-            // Adiciona um dia para compensar o fuso horário
             date.setDate(date.getDate() + 1);
             return date.toLocaleDateString('pt-BR');
         }
 
-        // Inicialização
         document.addEventListener('DOMContentLoaded', function() {
-            // Configurar data mínima para os campos de data (hoje)
             const today = new Date().toISOString().split('T')[0];
             document.querySelectorAll('.checkin, .checkout').forEach(input => {
                 input.min = today;
             });
             
-            // Configurar eventos dos botões de idioma
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.addEventListener('click', function() {
                     document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
@@ -614,7 +621,6 @@
                 });
             });
             
-            // Calcular inicialmente
             calculate();
         });
 
@@ -676,7 +682,6 @@
             `;
             container.appendChild(div);
             
-            // Configurar data mínima para os novos campos de data
             const today = new Date().toISOString().split('T')[0];
             div.querySelectorAll('.checkin, .checkout').forEach(input => {
                 input.min = today;
@@ -722,6 +727,7 @@
             }
             
             let totalAmount = 0;
+            let accommodationAmount = 0; // Apenas hospedagem para cálculo da diária média
             let groupHTML = '';
             let totalNights = 0;
             let totalApartments = 0;
@@ -737,7 +743,6 @@
                 const mealPrice = parseFloat(group.querySelector('.meal-price').value) || 0;
                 const parking = group.querySelector('.parking').value;
                 
-                // Calcular número de diárias
                 let nights = 0;
                 if (checkin && checkout) {
                     const checkinDate = new Date(checkin);
@@ -748,8 +753,9 @@
                 totalNights += nights;
                 totalApartments += qty;
                 
-                // Calcular custo da hospedagem
+                // Calcular custo da hospedagem (sem estacionamento)
                 const accommodationCost = qty * guests * rate * nights;
+                accommodationAmount += accommodationCost;
                 
                 // Calcular custo das refeições
                 let mealCost = 0;
@@ -766,7 +772,7 @@
                     mealDetails = `${translations[currentLang].fullBoard} - ${qty} x ${guests} x ${nights} x 3 x R$ ${mealPrice.toFixed(2)}`;
                 }
                 
-                // Calcular custo do estacionamento
+                // Calcular custo do estacionamento (separado)
                 let parkingCost = 0;
                 if (parking === 'yes') {
                     parkingCost = qty * nights * 45;
@@ -780,12 +786,10 @@
                     subtotal: groupTotal
                 });
                 
-                // CORREÇÃO: Usar a função corrigida para datas
                 const formatDate = (dateStr) => {
                     return correctTimezone(dateStr);
                 };
                 
-                // Gerar HTML do grupo
                 groupHTML += `
                     <div style="margin-bottom: 25px;">
                         <h3 style="color: #1a6bb3; margin-bottom: 10px;">${translations[currentLang].group} ${index + 1}:</h3>
@@ -808,7 +812,7 @@
                         ` : ''}
                         <div style="margin-bottom: 10px;">
                             <strong>${translations[currentLang].parking}:</strong><br>
-                            ${translations[currentLang][parking]}
+                            ${translations[currentLang][parking]} ${parking === 'yes' ? `(R$ ${parkingCost.toFixed(2)})` : ''}
                         </div>
                     </div>
                 `;
@@ -817,9 +821,10 @@
             // Calcular ISS
             const issAmount = totalAmount * (hotelConfig.iss / 100);
             const totalWithISS = totalAmount + issAmount;
-            const averageRate = totalNights > 0 ? totalAmount / totalNights / totalApartments : 0;
             
-            // CORREÇÃO: Conteúdo traduzido para serviços
+            // CORREÇÃO: Calcular diária média APENAS com hospedagem (sem estacionamento)
+            const averageRate = totalNights > 0 ? accommodationAmount / totalNights / totalApartments : 0;
+            
             const servicesContent = {
                 pt: [
                     'Café da manhã incluso das 6h às 10h, servido no restaurante',
@@ -851,7 +856,6 @@
                 ]
             };
 
-            // CORREÇÃO: Conteúdo traduzido para políticas
             const policiesContent = {
                 pt: {
                     checkin: 'Check-in / Check-out',
@@ -919,7 +923,6 @@
                 }
             };
 
-            // CORREÇÃO: Conteúdo traduzido para garantia
             const guaranteeContent = {
                 pt: {
                     deposit: 'Depósito Bancário ou Pix',
@@ -1001,7 +1004,7 @@
                         `Pix: ${hotelConfig.email}`
                     ],
                     depositNote: 'Después de realizar el depósito, envíe el comprobante para que podamos identificarlo con su reserva.',
-                    creditCard: 'Tarjeta de Crédito',
+                    creditCard: 'Tarjeta de Crédit',
                     creditCardText: [
                         'Solicite el enlace de pago por correo electrónico o, si lo prefiere, haga clic aquí para recibirlo por WhatsApp.',
                         'Solo debitaremos el valor de la primera noche + 2% ISS, pero si tiene una reserva con tarifa no reembolsable, Carnaval, Año Nuevo y eventos importantes, se debitara el valor total.'
@@ -1019,14 +1022,13 @@
                 }
             };
 
-            // CORREÇÃO: Conteúdo traduzido para notas fiscais
             const invoicesContent = {
                 pt: [
                     'As notas fiscais serão enviadas por e-mail em até 03 dias úteis após el check-out.',
                     'As notas fiscais de serviço serão emitidas de acordo com os serviços prestados, além da nota de F&B em caso de consumo.',
-                    'As notas fiscais devem ser conferidas no recebimento, pois temos prazo para alterações, substituição e/ou cancelamento até o 5º dia útil do mês seguinte.',
-                    'Caso o destinatário da nota não seja informado no pedido de reserva, a mesma será emitida em nome da empresa solicitante. Em caso de pessoa física, será emitida em nome do hóspede.',
-                    'Caso haja algum erro/discrepância ou se não receber as notas dentro do prazo, favor entrar em contato imediatamente com o departamento financeiro.',
+                    'As notas fiscais devem ser conferidas no recebimento, pois temos prazo para alterações, substituição e/ou cancelamento até o 5º dia útil do mês siguiente.',
+                    'Caso o destinatario da nota não seja informado no pedido de reserva, a mesma será emitida em nome da empresa solicitante. Em caso de pessoa física, será emitida em nome do hóspede.',
+                    'Caso haja algún error/discrepância ou se não receber as notas dentro do prazo, favor entrar em contato imediatamente com o departamento financeiro.',
                     'Luciana Felix - Tel.(21) 2612-5030 ramal 3 - Whatsapp (21)2710-6142 - Email: financeiro@icaraipraiahotel.com.br',
                     'Mantenha sempre seu cadastro atualizado para evitar possíveis problemas no recebimento das notas fiscais.'
                 ],
@@ -1059,7 +1061,11 @@
                 ]
             };
 
-            // Gerar HTML completo da cotação
+            // Verificar se é grupo (mais de 1 apartamento)
+            const isGroup = document.querySelectorAll('.group-container').length > 1 || 
+                           (document.querySelectorAll('.group-container').length === 1 && 
+                            parseInt(document.querySelector('.qty').value) > 1);
+
             const quotationHTML = `
                 <div class="quotation-header">
                     <div class="hotel-name">${hotelConfig.name}</div>
@@ -1076,6 +1082,10 @@
                         <span>${translations[currentLang].validity}</span>
                     </div>
                     
+                    ${isGroup ? `<div style="background: #ffebee; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 5px solid #f44336;">
+                        <strong>${translations[currentLang].paymentNote}</strong>
+                    </div>` : ''}
+                    
                     <h2 style="color: #1a6bb3; margin: 25px 0 15px;">${currentLang === 'pt' ? 'INFORMAÇÕES DA RESERVA' : 
                                                                      currentLang === 'en' ? 'RESERVATION INFORMATION' :
                                                                      currentLang === 'fr' ? 'INFORMATIONS DE RÉSERVATION' :
@@ -1090,7 +1100,6 @@
                     
                     <h2 style="color: #1a6bb3; margin: 25px 0 15px;">${translations[currentLang].financialDetails}</h2>
                     
-                    <!-- SUBTOTAIS POR GRUPO -->
                     ${groupSubtotals.map(subtotal => `
                         <div class="subtotal-row">
                             <strong>${translations[currentLang].groupSubtotal} ${subtotal.groupNumber}:</strong><br>
@@ -1203,6 +1212,19 @@
                 });
         }
 
+        function copyForEmail() {
+            const quotationContent = document.getElementById('quotationPreview').innerHTML;
+            
+            navigator.clipboard.writeText(quotationContent)
+                .then(() => {
+                    showNotification(translations[currentLang].emailSuccess);
+                })
+                .catch(err => {
+                    console.error('Erro ao copiar: ', err);
+                    showNotification('Erro ao copiar para e-mail', 'error');
+                });
+        }
+
         function generatePDF() {
             const { jsPDF } = window.jspdf;
             const doc = new jsPDF();
@@ -1222,15 +1244,86 @@
 
         function shareWhatsApp() {
             const phoneNumber = document.getElementById('whatsappNumber').value;
-            const quotationContent = document.getElementById('quotationPreview').innerText;
+            const mainGuest = document.getElementById('mainGuest').value;
+            const groups = document.querySelectorAll('.group-container');
             
             if (!phoneNumber) {
                 showNotification('Por favor, insira um número de WhatsApp', 'error');
                 return;
             }
             
-            const message = encodeURIComponent(`Olá! Segue a cotação solicitada:\n\n${quotationContent}`);
-            const whatsappURL = `https://wa.me/55${phoneNumber}?text=${message}`;
+            let whatsappMessage = `*🏨 ${hotelConfig.name} - COTAÇÃO DE RESERVA* 🏨\n\n`;
+            whatsappMessage += `*Responsável:* ${mainGuest}\n\n`;
+            
+            let totalAmount = 0;
+            
+            groups.forEach((group, index) => {
+                const qty = parseInt(group.querySelector('.qty').value) || 0;
+                const guests = parseInt(group.querySelector('.guests').value) || 0;
+                const rate = parseFloat(group.querySelector('.rate').value) || 0;
+                const checkin = group.querySelector('.checkin').value;
+                const checkout = group.querySelector('.checkout').value;
+                const mealType = group.querySelector(`input[name="meal-${index}"]:checked`).value;
+                const parking = group.querySelector('.parking').value;
+                
+                let nights = 0;
+                if (checkin && checkout) {
+                    const checkinDate = new Date(checkin);
+                    const checkoutDate = new Date(checkout);
+                    nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
+                }
+                
+                const accommodationCost = qty * guests * rate * nights;
+                let mealCost = 0;
+                const mealPrice = parseFloat(group.querySelector('.meal-price').value) || 0;
+                
+                if (mealType === 'breakfast') {
+                    mealCost = qty * guests * nights * mealPrice;
+                } else if (mealType === 'halfBoard') {
+                    mealCost = qty * guests * nights * mealPrice * 2;
+                } else if (mealType === 'fullBoard') {
+                    mealCost = qty * guests * nights * mealPrice * 3;
+                }
+                
+                let parkingCost = 0;
+                if (parking === 'yes') {
+                    parkingCost = qty * nights * 45;
+                }
+                
+                const groupTotal = accommodationCost + mealCost + parkingCost;
+                totalAmount += groupTotal;
+                
+                whatsappMessage += `*Grupo ${index + 1}:*\n`;
+                whatsappMessage += `📦 ${qty} apto(s) • 👥 ${guests} hóspede(s)\n`;
+                whatsappMessage += `💰 Diária: R$ ${rate.toFixed(2)}\n`;
+                whatsappMessage += `📅 ${correctTimezone(checkin)} ➝ ${correctTimezone(checkout)} (${nights} noite(s))\n`;
+                whatsappMessage += `🍽️ ${translations[currentLang][mealType]}\n`;
+                whatsappMessage += `🅿️ Estacionamento: ${parking === 'yes' ? 'Sim' : 'Não'}\n`;
+                whatsappMessage += `💵 Subtotal: R$ ${groupTotal.toFixed(2)}\n\n`;
+            });
+            
+            const issAmount = totalAmount * (hotelConfig.iss / 100);
+            const totalWithISS = totalAmount + issAmount;
+            
+            whatsappMessage += `*💰 RESUMO FINANCEIRO:*\n`;
+            whatsappMessage += `Subtotal: R$ ${totalAmount.toFixed(2)}\n`;
+            whatsappMessage += `ISS (2%): R$ ${issAmount.toFixed(2)}\n`;
+            whatsappMessage += `*TOTAL: R$ ${totalWithISS.toFixed(2)}*\n\n`;
+            
+            whatsappMessage += `*📋 INFORMAÇÕES IMPORTANTES:*\n`;
+            whatsappMessage += `• Cotação válida por 24 horas\n`;
+            whatsappMessage += `• Check-in: 14:00 / Check-out: 12:00\n`;
+            whatsappMessage += `• Pagamento via PIX, cartão ou transferência\n\n`;
+            
+            whatsappMessage += `*📞 CONTATO:*\n`;
+            whatsappMessage += `Telefone: ${hotelConfig.phone}\n`;
+            whatsappMessage += `E-mail: ${hotelConfig.email}\n`;
+            whatsappMessage += `Site: ${hotelConfig.site}\n\n`;
+            
+            whatsappMessage += `_Enviado via Cotador de Reservas_`;
+            
+            const encodedMessage = encodeURIComponent(whatsappMessage);
+            const whatsappURL = `https://wa.me/55${phoneNumber}?text=${encodedMessage}`;
             
             window.open(whatsappURL, '_blank');
             showNotification(translations[currentLang].whatsappSuccess);
