@@ -1,0 +1,882 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Cartão de Ponto</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .header p {
+            opacity: 0.8;
+            font-size: 1.1em;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .search-box, select, input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .search-box:focus, select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .employee-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .employee-item {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .employee-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .employee-item.selected {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+
+        .employee-info {
+            flex: 1;
+        }
+
+        .employee-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9em;
+        }
+
+        .employee-role {
+            font-size: 0.8em;
+            color: #7f8c8d;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7f8c8d;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #219a52;
+            transform: translateY(-2px);
+        }
+
+        .preview-area {
+            background: white;
+            border: 2px dashed #bdc3c7;
+            border-radius: 10px;
+            padding: 25px;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .preview-area h3 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        /* Cartão com dimensões corretas: 86 x 190 mm */
+        .card-preview {
+            width: 86mm;
+            height: 190mm;
+            font-family: 'Courier New', monospace;
+            font-size: 9px;
+            line-height: 1.1;
+            background: white;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .card-content {
+            padding: 3mm;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .card-line {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 0.5mm;
+            white-space: nowrap;
+        }
+
+        .card-section {
+            margin-bottom: 1mm;
+        }
+
+        .card-divider {
+            margin: 1mm 0;
+        }
+
+        .card-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8px;
+            margin-top: 1mm;
+        }
+
+        .card-table td {
+            padding: 0.5mm;
+            text-align: center;
+            height: 4mm;
+        }
+
+        .card-table th {
+            padding: 0.5mm;
+            text-align: center;
+            font-weight: bold;
+        }
+
+        .card-header {
+            text-align: center;
+            font-weight: bold;
+            margin-bottom: 1mm;
+        }
+
+        .card-footer {
+            position: absolute;
+            bottom: 3mm;
+            width: calc(100% - 6mm);
+            text-align: center;
+            font-size: 7px;
+        }
+
+        .selected-count {
+            background: #e74c3c;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .bulk-btn {
+            padding: 8px 16px;
+            border: 1px solid #3498db;
+            background: white;
+            color: #3498db;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .bulk-btn:hover {
+            background: #3498db;
+            color: white;
+        }
+
+        .month-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .month-selector .form-group {
+            flex: 2;
+        }
+
+        .month-selector .form-group:last-child {
+            flex: 1;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .preview-area {
+                min-height: 300px;
+            }
+        }
+
+        /* Estilos para impressão */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            .printable-card, .printable-card * {
+                visibility: visible;
+            }
+            
+            .printable-card {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                height: auto;
+            }
+            
+            .printable-card .card-preview {
+                width: 86mm;
+                height: 190mm;
+                page-break-after: always;
+                margin: 0;
+                box-shadow: none;
+                font-size: 9px;
+                font-family: 'Courier New', monospace;
+            }
+            
+            @page {
+                margin: 0;
+                size: 86mm 190mm;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Sistema de Cartão de Ponto</h1>
+            <p>Gere cartões de ponto personalizados para seus funcionários</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="controls">
+                <div class="bulk-actions">
+                    <button class="bulk-btn" onclick="selectAll()">Selecionar Todos</button>
+                    <button class="bulk-btn" onclick="deselectAll()">Limpar Seleção</button>
+                </div>
+
+                <div class="form-group month-selector">
+                    <div class="form-group">
+                        <label>Mês:</label>
+                        <select id="monthSelect">
+                            <option value="JANEIRO">Janeiro</option>
+                            <option value="FEVEREIRO">Fevereiro</option>
+                            <option value="MARÇO">Março</option>
+                            <option value="ABRIL">Abril</option>
+                            <option value="MAIO">Maio</option>
+                            <option value="JUNHO">Junho</option>
+                            <option value="JULHO">Julho</option>
+                            <option value="AGOSTO">Agosto</option>
+                            <option value="SETEMBRO">Setembro</option>
+                            <option value="OUTUBRO">Outubro</option>
+                            <option value="NOVEMBRO">Novembro</option>
+                            <option value="DEZEMBRO">Dezembro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ano:</label>
+                        <input type="number" id="yearInput" value="2025" min="1900" max="2100">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Buscar Funcionário:</label>
+                    <input type="text" class="search-box" id="searchInput" placeholder="Digite o nome ou função..." onkeyup="filterEmployees()">
+                </div>
+
+                <div class="form-group">
+                    <label>Funcionários <span id="selectedCount" class="selected-count">0</span>:</label>
+                    <div class="employee-list" id="employeeList">
+                        <!-- Lista será populada via JavaScript -->
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="generateSelected()">
+                        Imprimir Selecionados
+                    </button>
+                    <button class="btn btn-success" onclick="generateAll()">
+                        Imprimir Todos
+                    </button>
+                </div>
+            </div>
+
+            <div class="preview-area">
+                <h3>Pré-visualização do Cartão</h3>
+                <div class="card-preview" id="cardPreview">
+                    <!-- Preview será gerado aqui -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Dados COMPLETOS dos 51 funcionários (baseado no PDF fornecido)
+        const employees = [
+            { id: 1, name: "ANDERSON LUIS DE MELO", role: "GARÇON", admission: "22/04/2021", entrada: "05:30", intervalo: "10:00/11:00", saida: "13:50", ctps: "", registro: "" },
+            { id: 2, name: "ANDRE DA CRUZ ANJOS", role: "SUB CHEFE DE CC", admission: "04/04/2023", entrada: "06:30", intervalo: "09:30/10:30", saida: "13:50", ctps: "", registro: "" },
+            { id: 3, name: "ARYANNE KETLIN DA SILVA PEREIRA", role: "JOVEM APRENDIZ", admission: "28/03/2025", entrada: "12:00", intervalo: "", saida: "18:00", ctps: "", registro: "" },
+            { id: 4, name: "CARINA ALVES CORDEIRO", role: "GARÇONETE", admission: "28/03/2025", entrada: "08:30", intervalo: "09:00/10:00", saida: "13:50", ctps: "", registro: "" },
+            { id: 5, name: "CARLOS EDUARDO SILVA", role: "MANOBRISTA", admission: "29/01/2025", entrada: "06:00", intervalo: "11:00/12:00", saida: "18:00", ctps: "", registro: "" },
+            { id: 6, name: "CELIA LUIZA DA SILVA", role: "ARRUMADEIRA", admission: "09/09/2014", entrada: "09:00", intervalo: "12:00/13:00", saida: "17:20", ctps: "", registro: "" },
+            { id: 7, name: "CELINA WEIRA RIBEIRO", role: "ARRUMADEIRA", admission: "01/04/2002", entrada: "07:00", intervalo: "11:00/12:00", saida: "15:20", ctps: "", registro: "" },
+            { id: 8, name: "CREDOMAR VERAS DE SOUSA", role: "GOVERNANTA HO", admission: "01/05/2013", entrada: "09:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "" },
+            { id: 9, name: "DANIEL ALVES VIANA", role: "RECEPCIONISTA", admission: "06/11/2025", entrada: "07:00", intervalo: "12:00/13:00", saida: "15:20", ctps: "", registro: "" },
+            { id: 10, name: "EDILZA SOUZA NOQUEIRA", role: "ARRUMADEIRA", admission: "22/06/2024", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "" },
+            { id: 11, name: "ELIANE SILVA DE MACEDO", role: "ARRUMADEIRA", admission: "02/05/1996", entrada: "09:00", intervalo: "13:00/14:00", saida: "17:20", ctps: "", registro: "" },
+            { id: 12, name: "ERALDO JOSE DO VALLE OLIVEIRA", role: "AUX SERVI GERAIS", admission: "14/03/2024", entrada: "07:00", intervalo: "12:00/13:00", saida: "19:00", ctps: "", registro: "" },
+            { id: 13, name: "EREVALDO DA SILVA LINIO", role: "GARÇON", admission: "10/04/2019", entrada: "08:00", intervalo: "10:45/11:45", saida: "14:20", ctps: "", registro: "" },
+            { id: 14, name: "ERICK PEREIRA DA COSTA", role: "RECEPCIONISTA", admission: "29/03/2025", entrada: "08:00", intervalo: "12:00/13:00", saida: "20:00", ctps: "", registro: "" },
+            { id: 15, name: "FABIANO CARDIM DE ARAÚJO", role: "MAITRE", admission: "04/09/2024", entrada: "13:40", intervalo: "17:00/18:00", saida: "22:00", ctps: "", registro: "" },
+            { id: 16, name: "FABIO DA TRINDADE LIMA", role: "RECEPCIONISTA", admission: "11/01/2024", entrada: "19:00", intervalo: "00:00/01:00", saida: "07:00", ctps: "", registro: "" },
+            { id: 17, name: "FABIO LA LUCIENE ROSA MARGELINO", role: "AUX SERVI GERAIS", admission: "13/06/2025", entrada: "08:00", intervalo: "12:00/13:00", saida: "20:00", ctps: "", registro: "" },
+            { id: 18, name: "GENESIO COSTA SILVA", role: "COZINHEIRO", admission: "03/04/2023", entrada: "05:30", intervalo: "09:00/10:00", saida: "13:50", ctps: "", registro: "" },
+            { id: 19, name: "GREGORIO DE SOUSA MAGALHAES", role: "AJUDANTE DE COZ", admission: "29/01/2025", entrada: "05:30", intervalo: "11:00/12:00", saida: "13:50", ctps: "", registro: "" },
+            { id: 20, name: "GUSTAVO COSTA DE LIMA", role: "CHEFE DE RECEP", admission: "13/12/2023", entrada: "18:00", intervalo: "00:00/01:00", saida: "06:00", ctps: "", registro: "" },
+            { id: 21, name: "HELOSA CRISTINA DOS SANTOS FIGUEIREI", role: "ARRUMADEIRA", admission: "16/12/2015", entrada: "08:00", intervalo: "12:00/13:00", saida: "20:00", ctps: "", registro: "" },
+            { id: 22, name: "ICARO TARANTO RODRIGUES", role: "RECEPCIONISTA", admission: "25/02/2025", entrada: "19:00", intervalo: "01:00/02:00", saida: "07:00", ctps: "", registro: "" },
+            { id: 23, name: "INACIA NEMEZIO DE LIMA", role: "ARRUMADEIRA", admission: "21/12/2016", entrada: "09:00", intervalo: "13:00/14:00", saida: "21:00", ctps: "", registro: "" },
+            { id: 24, name: "JOCELL DA SILVA FERREIRA", role: "AUX SERVI GERAIS", admission: "06/11/2025", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "" },
+            { id: 25, name: "JOEL FRERE DA FONSECA", role: "AUX SERVI GERAIS", admission: "05/08/2019", entrada: "07:00", intervalo: "11:00/12:00", saida: "15:20", ctps: "", registro: "" },
+            { id: 26, name: "JORGE LUIZ FERNANDO POLEGARIO DE CAL", role: "GARÇON", admission: "01/06/2022", entrada: "13:40", intervalo: "16:00/17:00", saida: "22:00", ctps: "", registro: "" },
+            { id: 27, name: "LAFRCIO DIAS FELICIO", role: "MANOBRISTA", admission: "18/09/2012", entrada: "06:00", intervalo: "11:00/12:00", saida: "18:00", ctps: "", registro: "" },
+            { id: 28, name: "LORRANE DOS SANTOS PEREIRA", role: "AUX SERVI GERAIS", admission: "28/04/2025", entrada: "15:00", intervalo: "19:00/20:00", saida: "23:00", ctps: "", registro: "" },
+            { id: 29, name: "LUCIANA FELIX DA SILVA", role: "ASS. ADMINISTRAT", admission: "20/05/2003", entrada: "09:00", intervalo: "13:00/14:00", saida: "16:00", ctps: "", registro: "" },
+            { id: 30, name: "LUCIANO FERREIRA DOS REIS", role: "RECEPCIONISTA I", admission: "18/03/2022", entrada: "19:00", intervalo: "00:00/01:00", saida: "07:00", ctps: "", registro: "" },
+            { id: 31, name: "LUIZ CLAUDIO GLOBIA", role: "AJUDANTE DE CO.", admission: "18/11/2009", entrada: "13:40", intervalo: "17:00/18:00", saida: "22:00", ctps: "", registro: "" },
+            { id: 32, name: "LUIZ MIGUEL DA SILVA ARAULO", role: "JOVEM APRENDIZ", admission: "28/08/2025", entrada: "13:00", intervalo: "", saida: "17:00", ctps: "", registro: "" },
+            { id: 33, name: "LUIZ OTAVID BARCELOS SILVA CONCEICAO", role: "JOVEM APRENDIZ", admission: "28/08/2025", entrada: "11:00", intervalo: "14:00/15:00", saida: "17:00", ctps: "", registro: "" },
+            { id: 34, name: "MARIA CLAUDIA VIERA DE BRITO SILVA", role: "RECEPCIONISTA I", admission: "02/05/2017", entrada: "07:00", intervalo: "12:00/13:00", saida: "19:00", ctps: "", registro: "" },
+            { id: 35, name: "MARIA CRISTINA SILVA MOREIRA", role: "ARRUMADEIRA", admission: "03/11/2010", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "" },
+            { id: 36, name: "MARIA DAS GRAÇAS ALVES MONTEIRO", role: "LAVADEIRO (A)", admission: "02/01/1992", entrada: "23:00", intervalo: "01:00/03:00", saida: "07:50", ctps: "", registro: "" },
+            { id: 37, name: "MARIA DO ROSARIO FERNANDES DA SILVA", role: "CAMAREIRO(a)", admission: "02/09/2004", entrada: "08:00", intervalo: "11:00/12:00", saida: "16:20", ctps: "", registro: "" },
+            { id: 38, name: "MAYCON JUNIO DOS SANTOS DA SILVA", role: "OFICIAL DE MANU", admission: "06/09/2025", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "" },
+            { id: 39, name: "MIZAEL OLIVEIRA FARIAS DA SILVA", role: "AJUDANTE DE CO.", admission: "02/10/2025", entrada: "05:30", intervalo: "11:00/12:00", saida: "13:50", ctps: "", registro: "" },
+            { id: 40, name: "PEDRO MENDES DA SILVA", role: "COZINHEIRO CHEI", admission: "08/06/2004", entrada: "15:00", intervalo: "17:00/18:00", saida: "23:00", ctps: "", registro: "" },
+            { id: 41, name: "ROBSON LUIZ DE MORAES NORBERTO JUN", role: "MANOBRISTA", admission: "21/09/2020", entrada: "06:00", intervalo: "11:00/12:00", saida: "18:00", ctps: "", registro: "" },
+            { id: 42, name: "SALOMAO LUIS DA SILVA", role: "GERENTE SENIOR", admission: "11/06/2002", entrada: "09:00", intervalo: "13:00/14:00", saida: "17:20", ctps: "", registro: "" },
+            { id: 43, name: "SHAMYG KATELEN DA SILVA MESSIAS", role: "AUX SERV GERAIS", admission: "28/10/2025", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "" },
+            { id: 44, name: "TATIANE SILVA MARINS", role: "ARRUMADEIRA", admission: "08/04/2024", entrada: "06:00", intervalo: "11:00/12:00", saida: "14:20", ctps: "", registro: "" },
+            { id: 45, name: "THAIS HELENA TEXEIRA DA SILVA", role: "COZINHEIRO", admission: "02/06/2023", entrada: "13:40", intervalo: "16:00/17:00", saida: "22:00", ctps: "", registro: "" },
+            { id: 46, name: "ULLEN GABRIEL LUZ SANTOS", role: "SUPERVISOR DE I", admission: "20/05/2019", entrada: "09:00", intervalo: "12:00/18:00", saida: "17:20", ctps: "", registro: "" },
+            { id: 47, name: "VANESSA DE BRITO ARAULO", role: "RECEPCIONISTA I", admission: "23/08/2010", entrada: "07:00", intervalo: "12:00/13:00", saida: "19:00", ctps: "", registro: "" },
+            { id: 48, name: "VAIVA THEREZA BONFIM BORGES", role: "ARRUMADEIRA", admission: "24/12/2020", entrada: "06:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "" },
+            { id: 49, name: "VICTOR SILVA RAMOS", role: "AUX SERV GERAIS", admission: "18/12/2024", entrada: "07:00", intervalo: "12:00/13:00", saida: "19:00", ctps: "", registro: "" },
+            { id: 50, name: "WAGNO DE PAULA FERREIRA", role: "ELETRIOSTA", admission: "12/04/2010", entrada: "06:00", intervalo: "11:00/12:00", saida: "16:20", ctps: "", registro: "" },
+            { id: 51, name: "WANDERLEY DA SILVA MACEDO", role: "GERENTE HOTEL", admission: "29/06/2010", entrada: "09:00", intervalo: "12:00/13:00", saida: "17:20", ctps: "", registro: "" }
+        ];
+
+        let selectedEmployees = new Set();
+
+        // Inicializar a aplicação
+        function initializeApp() {
+            renderEmployeeList();
+            updateSelectedCount();
+            // Mostrar preview do primeiro funcionário por padrão
+            if (employees.length > 0) {
+                showPreview(employees[0]);
+            }
+            // Atualizar preview ao mudar mês/ano
+            document.getElementById('monthSelect').addEventListener('change', updatePreview);
+            document.getElementById('yearInput').addEventListener('change', updatePreview);
+        }
+
+        function updatePreview() {
+            if (selectedEmployees.size > 0) {
+                const firstSelectedId = Array.from(selectedEmployees)[0];
+                const employee = employees.find(emp => emp.id === firstSelectedId);
+                if (employee) showPreview(employee);
+            } else if (employees.length > 0) {
+                showPreview(employees[0]);
+            }
+        }
+
+        // Renderizar lista de funcionários
+        function renderEmployeeList(filteredEmployees = employees) {
+            const employeeList = document.getElementById('employeeList');
+            employeeList.innerHTML = '';
+
+            filteredEmployees.forEach(employee => {
+                const isSelected = selectedEmployees.has(employee.id);
+                const employeeItem = document.createElement('div');
+                employeeItem.className = `employee-item ${isSelected ? 'selected' : ''}`;
+                employeeItem.onclick = () => toggleEmployee(employee.id);
+                
+                employeeItem.innerHTML = `
+                    <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleEmployee(${employee.id})">
+                    <div class="employee-info">
+                        <div class="employee-name">${employee.name}</div>
+                        <div class="employee-role">${employee.role} • Adm: ${employee.admission}</div>
+                    </div>
+                `;
+                
+                employeeList.appendChild(employeeItem);
+            });
+        }
+
+        // Alternar seleção de funcionário
+        function toggleEmployee(employeeId) {
+            if (selectedEmployees.has(employeeId)) {
+                selectedEmployees.delete(employeeId);
+            } else {
+                selectedEmployees.add(employeeId);
+            }
+            updateSelectedCount();
+            renderEmployeeList();
+            
+            // Atualizar preview com o funcionário selecionado
+            const employee = employees.find(emp => emp.id === employeeId);
+            if (employee) {
+                showPreview(employee);
+            }
+        }
+
+        // Selecionar todos os funcionários
+        function selectAll() {
+            employees.forEach(employee => selectedEmployees.add(employee.id));
+            updateSelectedCount();
+            renderEmployeeList();
+        }
+
+        // Desmarcar todos os funcionários
+        function deselectAll() {
+            selectedEmployees.clear();
+            updateSelectedCount();
+            renderEmployeeList();
+        }
+
+        // Atualizar contador de selecionados
+        function updateSelectedCount() {
+            document.getElementById('selectedCount').textContent = selectedEmployees.size;
+        }
+
+        // Filtrar funcionários
+        function filterEmployees() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = employees.filter(employee => 
+                employee.name.toLowerCase().includes(searchTerm) ||
+                employee.role.toLowerCase().includes(searchTerm)
+            );
+            renderEmployeeList(filtered);
+        }
+
+        // Obter mês e ano atuais
+        function getMonthYear() {
+            const month = document.getElementById('monthSelect').value;
+            const year = document.getElementById('yearInput').value;
+            return { month, year };
+        }
+
+        // Mostrar pré-visualização
+        function showPreview(employee) {
+            const { month, year } = getMonthYear();
+            const preview = document.getElementById('cardPreview');
+            
+            // Formatar nome para caber no espaço
+            const shortName = employee.name.length > 20 ? 
+                employee.name.substring(0, 17) + '...' : employee.name;
+            
+            preview.innerHTML = `
+                <div class="card-content">
+                    <!-- N° Ordem no lado direito -->
+                    <div class="card-line">
+                        <span></span>
+                        <span>05</span>
+                    </div>
+                    
+                    <!-- Razão Social no lado direito -->
+                    <div class="card-line">
+                        <span></span>
+                        <span>ICARAI P HOTEL</span>
+                    </div>
+                    
+                    <div class="card-line">
+                        <span></span>
+                        <span></span>
+                    </div>
+                    
+                    <!-- Dados do funcionário -->
+                    <div class="card-line">
+                        <span>${shortName}</span>
+                    </div>
+                    
+                    <div class="card-line">
+                        <span>${month} ${year}</span>
+                    </div>
+                    
+                    <div class="card-line">
+                        <span>${employee.ctps}</span>
+                        <span>${employee.registro}</span>
+                        <span>${employee.role}</span>
+                    </div>
+                    
+                    <div class="card-divider"></div>
+                    
+                    <!-- Horário de trabalho -->
+                    <div class="card-line">
+                        <span>${employee.entrada}</span>
+                        <span>${employee.intervalo}</span>
+                        <span>${employee.saida}</span>
+                        <span>12/36</span>
+                    </div>
+                    
+                    <div class="card-divider"></div>
+                    
+                    <!-- Tabela da 1ª quinzena SEM BORDAS E SEM NUMERAÇÃO DOS DIAS -->
+                    <div style="text-align: center; font-weight: bold; margin: 1mm 0;">1ª Quinzena</div>
+                    <table class="card-table" style="border: none;">
+                        <thead>
+                            <tr>
+                                <th style="border: none;"></th>
+                                <th style="border: none;">Entrada</th>
+                                <th style="border: none;">Saída</th>
+                                <th style="border: none;">Entrada</th>
+                                <th style="border: none;">Saída</th>
+                                <th style="border: none;">Entrada</th>
+                                <th style="border: none;">Saída</th>
+                                <th style="border: none;">Total</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            ${generateDaysTable()}
+                        </tbody>
+                    </table>
+                </div>
+            `;
+        }
+
+        // Gerar tabela de dias (1-15) SEM BORDAS E SEM NUMERAÇÃO
+        function generateDaysTable() {
+            let tableHTML = '';
+            for (let day = 1; day <= 15; day++) {
+                tableHTML += `
+                    <tr>
+                        <td style="border: none;"></td>
+                        <td style="border: none;"></td>
+                        <td style="border: none;"></td>
+                        <td style="border: none;"></td>
+                        <td style="border: none;"></td>
+                        <td style="border: none;"></td>
+                        <td style="border: none;"></td>
+                        <td style="border: none;"></td>
+                    </tr>
+                `;
+            }
+            return tableHTML;
+        }
+
+        // Gerar cartões para funcionários selecionados
+        function generateSelected() {
+            if (selectedEmployees.size === 0) {
+                alert('Por favor, selecione pelo menos um funcionário.');
+                return;
+            }
+
+            const selected = employees.filter(emp => selectedEmployees.has(emp.id));
+            printCards(selected);
+        }
+
+        // Gerar cartões para todos os funcionários
+        function generateAll() {
+            printCards(employees);
+        }
+
+        // Função principal de impressão de cartões
+        function printCards(employeesToPrint) {
+            const { month, year } = getMonthYear();
+            let printContent = '<div class="printable-card">';
+            
+            employeesToPrint.forEach(employee => {
+                // Gerar duas cópias do cartão (frente e verso)
+                for (let i = 0; i < 2; i++) {
+                    const shortName = employee.name.length > 20 ? 
+                        employee.name.substring(0, 17) + '...' : employee.name;
+                    
+                    printContent += `
+                        <div class="card-preview">
+                            <div class="card-content">
+                                <!-- N° Ordem no lado direito -->
+                                <div class="card-line">
+                                    <span></span>
+                                    <span>05</span>
+                                </div>
+                                
+                                <!-- Razão Social no lado direito -->
+                                <div class="card-line">
+                                    <span></span>
+                                    <span>ICARAI P HOTEL</span>
+                                </div>
+                                
+                                <div class="card-line">
+                                    <span></span>
+                                    <span></span>
+                                </div>
+                                
+                                <!-- Dados do funcionário -->
+                                <div class="card-line">
+                                    <span>${shortName}</span>
+                                </div>
+                                
+                                <div class="card-line">
+                                    <span>${month} ${year}</span>
+                                </div>
+                                
+                                <div class="card-line">
+                                    <span>${employee.ctps}</span>
+                                    <span>${employee.registro}</span>
+                                    <span>${employee.role}</span>
+                                </div>
+                                
+                                <div class="card-divider"></div>
+                                
+                                <!-- Horário de trabalho -->
+                                <div class="card-line">
+                                    <span>${employee.entrada}</span>
+                                    <span>${employee.intervalo}</span>
+                                    <span>${employee.saida}</span>
+                                    <span>12/36</span>
+                                </div>
+                                
+                                <div class="card-divider"></div>
+                                
+                                <!-- Tabela da 1ª quinzena SEM BORDAS E SEM NUMERAÇÃO DOS DIAS -->
+                                <div style="text-align: center; font-weight: bold; margin: 1mm 0;">1ª Quinzena</div>
+                                <table class="card-table" style="border: none;">
+                                    <thead>
+                                        <tr>
+                                            <th style="border: none;"></th>
+                                            <th style="border: none;">Entrada</th>
+                                            <th style="border: none;">Saída</th>
+                                            <th style="border: none;">Entrada</th>
+                                            <th style="border: none;">Saída</th>
+                                            <th style="border: none;">Entrada</th>
+                                            <th style="border: none;">Saída</th>
+                                            <th style="border: none;">Total</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        ${generateDaysTable()}
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+            
+            printContent += '</div>';
+
+            const printWindow = window.open('', '_blank', 'width=800,height=600');
+            printWindow.document.open();
+            printWindow.document.write(`
+                <html>
+                    <head>
+                        <title>Imprimir Cartões de Ponto</title>
+                        <style>
+                            body { 
+                                margin: 0; 
+                                padding: 0; 
+                                font-family: 'Courier New', monospace; 
+                                font-size: 9px; 
+                                line-height: 1.1;
+                            }
+                            
+                            .printable-card { 
+                                display: flex; 
+                                flex-wrap: wrap; 
+                                justify-content: center; 
+                                align-items: flex-start;
+                                gap: 10px;
+                                padding: 10px;
+                            }
+                            
+                            .card-preview { 
+                                width: 86mm; 
+                                height: 190mm; 
+                                font-family: 'Courier New', monospace;
+                                font-size: 9px;
+                                line-height: 1.1;
+                                background: white;
+                                position: relative;
+                                overflow: hidden;
+                            }
+                            
+                            .card-content {
+                                padding: 3mm;
+                                height: 100%;
+                                display: flex;
+                                flex-direction: column;
+                            }
+                            
+                            .card-line {
+                                display: flex;
+                                justify-content: space-between;
+                                margin-bottom: 0.5mm;
+                                white-space: nowrap;
+                            }
+                            
+                            .card-divider {
+                                margin: 1mm 0;
+                            }
+                            
+                            .card-table {
+                                width: 100%;
+                                border-collapse: collapse;
+                                font-size: 8px;
+                                margin-top: 1mm;
+                            }
+                            
+                            .card-table td {
+                                padding: 0.5mm;
+                                text-align: center;
+                                height: 4mm;
+                                border: none;
+                            }
+                            
+                            .card-table th {
+                                padding: 0.5mm;
+                                text-align: center;
+                                font-weight: bold;
+                                border: none;
+                            }
+                            
+                            @media print {
+                                body { margin: 0; padding: 0; }
+                                .printable-card { 
+                                    display: block; 
+                                    width: 100%; 
+                                    height: auto;
+                                }
+                                .card-preview { 
+                                    width: 86mm; 
+                                    height: 190mm; 
+                                    page-break-after: always; 
+                                    margin: 0 auto 10mm; 
+                                    box-shadow: none; 
+                                    font-size: 9px;
+                                }
+                                @page { 
+                                    margin: 0; 
+                                    size: 86mm 190mm; 
+                                }
+                            }
+                        </style>
+                    </head>
+                    <body onload="window.print(); setTimeout(() => window.close(), 500);">
+                        ${printContent}
+                    </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
