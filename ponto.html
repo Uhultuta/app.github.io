@@ -195,8 +195,8 @@
             width: 86mm;
             height: 190mm;
             font-family: 'Courier New', monospace;
-            font-size: 9px;
-            line-height: 1.1;
+            font-size: 11.7px; /* 30% maior que 9px */
+            line-height: 1.3;
             background: white;
             position: relative;
             overflow: hidden;
@@ -212,49 +212,29 @@
         .card-line {
             display: flex;
             justify-content: space-between;
-            margin-bottom: 0.5mm;
+            margin-bottom: 0.8mm;
             white-space: nowrap;
         }
 
         .card-section {
-            margin-bottom: 1mm;
+            margin-bottom: 1.3mm;
         }
 
         .card-divider {
-            margin: 1mm 0;
+            margin: 1.3mm 0;
         }
 
         .card-table {
             width: 100%;
             border-collapse: collapse;
-            font-size: 8px;
-            margin-top: 1mm;
+            font-size: 10.4px; /* 30% maior que 8px */
+            margin-top: 1.3mm;
         }
 
         .card-table td {
-            padding: 0.5mm;
+            padding: 0.65mm;
             text-align: center;
-            height: 4mm;
-        }
-
-        .card-table th {
-            padding: 0.5mm;
-            text-align: center;
-            font-weight: bold;
-        }
-
-        .card-header {
-            text-align: center;
-            font-weight: bold;
-            margin-bottom: 1mm;
-        }
-
-        .card-footer {
-            position: absolute;
-            bottom: 3mm;
-            width: calc(100% - 6mm);
-            text-align: center;
-            font-size: 7px;
+            height: 5.2mm;
         }
 
         .selected-count {
@@ -335,7 +315,7 @@
                 page-break-after: always;
                 margin: 0;
                 box-shadow: none;
-                font-size: 9px;
+                font-size: 11.7px;
                 font-family: 'Courier New', monospace;
             }
             
@@ -583,16 +563,10 @@
             
             preview.innerHTML = `
                 <div class="card-content">
-                    <!-- N° Ordem no lado direito -->
+                    <!-- Empregador lado ESQUERDO e N° Ordem lado DIREITO -->
                     <div class="card-line">
-                        <span></span>
-                        <span>05</span>
-                    </div>
-                    
-                    <!-- Razão Social no lado direito -->
-                    <div class="card-line">
-                        <span></span>
-                        <span>ICARAI P HOTEL</span>
+                        <span><strong>ICARAI P HOTEL</strong></span>
+                        <span><strong>05</strong></span>
                     </div>
                     
                     <div class="card-line">
@@ -602,46 +576,33 @@
                     
                     <!-- Dados do funcionário -->
                     <div class="card-line">
-                        <span>${shortName}</span>
+                        <span><strong>${shortName}</strong></span>
                     </div>
                     
                     <div class="card-line">
-                        <span>${month} ${year}</span>
+                        <span><strong>${month} ${year}</strong></span>
                     </div>
                     
                     <div class="card-line">
                         <span>${employee.ctps}</span>
                         <span>${employee.registro}</span>
-                        <span>${employee.role}</span>
+                        <span><strong>${employee.role}</strong></span>
                     </div>
                     
                     <div class="card-divider"></div>
                     
                     <!-- Horário de trabalho -->
                     <div class="card-line">
-                        <span>${employee.entrada}</span>
-                        <span>${employee.intervalo}</span>
-                        <span>${employee.saida}</span>
-                        <span>12/36</span>
+                        <span><strong>${employee.entrada}</strong></span>
+                        <span><strong>${employee.intervalo}</strong></span>
+                        <span><strong>${employee.saida}</strong></span>
+                        <span><strong>12/36</strong></span>
                     </div>
                     
                     <div class="card-divider"></div>
                     
-                    <!-- Tabela da 1ª quinzena SEM BORDAS E SEM NUMERAÇÃO DOS DIAS -->
-                    <div style="text-align: center; font-weight: bold; margin: 1mm 0;">1ª Quinzena</div>
-                    <table class="card-table" style="border: none;">
-                        <thead>
-                            <tr>
-                                <th style="border: none;"></th>
-                                <th style="border: none;">Entrada</th>
-                                <th style="border: none;">Saída</th>
-                                <th style="border: none;">Entrada</th>
-                                <th style="border: none;">Saída</th>
-                                <th style="border: none;">Entrada</th>
-                                <th style="border: none;">Saída</th>
-                                <th style="border: none;">Total</th>
-                            </tr>
-                        </thead>
+                    <!-- Tabela da 1ª quinzena SEM BORDAS, SEM NUMERAÇÃO, SEM CABEÇALHOS E SEM "1ª QUINZENA" -->
+                    <table class="card-table" style="border: none; margin-top: 1.3mm;">
                         <tbody>
                             ${generateDaysTable()}
                         </tbody>
@@ -650,7 +611,7 @@
             `;
         }
 
-        // Gerar tabela de dias (1-15) SEM BORDAS E SEM NUMERAÇÃO
+        // Gerar tabela de dias (1-15) SEM BORDAS, SEM NUMERAÇÃO E SEM CABEÇALHOS
         function generateDaysTable() {
             let tableHTML = '';
             for (let day = 1; day <= 15; day++) {
@@ -686,87 +647,66 @@
             printCards(employees);
         }
 
-        // Função principal de impressão de cartões
+        // Função principal de impressão de cartões - 1 CARTÃO POR PÁGINA
         function printCards(employeesToPrint) {
             const { month, year } = getMonthYear();
             let printContent = '<div class="printable-card">';
             
             employeesToPrint.forEach(employee => {
-                // Gerar duas cópias do cartão (frente e verso)
-                for (let i = 0; i < 2; i++) {
-                    const shortName = employee.name.length > 20 ? 
-                        employee.name.substring(0, 17) + '...' : employee.name;
-                    
-                    printContent += `
-                        <div class="card-preview">
-                            <div class="card-content">
-                                <!-- N° Ordem no lado direito -->
-                                <div class="card-line">
-                                    <span></span>
-                                    <span>05</span>
-                                </div>
-                                
-                                <!-- Razão Social no lado direito -->
-                                <div class="card-line">
-                                    <span></span>
-                                    <span>ICARAI P HOTEL</span>
-                                </div>
-                                
-                                <div class="card-line">
-                                    <span></span>
-                                    <span></span>
-                                </div>
-                                
-                                <!-- Dados do funcionário -->
-                                <div class="card-line">
-                                    <span>${shortName}</span>
-                                </div>
-                                
-                                <div class="card-line">
-                                    <span>${month} ${year}</span>
-                                </div>
-                                
-                                <div class="card-line">
-                                    <span>${employee.ctps}</span>
-                                    <span>${employee.registro}</span>
-                                    <span>${employee.role}</span>
-                                </div>
-                                
-                                <div class="card-divider"></div>
-                                
-                                <!-- Horário de trabalho -->
-                                <div class="card-line">
-                                    <span>${employee.entrada}</span>
-                                    <span>${employee.intervalo}</span>
-                                    <span>${employee.saida}</span>
-                                    <span>12/36</span>
-                                </div>
-                                
-                                <div class="card-divider"></div>
-                                
-                                <!-- Tabela da 1ª quinzena SEM BORDAS E SEM NUMERAÇÃO DOS DIAS -->
-                                <div style="text-align: center; font-weight: bold; margin: 1mm 0;">1ª Quinzena</div>
-                                <table class="card-table" style="border: none;">
-                                    <thead>
-                                        <tr>
-                                            <th style="border: none;"></th>
-                                            <th style="border: none;">Entrada</th>
-                                            <th style="border: none;">Saída</th>
-                                            <th style="border: none;">Entrada</th>
-                                            <th style="border: none;">Saída</th>
-                                            <th style="border: none;">Entrada</th>
-                                            <th style="border: none;">Saída</th>
-                                            <th style="border: none;">Total</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        ${generateDaysTable()}
-                                    </tbody>
-                                </table>
+                // APENAS 1 CARTÃO POR PÁGINA
+                const shortName = employee.name.length > 20 ? 
+                    employee.name.substring(0, 17) + '...' : employee.name;
+                
+                printContent += `
+                    <div class="card-preview">
+                        <div class="card-content">
+                            <!-- Empregador lado ESQUERDO e N° Ordem lado DIREITO -->
+                            <div class="card-line">
+                                <span><strong>ICARAI P HOTEL</strong></span>
+                                <span><strong>05</strong></span>
                             </div>
+                            
+                            <div class="card-line">
+                                <span></span>
+                                <span></span>
+                            </div>
+                            
+                            <!-- Dados do funcionário -->
+                            <div class="card-line">
+                                <span><strong>${shortName}</strong></span>
+                            </div>
+                            
+                            <div class="card-line">
+                                <span><strong>${month} ${year}</strong></span>
+                            </div>
+                            
+                            <div class="card-line">
+                                <span>${employee.ctps}</span>
+                                <span>${employee.registro}</span>
+                                <span><strong>${employee.role}</strong></span>
+                            </div>
+                            
+                            <div class="card-divider"></div>
+                            
+                            <!-- Horário de trabalho -->
+                            <div class="card-line">
+                                <span><strong>${employee.entrada}</strong></span>
+                                <span><strong>${employee.intervalo}</strong></span>
+                                <span><strong>${employee.saida}</strong></span>
+                                <span><strong>12/36</strong></span>
+                            </div>
+                            
+                            <div class="card-divider"></div>
+                            
+                            <!-- Tabela da 1ª quinzena SEM BORDAS, SEM NUMERAÇÃO, SEM CABEÇALHOS E SEM "1ª QUINZENA" -->
+                            <table class="card-table" style="border: none; margin-top: 1.3mm;">
+                                <tbody>
+                                    ${generateDaysTable()}
+                                </tbody>
+                            </table>
                         </div>
-                    `;
-                }
+                    </div>
+                `;
             });
             
             printContent += '</div>';
@@ -782,28 +722,25 @@
                                 margin: 0; 
                                 padding: 0; 
                                 font-family: 'Courier New', monospace; 
-                                font-size: 9px; 
-                                line-height: 1.1;
+                                font-size: 11.7px; 
+                                line-height: 1.3;
                             }
                             
                             .printable-card { 
-                                display: flex; 
-                                flex-wrap: wrap; 
-                                justify-content: center; 
-                                align-items: flex-start;
-                                gap: 10px;
-                                padding: 10px;
+                                display: block;
+                                width: 100%;
                             }
                             
                             .card-preview { 
                                 width: 86mm; 
                                 height: 190mm; 
                                 font-family: 'Courier New', monospace;
-                                font-size: 9px;
-                                line-height: 1.1;
+                                font-size: 11.7px;
+                                line-height: 1.3;
                                 background: white;
                                 position: relative;
                                 overflow: hidden;
+                                margin: 0 auto;
                             }
                             
                             .card-content {
@@ -816,32 +753,25 @@
                             .card-line {
                                 display: flex;
                                 justify-content: space-between;
-                                margin-bottom: 0.5mm;
+                                margin-bottom: 0.8mm;
                                 white-space: nowrap;
                             }
                             
                             .card-divider {
-                                margin: 1mm 0;
+                                margin: 1.3mm 0;
                             }
                             
                             .card-table {
                                 width: 100%;
                                 border-collapse: collapse;
-                                font-size: 8px;
-                                margin-top: 1mm;
+                                font-size: 10.4px;
+                                margin-top: 1.3mm;
                             }
                             
                             .card-table td {
-                                padding: 0.5mm;
+                                padding: 0.65mm;
                                 text-align: center;
-                                height: 4mm;
-                                border: none;
-                            }
-                            
-                            .card-table th {
-                                padding: 0.5mm;
-                                text-align: center;
-                                font-weight: bold;
+                                height: 5.2mm;
                                 border: none;
                             }
                             
@@ -856,9 +786,9 @@
                                     width: 86mm; 
                                     height: 190mm; 
                                     page-break-after: always; 
-                                    margin: 0 auto 10mm; 
+                                    margin: 0 auto; 
                                     box-shadow: none; 
-                                    font-size: 9px;
+                                    font-size: 11.7px;
                                 }
                                 @page { 
                                     margin: 0; 
