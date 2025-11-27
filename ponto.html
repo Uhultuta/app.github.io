@@ -199,6 +199,7 @@
             position: relative;
             overflow: hidden;
             border: 1px solid #ccc;
+            background-image: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="86mm" height="190mm" viewBox="0 0 86 190"><rect x="0" y="0" width="86" height="190" fill="white" stroke="black" stroke-width="0.1"/></svg>');
         }
 
         .card-content {
@@ -209,10 +210,11 @@
             position: relative;
         }
 
-        /* Posicionamento absoluto para as informações variáveis */
+        /* Posicionamento absoluto para as informações variáveis - AJUSTADO */
         .variable-field {
             position: absolute;
             font-weight: bold;
+            white-space: nowrap;
         }
 
         /* Fonte 15% menor para os horários */
@@ -220,23 +222,23 @@
             font-size: 11.44px; /* 15% menor que 13.455px */
         }
 
-        /* Posições específicas baseadas no cartão físico */
-        .n-ordem { top: 15mm; left: 10mm; }
-        .empregador { top: 15mm; left: 45mm; }
-        .atividade-economica { top: 20mm; left: 10mm; }
-        .cnpj { top: 20mm; left: 45mm; }
-        .endereco { top: 25mm; left: 10mm; }
-        .funcionario { top: 30mm; left: 10mm; }
-        .ctps { top: 35mm; left: 10mm; }
-        .registro { top: 35mm; left: 30mm; }
-        .funcao { top: 35mm; left: 50mm; }
-        .mes { top: 40mm; left: 10mm; }
+        /* POSIÇÕES ESPECÍFICAS AJUSTADAS PARA ALINHAR COM O CARTÃO FÍSICO */
+        .n-ordem { top: 8mm; left: 10mm; }
+        .empregador { top: 8mm; left: 45mm; }
+        .atividade-economica { top: 13mm; left: 10mm; }
+        .cnpj { top: 13mm; left: 45mm; }
+        .endereco { top: 18mm; left: 10mm; }
+        .funcionario { top: 23mm; left: 10mm; width: 75mm; } /* AJUSTADO */
+        .ctps { top: 28mm; left: 10mm; width: 18mm; }
+        .registro { top: 28mm; left: 30mm; width: 18mm; }
+        .funcao { top: 28mm; left: 50mm; width: 35mm; } /* AJUSTADO */
+        .mes { top: 33mm; left: 10mm; }
         
         /* Horário de trabalho com fonte 15% menor */
-        .entrada { top: 47mm; left: 25mm; }
-        .intervalo { top: 47mm; left: 40mm; }
-        .saida { top: 47mm; left: 60mm; }
-        .rep-semanal { top: 47mm; left: 72mm; }
+        .entrada { top: 40mm; left: 25mm; }
+        .intervalo { top: 40mm; left: 40mm; }
+        .saida { top: 40mm; left: 60mm; }
+        .rep-semanal { top: 40mm; left: 72mm; }
 
         .selected-count {
             background: #e74c3c;
@@ -569,103 +571,90 @@
                 <html>
                 <head>
                     <title>Cartões de Ponto</title>
+                    <meta charset="UTF-8">
                     <style>
+                        /* RESET COMPLETO */
                         * {
                             margin: 0 !important;
                             padding: 0 !important;
+                            border: 0 !important;
                             box-sizing: border-box;
                         }
                         
-                        body, html {
+                        html, body {
                             margin: 0 !important;
                             padding: 0 !important;
-                            width: 100%;
-                            height: 100%;
-                            font-family: 'Courier New', monospace;
+                            width: 100% !important;
+                            height: 100% !important;
+                            font-family: 'Courier New', monospace !important;
+                            background: white !important;
                         }
                         
-                        .card-container {
-                            width: 86mm;
-                            height: 190mm;
-                            page-break-after: always;
-                            position: relative;
-                            background: white;
-                            font-size: 13.455px;
-                            line-height: 1.3;
-                            overflow: hidden;
-                        }
-                        
-                        .card-content {
-                            padding: 3mm;
-                            height: 100%;
-                            position: relative;
+                        .page {
+                            width: 86mm !important;
+                            height: 190mm !important;
+                            page-break-after: always !important;
+                            position: relative !important;
+                            background: white !important;
+                            font-size: 13.455px !important;
+                            line-height: 1.3 !important;
+                            overflow: hidden !important;
+                            margin: 0 !important;
+                            padding: 0 !important;
                         }
                         
                         .variable-field {
-                            position: absolute;
-                            font-weight: bold;
+                            position: absolute !important;
+                            font-weight: bold !important;
+                            white-space: nowrap !important;
                         }
                         
                         .horario-field {
-                            font-size: 11.44px;
+                            font-size: 11.44px !important;
                         }
                         
-                        .n-ordem { top: 15mm; left: 10mm; }
-                        .empregador { top: 15mm; left: 45mm; }
-                        .atividade-economica { top: 20mm; left: 10mm; }
-                        .cnpj { top: 20mm; left: 45mm; }
-                        .endereco { top: 25mm; left: 10mm; }
-                        .funcionario { top: 30mm; left: 10mm; }
-                        .ctps { top: 35mm; left: 10mm; }
-                        .registro { top: 35mm; left: 30mm; }
-                        .funcao { top: 35mm; left: 50mm; }
-                        .mes { top: 40mm; left: 10mm; }
-                        .entrada { top: 47mm; left: 25mm; }
-                        .intervalo { top: 47mm; left: 40mm; }
-                        .saida { top: 47mm; left: 60mm; }
-                        .rep-semanal { top: 47mm; left: 72mm; }
+                        /* POSIÇÕES AJUSTADAS PARA ALINHAR COM O CARTÃO FÍSICO */
+                        .n-ordem { top: 2mm !important; left: 10mm !important; }
+                        .empregador { top: 2mm !important; left: 45mm !important; }
+                        .atividade-economica { top: 7mm !important; left: 10mm !important; }
+                        .cnpj { top: 7mm !important; left: 45mm !important; }
+                        .endereco { top: 12mm !important; left: 10mm !important; }
+                        .funcionario { top: 17mm !important; left: 10mm !important; width: 75mm !important; }
+                        .ctps { top: 22mm !important; left: 10mm !important; width: 18mm !important; }
+                        .registro { top: 22mm !important; left: 30mm !important; width: 18mm !important; }
+                        .funcao { top: 22mm !important; left: 50mm !important; width: 35mm !important; }
+                        .mes { top: 27mm !important; left: 10mm !important; }
+                        .entrada { top: 34mm !important; left: 25mm !important; }
+                        .intervalo { top: 34mm !important; left: 40mm !important; }
+                        .saida { top: 34mm !important; left: 60mm !important; }
+                        .rep-semanal { top: 34mm !important; left: 72mm !important; }
                         
                         @page {
                             margin: 0 !important;
-                            padding: 0 !important;
                             size: 86mm 190mm;
-                        }
-                        
-                        @media print {
-                            body, html {
-                                margin: 0 !important;
-                                padding: 0 !important;
-                            }
-                            .card-container {
-                                margin: 0 !important;
-                                padding: 0 !important;
-                                border: none;
-                            }
                         }
                     </style>
                 </head>
-                <body>
+                <body style="margin: 0 !important; padding: 0 !important;">
             `;
             
             employeesToPrint.forEach(employee => {
                 printContent += `
-                    <div class="card-container">
-                        <div class="card-content">
-                            <div class="variable-field n-ordem"><strong>${employee.id.toString().padStart(2, '0')}</strong></div>
-                            <div class="variable-field empregador"><strong>ICARAI P HOTEL</strong></div>
-                            <div class="variable-field atividade-economica"><strong>HOTEL</strong></div>
-                            <div class="variable-field cnpj"><strong>27.890.847/0001-45</strong></div>
-                            <div class="variable-field endereco"><strong>R BELISÁRIO AUGUSTO, Nº.21 – ICARAI</strong></div>
-                            <div class="variable-field funcionario"><strong>${employee.name}</strong></div>
-                            <div class="variable-field ctps"><strong>${employee.ctps}</strong></div>
-                            <div class="variable-field registro"><strong>${employee.registro}</strong></div>
-                            <div class="variable-field funcao"><strong>${employee.role}</strong></div>
-                            <div class="variable-field mes"><strong>${month} ${year}</strong></div>
-                            <div class="variable-field entrada horario-field"><strong>${employee.entrada}</strong></div>
-                            <div class="variable-field intervalo horario-field"><strong>${employee.intervalo}</strong></div>
-                            <div class="variable-field saida horario-field"><strong>${employee.saida}</strong></div>
-                            <div class="variable-field rep-semanal horario-field"><strong>12/36</strong></div>
-                        </div>
+                    <div class="page">
+                        <div class="variable-field n-ordem"><strong>${employee.id.toString().padStart(2, '0')}</strong></div>
+                        <div class="variable-field empregador"><strong>ICARAI P HOTEL</strong></div>
+                        <div class="variable-field atividade-economica"><strong>HOTEL</strong></div>
+                        <div class="variable-field cnpj"><strong>27.890.847/0001-45</strong></div>
+                        <div class="variable-field endereco"><strong>R BELISÁRIO AUGUSTO, Nº.21 – ICARAI</strong></div>
+                        <div class="variable-field funcionario"><strong>${employee.name}</strong></div>
+                        <div class="variable-field ctps"><strong>${employee.ctps}</strong></div>
+                        <div class="variable-field registro"><strong>${employee.registro}</strong></div>
+                        <div class="variable-field funcao"><strong>${employee.role}</strong></div>
+                        <div class="variable-field mes"><strong>${month} ${year}</strong></div>
+                        <div class="variable-field entrada horario-field"><strong>${employee.entrada}</strong></div>
+                        <div class="variable-field intervalo horario-field"><strong>${employee.intervalo}</strong></div>
+                        <div class="variable-field saida horario-field"><strong>${employee.saida}</strong></div>
+                        <div class="variable-field rep-semanal horario-field"><strong>12/36</strong></div>
                     </div>
                 `;
             });
