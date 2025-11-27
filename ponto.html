@@ -209,7 +209,7 @@
             position: relative;
         }
 
-        /* Posicionamento absoluto para as informações variáveis - AJUSTADO */
+        /* Posicionamento absoluto para as informações variáveis */
         .variable-field {
             position: absolute;
             font-weight: bold;
@@ -218,7 +218,7 @@
 
         /* Fonte 15% menor para os horários */
         .horario-field {
-            font-size: 11.44px; /* 15% menor que 13.455px */
+            font-size: 11.44px;
         }
 
         /* POSIÇÕES ESPECÍFICAS AJUSTADAS PARA ALINHAR COM O CARTÃO FÍSICO */
@@ -231,9 +231,10 @@
         .ctps { top: 28mm; left: 10mm; width: 18mm; }
         .registro { top: 28mm; left: 30mm; width: 18mm; }
         .funcao { top: 28mm; left: 50mm; width: 35mm; }
-        .mes { top: 33mm; left: 10mm; }
+        .mes { top: 34mm; left: 10mm; } /* AJUSTADO: 6mm mais acima (40mm - 6mm = 34mm) */
+        .ano { top: 34mm; left: 60mm; } /* AJUSTADO: 6mm mais acima (40mm - 6mm = 34mm) */
         
-        /* Horário de trabalho com fonte 15% menor - AJUSTADO 6mm PARA BAIXO */
+        /* Horário de trabalho com fonte 15% menor */
         .entrada { top: 46mm; left: 25mm; }
         .intervalo { top: 46mm; left: 40mm; }
         .saida { top: 46mm; left: 60mm; }
@@ -524,7 +525,6 @@
             
             preview.innerHTML = `
                 <div class="card-content">
-                    <!-- Apenas as informações variáveis são impressas nos espaços pré-definidos -->
                     <div class="variable-field n-ordem"><strong>${employee.id.toString().padStart(2, '0')}</strong></div>
                     <div class="variable-field empregador"><strong>ICARAI P HOTEL</strong></div>
                     <div class="variable-field atividade-economica"><strong>HOTEL</strong></div>
@@ -534,9 +534,9 @@
                     <div class="variable-field ctps"><strong>${employee.ctps}</strong></div>
                     <div class="variable-field registro"><strong>${employee.registro}</strong></div>
                     <div class="variable-field funcao"><strong>${employee.role}</strong></div>
-                    <div class="variable-field mes"><strong>${month} ${year}</strong></div>
+                    <div class="variable-field mes"><strong>${month}</strong></div>
+                    <div class="variable-field ano"><strong>${year}</strong></div>
                     
-                    <!-- Horário de trabalho com fonte 15% menor -->
                     <div class="variable-field entrada horario-field"><strong>${employee.entrada}</strong></div>
                     <div class="variable-field intervalo horario-field"><strong>${employee.intervalo}</strong></div>
                     <div class="variable-field saida horario-field"><strong>${employee.saida}</strong></div>
@@ -572,7 +572,6 @@
                     <title>Cartões de Ponto</title>
                     <meta charset="UTF-8">
                     <style>
-                        /* RESET COMPLETO */
                         * {
                             margin: 0 !important;
                             padding: 0 !important;
@@ -612,7 +611,6 @@
                             font-size: 11.44px !important;
                         }
                         
-                        /* POSIÇÕES AJUSTADAS - HORÁRIOS 6mm MAIS ABAIXO */
                         .n-ordem { top: 8mm !important; left: 10mm !important; }
                         .empregador { top: 8mm !important; left: 45mm !important; }
                         .atividade-economica { top: 13mm !important; left: 10mm !important; }
@@ -622,7 +620,8 @@
                         .ctps { top: 28mm !important; left: 10mm !important; width: 18mm !important; }
                         .registro { top: 28mm !important; left: 30mm !important; width: 18mm !important; }
                         .funcao { top: 28mm !important; left: 50mm !important; width: 35mm !important; }
-                        .mes { top: 33mm !important; left: 10mm !important; }
+                        .mes { top: 34mm !important; left: 10mm !important; }
+                        .ano { top: 34mm !important; left: 60mm !important; }
                         .entrada { top: 46mm !important; left: 25mm !important; }
                         .intervalo { top: 46mm !important; left: 40mm !important; }
                         .saida { top: 46mm !important; left: 60mm !important; }
@@ -649,7 +648,8 @@
                         <div class="variable-field ctps"><strong>${employee.ctps}</strong></div>
                         <div class="variable-field registro"><strong>${employee.registro}</strong></div>
                         <div class="variable-field funcao"><strong>${employee.role}</strong></div>
-                        <div class="variable-field mes"><strong>${month} ${year}</strong></div>
+                        <div class="variable-field mes"><strong>${month}</strong></div>
+                        <div class="variable-field ano"><strong>${year}</strong></div>
                         <div class="variable-field entrada horario-field"><strong>${employee.entrada}</strong></div>
                         <div class="variable-field intervalo horario-field"><strong>${employee.intervalo}</strong></div>
                         <div class="variable-field saida horario-field"><strong>${employee.saida}</strong></div>
@@ -668,7 +668,6 @@
             printWindow.document.write(printContent);
             printWindow.document.close();
             
-            // Aguardar o conteúdo carregar antes de imprimir
             setTimeout(() => {
                 printWindow.print();
                 setTimeout(() => printWindow.close(), 100);
