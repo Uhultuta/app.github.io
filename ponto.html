@@ -221,24 +221,24 @@
             font-size: 11.44px;
         }
 
-        /* POSIÇÕES ESPECÍFICAS AJUSTADAS PARA ALINHAR COM O CARTÃO FÍSICO */
-        .n-ordem { top: 8mm; left: 10mm; }
-        .empregador { top: 8mm; left: 45mm; }
-        .atividade-economica { top: 13mm; left: 10mm; }
-        .cnpj { top: 13mm; left: 45mm; }
-        .endereco { top: 18mm; left: 10mm; }
-        .funcionario { top: 23mm; left: 10mm; width: 75mm; }
-        .ctps { top: 28mm; left: 10mm; width: 18mm; }
-        .registro { top: 28mm; left: 30mm; width: 18mm; }
-        .funcao { top: 40mm; left: 54mm; width: 35mm; } /* AJUSTADO: 6mm para a esquerda (60mm - 6mm = 54mm) */
-        .mes { top: 34mm; left: 10mm; }
-        .ano { top: 34mm; left: 60mm; }
+        /* POSIÇÕES ESPECÍFICAS AJUSTADAS - TODOS OS CAMPOS 6MM MAIS PARA ESQUERDA */
+        .n-ordem { top: 6mm; left: 4mm; } /* ANTES: 10mm, AGORA: 4mm */
+        .empregador { top: 6mm; left: 39mm; } /* ANTES: 45mm, AGORA: 39mm */
+        .atividade-economica { top: 13mm; left: 4mm; } /* ANTES: 10mm, AGORA: 4mm */
+        .cnpj { top: 13mm; left: 39mm; } /* ANTES: 45mm, AGORA: 39mm */
+        .endereco { top: 18mm; left: 4mm; } /* ANTES: 10mm, AGORA: 4mm */
+        .funcionario { top: 23mm; left: 4mm; width: 75mm; } /* ANTES: 10mm, AGORA: 4mm */
+        .ctps { top: 28mm; left: 4mm; width: 18mm; } /* ANTES: 10mm, AGORA: 4mm */
+        .registro { top: 28mm; left: 24mm; width: 18mm; } /* ANTES: 30mm, AGORA: 24mm */
+        .funcao { top: 40mm; left: 48mm; width: 35mm; } /* ANTES: 54mm, AGORA: 48mm */
+        .mes { top: 34mm; left: 4mm; } /* ANTES: 10mm, AGORA: 4mm */
+        .ano { top: 34mm; left: 54mm; } /* ANTES: 60mm, AGORA: 54mm */
         
-        /* Horário de trabalho com fonte 15% menor - 2mm mais em baixo */
-        .entrada { top: 48mm; left: 25mm; }
-        .intervalo { top: 48mm; left: 40mm; }
-        .saida { top: 48mm; left: 60mm; }
-        .rep-semanal { top: 48mm; left: 72mm; }
+        /* Horário de trabalho com fonte 15% menor */
+        .entrada { top: 48mm; left: 19mm; } /* ANTES: 25mm, AGORA: 19mm */
+        .intervalo { top: 48mm; left: 34mm; } /* ANTES: 40mm, AGORA: 34mm */
+        .saida { top: 48mm; left: 54mm; } /* ANTES: 60mm, AGORA: 54mm */
+        .rep-semanal { top: 48mm; left: 66mm; } /* ANTES: 72mm, AGORA: 66mm */
 
         .selected-count {
             background: #e74c3c;
@@ -611,21 +611,22 @@
                             font-size: 11.44px !important;
                         }
                         
-                        .n-ordem { top: 8mm !important; left: 10mm !important; }
-                        .empregador { top: 8mm !important; left: 45mm !important; }
-                        .atividade-economica { top: 13mm !important; left: 10mm !important; }
-                        .cnpj { top: 13mm !important; left: 45mm !important; }
-                        .endereco { top: 18mm !important; left: 10mm !important; }
-                        .funcionario { top: 23mm !important; left: 10mm !important; width: 75mm !important; }
-                        .ctps { top: 28mm !important; left: 10mm !important; width: 18mm !important; }
-                        .registro { top: 28mm !important; left: 30mm !important; width: 18mm !important; }
-                        .funcao { top: 40mm !important; left: 54mm !important; width: 35mm !important; }
-                        .mes { top: 34mm !important; left: 10mm !important; }
-                        .ano { top: 34mm !important; left: 60mm !important; }
-                        .entrada { top: 48mm !important; left: 25mm !important; }
-                        .intervalo { top: 48mm !important; left: 40mm !important; }
-                        .saida { top: 48mm !important; left: 60mm !important; }
-                        .rep-semanal { top: 48mm !important; left: 72mm !important; }
+                        /* POSIÇÕES AJUSTADAS PARA IMPRESSÃO - TODOS OS CAMPOS 6MM MAIS PARA ESQUERDA */
+                        .n-ordem { top: 6mm !important; left: 4mm !important; }
+                        .empregador { top: 6mm !important; left: 39mm !important; }
+                        .atividade-economica { top: 13mm !important; left: 4mm !important; }
+                        .cnpj { top: 13mm !important; left: 39mm !important; }
+                        .endereco { top: 18mm !important; left: 4mm !important; }
+                        .funcionario { top: 23mm !important; left: 4mm !important; width: 75mm !important; }
+                        .ctps { top: 28mm !important; left: 4mm !important; width: 18mm !important; }
+                        .registro { top: 28mm !important; left: 24mm !important; width: 18mm !important; }
+                        .funcao { top: 40mm !important; left: 48mm !important; width: 35mm !important; }
+                        .mes { top: 34mm !important; left: 4mm !important; }
+                        .ano { top: 34mm !important; left: 54mm !important; }
+                        .entrada { top: 48mm !important; left: 19mm !important; }
+                        .intervalo { top: 48mm !important; left: 34mm !important; }
+                        .saida { top: 48mm !important; left: 54mm !important; }
+                        .rep-semanal { top: 48mm !important; left: 66mm !important; }
                         
                         @page {
                             margin: 0 !important;
