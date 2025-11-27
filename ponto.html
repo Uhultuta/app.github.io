@@ -148,16 +148,6 @@
             transform: translateY(-2px);
         }
 
-        .btn-secondary {
-            background: #95a5a6;
-            color: white;
-        }
-
-        .btn-secondary:hover {
-            background: #7f8c8d;
-            transform: translateY(-2px);
-        }
-
         .btn-success {
             background: #27ae60;
             color: white;
@@ -190,11 +180,12 @@
             width: 86mm;
             height: 190mm;
             font-family: 'Courier New', monospace;
-            font-size: 13.455px; /* 15% maior que 11.7px */
+            font-size: 13.455px;
             line-height: 1.3;
             background: white;
             position: relative;
             overflow: hidden;
+            border: 1px solid #ccc;
         }
 
         .card-content {
@@ -202,35 +193,37 @@
             height: 100%;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
-        .card-line {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 0.8mm;
-            white-space: nowrap;
+        /* Posicionamento absoluto para as informações variáveis */
+        .variable-field {
+            position: absolute;
+            font-weight: bold;
         }
 
-        .card-section {
-            margin-bottom: 1.3mm;
+        /* Fonte 15% menor para os horários */
+        .horario-field {
+            font-size: 11.44px; /* 15% menor que 13.455px */
         }
 
-        .card-divider {
-            margin: 1.3mm 0;
-        }
-
-        .card-table {
-            width: 100%;
-            border-collapse: collapse;
-            font-size: 11.96px; /* 15% maior que 10.4px */
-            margin-top: 1.3mm;
-        }
-
-        .card-table td {
-            padding: 0.65mm;
-            text-align: center;
-            height: 5.2mm;
-        }
+        /* Posições específicas baseadas no cartão físico */
+        .n-ordem { top: 15mm; left: 10mm; }
+        .empregador { top: 15mm; left: 45mm; }
+        .atividade-economica { top: 20mm; left: 10mm; }
+        .cnpj { top: 20mm; left: 45mm; }
+        .endereco { top: 25mm; left: 10mm; }
+        .funcionario { top: 30mm; left: 10mm; }
+        .ctps { top: 35mm; left: 10mm; }
+        .registro { top: 35mm; left: 30mm; }
+        .funcao { top: 35mm; left: 50mm; }
+        .mes { top: 40mm; left: 10mm; }
+        
+        /* Horário de trabalho com fonte 15% menor */
+        .entrada { top: 47mm; left: 25mm; }
+        .intervalo { top: 47mm; left: 40mm; }
+        .saida { top: 47mm; left: 60mm; }
+        .rep-semanal { top: 47mm; left: 72mm; }
 
         .selected-count {
             background: #e74c3c;
@@ -343,7 +336,7 @@
                             <option value="MARÇO">Março</option>
                             <option value="ABRIL">Abril</option>
                             <option value="MAIO">Maio</option>
-                            <option value="JUNHO">Junho</option>
+                            <option value="JUNHO" selected>Junho</option>
                             <option value="JULHO">Julho</option>
                             <option value="AGOSTO">Agosto</option>
                             <option value="SETEMBRO">Setembro</option>
@@ -390,7 +383,7 @@
     </div>
 
     <script>
-        // Dados COMPLETOS dos 51 funcionários (baseado no PDF fornecido)
+        // Dados COMPLETOS dos 51 funcionários
         const employees = [
             { id: 1, name: "ANDERSON LUIS DE MELO", role: "GARÇON", admission: "22/04/2021", entrada: "05:30", intervalo: "10:00/11:00", saida: "13:50", ctps: "", registro: "" },
             { id: 2, name: "ANDRE DA CRUZ ANJOS", role: "SUB CHEFE DE CC", admission: "04/04/2023", entrada: "06:30", intervalo: "09:30/10:30", saida: "13:50", ctps: "", registro: "" },
@@ -451,11 +444,9 @@
         function initializeApp() {
             renderEmployeeList();
             updateSelectedCount();
-            // Mostrar preview do primeiro funcionário por padrão
             if (employees.length > 0) {
                 showPreview(employees[0]);
             }
-            // Atualizar preview ao mudar mês/ano
             document.getElementById('monthSelect').addEventListener('change', updatePreview);
             document.getElementById('yearInput').addEventListener('change', updatePreview);
         }
@@ -503,7 +494,6 @@
             updateSelectedCount();
             renderEmployeeList();
             
-            // Atualizar preview com o funcionário selecionado
             const employee = employees.find(emp => emp.id === employeeId);
             if (employee) {
                 showPreview(employee);
@@ -551,78 +541,27 @@
             const { month, year } = getMonthYear();
             const preview = document.getElementById('cardPreview');
             
-            // Formatar nome para caber no espaço
-            const shortName = employee.name.length > 20 ? 
-                employee.name.substring(0, 17) + '...' : employee.name;
-            
             preview.innerHTML = `
                 <div class="card-content">
-                    <!-- INVERTIDO: N° Ordem lado ESQUERDO e Empregador lado DIREITO -->
-                    <div class="card-line">
-                        <span><strong>05</strong></span>
-                        <span><strong>ICARAI P HOTEL</strong></span>
-                    </div>
+                    <!-- Apenas as informações variáveis são impressas nos espaços pré-definidos -->
+                    <div class="variable-field n-ordem"><strong>05</strong></div>
+                    <div class="variable-field empregador"><strong>ICARAI P HOTEL</strong></div>
+                    <div class="variable-field atividade-economica"><strong>HOTEL</strong></div>
+                    <div class="variable-field cnpj"><strong>27.890.847/0001-45</strong></div>
+                    <div class="variable-field endereco"><strong>R BELISÁRIO AUGUSTO, Nº.21 – ICARAI</strong></div>
+                    <div class="variable-field funcionario"><strong>${employee.name}</strong></div>
+                    <div class="variable-field ctps"><strong>${employee.ctps}</strong></div>
+                    <div class="variable-field registro"><strong>${employee.registro}</strong></div>
+                    <div class="variable-field funcao"><strong>${employee.role}</strong></div>
+                    <div class="variable-field mes"><strong>${month} ${year}</strong></div>
                     
-                    <div class="card-line">
-                        <span></span>
-                        <span></span>
-                    </div>
-                    
-                    <!-- Dados do funcionário -->
-                    <div class="card-line">
-                        <span><strong>${shortName}</strong></span>
-                    </div>
-                    
-                    <div class="card-line">
-                        <span><strong>${month} ${year}</strong></span>
-                    </div>
-                    
-                    <div class="card-line">
-                        <span>${employee.ctps}</span>
-                        <span>${employee.registro}</span>
-                        <span><strong>${employee.role}</strong></span>
-                    </div>
-                    
-                    <div class="card-divider"></div>
-                    
-                    <!-- Horário de trabalho -->
-                    <div class="card-line">
-                        <span><strong>${employee.entrada}</strong></span>
-                        <span><strong>${employee.intervalo}</strong></span>
-                        <span><strong>${employee.saida}</strong></span>
-                        <span><strong>12/36</strong></span>
-                    </div>
-                    
-                    <div class="card-divider"></div>
-                    
-                    <!-- Tabela da 1ª quinzena SEM BORDAS, SEM NUMERAÇÃO, SEM CABEÇALHOS E SEM "1ª QUINZENA" -->
-                    <table class="card-table" style="border: none; margin-top: 1.3mm;">
-                        <tbody>
-                            ${generateDaysTable()}
-                        </tbody>
-                    </table>
+                    <!-- Horário de trabalho com fonte 15% menor -->
+                    <div class="variable-field entrada horario-field"><strong>${employee.entrada}</strong></div>
+                    <div class="variable-field intervalo horario-field"><strong>${employee.intervalo}</strong></div>
+                    <div class="variable-field saida horario-field"><strong>${employee.saida}</strong></div>
+                    <div class="variable-field rep-semanal horario-field"><strong>12/36</strong></div>
                 </div>
             `;
-        }
-
-        // Gerar tabela de dias (1-15) SEM BORDAS, SEM NUMERAÇÃO E SEM CABEÇALHOS
-        function generateDaysTable() {
-            let tableHTML = '';
-            for (let day = 1; day <= 15; day++) {
-                tableHTML += `
-                    <tr>
-                        <td style="border: none;"></td>
-                        <td style="border: none;"></td>
-                        <td style="border: none;"></td>
-                        <td style="border: none;"></td>
-                        <td style="border: none;"></td>
-                        <td style="border: none;"></td>
-                        <td style="border: none;"></td>
-                        <td style="border: none;"></td>
-                    </tr>
-                `;
-            }
-            return tableHTML;
         }
 
         // Gerar cartões para funcionários selecionados
@@ -641,63 +580,32 @@
             printCards(employees);
         }
 
-        // Função principal de impressão de cartões - 1 CARTÃO POR PÁGINA
+        // Função principal de impressão de cartões
         function printCards(employeesToPrint) {
             const { month, year } = getMonthYear();
             let printContent = '<div class="printable-card">';
             
             employeesToPrint.forEach(employee => {
-                // APENAS 1 CARTÃO POR PÁGINA
-                const shortName = employee.name.length > 20 ? 
-                    employee.name.substring(0, 17) + '...' : employee.name;
-                
                 printContent += `
                     <div class="card-preview">
                         <div class="card-content">
-                            <!-- INVERTIDO: N° Ordem lado ESQUERDO e Empregador lado DIREITO -->
-                            <div class="card-line">
-                                <span><strong>05</strong></span>
-                                <span><strong>ICARAI P HOTEL</strong></span>
-                            </div>
+                            <!-- Apenas as informações variáveis são impressas nos espaços pré-definidos -->
+                            <div class="variable-field n-ordem"><strong>05</strong></div>
+                            <div class="variable-field empregador"><strong>ICARAI P HOTEL</strong></div>
+                            <div class="variable-field atividade-economica"><strong>HOTEL</strong></div>
+                            <div class="variable-field cnpj"><strong>27.890.847/0001-45</strong></div>
+                            <div class="variable-field endereco"><strong>R BELISÁRIO AUGUSTO, Nº.21 – ICARAI</strong></div>
+                            <div class="variable-field funcionario"><strong>${employee.name}</strong></div>
+                            <div class="variable-field ctps"><strong>${employee.ctps}</strong></div>
+                            <div class="variable-field registro"><strong>${employee.registro}</strong></div>
+                            <div class="variable-field funcao"><strong>${employee.role}</strong></div>
+                            <div class="variable-field mes"><strong>${month} ${year}</strong></div>
                             
-                            <div class="card-line">
-                                <span></span>
-                                <span></span>
-                            </div>
-                            
-                            <!-- Dados do funcionário -->
-                            <div class="card-line">
-                                <span><strong>${shortName}</strong></span>
-                            </div>
-                            
-                            <div class="card-line">
-                                <span><strong>${month} ${year}</strong></span>
-                            </div>
-                            
-                            <div class="card-line">
-                                <span>${employee.ctps}</span>
-                                <span>${employee.registro}</span>
-                                <span><strong>${employee.role}</strong></span>
-                            </div>
-                            
-                            <div class="card-divider"></div>
-                            
-                            <!-- Horário de trabalho -->
-                            <div class="card-line">
-                                <span><strong>${employee.entrada}</strong></span>
-                                <span><strong>${employee.intervalo}</strong></span>
-                                <span><strong>${employee.saida}</strong></span>
-                                <span><strong>12/36</strong></span>
-                            </div>
-                            
-                            <div class="card-divider"></div>
-                            
-                            <!-- Tabela da 1ª quinzena SEM BORDAS, SEM NUMERAÇÃO, SEM CABEÇALHOS E SEM "1ª QUINZENA" -->
-                            <table class="card-table" style="border: none; margin-top: 1.3mm;">
-                                <tbody>
-                                    ${generateDaysTable()}
-                                </tbody>
-                            </table>
+                            <!-- Horário de trabalho com fonte 15% menor -->
+                            <div class="variable-field entrada horario-field"><strong>${employee.entrada}</strong></div>
+                            <div class="variable-field intervalo horario-field"><strong>${employee.intervalo}</strong></div>
+                            <div class="variable-field saida horario-field"><strong>${employee.saida}</strong></div>
+                            <div class="variable-field rep-semanal horario-field"><strong>12/36</strong></div>
                         </div>
                     </div>
                 `;
@@ -742,32 +650,37 @@
                                 height: 100%;
                                 display: flex;
                                 flex-direction: column;
+                                position: relative;
                             }
                             
-                            .card-line {
-                                display: flex;
-                                justify-content: space-between;
-                                margin-bottom: 0.8mm;
-                                white-space: nowrap;
+                            /* Posicionamento absoluto para as informações variáveis */
+                            .variable-field {
+                                position: absolute;
+                                font-weight: bold;
                             }
+
+                            /* Fonte 15% menor para os horários */
+                            .horario-field {
+                                font-size: 11.44px; /* 15% menor que 13.455px */
+                            }
+
+                            /* Posições específicas baseadas no cartão físico */
+                            .n-ordem { top: 15mm; left: 10mm; }
+                            .empregador { top: 15mm; left: 45mm; }
+                            .atividade-economica { top: 20mm; left: 10mm; }
+                            .cnpj { top: 20mm; left: 45mm; }
+                            .endereco { top: 25mm; left: 10mm; }
+                            .funcionario { top: 30mm; left: 10mm; }
+                            .ctps { top: 35mm; left: 10mm; }
+                            .registro { top: 35mm; left: 30mm; }
+                            .funcao { top: 35mm; left: 50mm; }
+                            .mes { top: 40mm; left: 10mm; }
                             
-                            .card-divider {
-                                margin: 1.3mm 0;
-                            }
-                            
-                            .card-table {
-                                width: 100%;
-                                border-collapse: collapse;
-                                font-size: 11.96px;
-                                margin-top: 1.3mm;
-                            }
-                            
-                            .card-table td {
-                                padding: 0.65mm;
-                                text-align: center;
-                                height: 5.2mm;
-                                border: none;
-                            }
+                            /* Horário de trabalho com fonte 15% menor */
+                            .entrada { top: 47mm; left: 25mm; }
+                            .intervalo { top: 47mm; left: 40mm; }
+                            .saida { top: 47mm; left: 60mm; }
+                            .rep-semanal { top: 47mm; left: 72mm; }
                             
                             @media print {
                                 body { margin: 0; padding: 0; }
