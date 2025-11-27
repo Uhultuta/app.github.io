@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Sistema de Cartão de Ponto</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         * {
             margin: 0;
@@ -138,6 +139,7 @@
             display: flex;
             gap: 10px;
             margin-top: 20px;
+            flex-wrap: wrap;
         }
 
         .btn {
@@ -168,6 +170,26 @@
 
         .btn-success:hover {
             background: #219a52;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #138496;
             transform: translateY(-2px);
         }
 
@@ -284,6 +306,27 @@
             flex: 1;
         }
 
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: block;
+            padding: 12px 24px;
+            background: #f39c12;
+            color: white;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .file-label:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -351,6 +394,13 @@
                     <button class="btn btn-success" onclick="generateAll()">
                         Imprimir Todos
                     </button>
+                    <button class="btn btn-warning" onclick="exportToExcel()">
+                        Exportar para Excel
+                    </button>
+                    <label for="excelFile" class="file-label">
+                        Importar do Excel
+                    </label>
+                    <input type="file" id="excelFile" class="file-input" accept=".xlsx, .xls" onchange="importFromExcel(event)">
                 </div>
             </div>
 
@@ -365,7 +415,7 @@
 
     <script>
         // LISTA DE FUNCIONÁRIOS ATUALIZADA COM OS NOVOS DADOS
-        const employees = [
+        let employees = [
             { id: 1, name: "ARYANNE K. DA SILVA PEREIRA", role: "JOVEM APRENDIZ", admission: "28/03/2025", entrada: "12:00", intervalo: "16:00/16:15", saida: "18:00", ctps: "", registro: "" },
             { id: 2, name: "CARINA ALVES CORDEIRO", role: "GARÇONETE", admission: "28/03/2025", entrada: "05:30", intervalo: "11:00/12:00", saida: "13:50", ctps: "", registro: "" },
             { id: 3, name: "CELIA LUIZA DA SILVA", role: "ARRUMADEIRA", admission: "09/09/2014", entrada: "09:00", intervalo: "12:00/13:00", saida: "17:20", ctps: "", registro: "" },
@@ -665,6 +715,85 @@
                 printWindow.print();
                 setTimeout(() => printWindow.close(), 100);
             }, 250);
+        }
+
+        // Exportar dados para Excel
+        function exportToExcel() {
+            // Preparar dados para exportação
+            const data = employees.map(emp => ({
+                'N Ordem': emp.id,
+                'Nome': emp.name,
+                'Função': emp.role,
+                'Admissão': emp.admission,
+                'Entrada': emp.entrada,
+                'Intervalo': emp.intervalo,
+                'Saída': emp.saida,
+                'CTPS': emp.ctps,
+                'Registro': emp.registro
+            }));
+
+            // Criar planilha
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Funcionários");
+
+            // Exportar arquivo
+            XLSX.writeFile(wb, "cartoes_ponto_funcionarios.xlsx");
+        }
+
+        // Importar dados do Excel
+        function importFromExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    
+                    // Obter primeira planilha
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    // Atualizar dados dos funcionários
+                    updateEmployeesFromExcel(jsonData);
+                    
+                    // Limpar input de arquivo
+                    event.target.value = '';
+                } catch (error) {
+                    alert('Erro ao importar arquivo. Verifique se o formato está correto.');
+                    console.error(error);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Atualizar funcionários com dados do Excel
+        function updateEmployeesFromExcel(excelData) {
+            // Para cada linha do Excel
+            excelData.forEach(row => {
+                const nOrdem = row['N Ordem'];
+                const employee = employees.find(emp => emp.id === nOrdem);
+                
+                if (employee) {
+                    // Atualizar dados do funcionário
+                    if (row['Nome']) employee.name = row['Nome'];
+                    if (row['Função']) employee.role = row['Função'];
+                    if (row['Entrada']) employee.entrada = row['Entrada'];
+                    if (row['Intervalo']) employee.intervalo = row['Intervalo'];
+                    if (row['Saída']) employee.saida = row['Saída'];
+                    if (row['CTPS']) employee.ctps = row['CTPS'];
+                    if (row['Registro']) employee.registro = row['Registro'];
+                }
+            });
+            
+            // Atualizar interface
+            renderEmployeeList();
+            updateSelectedCount();
+            
+            // Mostrar mensagem de sucesso
+            alert(`Dados de ${excelData.length} funcionários atualizados com sucesso!`);
         }
 
         // Inicializar quando a página carregar
