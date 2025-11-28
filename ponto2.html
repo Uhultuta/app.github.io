@@ -231,13 +231,14 @@
             font-size: 11px;
         }
         
-        /* EMPREGADOR - 38mm de distância do número de ordem (4mm + 34mm) */
+        /* EMPREGADOR - MÁXIMO POSSÍVEL DA EXTREMIDADE OPOSTA (direita) */
         .empregador { 
             position: absolute; 
             top: 6mm; 
-            left: 38mm; 
+            right: 4mm; 
             font-weight: bold; 
             font-size: 11px;
+            text-align: right;
         }
         
         .atividade-economica { 
@@ -248,13 +249,14 @@
             font-size: 11px;
         }
         
-        /* CNPJ - 34mm de distância do HOTEL (4mm + 30mm) */
+        /* CNPJ - MÁXIMO POSSÍVEL DA EXTREMIDADE OPOSTA (direita) */
         .cnpj { 
             position: absolute; 
             top: 12mm; 
-            left: 34mm; 
+            right: 4mm; 
             font-weight: bold; 
             font-size: 9px;
+            text-align: right;
         }
         
         .endereco { 
@@ -283,31 +285,36 @@
             font-size: 11px;
         }
         
-        /* ANO - POSIÇÃO CORRIGIDA (15mm mais distante do mês) */
+        /* ANO - MÁXIMO POSSÍVEL DA EXTREMIDADE OPOSTA (direita) */
         .ano { 
             position: absolute; 
             top: 28mm; 
-            left: 40mm; 
+            right: 4mm; 
             font-weight: bold; 
             font-size: 11px;
+            text-align: right;
         }
         
-        /* FUNÇÃO - POSIÇÃO CORRIGIDA (embaixo do ano, alinhada com o ano) */
+        /* FUNÇÃO - MÁXIMO POSSÍVEL DA EXTREMIDADE OPOSTA (direita) */
         .funcao { 
             position: absolute; 
             top: 33mm; 
-            left: 40mm; 
+            right: 4mm; 
             font-weight: bold; 
             font-size: 8px;
+            text-align: right;
         }
         
+        /* HORÁRIOS - CENTRALIZADO */
         .horarios { 
             position: absolute; 
             top: 39mm; 
-            left: 4mm; 
+            left: 50%; 
+            transform: translateX(-50%);
             font-weight: bold;
             font-size: 11px;
             white-space: nowrap;
+            text-align: center;
         }
 
         .selected-count {
@@ -690,13 +697,14 @@
                             font-size: 11px !important;
                         }
                         
-                        /* EMPREGADOR - 38mm de distância do número de ordem (4mm + 34mm) */
+                        /* EMPREGADOR - MÁXIMO POSSÍVEL DA EXTREMIDADE OPOSTA (direita) */
                         .empregador { 
                             position: absolute !important; 
                             top: 6mm !important; 
-                            left: 38mm !important; 
+                            right: 4mm !important; 
                             font-weight: bold !important; 
                             font-size: 11px !important;
+                            text-align: right !important;
                         }
                         
                         .atividade-economica { 
@@ -707,13 +715,14 @@
                             font-size: 11px !important;
                         }
                         
-                        /* CNPJ - 34mm de distância do HOTEL (4mm + 30mm) */
+                        /* CNPJ - MÁXIMO POSSÍVEL DA EXTREMIDADE OPOSTA (direita) */
                         .cnpj { 
                             position: absolute !important; 
                             top: 12mm !important; 
-                            left: 34mm !important; 
+                            right: 4mm !important; 
                             font-weight: bold !important; 
                             font-size: 9px !important;
+                            text-align: right !important;
                         }
                         
                         .endereco { 
@@ -742,31 +751,36 @@
                             font-size: 11px !important;
                         }
                         
-                        /* ANO - POSIÇÃO CORRIGIDA (15mm mais distante do mês) */
+                        /* ANO - MÁXIMO POSSÍVEL DA EXTREMIDADE OPOSTA (direita) */
                         .ano { 
                             position: absolute !important; 
                             top: 28mm !important; 
-                            left: 40mm !important; 
+                            right: 4mm !important; 
                             font-weight: bold !important; 
                             font-size: 11px !important;
+                            text-align: right !important;
                         }
                         
-                        /* FUNÇÃO - POSIÇÃO CORRIGIDA (embaixo do ano, alinhada com o ano) */
+                        /* FUNÇÃO - MÁXIMO POSSÍVEL DA EXTREMIDADE OPOSTA (direita) */
                         .funcao { 
                             position: absolute !important; 
                             top: 33mm !important; 
-                            left: 40mm !important; 
+                            right: 4mm !important; 
                             font-weight: bold !important; 
                             font-size: 8px !important;
+                            text-align: right !important;
                         }
                         
+                        /* HORÁRIOS - CENTRALIZADO */
                         .horarios { 
                             position: absolute !important; 
                             top: 39mm !important; 
-                            left: 4mm !important; 
+                            left: 50% !important; 
+                            transform: translateX(-50%) !important;
                             font-weight: bold !important;
                             font-size: 11px !important;
                             white-space: nowrap !important;
+                            text-align: center !important;
                         }
                         
                         @page {
