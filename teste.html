@@ -1312,6 +1312,41 @@
             height: 16px;
         }
 
+        /* Estilos do Cartão de Ponto */
+        .ponto-container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+
+        .ponto-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .ponto-password {
+            text-align: center;
+            margin: 20px 0;
+        }
+
+        .ponto-password input {
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            width: 100%;
+            max-width: 200px;
+            font-size: 16px;
+            text-align: center;
+            margin: 10px 0;
+        }
+
+        .ponto-content {
+            display: none;
+        }
+
+        .ponto-content.active {
+            display: block;
+        }
+
         @media (max-width: 480px) {
             .tab {
                 padding: 12px 8px;
@@ -1410,6 +1445,7 @@
             <button class="tab" onclick="openTab('lavanderia')">Lavanderia</button>
             <button class="tab" onclick="openTab('vale')">Solicitar Vale</button>
             <button class="tab" onclick="openTab('cotacao')">Cotação</button>
+            <button class="tab" onclick="openTab('ponto')">Cartão de Ponto</button>
         </div>
 
         <!-- Conteúdo Frigobar -->
@@ -1794,6 +1830,71 @@
                 <!-- Preview -->
                 <div class="quotation-preview" id="quotationPreview">
                     <!-- O conteúdo do voucher será gerado aqui dinamicamente -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Conteúdo Cartão de Ponto -->
+        <div id="ponto" class="tab-content">
+            <div class="ponto-container">
+                <div class="ponto-header">
+                    <h2>Sistema de Cartão de Ponto</h2>
+                    <p>Acesso restrito para funcionários autorizados</p>
+                </div>
+                
+                <div class="ponto-password">
+                    <label for="passwordInput">Digite a senha de acesso:</label>
+                    <input type="password" id="passwordInput" placeholder="****">
+                    <button class="vale-btn" onclick="checkPassword()">Acessar</button>
+                </div>
+                
+                <div id="pontoContent" class="ponto-content">
+                    <div class="message message-success">
+                        <p>Acesso concedido! Sistema de Cartão de Ponto carregado.</p>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Funcionário:</label>
+                        <select class="form-select">
+                            <option value="">Selecione um funcionário</option>
+                            <option value="1">Aryanne K. da Silva Pereira</option>
+                            <option value="2">Carina Alves Cordeiro</option>
+                            <option value="3">Célia Luiza da Silva</option>
+                            <!-- Outros funcionários -->
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Mês:</label>
+                        <select class="form-select">
+                            <option value="1">Janeiro</option>
+                            <option value="2">Fevereiro</option>
+                            <option value="3">Março</option>
+                            <option value="4">Abril</option>
+                            <option value="5">Maio</option>
+                            <option value="6">Junho</option>
+                            <option value="7">Julho</option>
+                            <option value="8">Agosto</option>
+                            <option value="9">Setembro</option>
+                            <option value="10">Outubro</option>
+                            <option value="11">Novembro</option>
+                            <option value="12">Dezembro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Ano:</label>
+                        <input type="number" class="form-input" value="2025" min="2020" max="2030">
+                    </div>
+                    
+                    <div class="action-buttons">
+                        <button class="whatsapp-btn" onclick="alert('Funcionalidade de impressão será implementada')">
+                            <i class="fas fa-print"></i> Imprimir Cartão
+                        </button>
+                        <button class="print-btn" onclick="alert('Funcionalidade de exportação será implementada')">
+                            <i class="fas fa-file-export"></i> Exportar para Excel
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -3055,7 +3156,7 @@
                         `<option value="${i+1}">${currentLang === 'pt' ? `${i+1} Hóspede${i > 0 ? 's' : ''}` :
                                               currentLang === 'en' ? `${i+1} Guest${i > 0 ? 's' : ''}` :
                                               currentLang === 'fr' ? `${i+1} Client${i > 0 ? 's' : ''}` :
-                                              `${i+1} Huésped${i > 0 ? 'es' : ''}`}</option>`
+                                              `${i+1} Huésped${i > 0 ? 'es' : ''}</option>`
                     ).join('')}
                 </select>
                 <input type="number" class="room-input" min="0" step="0.01" placeholder="${currentLang === 'pt' ? 'Diária (R$)' :
@@ -3878,7 +3979,7 @@
                            `${currentLang === 'pt' ? 'Pagamento da primeira diária (' : 
                              currentLang === 'en' ? 'Payment of the first night (' :
                              currentLang === 'fr' ? 'Paiement de la première nuit (' : 
-                             'Pago de la primera noche ('}${formatCurrency(firstNightPayment)}${currentLang === 'pt' ? ') requerido.' :
+                             'Pago de la primeira noche ('}${formatCurrency(firstNightPayment)}${currentLang === 'pt' ? ') requerido.' :
                              currentLang === 'en' ? ') required.' :
                              currentLang === 'fr' ? ') requis.' : 
                              ') requerido.'}\n\n` +
@@ -3917,6 +4018,21 @@
             const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
             
             window.open(whatsappUrl, '_blank');
+        }
+
+        // ========== SISTEMA CARTÃO DE PONTO ==========
+        function checkPassword() {
+            const passwordInput = document.getElementById('passwordInput');
+            const pontoContent = document.getElementById('pontoContent');
+            
+            if (passwordInput.value === '0000') {
+                pontoContent.classList.add('active');
+                passwordInput.value = '';
+                alert('Acesso concedido! Sistema de Cartão de Ponto carregado.');
+            } else {
+                alert('Senha incorreta. Tente novamente.');
+                passwordInput.value = '';
+            }
         }
 
         // ========== PWA INSTALL BUTTON ==========
