@@ -1,0 +1,874 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Cartão de Ponto</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Courier New', monospace;
+        }
+
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .header {
+            background: #2c3e50;
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 300;
+        }
+
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+            padding: 30px;
+        }
+
+        .controls {
+            background: #f8f9fa;
+            padding: 25px;
+            border-radius: 10px;
+            border: 1px solid #e9ecef;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .search-box, select, input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            font-size: 14px;
+            transition: border-color 0.3s;
+        }
+
+        .search-box:focus, select:focus, input[type="number"]:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+
+        .employee-list {
+            max-height: 400px;
+            overflow-y: auto;
+            border: 1px solid #e9ecef;
+            border-radius: 8px;
+            background: white;
+        }
+
+        .employee-item {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .employee-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .employee-item.selected {
+            background-color: #e3f2fd;
+            border-left: 4px solid #2196f3;
+        }
+
+        .employee-info {
+            flex: 1;
+        }
+
+        .employee-name {
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 0.9em;
+        }
+
+        .employee-role {
+            font-size: 0.8em;
+            color: #7f8c8d;
+        }
+
+        .employee-order {
+            background: #3498db;
+            color: white;
+            border-radius: 50%;
+            width: 24px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.8em;
+            font-weight: bold;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            padding: 12px 24px;
+            border: none;
+            border-radius: 8px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+        }
+
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #2980b9;
+            transform: translateY(-2px);
+        }
+
+        .btn-success {
+            background: #27ae60;
+            color: white;
+        }
+
+        .btn-success:hover {
+            background: #219a52;
+            transform: translateY(-2px);
+        }
+
+        .btn-warning {
+            background: #f39c12;
+            color: white;
+        }
+
+        .btn-warning:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        .btn-info {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .btn-info:hover {
+            background: #138496;
+            transform: translateY(-2px);
+        }
+
+        .preview-area {
+            background: white;
+            border: 2px dashed #bdc3c7;
+            border-radius: 10px;
+            padding: 25px;
+            min-height: 500px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: flex-start;
+        }
+
+        .preview-area h3 {
+            margin-bottom: 20px;
+            color: #2c3e50;
+        }
+
+        /* Cartão com dimensões corretas: 86 x 190 mm */
+        .card-preview {
+            width: 86mm;
+            height: 190mm;
+            font-family: 'Courier New', monospace;
+            background: white;
+            position: relative;
+            overflow: hidden;
+            border: 1px solid #ccc;
+            padding: 3mm;
+        }
+
+        /* POSIÇÕES E TAMANHOS DE FONTE EXATOS BASEADOS NO PDF - CORRIGIDOS */
+        .n-ordem { 
+            position: absolute; 
+            top: 6mm; 
+            left: 4mm; 
+            font-weight: bold; 
+            font-size: 11px;
+        }
+        
+        /* EMPREGADOR - 15mm mais distante do número de ordem */
+        .empregador { 
+            position: absolute; 
+            top: 6mm; 
+            left: 27mm; 
+            font-weight: bold; 
+            font-size: 11px;
+        }
+        
+        .atividade-economica { 
+            position: absolute; 
+            top: 12mm; 
+            left: 4mm; 
+            font-weight: bold; 
+            font-size: 11px;
+        }
+        
+        /* CNPJ - 10mm mais distante do nome HOTEL */
+        .cnpj { 
+            position: absolute; 
+            top: 12mm; 
+            left: 30mm; 
+            font-weight: bold; 
+            font-size: 9px;
+        }
+        
+        .endereco { 
+            position: absolute; 
+            top: 17mm; 
+            left: 4mm; 
+            font-weight: bold; 
+            font-size: 11px;
+        }
+        
+        /* NOME DO FUNCIONÁRIO - POSIÇÃO CORRIGIDA (depois do endereço) */
+        .funcionario { 
+            position: absolute; 
+            top: 22mm; 
+            left: 4mm; 
+            font-weight: bold; 
+            font-size: 11px;
+            width: 78mm;
+        }
+        
+        .mes { 
+            position: absolute; 
+            top: 28mm; 
+            left: 4mm; 
+            font-weight: bold; 
+            font-size: 11px;
+        }
+        
+        /* ANO - POSIÇÃO CORRIGIDA (15mm mais distante do mês) */
+        .ano { 
+            position: absolute; 
+            top: 28mm; 
+            left: 40mm; 
+            font-weight: bold; 
+            font-size: 11px;
+        }
+        
+        /* FUNÇÃO - POSIÇÃO CORRIGIDA (embaixo do ano, alinhada com o ano) */
+        .funcao { 
+            position: absolute; 
+            top: 33mm; 
+            left: 40mm; 
+            font-weight: bold; 
+            font-size: 8px;
+        }
+        
+        .horarios { 
+            position: absolute; 
+            top: 39mm; 
+            left: 4mm; 
+            font-weight: bold;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .selected-count {
+            background: #e74c3c;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8em;
+            margin-left: 10px;
+        }
+
+        .bulk-actions {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .bulk-btn {
+            padding: 8px 16px;
+            border: 1px solid #3498db;
+            background: white;
+            color: #3498db;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: all 0.3s;
+        }
+
+        .bulk-btn:hover {
+            background: #3498db;
+            color: white;
+        }
+
+        .month-selector {
+            display: flex;
+            gap: 10px;
+        }
+
+        .month-selector .form-group {
+            flex: 2;
+        }
+
+        .month-selector .form-group:last-child {
+            flex: 1;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: block;
+            padding: 12px 24px;
+            background: #f39c12;
+            color: white;
+            border-radius: 8px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s;
+        }
+
+        .file-label:hover {
+            background: #e67e22;
+            transform: translateY(-2px);
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .preview-area {
+                min-height: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Sistema de Cartão de Ponto</h1>
+        </div>
+        
+        <div class="main-content">
+            <div class="controls">
+                <div class="bulk-actions">
+                    <button class="bulk-btn" onclick="selectAll()">Selecionar Todos</button>
+                    <button class="bulk-btn" onclick="deselectAll()">Limpar Seleção</button>
+                </div>
+
+                <div class="form-group month-selector">
+                    <div class="form-group">
+                        <label>Mês:</label>
+                        <select id="monthSelect">
+                            <option value="JANEIRO">Janeiro</option>
+                            <option value="FEVEREIRO">Fevereiro</option>
+                            <option value="MARÇO">Março</option>
+                            <option value="ABRIL">Abril</option>
+                            <option value="MAIO">Maio</option>
+                            <option value="JUNHO">Junho</option>
+                            <option value="JULHO">Julho</option>
+                            <option value="AGOSTO">Agosto</option>
+                            <option value="SETEMBRO">Setembro</option>
+                            <option value="OUTUBRO">Outubro</option>
+                            <option value="NOVEMBRO">Novembro</option>
+                            <option value="DEZEMBRO" selected>Dezembro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Ano:</label>
+                        <input type="number" id="yearInput" value="2025" min="1900" max="2100">
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label>Buscar Funcionário:</label>
+                    <input type="text" class="search-box" id="searchInput" placeholder="Digite o nome ou função..." onkeyup="filterEmployees()">
+                </div>
+
+                <div class="form-group">
+                    <label>Funcionários <span id="selectedCount" class="selected-count">0</span>:</label>
+                    <div class="employee-list" id="employeeList">
+                        <!-- Lista será populada via JavaScript -->
+                    </div>
+                </div>
+
+                <div class="action-buttons">
+                    <button class="btn btn-primary" onclick="generateSelected()">
+                        Imprimir Selecionados
+                    </button>
+                    <button class="btn btn-success" onclick="generateAll()">
+                        Imprimir Todos
+                    </button>
+                    <button class="btn btn-warning" onclick="exportToExcel()">
+                        Exportar para Excel
+                    </button>
+                    <label for="excelFile" class="file-label">
+                        Importar do Excel
+                    </label>
+                    <input type="file" id="excelFile" class="file-input" accept=".xlsx, .xls" onchange="importFromExcel(event)">
+                </div>
+            </div>
+
+            <div class="preview-area">
+                <h3>Pré-visualização do Cartão</h3>
+                <div class="card-preview" id="cardPreview">
+                    <!-- Preview será gerado aqui -->
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // LISTA DE FUNCIONÁRIOS ATUALIZADA COM BASE NO PDF
+        let employees = [
+            { id: 1, name: "ARYANNE K. DA SILVA PEREIRA", role: "JOVEM APRENDIZ", horarios: "12:00 16:00/16:15/18:00 sáb/bom" },
+            { id: 2, name: "CARINA ALVES CORDEIRO", role: "GARÇONETE", horarios: "05:30  11:00/12:00/13:50 Terça" },
+            { id: 3, name: "CELIA LUIZA DA SILVA", role: "ARRUMADEIRA", horarios: "09:00  12:00/13:00/17:20 Terça" },
+            { id: 4, name: "ULLEN GABRIEL LUZ SANTOS", role: "SUP. RESERVAS", horarios: "09:00 12:00/13:00/17:20 sáb/Dom" },
+            { id: 5, name: "INACIA NEMEZIO DE LIMA", role: "ARRUMADEIRA", horarios: "09:00  13:00/14:0021:00 Quarta" },
+            { id: 6, name: "ICARO TARANTO RODRIGUES", role: "RECEP C/ DIREÇÃO", horarios: "19:00  01:00/02:0007:00  12/36" },
+            { id: 7, name: "EREVALDO DA SILVA LIRIO", role: "GARÇON", horarios: "06:00 10:45/11:45/14:20 Segunda" },
+            { id: 8, name: "GREGORIO DE SOUSA MAGALHAES", role: "AJ. DE COZINHA", horarios: "05:30 10:00/11:00/13:50 Segunda" },
+            { id: 9, name: "TATIANE SILVA MARINS", role: "ARRUMADEIRA", horarios: "06:00  11:00/12:00/14:20 Quarta" },
+            { id: 10, name: "CREDIOMAR VERAS DE SOUSA", role: "GOVERNANTA", horarios: "08:00 12:00/13:00/16:20 Domingo" },
+            { id: 11, name: "VICTOR SILVA RAMOS", role: "AUX S. GERAIS", horarios: "12:00 15:00/16:00/20:00 Domingo" },
+            { id: 12, name: "VANESSA DE BRITO ARAUJO", role: "RECEPCIONISTA", horarios: "07:00  12:00/13:00/19:00 12/36" },
+            { id: 13, name: "LAERCIO DIAS FELICIO", role: "MANOBRISTA", horarios: "06:00  11:00/12:00/18:00 12/36" },
+            { id: 14, name: "DANIEL ALVES VIANA", role: "RECEPCIONISTA", horarios: "07:00  12:00/13:00/19:00 12/36" },
+            { id: 15, name: "HELOISA CRISTINA DOS S. FIGUEIREDO", role: "ARRUMADEIRA", horarios: "08:00  12:00/13:00/20:00 12/36" },
+            { id: 16, name: "LUCIANA FELIX", role: "ASS. ADMINISTRATIV", horarios: "09:00 13:00/14:00/16:00 Sab / Dom" },
+            { id: 17, name: "VANIA THEREZA B. BORGES", role: "ARRUMADEIRA", horarios: "08:00  12:00/13:00/16:20 Quinta" },
+            { id: 18, name: "LORRANE DOS SANTOS PEREIRA", role: "AUX S. GERAIS", horarios: "15:00  19:00/20:00/23:00  Sexta" },
+            { id: 19, name: "WANDERLEY DA SILVA MACEDO", role: "GERENTE HOTEL", horarios: "07:00  12:00/13:00/15:20 sábado" },
+            { id: 20, name: "ROBSON LUIZ DE M. NORBERTO JR", role: "MANOBRISTA", horarios: "06:00  11:00/12:00/18:00 12/36" },
+            { id: 21, name: "THAIS HELENA T. DA SILVA", role: "COZINHEIRO", horarios: "13:40  16:00/17:00/22:00 Terça" },
+            { id: 22, name: "LUIZ CLAUDIO GLORIA", role: "AJUDANTE DE COZINH", horarios: "13:40  17:00/18:00/22:00 Sexta" },
+            { id: 23, name: "MARIA CRISTINA SILVA MOREIRA", role: "ARRUMADEIRA", horarios: "08:00 12:00/13:00/16:20 Segunda" },
+            { id: 24, name: "MARIA CLAUDIA V. DE B. SILVA", role: "RECEPCIONISTA", horarios: "07:00  12:00/13:00/19:00 12/36" },
+            { id: 25, name: "FABIOLA LUCIENE R. MARCELLO", role: "AUX S. GERAIS", horarios: "08:00  12:00/13:00/20:00 12/36" },
+            { id: 26, name: "ANDERSON LUIS DE MELO", role: "GARÇON", horarios: "14:20  16:00/17:00/22:40  Sexta" },
+            { id: 27, name: "ANDRE DA CRUZ ANJOS", role: "SUB CHE DE COZINHA", horarios: "05:30 09:30/10:30/13:50 Segunda" },
+            { id: 28, name: "SHAMYG K. DA S. MESSIAS", role: "AUX S. GERAIS", horarios: "08:00  12:00/13:00/16:20 sábado" },
+            { id: 29, name: "SALOMAO LUIS DA SILVA", role: "GERENTE SENIOR", horarios: "09:00 14:00/15:0017:20 Sáb/Dom" },
+            { id: 30, name: "GUSTAVO COSTA DE LIMA", role: "CHF DE RECEP", horarios: "18:00  1:00/02:00 06:00  12/36" },
+            { id: 31, name: "LUIZ MIGUEL DA S. ARAUJO", role: "JOVEM APRENDIZ", horarios: "18:00    22:00  Sab/Dom" },
+            { id: 32, name: "WAGNO DE PAULA FERREIRA", role: "ELETRICISTA", horarios: "08:00  11:00/12:0016:00 Sab/Dom" },
+            { id: 34, name: "JOCELI DA SILVA FERREIRA", role: "AUX S. GERAIS", horarios: "08:00 12:00/13:00/16:20 Segunda" },
+            { id: 35, name: "JORGE LUIZ F. POLEGARIO", role: "GARÇON", horarios: "14:20  16:00/17:00/22:40 Quarta" },
+            { id: 36, name: "ERICK PEREIRA DA COSTA", role: "RECEP C/ DIREÇÃO", horarios: "07:00  13:00/14:00/19:00 12/36" },
+            { id: 37, name: "LUCIANO FERREIRA DOS REIS", role: "RECEP C/DIREÇÃO", horarios: "19:00  00:00/01:00/07:00 12/36" },
+            { id: 38, name: "CARLOS EDUARDO SILVA", role: "MANOBRISTA", horarios: "14:00 16:00/17:00/22:00 Domingo" },
+            { id: 39, name: "EDILZA SOUZA NOGUEIRA", role: "ARRUMADEIRA", horarios: "15:00  19:00/20:0023:00 sábado" },
+            { id: 40, name: "FABIO DA TRINDADE LIMA", role: "RECEP C/ DIREÇÃO", horarios: "19:00  01:00/02:0007:00  12/36" },
+            { id: 41, name: "FABIANO CARDIM DE ARAÚJO", role: "MAITRE", horarios: "13:40  17:00/18:0022:00 sábado" },
+            { id: 42, name: "MAYCON J. DOS S. DA SILVA", role: "OF.DE MANUTENÇÃO", horarios: "08:00 12:00/13:00/16:20 sáb/Dom" },
+            { id: 44, name: "GENESIO COSTA SILVA", role: "COZINHEIRO", horarios: "05:30  10:00/11:0013:50 Quarta" },
+            { id: 45, name: "LUIZ OTAVIO B. S. CONCEICAO", role: "JOVEM APRENDIZ", horarios: "11:00 16:00/16:15/17:00 sáb/bom" }
+        ];
+
+        let selectedEmployees = new Set();
+
+        // Inicializar a aplicação
+        function initializeApp() {
+            renderEmployeeList();
+            updateSelectedCount();
+            if (employees.length > 0) {
+                showPreview(employees[0]);
+            }
+            document.getElementById('monthSelect').addEventListener('change', updatePreview);
+            document.getElementById('yearInput').addEventListener('change', updatePreview);
+        }
+
+        function updatePreview() {
+            if (selectedEmployees.size > 0) {
+                const firstSelectedId = Array.from(selectedEmployees)[0];
+                const employee = employees.find(emp => emp.id === firstSelectedId);
+                if (employee) showPreview(employee);
+            } else if (employees.length > 0) {
+                showPreview(employees[0]);
+            }
+        }
+
+        // Renderizar lista de funcionários
+        function renderEmployeeList(filteredEmployees = employees) {
+            const employeeList = document.getElementById('employeeList');
+            employeeList.innerHTML = '';
+
+            filteredEmployees.forEach(employee => {
+                const isSelected = selectedEmployees.has(employee.id);
+                const employeeItem = document.createElement('div');
+                employeeItem.className = `employee-item ${isSelected ? 'selected' : ''}`;
+                employeeItem.onclick = () => toggleEmployee(employee.id);
+                
+                employeeItem.innerHTML = `
+                    <input type="checkbox" ${isSelected ? 'checked' : ''} onchange="toggleEmployee(${employee.id})">
+                    <div class="employee-order">${employee.id}</div>
+                    <div class="employee-info">
+                        <div class="employee-name">${employee.name}</div>
+                        <div class="employee-role">${employee.role}</div>
+                    </div>
+                `;
+                
+                employeeList.appendChild(employeeItem);
+            });
+        }
+
+        // Alternar seleção de funcionário
+        function toggleEmployee(employeeId) {
+            if (selectedEmployees.has(employeeId)) {
+                selectedEmployees.delete(employeeId);
+            } else {
+                selectedEmployees.add(employeeId);
+            }
+            updateSelectedCount();
+            renderEmployeeList();
+            
+            const employee = employees.find(emp => emp.id === employeeId);
+            if (employee) {
+                showPreview(employee);
+            }
+        }
+
+        // Selecionar todos os funcionários
+        function selectAll() {
+            employees.forEach(employee => selectedEmployees.add(employee.id));
+            updateSelectedCount();
+            renderEmployeeList();
+        }
+
+        // Desmarcar todos os funcionários
+        function deselectAll() {
+            selectedEmployees.clear();
+            updateSelectedCount();
+            renderEmployeeList();
+        }
+
+        // Atualizar contador de selecionados
+        function updateSelectedCount() {
+            document.getElementById('selectedCount').textContent = selectedEmployees.size;
+        }
+
+        // Filtrar funcionários
+        function filterEmployees() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const filtered = employees.filter(employee => 
+                employee.name.toLowerCase().includes(searchTerm) ||
+                employee.role.toLowerCase().includes(searchTerm)
+            );
+            renderEmployeeList(filtered);
+        }
+
+        // Obter mês e ano atuais
+        function getMonthYear() {
+            const month = document.getElementById('monthSelect').value;
+            const year = document.getElementById('yearInput').value;
+            return { month, year };
+        }
+
+        // Mostrar pré-visualização
+        function showPreview(employee) {
+            const { month, year } = getMonthYear();
+            const preview = document.getElementById('cardPreview');
+            
+            preview.innerHTML = `
+                <div class="n-ordem">${employee.id.toString().padStart(2, '0')}</div>
+                <div class="empregador">ICARAI P HOTEL</div>
+                <div class="atividade-economica">HOTEL</div>
+                <div class="cnpj">27.890.847/0001-45</div>
+                <div class="endereco">R BELISÁRIO AUGUSTO, N°.21 - ICARAI</div>
+                <div class="funcionario">${employee.name}</div>
+                <div class="mes">${month}</div>
+                <div class="ano">${year}</div>
+                <div class="funcao">${employee.role}</div>
+                <div class="horarios">${employee.horarios}</div>
+            `;
+        }
+
+        // Gerar cartões para funcionários selecionados
+        function generateSelected() {
+            if (selectedEmployees.size === 0) {
+                alert('Por favor, selecione pelo menos um funcionário.');
+                return;
+            }
+
+            const selected = employees.filter(emp => selectedEmployees.has(emp.id));
+            printCards(selected);
+        }
+
+        // Gerar cartões para todos os funcionários
+        function generateAll() {
+            printCards(employees);
+        }
+
+        // Função principal de impressão de cartões
+        function printCards(employeesToPrint) {
+            const { month, year } = getMonthYear();
+            
+            let printContent = `
+                <!DOCTYPE html>
+                <html>
+                <head>
+                    <title>Cartões de Ponto</title>
+                    <meta charset="UTF-8">
+                    <style>
+                        * {
+                            margin: 0 !important;
+                            padding: 0 !important;
+                            border: 0 !important;
+                            box-sizing: border-box;
+                        }
+                        
+                        html, body {
+                            margin: 0 !important;
+                            padding: 0 !important;
+                            width: 100% !important;
+                            height: 100% !important;
+                            font-family: 'Courier New', monospace !important;
+                            background: white !important;
+                        }
+                        
+                        .page {
+                            width: 86mm !important;
+                            height: 190mm !important;
+                            page-break-after: always !important;
+                            position: relative !important;
+                            background: white !important;
+                            overflow: hidden !important;
+                            margin: 0 !important;
+                            padding: 3mm !important;
+                        }
+                        
+                        /* POSIÇÕES E TAMANHOS DE FONTE EXATOS PARA IMPRESSÃO - CORRIGIDOS */
+                        .n-ordem { 
+                            position: absolute !important; 
+                            top: 6mm !important; 
+                            left: 4mm !important; 
+                            font-weight: bold !important; 
+                            font-size: 11px !important;
+                        }
+                        
+                        /* EMPREGADOR - 15mm mais distante do número de ordem */
+                        .empregador { 
+                            position: absolute !important; 
+                            top: 6mm !important; 
+                            left: 27mm !important; 
+                            font-weight: bold !important; 
+                            font-size: 11px !important;
+                        }
+                        
+                        .atividade-economica { 
+                            position: absolute !important; 
+                            top: 12mm !important; 
+                            left: 4mm !important; 
+                            font-weight: bold !important; 
+                            font-size: 11px !important;
+                        }
+                        
+                        /* CNPJ - 10mm mais distante do nome HOTEL */
+                        .cnpj { 
+                            position: absolute !important; 
+                            top: 12mm !important; 
+                            left: 30mm !important; 
+                            font-weight: bold !important; 
+                            font-size: 9px !important;
+                        }
+                        
+                        .endereco { 
+                            position: absolute !important; 
+                            top: 17mm !important; 
+                            left: 4mm !important; 
+                            font-weight: bold !important; 
+                            font-size: 11px !important;
+                        }
+                        
+                        /* NOME DO FUNCIONÁRIO - POSIÇÃO CORRIGIDA (depois do endereço) */
+                        .funcionario { 
+                            position: absolute !important; 
+                            top: 22mm !important; 
+                            left: 4mm !important; 
+                            font-weight: bold !important; 
+                            font-size: 11px !important;
+                            width: 78mm !important;
+                        }
+                        
+                        .mes { 
+                            position: absolute !important; 
+                            top: 28mm !important; 
+                            left: 4mm !important; 
+                            font-weight: bold !important; 
+                            font-size: 11px !important;
+                        }
+                        
+                        /* ANO - POSIÇÃO CORRIGIDA (15mm mais distante do mês) */
+                        .ano { 
+                            position: absolute !important; 
+                            top: 28mm !important; 
+                            left: 40mm !important; 
+                            font-weight: bold !important; 
+                            font-size: 11px !important;
+                        }
+                        
+                        /* FUNÇÃO - POSIÇÃO CORRIGIDA (embaixo do ano, alinhada com o ano) */
+                        .funcao { 
+                            position: absolute !important; 
+                            top: 33mm !important; 
+                            left: 40mm !important; 
+                            font-weight: bold !important; 
+                            font-size: 8px !important;
+                        }
+                        
+                        .horarios { 
+                            position: absolute !important; 
+                            top: 39mm !important; 
+                            left: 4mm !important; 
+                            font-weight: bold !important;
+                            font-size: 11px !important;
+                            white-space: nowrap !important;
+                        }
+                        
+                        @page {
+                            margin: 0 !important;
+                            size: 86mm 190mm;
+                        }
+                    </style>
+                </head>
+                <body style="margin: 0 !important; padding: 0 !important;">
+            `;
+            
+            employeesToPrint.forEach(employee => {
+                printContent += `
+                    <div class="page">
+                        <div class="n-ordem">${employee.id.toString().padStart(2, '0')}</div>
+                        <div class="empregador">ICARAI P HOTEL</div>
+                        <div class="atividade-economica">HOTEL</div>
+                        <div class="cnpj">27.890.847/0001-45</div>
+                        <div class="endereco">R BELISÁRIO AUGUSTO, N°.21 - ICARAI</div>
+                        <div class="funcionario">${employee.name}</div>
+                        <div class="mes">${month}</div>
+                        <div class="ano">${year}</div>
+                        <div class="funcao">${employee.role}</div>
+                        <div class="horarios">${employee.horarios}</div>
+                    </div>
+                `;
+            });
+            
+            printContent += `
+                </body>
+                </html>
+            `;
+
+            const printWindow = window.open('', '_blank');
+            printWindow.document.open();
+            printWindow.document.write(printContent);
+            printWindow.document.close();
+            
+            setTimeout(() => {
+                printWindow.print();
+                setTimeout(() => printWindow.close(), 100);
+            }, 250);
+        }
+
+        // Exportar dados para Excel
+        function exportToExcel() {
+            const data = employees.map(emp => ({
+                'N Ordem': emp.id,
+                'Nome': emp.name,
+                'Função': emp.role,
+                'Horários': emp.horarios
+            }));
+
+            const ws = XLSX.utils.json_to_sheet(data);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, "Funcionários");
+            XLSX.writeFile(wb, "cartoes_ponto_funcionarios.xlsx");
+        }
+
+        // Importar dados do Excel
+        function importFromExcel(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const data = new Uint8Array(e.target.result);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    
+                    updateEmployeesFromExcel(jsonData);
+                    event.target.value = '';
+                } catch (error) {
+                    alert('Erro ao importar arquivo. Verifique se o formato está correto.');
+                    console.error(error);
+                }
+            };
+            reader.readAsArrayBuffer(file);
+        }
+
+        // Atualizar funcionários com dados do Excel
+        function updateEmployeesFromExcel(excelData) {
+            excelData.forEach(row => {
+                const nOrdem = row['N Ordem'];
+                const employee = employees.find(emp => emp.id === nOrdem);
+                
+                if (employee) {
+                    if (row['Nome']) employee.name = row['Nome'];
+                    if (row['Função']) employee.role = row['Função'];
+                    if (row['Horários']) employee.horarios = row['Horários'];
+                }
+            });
+            
+            renderEmployeeList();
+            updateSelectedCount();
+            alert(`Dados de ${excelData.length} funcionários atualizados com sucesso!`);
+        }
+
+        // Inicializar quando a página carregar
+        document.addEventListener('DOMContentLoaded', initializeApp);
+    </script>
+</body>
+</html>
