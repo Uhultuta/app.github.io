@@ -243,24 +243,24 @@
             font-size: 11.44px;
         }
 
-        /* POSIÇÕES ESPECÍFICAS AJUSTADAS - TODOS OS CAMPOS 6MM MAIS PARA ESQUERDA */
-        .n-ordem { top: 6mm; left: 4mm; } /* ANTES: 10mm, AGORA: 4mm */
-        .empregador { top: 6mm; left: 39mm; } /* ANTES: 45mm, AGORA: 39mm */
-        .atividade-economica { top: 13mm; left: 4mm; } /* ANTES: 10mm, AGORA: 4mm */
-        .cnpj { top: 13mm; left: 39mm; } /* ANTES: 45mm, AGORA: 39mm */
-        .endereco { top: 18mm; left: 4mm; } /* ANTES: 10mm, AGORA: 4mm */
-        .funcionario { top: 23mm; left: 4mm; width: 75mm; } /* ANTES: 10mm, AGORA: 4mm */
-        .ctps { top: 28mm; left: 4mm; width: 18mm; } /* ANTES: 10mm, AGORA: 4mm */
-        .registro { top: 28mm; left: 24mm; width: 18mm; } /* ANTES: 30mm, AGORA: 24mm */
-        .funcao { top: 40mm; left: 48mm; width: 35mm; } /* ANTES: 54mm, AGORA: 48mm */
-        .mes { top: 34mm; left: 4mm; } /* ANTES: 10mm, AGORA: 4mm */
-        .ano { top: 34mm; left: 54mm; } /* ANTES: 60mm, AGORA: 54mm */
+        /* POSIÇÕES ESPECÍFICAS AJUSTADAS - CORRIGINDO A SOBREPOSIÇÃO DOS HORÁRIOS */
+        .n-ordem { top: 6mm; left: 4mm; }
+        .empregador { top: 6mm; left: 39mm; }
+        .atividade-economica { top: 13mm; left: 4mm; }
+        .cnpj { top: 13mm; left: 39mm; }
+        .endereco { top: 18mm; left: 4mm; }
+        .funcionario { top: 23mm; left: 4mm; width: 75mm; }
+        .ctps { top: 28mm; left: 4mm; width: 18mm; }
+        .registro { top: 28mm; left: 24mm; width: 18mm; }
+        .funcao { top: 40mm; left: 48mm; width: 35mm; }
+        .mes { top: 34mm; left: 4mm; }
+        .ano { top: 34mm; left: 54mm; }
         
-        /* Horário de trabalho com fonte 15% menor */
-        .entrada { top: 48mm; left: 19mm; } /* ANTES: 25mm, AGORA: 19mm */
-        .intervalo { top: 48mm; left: 34mm; } /* ANTES: 40mm, AGORA: 34mm */
-        .saida { top: 48mm; left: 54mm; } /* ANTES: 60mm, AGORA: 54mm */
-        .rep-semanal { top: 48mm; left: 66mm; } /* ANTES: 72mm, AGORA: 66mm */
+        /* Horário de trabalho com fonte 15% menor - POSIÇÕES CORRIGIDAS PARA EVITAR SOBREPOSIÇÃO */
+        .entrada { top: 48mm; left: 4mm; width: 15mm; }
+        .intervalo { top: 48mm; left: 22mm; width: 25mm; }
+        .saida { top: 48mm; left: 50mm; width: 15mm; }
+        .rep-semanal { top: 48mm; left: 68mm; width: 15mm; }
 
         .selected-count {
             background: #e74c3c;
@@ -414,7 +414,7 @@
     </div>
 
     <script>
-        // LISTA DE FUNCIONÁRIOS ATUALIZADA COM OS NOVOS DADOS
+        // LISTA DE FUNCIONÁRIOS ATUALIZADA COM HORÁRIOS CORRETAMENTE FORMATADOS COM "/"
         let employees = [
             { id: 1, name: "ARYANNE K. DA SILVA PEREIRA", role: "JOVEM APRENDIZ", admission: "28/03/2025", entrada: "12:00", intervalo: "16:00/16:15", saida: "18:00", ctps: "", registro: "" },
             { id: 2, name: "CARINA ALVES CORDEIRO", role: "GARÇONETE", admission: "28/03/2025", entrada: "05:30", intervalo: "11:00/12:00", saida: "13:50", ctps: "", registro: "" },
@@ -445,7 +445,7 @@
             { id: 27, name: "ANDRE DA CRUZ ANJOS", role: "SUB CHF DE COZINHA", admission: "04/04/2023", entrada: "05:30", intervalo: "09:30/10:30", saida: "13:50", ctps: "", registro: "" },
             { id: 28, name: "SHAMYG K. DA S. MESSIAS", role: "AUX S. GERAIS", admission: "28/10/2025", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "" },
             { id: 29, name: "SALOMAO LUIS DA SILVA", role: "GERENTE SENIOR", admission: "11/06/2002", entrada: "09:00", intervalo: "14:00/15:00", saida: "17:20", ctps: "", registro: "" },
-            { id: 30, name: "GUSTAVO COSTA DE LIMA", role: "CHF DE RECEP", admission: "13/12/2023", entrada: "18:00", intervalo: "1:00/02:00", saida: "06:00", ctps: "", registro: "" },
+            { id: 30, name: "GUSTAVO COSTA DE LIMA", role: "CHF DE RECEP", admission: "13/12/2023", entrada: "18:00", intervalo: "01:00/02:00", saida: "06:00", ctps: "", registro: "" },
             { id: 31, name: "LUIZ MIGUEL DA S. ARAUJO", role: "JOVEM APRENDIZ", admission: "28/08/2025", entrada: "18:00", intervalo: "", saida: "22:00", ctps: "", registro: "" },
             { id: 32, name: "WAGNO DE PAULA FERREIRA", role: "ELETRICISTA", admission: "12/04/2010", entrada: "08:00", intervalo: "11:00/12:00", saida: "16:00", ctps: "", registro: "" },
             { id: 34, name: "JOCELI DA SILVA FERREIRA", role: "AUX S. GERAIS", admission: "06/11/2025", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "" },
@@ -653,7 +653,7 @@
                             font-size: 11.44px !important;
                         }
                         
-                        /* POSIÇÕES AJUSTADAS PARA IMPRESSÃO - TODOS OS CAMPOS 6MM MAIS PARA ESQUERDA */
+                        /* POSIÇÕES AJUSTADAS PARA IMPRESSÃO - CORRIGINDO SOBREPOSIÇÃO DOS HORÁRIOS */
                         .n-ordem { top: 6mm !important; left: 4mm !important; }
                         .empregador { top: 6mm !important; left: 39mm !important; }
                         .atividade-economica { top: 13mm !important; left: 4mm !important; }
@@ -665,10 +665,12 @@
                         .funcao { top: 40mm !important; left: 48mm !important; width: 35mm !important; }
                         .mes { top: 34mm !important; left: 4mm !important; }
                         .ano { top: 34mm !important; left: 54mm !important; }
-                        .entrada { top: 48mm !important; left: 19mm !important; }
-                        .intervalo { top: 48mm !important; left: 34mm !important; }
-                        .saida { top: 48mm !important; left: 54mm !important; }
-                        .rep-semanal { top: 48mm !important; left: 66mm !important; }
+                        
+                        /* POSIÇÕES CORRIGIDAS PARA OS HORÁRIOS COM ESPAÇAMENTO ADEQUADO */
+                        .entrada { top: 48mm !important; left: 4mm !important; width: 15mm !important; }
+                        .intervalo { top: 48mm !important; left: 22mm !important; width: 25mm !important; }
+                        .saida { top: 48mm !important; left: 50mm !important; width: 15mm !important; }
+                        .rep-semanal { top: 48mm !important; left: 68mm !important; width: 15mm !important; }
                         
                         @page {
                             margin: 0 !important;
@@ -693,6 +695,7 @@
                         <div class="variable-field funcao"><strong>${employee.role}</strong></div>
                         <div class="variable-field mes"><strong>${month}</strong></div>
                         <div class="variable-field ano"><strong>${year}</strong></div>
+                        
                         <div class="variable-field entrada horario-field"><strong>${employee.entrada}</strong></div>
                         <div class="variable-field intervalo horario-field"><strong>${employee.intervalo}</strong></div>
                         <div class="variable-field saida horario-field"><strong>${employee.saida}</strong></div>
