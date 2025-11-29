@@ -4,10 +4,13 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Cotador de Reservas - Icaraí Praia Hotel</title>
-    <script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js"></script>
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; }
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
         body {
             font-family: 'Segoe UI', system-ui, sans-serif;
             background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
@@ -17,1316 +20,1842 @@
             flex-direction: column;
             align-items: center;
         }
-        .container { 
-            width: 100%; 
-            max-width: 1200px; 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 30px; 
-            margin-top: 20px; 
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            margin-top: 20px;
         }
-        .language-selector { 
-            display: flex; 
-            gap: 10px; 
-            margin-bottom: 20px; 
-            flex-wrap: wrap; 
-            justify-content: center; 
+        
+        /* Language Selector */
+        .language-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
-        .lang-btn { 
-            padding: 8px 16px; 
-            border: 2px solid rgba(255,255,255,0.3); 
-            border-radius: 20px; 
-            background: rgba(255,255,255,0.1); 
-            color: white; 
-            font-weight: 600; 
-            cursor: pointer; 
-            transition: all 0.3s ease; 
+        
+        .lang-btn {
+            padding: 8px 16px;
+            border: 2px solid rgba(255,255,255,0.3);
+            border-radius: 20px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-        .lang-btn.active { 
-            background: white; 
-            color: #1a6bb3; 
-            border-color: white; 
+        
+        .lang-btn.active {
+            background: white;
+            color: #1a6bb3;
+            border-color: white;
         }
-        .calculator { 
-            background: white; 
-            padding: 30px; 
-            border-radius: 20px; 
-            box-shadow: 0 10px 30px rgba(0,0,0,0.15); 
+        
+        .lang-btn:hover {
+            background: rgba(255,255,255,0.2);
         }
-        .calculator-title { 
-            font-size: 24px; 
-            font-weight: 700; 
-            color: #1a6bb3; 
-            margin-bottom: 25px; 
-            text-align: center; 
+        
+        /* Calculator Styles */
+        .calculator {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
         }
-        .form-group { 
-            margin-bottom: 20px; 
+        
+        .calculator-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a6bb3;
+            margin-bottom: 25px;
+            text-align: center;
         }
-        .form-label { 
-            display: block; 
-            font-weight: 600; 
-            color: #333; 
-            margin-bottom: 8px; 
-            font-size: 14px; 
+        
+        .form-group {
+            margin-bottom: 20px;
         }
-        .form-input, .form-select { 
-            width: 100%; 
-            padding: 12px 15px; 
-            border: 2px solid #e0e0e0; 
-            border-radius: 10px; 
-            font-size: 14px; 
-            transition: all 0.3s ease; 
+        
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+            font-size: 14px;
         }
-        .form-input:focus, .form-select:focus { 
-            outline: none; 
-            border-color: #1a6bb3; 
-            box-shadow: 0 0 0 3px rgba(26, 107, 179, 0.1); 
+        
+        .form-input, .form-select {
+            width: 100%;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s ease;
         }
-        .group-container { 
-            background: #f8fafc; 
-            padding: 20px; 
-            border-radius: 12px; 
-            margin-bottom: 20px; 
-            border: 1px solid #e0e0e0; 
-            position: relative; 
+        
+        .form-input:focus, .form-select:focus {
+            outline: none;
+            border-color: #1a6bb3;
+            box-shadow: 0 0 0 3px rgba(26, 107, 179, 0.1);
         }
-        .group-title { 
-            font-size: 18px; 
-            font-weight: 700; 
-            color: #1a6bb3; 
-            margin-bottom: 15px; 
-            display: flex; 
-            justify-content: space-between; 
-            align-items: center; 
+        
+        .radio-group {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 10px;
         }
-        .remove-group-btn { 
-            background: #ff6b6b; 
-            color: white; 
-            border: none; 
-            width: 32px; 
-            height: 32px; 
-            border-radius: 8px; 
-            cursor: pointer; 
-            font-size: 16px; 
-        }
-        .grid-2 { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr; 
-            gap: 15px; 
-        }
-        .grid-3 { 
-            display: grid; 
-            grid-template-columns: repeat(3, 1fr); 
-            gap: 15px; 
-        }
-        .meal-options { 
-            background: #e7f3ff; 
-            padding: 15px; 
-            border-radius: 10px; 
-            margin-top: 12px; 
-            border-left: 5px solid #1a6bb3; 
-            display: none; 
-        }
-        .add-group-btn { 
-            background: #1a6bb3; 
-            color: white; 
-            border: none; 
-            padding: 14px 20px; 
-            border-radius: 10px; 
-            cursor: pointer; 
-            font-weight: 600; 
-            width: 100%; 
-            margin: 15px 0; 
-            font-size: 16px; 
-        }
-        .checkbox-group { 
-            display: flex; 
-            align-items: center; 
-            gap: 10px; 
-            margin: 15px 0; 
-            font-weight: 600; 
-            color: #333; 
-        }
-        .action-buttons { 
-            display: grid; 
-            grid-template-columns: 1fr 1fr 1fr; 
-            gap: 12px; 
-            margin-top: 20px; 
-        }
-        .action-btn { 
-            padding: 16px; 
-            border: none; 
-            border-radius: 12px; 
-            font-size: 15px; 
-            font-weight: 700; 
-            cursor: pointer; 
-            display: flex; 
-            align-items: center; 
-            justify-content: center; 
-            gap: 10px; 
-        }
-        .copy-btn { 
-            background: linear-gradient(135deg, #1a6bb3, #2c8cda); 
-            color: white; 
-        }
-        .email-btn { 
-            background: linear-gradient(135deg, #FFA500, #FF8C00); 
-            color: white; 
-        }
-        .whatsapp-btn { 
-            background: linear-gradient(135deg, #25D366, #128C7E); 
-            color: white; 
-        }
-        .pdf-btn { 
-            background: linear-gradient(135deg, #e74c3c, #c0392b); 
-            color: white; 
-        }
-        .preview { 
-            background: white; 
-            border-radius: 20px; 
-            overflow: hidden; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2); 
-            max-height: 80vh; 
-            overflow-y: auto; 
-        }
-        .quotation-header { 
-            background: linear-gradient(135deg, #1a6bb3, #2c8cda); 
-            padding: 35px; 
-            color: white; 
-            text-align: center; 
-        }
-        .hotel-name { 
-            font-size: 30px; 
-            font-weight: 900; 
-            text-shadow: 0 3px 8px rgba(0,0,0,0.5); 
-        }
-        .quotation-title { 
-            font-size: 22px; 
-            margin: 12px 0; 
-            opacity: 0.95; 
-        }
-        .quotation-badge { 
-            background: #ff4444; 
-            padding: 10px 25px; 
-            border-radius: 50px; 
-            font-weight: 700; 
-            font-size: 14px; 
-        }
-        .validity-notice { 
-            background: #fff8e1; 
-            border-left: 6px solid #ffc107; 
-            padding: 18px; 
-            margin: 20px; 
-            border-radius: 0 12px 12px 0; 
-            font-weight: 600; 
-            color: #856404; 
+        
+        .radio-label {
             display: flex;
             align-items: center;
-            gap: 10px;
+            padding: 12px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
-        .quotation-body { 
-            padding: 35px; 
+        
+        .radio-label:hover {
+            border-color: #1a6bb3;
         }
-        .group-box { 
-            background: #f8fdff; 
-            padding: 25px; 
-            border-radius: 16px; 
-            margin: 25px 0; 
-            border-left: 6px solid #1a6bb3; 
-            box-shadow: 0 4px 15px rgba(0,0,0,0.08); 
+        
+        .radio-label.selected {
+            border-color: #1a6bb3;
+            background: #f0f7ff;
         }
-        .meal-detail { 
-            background: #e3f2fd; 
-            padding: 14px; 
-            border-radius: 10px; 
-            margin: 12px 0; 
-            font-size: 14px; 
-            border-left: 5px solid #1a6bb3; 
+        
+        .radio-input {
+            margin-right: 10px;
         }
-        .total-row { 
-            background: #1a6bb3; 
-            color: white; 
-            padding: 22px; 
-            border-radius: 14px; 
-            text-align: center; 
-            font-size: 22px; 
-            font-weight: 700; 
-            margin: 30px 0; 
-        }
-        .whatsapp-input { 
-            display: flex; 
-            gap: 10px; 
-            margin: 15px 0; 
-        }
-        .info-section { 
-            margin: 25px 0; 
-            padding: 20px; 
-            background: #f9f9f9; 
-            border-radius: 12px; 
-            border-left: 5px solid #1a6bb3; 
-        }
-        .info-section h3 { 
-            color: #1a6bb3; 
-            margin-bottom: 15px; 
-            font-size: 18px; 
-        }
-        .info-section ul { 
-            padding-left: 20px; 
-        }
-        .info-section li { 
-            margin-bottom: 8px; 
-            line-height: 1.5; 
-        }
-        .notification { 
-            position: fixed; 
-            top: 20px; 
-            right: 20px; 
-            padding: 15px 25px; 
-            border-radius: 10px; 
-            background: #4CAF50; 
-            color: white; 
-            font-weight: 600; 
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2); 
-            z-index: 1000; 
-            opacity: 0; 
-            transition: opacity 0.3s; 
-        }
-        .notification.show { 
-            opacity: 1; 
-        }
-        .subtotal-row {
-            background: #e7f3ff;
+        
+        .meal-options {
+            background: #f8fafc;
             padding: 15px;
             border-radius: 10px;
-            margin: 15px 0;
-            border-left: 5px solid #1a6bb3;
+            margin-top: 10px;
+            border-left: 4px solid #1a6bb3;
+        }
+        
+        /* Room Configuration Styles */
+        .room-configuration {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            border: 1px solid #e0e0e0;
+        }
+        
+        .room-config-title {
+            font-size: 16px;
+            font-weight: 700;
+            color: #1a6bb3;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .add-room-btn {
+            background: #1a6bb3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+        
+        .add-room-btn:hover {
+            background: #155a9d;
+            transform: translateY(-2px);
+        }
+        
+        .room-item {
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e0e0e0;
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr 1fr 1fr auto;
+            gap: 10px;
+            align-items: center;
+        }
+        
+        .room-input {
+            padding: 8px 12px;
+            border: 1px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 13px;
+        }
+        
+        .remove-room-btn {
+            background: #ff6b6b;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 14px;
+        }
+        
+        .remove-room-btn:hover {
+            background: #ff5252;
+        }
+        
+        .rooms-summary {
+            background: #e7f3ff;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #1a6bb3;
             font-weight: 600;
         }
+        
+        .action-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .action-btn {
+            padding: 15px;
+            border: none;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+        
+        .copy-btn {
+            background: linear-gradient(135deg, #1a6bb3, #2c8cda);
+            color: white;
+        }
+        
+        .whatsapp-btn {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+        }
+        
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+        }
+        
+        /* Meal Details Toggle */
+        .meal-details-toggle {
+            background: #1a6bb3;
+            color: white;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 600;
+            margin-top: 10px;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .meal-details-toggle:hover {
+            background: #155a9d;
+        }
+
+        .meal-details-toggle.checked {
+            background: #155a9d;
+        }
+
+        .custom-checkbox {
+            width: 16px;
+            height: 16px;
+            border: 2px solid white;
+            border-radius: 3px;
+            background: transparent;
+            position: relative;
+            transition: all 0.3s ease;
+        }
+
+        .custom-checkbox.checked {
+            background: white;
+        }
+
+        .custom-checkbox.checked::after {
+            content: '✓';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #1a6bb3;
+            font-size: 10px;
+            font-weight: bold;
+        }
+        
+        .meal-details {
+            background: #f8fafc;
+            padding: 15px;
+            border-radius: 10px;
+            margin-top: 10px;
+            border-left: 4px solid #1a6bb3;
+            display: none;
+        }
+        
+        .meal-details.active {
+            display: block;
+        }
+        
+        /* Preview Styles */
+        .preview {
+            background: white;
+            border-radius: 20px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.15);
+            height: fit-content;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+        
+        /* Voucher Styles */
+        .quotation-header {
+            background: linear-gradient(135deg, #1a6bb3, #2c8cda);
+            padding: 25px 30px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .quotation-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        
+        .hotel-name {
+            font-size: 24px;
+            font-weight: 800;
+            color: white;
+            margin-bottom: 5px;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+        }
+        
+        .quotation-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: rgba(255,255,255,0.9);
+        }
+
+        .quotation-badge {
+            background: #ff6b6b;
+            color: white;
+            padding: 6px 15px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 12px;
+            display: inline-block;
+            margin-top: 10px;
+        }
+
+        .validity-notice {
+            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
+            border-left: 4px solid #ffc107;
+            padding: 12px 20px;
+            font-weight: 600;
+            color: #856404;
+            font-size: 13px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .quotation-body {
+            padding: 25px 30px;
+        }
+
+        .section-title {
+            font-size: 16px;
+            color: #1a6bb3;
+            font-weight: 700;
+            margin-bottom: 15px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #eaeaea;
+        }
+
+        .details-grid {
+            display: grid;
+            gap: 12px;
+            margin-bottom: 20px;
+        }
+
+        .detail-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #f5f5f5;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+            font-size: 14px;
+        }
+
+        .detail-value {
+            color: #333;
+            font-weight: 500;
+        }
+
+        .dates-container {
+            display: flex;
+            gap: 15px;
+            margin: 20px 0;
+        }
+
+        .date-column {
+            flex: 1;
+            text-align: center;
+            background: #f0f7ff;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #1a6bb3;
+        }
+
+        .date-label {
+            font-size: 13px;
+            color: #1a6bb3;
+            font-weight: 700;
+            margin-bottom: 5px;
+            text-transform: uppercase;
+        }
+
+        .date-value {
+            font-size: 15px;
+            font-weight: 800;
+            color: #1a6bb3;
+            margin-bottom: 3px;
+        }
+
+        .date-time {
+            font-size: 12px;
+            color: #666;
+        }
+
+        .pricing-breakdown {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border: 1px solid #e0e0e0;
+        }
+
+        .price-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .price-row:last-child {
+            border-bottom: none;
+        }
+
+        .total-row {
+            background: #1a6bb3;
+            color: white;
+            padding: 12px 15px;
+            border-radius: 8px;
+            margin-top: 10px;
+            font-weight: 700;
+        }
+
+        .amenities-list {
+            list-style: none;
+            margin: 15px 0;
+        }
+
+        .amenities-list li {
+            padding: 6px 0;
+            font-size: 13px;
+            color: #555;
+            display: flex;
+            align-items: center;
+        }
+
+        .amenities-list li::before {
+            content: '✓';
+            color: #4CAF50;
+            font-weight: bold;
+            margin-right: 8px;
+        }
+
+        .no-breakfast-notice {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 12px;
+            color: #856404;
+        }
+
+        .meal-info-notice {
+            background: #e7f3ff;
+            border-left: 4px solid #1a6bb3;
+            padding: 10px 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 12px;
+            color: #1a6bb3;
+            font-weight: 600;
+        }
+
+        .quotation-footer {
+            background: #1a6bb3;
+            padding: 20px 30px;
+            color: white;
+            text-align: center;
+        }
+
+        .contact-info {
+            font-size: 13px;
+            line-height: 1.5;
+            opacity: 0.9;
+        }
+
+        .policy-section {
+            margin: 20px 0;
+        }
+
+        .policy-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a6bb3;
+            margin-bottom: 8px;
+        }
+
+        .policy-content {
+            font-size: 12px;
+            color: #555;
+            line-height: 1.5;
+        }
+
+        .policy-notice {
+            background: #f8fafc;
+            border-left: 4px solid #1a6bb3;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 12px;
+            color: #1a6bb3;
+        }
+
+        .warning-notice {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 12px;
+            color: #856404;
+        }
+
+        .group-payment-notice {
+            background: #e7f3ff;
+            border-left: 4px solid #1a6bb3;
+            padding: 12px 15px;
+            margin: 10px 0;
+            border-radius: 0 8px 8px 0;
+            font-size: 12px;
+            color: #1a6bb3;
+            font-weight: 600;
+        }
+
+        /* Status indicator */
+        .update-status {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            background: #4CAF50;
+            color: white;
+            padding: 10px 15px;
+            border-radius: 5px;
+            font-size: 14px;
+            font-weight: 600;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            z-index: 1000;
+            opacity: 0;
+            transform: translateY(-10px);
+            transition: all 0.3s ease;
+        }
+        
+        .update-status.show {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* Responsive */
         @media (max-width: 768px) {
-            .container { grid-template-columns: 1fr; }
-            .action-buttons { grid-template-columns: 1fr; }
+            .container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+            
+            .calculator, .preview {
+                padding: 20px;
+            }
+            
+            .radio-group {
+                grid-template-columns: 1fr;
+            }
+            
+            .dates-container {
+                flex-direction: column;
+            }
+            
+            .action-buttons {
+                grid-template-columns: 1fr;
+            }
+            
+            .room-item {
+                grid-template-columns: 1fr;
+                gap: 8px;
+            }
+            
+            .room-input {
+                width: 100%;
+            }
         }
     </style>
 </head>
 <body>
+    <!-- Status indicator -->
+    <div class="update-status" id="updateStatus">Voucher atualizado ✓</div>
+    
     <h1 style="color: white; text-align: center; margin-bottom: 10px;">Cotador de Reservas</h1>
-    <p style="color: rgba(255,255,255,0.9); text-align: center; margin-bottom: 30px;">Icaraí Praia Hotel</p>
-
-    <div class="notification" id="notification"></div>
-
-    <script>
-        const hotelConfig = {
-            name: "ICARAÍ PRAIA HOTEL",
-            email: "reservas@icaraipraiahotel.com.br",
-            phone: "(21) 2612-5030",
-            site: "www.icaraipraiahotel.com.br",
-            address: "Rua Belisário Augusto 21, Icaraí, Niterói - 24.230-200",
-            bank: {
-                name: "Bradesco",
-                agency: "0541",
-                account: "17561-7"
-            },
-            cnpj: "27.890.847/0001-45",
-            iss: 2
-        };
-    </script>
-
+    <p style="color: rgba(255,255,255,0.8); text-align: center; margin-bottom: 30px;">Icaraí Praia Hotel</p>
+    
     <div class="language-selector">
-        <button class="lang-btn active" data-lang="pt">Português</button>
-        <button class="lang-btn" data-lang="en">English</button>
-        <button class="lang-btn" data-lang="fr">Français</button>
-        <button class="lang-btn" data-lang="es">Español</button>
+        <button class="lang-btn active" data-lang="pt">🇧🇷 Português</button>
+        <button class="lang-btn" data-lang="en">🇺🇸 English</button>
+        <button class="lang-btn" data-lang="fr">🇫🇷 Français</button>
+        <button class="lang-btn" data-lang="es">🇪🇸 Español</button>
     </div>
-
+    
     <div class="container">
+        <!-- Calculator -->
         <div class="calculator">
-            <div class="calculator-title">Informações da Reserva</div>
-
+            <div class="calculator-title" id="calculatorTitle">Informações da Reserva</div>
+            
             <div class="form-group">
-                <label class="form-label">Responsável pelo Grupo</label>
-                <input type="text" class="form-input" id="mainGuest" placeholder="Ex: João Silva" oninput="calculate()">
+                <label class="form-label" id="guestNameLabel">Nome do Hóspede Principal</label>
+                <input type="text" class="form-input" id="guestName" placeholder="Digite o nome completo">
             </div>
-
-            <div class="checkbox-group">
-                <input type="checkbox" id="showMealDetails" checked onchange="calculate()">
-                <label for="showMealDetails">Exibir detalhes das refeições no voucher</label>
-            </div>
-
-            <div id="groupsContainer">
-                <!-- Grupo Inicial -->
-                <div class="group-container" data-group="0">
-                    <div class="group-title">
-                        <span>Grupo 1</span>
-                        <button class="remove-group-btn" style="display:none;">×</button>
-                    </div>
-
-                    <div class="grid-3">
-                        <div><label class="form-label">Quantidade</label><input type="number" class="form-input qty" min="1" value="1" oninput="calculate()"></div>
-                        <div><label class="form-label">Hóspedes</label>
-                            <select class="form-select guests" oninput="calculate()">
-                                <option value="1" selected>1</option>
-                                <option value="2">2</option>
-                                <option value="3">3</option>
-                                <option value="4">4</option>
-                            </select>
-                        </div>
-                        <div><label class="form-label">Diária (R$)</label><input type="number" class="form-input rate" step="0.01" value="0" placeholder="0,00" oninput="calculate()"></div>
-                    </div>
-
-                    <div class="grid-2" style="margin-top:15px;">
-                        <div><label class="form-label">Check-in</label><input type="date" class="form-input checkin" oninput="calculate()"></div>
-                        <div><label class="form-label">Check-out</label><input type="date" class="form-input checkout" oninput="calculate()"></div>
-                    </div>
-
-                    <div style="margin-top:15px;">
-                        <label class="form-label">Tipo de Pensão</label>
-                        <div style="display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; font-size:13px;">
-                            <label><input type="radio" name="meal-0" value="breakfast" checked onchange="toggleMealOptions(this)"> Com Café</label>
-                            <label><input type="radio" name="meal-0" value="noBreakfast" onchange="toggleMealOptions(this)"> Sem Café</label>
-                            <label><input type="radio" name="meal-0" value="halfBoard" onchange="toggleMealOptions(this)"> Meia Pensão</label>
-                            <label><input type="radio" name="meal-0" value="fullBoard" onchange="toggleMealOptions(this)"> Pensão Completa</label>
-                        </div>
-                        <div class="meal-options">
-                            <label class="form-label">Valor por refeição/pessoa (R$)</label>
-                            <input type="number" class="form-input meal-price" step="0.01" placeholder="0,00" value="0" oninput="calculate()">
-                        </div>
-                    </div>
-
-                    <div style="margin-top:15px;">
-                        <label class="form-label">Estacionamento</label>
-                        <select class="form-select parking" oninput="calculate()">
-                            <option value="no">Não</option>
-                            <option value="yes">Sim (R$ 45/dia)</option>
+            
+            <!-- Room Configuration Section -->
+            <div class="room-configuration">
+                <div class="room-config-title">
+                    <span id="roomConfigLabel">Configuração de Grupos</span>
+                    <button class="add-room-btn" onclick="addRoom()" id="addRoomBtn">+ Adicionar Grupo</button>
+                </div>
+                
+                <div id="roomsContainer">
+                    <!-- Room items will be added here dynamically -->
+                    <div class="room-item">
+                        <input type="number" class="room-input" min="1" value="1" placeholder="Quantidade" onchange="updateRoomsSummary()">
+                        <select class="room-input" onchange="updateRoomsSummary()">
+                            <option value="1">1 Hóspede</option>
+                            <option value="2">2 Hóspedes</option>
+                            <option value="3">3 Hóspedes</option>
+                            <option value="4">4 Hóspedes</option>
                         </select>
+                        <input type="number" class="room-input" min="0" step="0.01" placeholder="Diária (R$)" onchange="updateRoomsSummary()">
+                        <input type="date" class="room-input" onchange="updateRoomsSummary()">
+                        <input type="date" class="room-input" onchange="updateRoomsSummary()">
+                        <button class="remove-room-btn" onclick="removeRoom(this)" style="display: none;">×</button>
                     </div>
                 </div>
+                
+                <div class="rooms-summary" id="roomsSummary">
+                    Total: 1 grupo(s) • 1 hóspede(s) • R$ 0,00/dia
+                </div>
             </div>
-
-            <button class="add-group-btn" onclick="addGroup()">+ Adicionar Outro Grupo</button>
-
-            <div class="whatsapp-input">
-                <input type="text" class="form-input" id="whatsappNumber" placeholder="WhatsApp com DDD (21999999999)">
-                <button class="action-btn whatsapp-btn" onclick="shareWhatsApp()">Enviar via WhatsApp</button>
+            
+            <div class="form-group">
+                <label class="form-label" id="mealTypeLabel">Tipo de Refeição</label>
+                <div class="radio-group">
+                    <label class="radio-label" id="labelBreakfast">
+                        <input type="radio" name="mealType" class="radio-input" value="breakfast" checked>
+                        <span id="breakfastLabel">Com Café da Manhã</span>
+                    </label>
+                    <label class="radio-label" id="labelNoBreakfast">
+                        <input type="radio" name="mealType" class="radio-input" value="noBreakfast">
+                        <span id="noBreakfastLabel">Sem Café da Manhã</span>
+                    </label>
+                    <label class="radio-label" id="labelHalfBoard">
+                        <input type="radio" name="mealType" class="radio-input" value="halfBoard">
+                        <span id="halfBoardLabel">Meia Pensão (MAP)</span>
+                    </label>
+                    <label class="radio-label" id="labelFullBoard">
+                        <input type="radio" name="mealType" class="radio-input" value="fullBoard">
+                        <span id="fullBoardLabel">Pensão Completa (FAP)</span>
+                    </label>
+                </div>
+                
+                <!-- Checkbox Toggle Button -->
+                <button class="meal-details-toggle" onclick="toggleMealDetails()" id="mealDetailsToggle">
+                    <div class="custom-checkbox" id="mealDetailsCheckbox"></div>
+                    <span id="mealDetailsToggleText">📋 Exibir Detalhes das Refeições</span>
+                </button>
+                
+                <div class="meal-details" id="mealDetails">
+                    <div class="meal-info-notice">
+                        <strong>Café da Manhã:</strong> Servido das 6h às 10h no restaurante do hotel<br>
+                        <strong>Meia Pensão (MAP):</strong> Inclui Almoço OU Jantar + 1 bebida não alcoólica + Sobremesa disponível<br>
+                        <strong>Pensão Completa (FAP):</strong> Inclui Almoço + Jantar + 1 bebida não alcoólica em cada refeição + Sobremesa disponível
+                    </div>
+                </div>
+                
+                <div class="meal-options" id="mealPriceSection" style="display: none;">
+                    <label class="form-label" id="mealPriceLabel">Valor por Refeição (por pessoa)</label>
+                    <input type="number" class="form-input" id="mealPrice" min="0" step="0.01" placeholder="R$ 0,00">
+                </div>
             </div>
-
+            
+            <div class="form-group">
+                <label class="form-label" id="parkingLabel">Estacionamento</label>
+                <select class="form-select" id="parking">
+                    <option value="no">Não</option>
+                    <option value="yes">Sim</option>
+                </select>
+            </div>
+            
             <div class="action-buttons">
-                <button class="action-btn copy-btn" onclick="copyQuotation()">Copiar Cotação</button>
-                <button class="action-btn email-btn" onclick="copyForEmail()">Copiar para E-mail</button>
-                <button class="action-btn pdf-btn" onclick="generatePDF()">Gerar PDF</button>
+                <button class="action-btn copy-btn" onclick="copyQuotation()">
+                    📋 <span id="copyButtonText">Copiar Cotação</span>
+                </button>
+                <button class="action-btn whatsapp-btn" onclick="shareWhatsApp()">
+                    💬 <span id="whatsappButtonText">Enviar por WhatsApp</span>
+                </button>
             </div>
         </div>
-
+        
+        <!-- Preview -->
         <div class="preview" id="quotationPreview">
-            <div style="padding:80px 40px; text-align:center; color:#aaa; font-size:18px;">
-                Preencha os dados para gerar a cotação
-            </div>
+            <!-- O conteúdo do voucher será gerado aqui dinamicamente -->
         </div>
     </div>
 
     <script>
+        // Language data
         const translations = {
             pt: {
-                title: "COTAÇÃO DE RESERVA",
-                validity: "Esta cotação é válida por 24 horas. Tarifas e disponibilidade podem mudar após a expiração.",
-                guest: "Responsável pelo Grupo",
-                group: "Grupo",
-                quantity: "Quantidade",
-                guests: "Hóspedes",
-                rate: "Diária",
-                checkin: "Check-in",
-                checkout: "Check-out",
-                mealPlan: "Tipo de Refeição",
-                breakfast: "Com Café da Manhã",
-                noBreakfast: "Sem Café da Manhã",
-                halfBoard: "Meia Pensão",
-                fullBoard: "Pensão Completa",
-                parking: "Estacionamento",
-                yes: "Sim",
-                no: "Não",
-                mealPrice: "Valor por refeição",
-                total: "TOTAL",
-                copySuccess: "Cotação copiada para a área de transferência!",
-                emailSuccess: "Cotação formatada copiada para e-mail!",
-                pdfSuccess: "PDF gerado com sucesso!",
-                whatsappSuccess: "Cotação enviada via WhatsApp!",
-                services: "SERVIÇOS INCLUSOS",
-                policies: "POLÍTICAS DO HOTEL",
-                guarantee: "GARANTIA DA RESERVA",
-                invoices: "NOTAS FISCAIS",
-                financialDetails: "DETALHES FINANCEIROS",
-                subtotal: "Subtotal",
-                iss: "ISS (2%)",
-                averageRate: "Diária Média",
-                period: "Período",
-                nights: "Noite(s)",
-                apartment: "apartamento(s)",
-                guestWord: "hóspede(s)",
-                perDay: "/dia",
-                mealDetails: "Detalhes das Refeições",
-                until: "até",
-                groupSubtotal: "Subtotal do Grupo",
-                paymentNote: "⚠️ *PAGAMENTO INTEGRAL OBRIGATÓRIO PARA GRUPOS*"
+                calculatorTitle: "Informações da Reserva",
+                guestNameLabel: "Nome do Hóspede Principal",
+                roomConfigLabel: "Configuração de Grupos",
+                addRoomBtn: "+ Adicionar Grupo",
+                mealTypeLabel: "Tipo de Refeição",
+                breakfastLabel: "Com Café da Manhã",
+                noBreakfastLabel: "Sem Café da Manhã",
+                halfBoardLabel: "Meia Pensão (MAP)",
+                fullBoardLabel: "Pensão Completa (FAP)",
+                mealPriceLabel: "Valor por Refeição (por pessoa)",
+                parkingLabel: "Estacionamento",
+                copyButtonText: "Copiar Cotação",
+                whatsappButtonText: "Enviar por WhatsApp",
+                mealDetailsShowText: "📋 Exibir Detalhes das Refeições",
+                mealDetailsHideText: "📋 Ocultar Detalhes das Refeições",
+                quotationTitle: "COTAÇÃO DE RESERVA",
+                quotationBadge: "COTAÇÃO • VÁLIDA 24 HORAS",
+                validityNotice: "Esta cotação é válida por 24 horas. Tarifas e disponibilidade podem mudar após a expiração.",
+                reservationInfo: "INFORMAÇÕES DA RESERVA",
+                guestName: "Hóspede Principal:",
+                apartments: "Apartamentos:",
+                guests: "Hóspedes:",
+                mealType: "Tipo de Refeição:",
+                parking: "Estacionamento:",
+                period: "Período:",
+                checkIn: "CHECK-IN",
+                checkOut: "CHECK-OUT",
+                fromTime: "A partir das 14:00",
+                untilTime: "Até às 12:00",
+                financialDetails: "DETALHES FINANCIEROS",
+                dailyPerRoom: "Diária por apartamento:",
+                roomsNights: "apto(s) × noite(s):",
+                mealsIncluded: "Refeições incluídas:",
+                parkingCost: "Estacionamento:",
+                subtotal: "Subtotal:",
+                issTax: "ISS (2% sobre diárias e refeições):",
+                total: "TOTAL:",
+                includedServices: "SERVIÇOS INCLUSOS",
+                breakfastIncluded: "Café da manhã incluso das 6h às 10h, servido no restaurante",
+                wifi: "Internet (wi-fi)",
+                parkingInfo: "Estacionamento R$ 45,00 por dia - sujeito à disponibilidade, solicitação prévia e confirmação - vagas limitadas",
+                roomsInfo: "Apartamentos Standard com Smart TV, ar condicionado, telefone, frigobar, internet e cofre individual",
+                restaurant: "Restaurante próprio (das 6h às 22h)",
+                noBreakfastNotice: "Observação: Esta reserva não inclui café da manhã. Caso deseje, poderá adquirir o café da manhã pelo valor de R$ 52,00 por dia por pessoa diretamente no restaurante.",
+                halfBoardNotice: "A meia pensão contempla Almoço OU Jantar + 1 bebida não alcoólica + Sobremesa disponível.",
+                fullBoardNotice: "A pensão completa contempla Almoço + Jantar + 1 bebida não alcoólica em cada refeição + Sobremesa disponível.",
+                hotelPolicies: "POLÍTICAS DO HOTEL",
+                checkInOut: "Check-in / Check-out",
+                checkInOutDetails: "• Check-in: 14:00 / Check-out: 12:00<br>• Não aceitamos Pets",
+                minorsPolicy: "Política para Menores",
+                minorsPolicyDetails: "Acompanhado pelos pais: Apresentar RG ou certidão de nascimento no check-in comprovando ser filho de um dos pais presentes<br>Desacompanhado dos pais: Apresentar RG ou certidão de nascimento E autorização de ambos os pais reconhecida em cartório, por exigência legal",
+                guaranteeNotice: "Para garantir a sua reserva, solicitamos o pagamento da primeira diária + 2% ISS, lembrando que em caso de cancelamento da sua reserva fora do prazo, não devolvemos o valor pago.",
+                nonRefundableNotice: "Caso tenha feito sua reserva com condição de tarifa não reembolsável, iremos cobrar o valor total da reserva e em caso de cancelamento e/ou alterações, não devolvemos o valor pré-pago.",
+                groupPaymentNotice: "Toda reserva de grupo requer pré-pagamento integral antecipado ou 50% logo após a confirmação e o restante em até 15 dias antes do Check-in.",
+                reservationGuarantee: "GARANTIA DA RESERVA",
+                bankDeposit: "Depósito Bancário ou Pix",
+                bankDetails: "Bradesco - Agência 0541 - Conta 17561-7<br>Icaraí Praia Hotel CNPJ: 27.890.847/0001-45<br>Pix: reservas@icaraipraiahotel.com.br<br><br>Após realizar o depósito, favor enviar o comprovante para que possamos identificá-lo com a sua reserva.",
+                creditCard: "Cartão de Crêdito",
+                creditCardDetails: "Solicite o link de pagamento por e-mail ou, se preferir, clique aqui para receber via WhatsApp.<br><br>Iremos debitar apenas o valor da primeira diária + 2% ISS, porém caso tenha reserva com tarifa não reembolsável, Carnaval, Reveillon e grandes eventos, será debitado o valor total.",
+                companyAgency: "Empresa/Agência",
+                companyAgencyDetails: "Solicitamos garantia para no-show, caso o hóspede não se apresente no hotel ou seja solicitado cancelamento fora do prazo, será cobrado o valor correspondente a primeira diária + 2% ISS.<br><br>Reservas sem garantia de no-show ou sem pré-pagamento poderão ser canceladas sem aviso prévio.",
+                cancellationPolicy: "Prazo para Cancelamento",
+                cancellationDetails: "Cancelamento da reserva sem ônus, até 72 horas antes do Check-in. Exceto para tarifas não reembolsáveis - estas não permitem cancelamento.<br><br>Os pedidos de cancelamento devem ser feitos somente por e-mail e só serão validados após a confirmação pelo hotel.",
+                taxNotes: "NOTAS FISCAIS",
+                taxNotesDetails: "As notas fiscais serão enviadas por e-mail em até 03 dias úteis após o check-out.<br><br>As notas fiscais de serviço serão emitidas de acordo com os serviços prestados, além da nota de F&B em caso de consumo.<br><br>As notas fiscais devem ser conferidas no recebimento, pois temos prazo para alterações, substituição e/ou cancelamento até o 5º dia útil do mês seguinte.<br><br>Caso o destinatario da nota não seja informado no pedido de reserva, a mesma será emitida em nome da empresa solicitante. Em caso de pessoa física, será emitida em nome do hóspede.<br><br>Caso haja algum erro/discrepância ou se não receber as notas dentro do prazo, favor entrar em contato imediatamente com o departamento financeiro.<br><br>Luciana Felix - Tel.(21) 2612-5030 ramal 3 - Whatsapp (21)2710-6142 - Email: financeiro@icaraipraiahotel.com.br<br><br>Mantenha sempre seu cadastro atualizado para evitar possíveis problemas no recebimento das notas fiscais."
             },
             en: {
-                title: "BOOKING QUOTATION",
-                validity: "This quotation is valid for 24 hours. Rates and availability may change after expiration.",
-                guest: "Group Responsible",
-                group: "Group",
-                quantity: "Quantity",
-                guests: "Guests",
-                rate: "Daily Rate",
-                checkin: "Check-in",
-                checkout: "Check-out",
-                mealPlan: "Meal Plan Type",
-                breakfast: "With Breakfast",
-                noBreakfast: "Without Breakfast",
-                halfBoard: "Half Board",
-                fullBoard: "Full Board",
-                parking: "Parking",
-                yes: "Yes",
-                no: "No",
-                mealPrice: "Meal price per person",
-                total: "TOTAL",
-                copySuccess: "Quotation copied to clipboard!",
-                emailSuccess: "Formatted quotation copied for email!",
-                pdfSuccess: "PDF generated successfully!",
-                whatsappSuccess: "Quotation sent via WhatsApp!",
-                services: "INCLUDED SERVICES",
-                policies: "HOTEL POLICIES",
-                guarantee: "RESERVATION GUARANTEE",
-                invoices: "INVOICES",
+                calculatorTitle: "Reservation Information",
+                guestNameLabel: "Main Guest Name",
+                roomConfigLabel: "Group Configuration",
+                addRoomBtn: "+ Add Group",
+                mealTypeLabel: "Meal Type",
+                breakfastLabel: "With Breakfast",
+                noBreakfastLabel: "Without Breakfast",
+                halfBoardLabel: "Half Board (MAP)",
+                fullBoardLabel: "Full Board (FAP)",
+                mealPriceLabel: "Price per Meal (per person)",
+                parkingLabel: "Parking",
+                copyButtonText: "Copy Quotation",
+                whatsappButtonText: "Send via WhatsApp",
+                mealDetailsShowText: "📋 Show Meal Details",
+                mealDetailsHideText: "📋 Hide Meal Details",
+                quotationTitle: "RESERVATION QUOTATION",
+                quotationBadge: "QUOTATION • VALID 24 HOURS",
+                validityNotice: "This quotation is valid for 24 hours. Rates and availability may change after expiration.",
+                reservationInfo: "RESERVATION INFORMATION",
+                guestName: "Main Guest:",
+                apartments: "Apartments:",
+                guests: "Guests:",
+                mealType: "Meal Type:",
+                parking: "Parking:",
+                period: "Period:",
+                checkIn: "CHECK-IN",
+                checkOut: "CHECK-OUT",
+                fromTime: "From 14:00",
+                untilTime: "Until 12:00",
                 financialDetails: "FINANCIAL DETAILS",
-                subtotal: "Subtotal",
-                iss: "ISS (2%)",
-                averageRate: "Average Rate",
-                period: "Period",
-                nights: "Night(s)",
-                apartment: "apartment(s)",
-                guestWord: "guest(s)",
-                perDay: "/day",
-                mealDetails: "Meal Details",
-                until: "until",
-                groupSubtotal: "Group Subtotal",
-                paymentNote: "⚠️ *FULL PAYMENT REQUIRED FOR GROUPS*"
+                dailyPerRoom: "Daily rate per apartment:",
+                roomsNights: "room(s) × night(s):",
+                mealsIncluded: "Meals included:",
+                parkingCost: "Parking:",
+                subtotal: "Subtotal:",
+                issTax: "ISS (2% on rooms and meals):",
+                total: "TOTAL:",
+                includedServices: "INCLUDED SERVICES",
+                breakfastIncluded: "Breakfast included from 6am to 10am, served in the restaurant",
+                wifi: "Internet (wi-fi)",
+                parkingInfo: "Parking R$ 45.00 per day - subject to availability, prior request and confirmation - limited spaces",
+                roomsInfo: "Standard Apartments with Smart TV, air conditioning, telephone, minibar, internet and individual safe",
+                restaurant: "Own restaurant (from 6am to 10pm)",
+                noBreakfastNotice: "Note: This reservation does not include breakfast. If you wish, you can purchase breakfast for R$ 52.00 per day per person directly at the restaurant.",
+                halfBoardNotice: "Half board includes Lunch OR Dinner + 1 non-alcoholic drink + Dessert available.",
+                fullBoardNotice: "Full board includes Lunch + Dinner + 1 non-alcoholic drink in each meal + Dessert available.",
+                hotelPolicies: "HOTEL POLICIES",
+                checkInOut: "Check-in / Check-out",
+                checkInOutDetails: "• Check-in: 14:00 / Check-out: 12:00<br>• We do not accept Pets",
+                minorsPolicy: "Policy for Minors",
+                minorsPolicyDetails: "Accompanied by parents: Present ID or birth certificate at check-in proving to be the child of one of the present parents<br>Unaccompanied by parents: Present ID or birth certificate AND authorization from both parents notarized, by legal requirement",
+                guaranteeNotice: "To guarantee your reservation, we request payment of the first night + 2% ISS, remembering that in case of cancellation of your reservation outside the deadline, we do not refund the amount paid.",
+                nonRefundableNotice: "If you have made your reservation with a non-refundable rate condition, we will charge the total amount of the reservation and in case of cancellation and/or changes, we do not refund the prepaid amount.",
+                groupPaymentNotice: "All group reservations require full prepayment in advance or 50% upon confirmation and the remainder up to 15 days before Check-in.",
+                reservationGuarantee: "RESERVATION GUARANTEE",
+                bankDeposit: "Bank Deposit or Pix",
+                bankDetails: "Bradesco - Agency 0541 - Account 17561-7<br>Icaraí Praia Hotel CNPJ: 27.890.847/0001-45<br>Pix: reservas@icaraipraiahotel.com.br<br><br>After making the deposit, please send the receipt so we can identify it with your reservation.",
+                creditCard: "Credit Card",
+                creditCardDetails: "Request the payment link by email or, if you prefer, click here to receive it via WhatsApp.<br><br>We will only charge the first night + 2% ISS, but if you have a reservation with a non-refundable rate, Carnival, New Year's Eve and major events, the total amount will be charged.",
+                companyAgency: "Company/Agency",
+                companyAgencyDetails: "We request a no-show guarantee, if the guest does not show up at the hotel or cancellation is requested outside the deadline, the amount corresponding to the first night + 2% ISS will be charged.<br><br>Reservations without a no-show guarantee or without prepayment may be canceled without prior notice.",
+                cancellationPolicy: "Cancellation Policy",
+                cancellationDetails: "Reservation cancellation without charge, up to 72 hours before Check-in. Except for non-refundable rates - these do not allow cancellation.<br><br>Cancellation requests must be made only by email and will only be validated after confirmation by the hotel.",
+                taxNotes: "TAX NOTES",
+                taxNotesDetails: "Invoices will be sent by email within 03 business days after check-out.<br><br>Service invoices will be issued according to the services provided, in addition to the F&B invoice in case of consumption.<br><br>Invoices must be checked upon receipt, as we have a deadline for changes, replacement and/or cancellation until the 5th business day of the following month.<br><br>If the invoice recipient is not informed in the reservation request, it will be issued in the name of the requesting company. In the case of an individual, it will be issued in the name of the guest.<br><br>If there is any error/discrepancy or if you do not receive the invoices within the deadline, please contact the financial department immediately.<br><br>Luciana Felix - Tel.(21) 2612-5030 extension 3 - Whatsapp (21)2710-6142 - Email: financeiro@icaraipraiahotel.com.br<br><br>Always keep your registration updated to avoid possible problems in receiving invoices."
             },
             fr: {
-                title: "DEVIS DE RÉSERVATION",
-                validity: "Ce devis est valable 24 heures. Les tarifs et la disponibilité peuvent changer après expiration.",
-                guest: "Responsable du Groupe",
-                group: "Groupe",
-                quantity: "Quantité",
-                guests: "Clients",
-                rate: "Tarif Journalier",
-                checkin: "Arrivée",
-                checkout: "Départ",
-                mealPlan: "Type de Pension",
-                breakfast: "Avec Petit-déjeuner",
-                noBreakfast: "Sans Petit-déjeuner",
-                halfBoard: "Demi-pension",
-                fullBoard: "Pension Complète",
-                parking: "Parking",
-                yes: "Oui",
-                no: "Non",
-                mealPrice: "Prix par repas/personne",
-                total: "TOTAL",
-                copySuccess: "Devis copié dans le presse-papiers!",
-                emailSuccess: "Devis formaté copié pour email!",
-                pdfSuccess: "PDF généré avec succès!",
-                whatsappSuccess: "Devis envoyé via WhatsApp!",
-                services: "SERVICES INCLUS",
-                policies: "POLITIQUES DE L'HÔTEL",
-                guarantee: "GARANTIE DE RÉSERVATION",
-                invoices: "FACTURES",
-                financialDetails: "DÉTAILS FINANCIERS",
-                subtotal: "Sous-total",
-                iss: "ISS (2%)",
-                averageRate: "Tarif Moyen",
-                period: "Période",
-                nights: "Nuit(s)",
-                apartment: "appartement(s)",
-                guestWord: "client(s)",
-                perDay: "/jour",
-                mealDetails: "Détails des Repas",
-                until: "jusqu'à",
-                groupSubtotal: "Sous-total du Groupe",
-                paymentNote: "⚠️ *PAIEMENT INTÉGRAL OBLIGATOIRE POUR LES GROUPES*"
+                calculatorTitle: "Informations de Réservation",
+                guestNameLabel: "Nom du Client Principal",
+                roomConfigLabel: "Configuration des Groupes",
+                addRoomBtn: "+ Ajouter Groupe",
+                mealTypeLabel: "Type de Repas",
+                breakfastLabel: "Avec Petit Déjeuner",
+                noBreakfastLabel: "Sans Petit Déjeuner",
+                halfBoardLabel: "Demi-Pension (MAP)",
+                fullBoardLabel: "Pension Complète (FAP)",
+                mealPriceLabel: "Prix par Repas (par personne)",
+                parkingLabel: "Parking",
+                copyButtonText: "Copier le Devis",
+                whatsappButtonText: "Envoyer par WhatsApp",
+                mealDetailsShowText: "📋 Afficher les Détails des Repas",
+                mealDetailsHideText: "📋 Masquer les Détails des Repas"
             },
             es: {
-                title: "COTIZACIÓN DE RESERVA",
-                validity: "Esta cotización es válida por 24 horas. Las tarifas y disponibilidad pueden cambiar después de la expiración.",
-                guest: "Responsable del Grupo",
-                group: "Grupo",
-                quantity: "Cantidad",
-                guests: "Huéspedes",
-                rate: "Tarifa Diaria",
-                checkin: "Check-in",
-                checkout: "Check-out",
-                mealPlan: "Tipo de Pensión",
-                breakfast: "Con Desayuno",
-                noBreakfast: "Sin Desayuno",
-                halfBoard: "Media Pensión",
-                fullBoard: "Pensión Completa",
-                parking: "Estacionamiento",
-                yes: "Sí",
-                no: "No",
-                mealPrice: "Precio por comida/persona",
-                total: "TOTAL",
-                copySuccess: "¡Cotización copiada al portapapeles!",
-                emailSuccess: "¡Cotización formateada copiada para correo!",
-                pdfSuccess: "¡PDF generado con éxito!",
-                whatsappSuccess: "¡Cotización enviada por WhatsApp!",
-                services: "SERVICIOS INCLUIDOS",
-                policies: "POLÍTICAS DEL HOTEL",
-                guarantee: "GARANTÍA DE RESERVA",
-                invoices: "FACTURAS",
-                financialDetails: "DETALLES FINANCIEROS",
-                subtotal: "Subtotal",
-                iss: "ISS (2%)",
-                averageRate: "Tarifa Promedio",
-                period: "Período",
-                nights: "Noche(s)",
-                apartment: "apartamento(s)",
-                guestWord: "huésped(es)",
-                perDay: "/día",
-                mealDetails: "Detalles de las Comidas",
-                until: "hasta",
-                groupSubtotal: "Subtotal del Grupo",
-                paymentNote: "⚠️ *PAGO INTEGRAL OBLIGATORIO PARA GRUPOS*"
+                calculatorTitle: "Información de la Reserva",
+                guestNameLabel: "Nombre del Huésped Principal",
+                roomConfigLabel: "Configuración de Grupos",
+                addRoomBtn: "+ Añadir Grupo",
+                mealTypeLabel: "Tipo de Comida",
+                breakfastLabel: "Con Desayuno",
+                noBreakfastLabel: "Sin Desayuno",
+                halfBoardLabel: "Media Pensión (MAP)",
+                fullBoardLabel: "Pensión Completa (FAP)",
+                mealPriceLabel: "Precio por Comida (por persona)",
+                parkingLabel: "Estacionamiento",
+                copyButtonText: "Copiar Cotización",
+                whatsappButtonText: "Enviar por WhatsApp",
+                mealDetailsShowText: "📋 Mostrar Detalles de las Comidas",
+                mealDetailsHideText: "📋 Ocultar Detalles de las Comidas"
             }
         };
 
+        // Current language
         let currentLang = 'pt';
-        let groupIndex = 0;
 
-        function correctTimezone(dateStr) {
-            if (!dateStr) return '';
-            const date = new Date(dateStr);
-            date.setDate(date.getDate() + 1);
-            return date.toLocaleDateString('pt-BR');
-        }
-
-        document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date().toISOString().split('T')[0];
-            document.querySelectorAll('.checkin, .checkout').forEach(input => {
-                input.min = today;
+        // Language selector functionality
+        document.querySelectorAll('.lang-btn').forEach(btn => {
+            btn.addEventListener('click', function() {
+                // Update active button
+                document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Update language
+                currentLang = this.getAttribute('data-lang');
+                updateLanguage();
+                calculateQuotation();
             });
-            
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    currentLang = this.dataset.lang;
-                    calculate();
-                });
-            });
-            
-            calculate();
         });
 
-        function toggleMealOptions(radio) {
-            const groupContainer = radio.closest('.group-container');
-            const mealOptionsDiv = groupContainer.querySelector('.meal-options');
-            if (radio.value === 'halfBoard' || radio.value === 'fullBoard') {
-                mealOptionsDiv.style.display = 'block';
+        // Update interface language
+        function updateLanguage() {
+            const langData = translations[currentLang];
+            
+            // Update form labels
+            document.getElementById('calculatorTitle').textContent = langData.calculatorTitle;
+            document.getElementById('guestNameLabel').textContent = langData.guestNameLabel;
+            document.getElementById('roomConfigLabel').textContent = langData.roomConfigLabel;
+            document.getElementById('addRoomBtn').textContent = langData.addRoomBtn;
+            document.getElementById('mealTypeLabel').textContent = langData.mealTypeLabel;
+            document.getElementById('breakfastLabel').textContent = langData.breakfastLabel;
+            document.getElementById('noBreakfastLabel').textContent = langData.noBreakfastLabel;
+            document.getElementById('halfBoardLabel').textContent = langData.halfBoardLabel;
+            document.getElementById('fullBoardLabel').textContent = langData.fullBoardLabel;
+            document.getElementById('mealPriceLabel').textContent = langData.mealPriceLabel;
+            document.getElementById('parkingLabel').textContent = langData.parkingLabel;
+            document.getElementById('copyButtonText').textContent = langData.copyButtonText;
+            document.getElementById('whatsappButtonText').textContent = langData.whatsappButtonText;
+            
+            // Update checkbox toggle text based on current state
+            const checkbox = document.getElementById('mealDetailsCheckbox');
+            const toggleText = document.getElementById('mealDetailsToggleText');
+            if (checkbox.classList.contains('checked')) {
+                toggleText.textContent = langData.mealDetailsHideText;
+                document.getElementById('mealDetailsToggle').classList.add('checked');
             } else {
-                mealOptionsDiv.style.display = 'none';
+                toggleText.textContent = langData.mealDetailsShowText;
+                document.getElementById('mealDetailsToggle').classList.remove('checked');
             }
-            calculate();
+            
+            // Update placeholders
+            document.getElementById('guestName').placeholder = currentLang === 'pt' ? 'Digite o nome completo' : 
+                                                              currentLang === 'en' ? 'Enter full name' :
+                                                              currentLang === 'fr' ? 'Entrez le nom complet' : 
+                                                              'Ingrese el nombre completo';
+            
+            // Update room configuration options
+            updateRoomConfigurationLanguage();
+            updateRoomsSummary();
         }
 
-        function addGroup() {
-            groupIndex++;
-            const container = document.getElementById('groupsContainer');
-            const div = document.createElement('div');
-            div.className = 'group-container';
-            div.dataset.group = groupIndex;
-            div.innerHTML = `
-                <div class="group-title">
-                    <span>Grupo ${groupIndex + 1}</span>
-                    <button class="remove-group-btn" onclick="removeGroup(this)">×</button>
-                </div>
-                <div class="grid-3">
-                    <div><label class="form-label">Quantidade</label><input type="number" class="form-input qty" min="1" value="1" oninput="calculate()"></div>
-                    <div><label class="form-label">Hóspedes</label>
-                        <select class="form-select guests" oninput="calculate()">
-                            <option value="1" selected>1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option>
-                        </select>
-                    </div>
-                    <div><label class="form-label">Diária (R$)</label><input type="number" class="form-input rate" step="0.01" value="0" placeholder="0,00" oninput="calculate()"></div>
-                </div>
-                <div class="grid-2" style="margin-top:15px;">
-                    <div><label class="form-label">Check-in</label><input type="date" class="form-input checkin" oninput="calculate()"></div>
-                    <div><label class="form-label">Check-out</label><input type="date" class="form-input checkout" oninput="calculate()"></div>
-                </div>
-                <div style="margin-top:15px;">
-                    <label class="form-label">Tipo de Pensão</label>
-                    <div style="display: grid; grid-template-columns: repeat(4,1fr); gap: 8px; font-size:13px;">
-                        <label><input type="radio" name="meal-${groupIndex}" value="breakfast" checked onchange="toggleMealOptions(this)"> Com Café</label>
-                        <label><input type="radio" name="meal-${groupIndex}" value="noBreakfast" onchange="toggleMealOptions(this)"> Sem Café</label>
-                        <label><input type="radio" name="meal-${groupIndex}" value="halfBoard" onchange="toggleMealOptions(this)"> Meia Pensão</label>
-                        <label><input type="radio" name="meal-${groupIndex}" value="fullBoard" onchange="toggleMealOptions(this)"> Pensão Completa</label>
-                    </div>
-                    <div class="meal-options" style="display:none;">
-                        <label class="form-label">Valor por refeição/pessoa (R$)</label>
-                        <input type="number" class="form-input meal-price" step="0.01" placeholder="0,00" oninput="calculate()">
-                    </div>
-                </div>
-                <div style="margin-top:15px;">
-                    <label class="form-label">Estacionamento</label>
-                    <select class="form-select parking" oninput="calculate()">
-                        <option value="no">Não</option>
-                        <option value="yes">Sim (R$ 45/dia)</option>
-                    </select>
-                </div>
-            `;
-            container.appendChild(div);
+        // Toggle meal details com checkbox
+        function toggleMealDetails() {
+            const mealDetails = document.getElementById('mealDetails');
+            const checkbox = document.getElementById('mealDetailsCheckbox');
+            const toggleButton = document.getElementById('mealDetailsToggle');
+            const toggleText = document.getElementById('mealDetailsToggleText');
+            
+            checkbox.classList.toggle('checked');
+            toggleButton.classList.toggle('checked');
+            mealDetails.classList.toggle('active');
+            
+            // Update toggle text
+            if (checkbox.classList.contains('checked')) {
+                toggleText.textContent = translations[currentLang].mealDetailsHideText;
+            } else {
+                toggleText.textContent = translations[currentLang].mealDetailsShowText;
+            }
+            
+            // Recalculate quotation to update the preview
+            calculateQuotation();
+            showUpdateStatus();
+        }
+
+        // Update room configuration language
+        function updateRoomConfigurationLanguage() {
+            const roomItems = document.querySelectorAll('.room-item');
+            roomItems.forEach(room => {
+                const quantityInput = room.querySelector('input[type="number"]:first-of-type');
+                const guestsSelect = room.querySelector('select');
+                const rateInput = room.querySelectorAll('input[type="number"]')[1];
+                
+                // Update select options
+                guestsSelect.innerHTML = '';
+                for (let i = 1; i <= 4; i++) {
+                    const option = document.createElement('option');
+                    option.value = i;
+                    option.textContent = currentLang === 'pt' ? `${i} Hóspede${i > 1 ? 's' : ''}` :
+                                        currentLang === 'en' ? `${i} Guest${i > 1 ? 's' : ''}` :
+                                        currentLang === 'fr' ? `${i} Client${i > 1 ? 's' : ''}` :
+                                        `${i} Huésped${i > 1 ? 'es' : ''}`;
+                    guestsSelect.appendChild(option);
+                }
+                
+                // Update placeholders
+                quantityInput.placeholder = currentLang === 'pt' ? 'Quantidade' :
+                                          currentLang === 'en' ? 'Quantity' :
+                                          currentLang === 'fr' ? 'Quantité' :
+                                          'Cantidad';
+                
+                rateInput.placeholder = currentLang === 'pt' ? 'Diária (R$)' :
+                                     currentLang === 'en' ? 'Daily Rate (R$)' :
+                                     currentLang === 'fr' ? 'Tarif (R$)' :
+                                     'Tarifa (R$)';
+            });
+        }
+
+        // Add new room configuration
+        function addRoom() {
+            const roomsContainer = document.getElementById('roomsContainer');
+            const roomItem = document.createElement('div');
+            roomItem.className = 'room-item';
             
             const today = new Date().toISOString().split('T')[0];
-            div.querySelectorAll('.checkin, .checkout').forEach(input => {
-                input.min = today;
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            const tomorrowStr = tomorrow.toISOString().split('T')[0];
+            
+            roomItem.innerHTML = `
+                <input type="number" class="room-input" min="1" value="1" placeholder="${currentLang === 'pt' ? 'Quantidade' : 
+                                                                                      currentLang === 'en' ? 'Quantity' :
+                                                                                      currentLang === 'fr' ? 'Quantité' :
+                                                                                      'Cantidad'}" onchange="updateRoomsSummary()">
+                <select class="room-input" onchange="updateRoomsSummary()">
+                    ${Array.from({length: 4}, (_, i) => 
+                        `<option value="${i+1}">${currentLang === 'pt' ? `${i+1} Hóspede${i > 0 ? 's' : ''}` :
+                                              currentLang === 'en' ? `${i+1} Guest${i > 0 ? 's' : ''}` :
+                                              currentLang === 'fr' ? `${i+1} Client${i > 0 ? 's' : ''}` :
+                                              `${i+1} Huésped${i > 0 ? 'es' : ''}`}</option>`
+                    ).join('')}
+                </select>
+                <input type="number" class="room-input" min="0" step="0.01" placeholder="${currentLang === 'pt' ? 'Diária (R$)' :
+                                                                                        currentLang === 'en' ? 'Daily Rate (R$)' :
+                                                                                        currentLang === 'fr' ? 'Tarif (R$)' :
+                                                                                        'Tarifa (R$)'}" onchange="updateRoomsSummary()">
+                <input type="date" class="room-input" value="${today}" onchange="updateRoomsSummary()">
+                <input type="date" class="room-input" value="${tomorrowStr}" onchange="updateRoomsSummary()">
+                <button class="remove-room-btn" onclick="removeRoom(this)">×</button>
+            `;
+            
+            roomsContainer.appendChild(roomItem);
+            updateRoomsSummary();
+            
+            // Show remove buttons for all rooms if there's more than one
+            const removeButtons = document.querySelectorAll('.remove-room-btn');
+            if (removeButtons.length > 1) {
+                removeButtons.forEach(btn => btn.style.display = 'block');
+            }
+        }
+
+        // Remove room configuration
+        function removeRoom(button) {
+            const roomItem = button.closest('.room-item');
+            roomItem.remove();
+            updateRoomsSummary();
+            
+            // Hide remove buttons if there's only one room left
+            const removeButtons = document.querySelectorAll('.remove-room-btn');
+            if (removeButtons.length === 1) {
+                removeButtons[0].style.display = 'none';
+            }
+        }
+
+        // Update rooms summary
+        function updateRoomsSummary() {
+            const roomItems = document.querySelectorAll('.room-item');
+            let totalGroups = 0;
+            let totalGuests = 0;
+            let totalDailyRate = 0;
+            
+            roomItems.forEach(room => {
+                const quantity = parseInt(room.querySelector('input[type="number"]:first-of-type').value) || 0;
+                const guests = parseInt(room.querySelector('select').value) || 0;
+                const rate = parseFloat(room.querySelectorAll('input[type="number"]')[1].value) || 0;
+                
+                totalGroups += quantity;
+                totalGuests += quantity * guests;
+                totalDailyRate += quantity * rate;
             });
             
-            updateRemoveButtons();
-            calculate();
-        }
-
-        function removeGroup(btn) {
-            btn.closest('.group-container').remove();
-            updateGroupTitles();
-            updateRemoveButtons();
-            calculate();
-        }
-
-        function updateGroupTitles() {
-            document.querySelectorAll('.group-container').forEach((g, i) => {
-                g.querySelector('.group-title span').textContent = `Grupo ${i + 1}`;
-            });
-        }
-
-        function updateRemoveButtons() {
-            const btns = document.querySelectorAll('.remove-group-btn');
-            btns.forEach(b => b.style.display = btns.length > 1 ? 'block' : 'none');
-        }
-
-        function calculate() {
-            const groups = document.querySelectorAll('.group-container');
-            const mainGuest = document.getElementById('mainGuest').value;
-            const showMealDetails = document.getElementById('showMealDetails').checked;
+            const formatCurrency = (value) => {
+                return 'R$ ' + value.toFixed(2).replace('.', ',').replace(/\d(?=(\d{3})+,)/g, '$&.');
+            };
             
-            if (groups.length === 0 || !mainGuest) {
+            const summaryText = currentLang === 'pt' ? `Total: ${totalGroups} grupo(s) • ${totalGuests} hóspede(s) • ${formatCurrency(totalDailyRate)}/dia` :
+                              currentLang === 'en' ? `Total: ${totalGroups} group(s) • ${totalGuests} guest(s) • ${formatCurrency(totalDailyRate)}/day` :
+                              currentLang === 'fr' ? `Total: ${totalGroups} groupe(s) • ${totalGuests} client(s) • ${formatCurrency(totalDailyRate)}/jour` :
+                              `Total: ${totalGroups} grupo(s) • ${totalGuests} huésped(es) • ${formatCurrency(totalDailyRate)}/día`;
+            
+            document.getElementById('roomsSummary').textContent = summaryText;
+            calculateQuotation();
+        }
+
+        // Show update status
+        function showUpdateStatus() {
+            const statusElement = document.getElementById('updateStatus');
+            statusElement.classList.add('show');
+            
+            setTimeout(() => {
+                statusElement.classList.remove('show');
+            }, 2000);
+        }
+
+        // Meal type selection
+        document.querySelectorAll('input[name="mealType"]').forEach(radio => {
+            radio.addEventListener('change', function() {
+                // Update radio label styles
+                document.querySelectorAll('.radio-label').forEach(label => {
+                    label.classList.remove('selected');
+                });
+                document.getElementById('label' + this.value.charAt(0).toUpperCase() + this.value.slice(1)).classList.add('selected');
+                
+                // Show/hide meal price input
+                const mealPriceSection = document.getElementById('mealPriceSection');
+                if (this.value === 'halfBoard' || this.value === 'fullBoard') {
+                    mealPriceSection.style.display = 'block';
+                } else {
+                    mealPriceSection.style.display = 'none';
+                }
+                
+                calculateQuotation();
+                showUpdateStatus();
+            });
+        });
+        
+        // Add event listeners for real-time updates
+        document.querySelectorAll('#guestName, #mealPrice, #parking').forEach(input => {
+            input.addEventListener('input', function() {
+                calculateQuotation();
+                showUpdateStatus();
+            });
+            input.addEventListener('change', function() {
+                calculateQuotation();
+                showUpdateStatus();
+            });
+        });
+        
+        // Add event listeners to all room inputs for real-time updates
+        document.addEventListener('input', function(e) {
+            if (e.target.classList.contains('room-input')) {
+                calculateQuotation();
+                showUpdateStatus();
+            }
+        });
+        
+        // Initialize first radio as selected
+        document.getElementById('labelBreakfast').classList.add('selected');
+        
+        // Initial calculation
+        updateRoomsSummary();
+        
+        function calculateQuotation() {
+            // Get input values
+            const guestName = document.getElementById('guestName').value || '';
+            const mealType = document.querySelector('input[name="mealType"]:checked').value;
+            const mealPrice = parseFloat(document.getElementById('mealPrice').value) || 0;
+            const parking = document.getElementById('parking').value;
+            
+            // Check if meal details should be shown in voucher
+            const showMealDetails = document.getElementById('mealDetailsCheckbox').classList.contains('checked');
+            
+            // Calculate room configurations
+            const roomItems = document.querySelectorAll('.room-item');
+            let totalGroups = 0;
+            let totalGuests = 0;
+            let totalDailyRate = 0;
+            let totalNights = 0;
+            const groupDetails = [];
+            
+            roomItems.forEach((room, index) => {
+                const quantity = parseInt(room.querySelector('input[type="number"]:first-of-type').value) || 0;
+                const guests = parseInt(room.querySelector('select').value) || 0;
+                const rate = parseFloat(room.querySelectorAll('input[type="number"]')[1].value) || 0;
+                const checkIn = room.querySelectorAll('input[type="date"]')[0].value;
+                const checkOut = room.querySelectorAll('input[type="date"]')[1].value;
+                
+                // Calculate nights for this group
+                let nights = 0;
+                if (checkIn && checkOut) {
+                    const checkInDate = new Date(checkIn);
+                    const checkOutDate = new Date(checkOut);
+                    const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
+                    nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    totalNights += nights * quantity;
+                }
+                
+                totalGroups += quantity;
+                totalGuests += quantity * guests;
+                totalDailyRate += quantity * rate * nights;
+                
+                if (quantity > 0) {
+                    groupDetails.push({
+                        quantity: quantity,
+                        guests: guests,
+                        rate: rate,
+                        checkIn: checkIn,
+                        checkOut: checkOut,
+                        nights: nights,
+                        groupTotal: quantity * rate * nights
+                    });
+                }
+            });
+            
+            if (totalGroups === 0) {
+                // Show empty preview if no groups
                 document.getElementById('quotationPreview').innerHTML = `
-                    <div style="padding:80px 40px; text-align:center; color:#aaa; font-size:18px;">
-                        ${currentLang === 'pt' ? 'Preencha os dados para gerar a cotação' : 
-                          currentLang === 'en' ? 'Fill in the data to generate quotation' :
-                          currentLang === 'fr' ? 'Remplissez les données pour générer le devis' :
-                          'Complete los datos para generar la cotización'}
+                    <div class="quotation-header">
+                        <div class="hotel-name">ICARAÍ PRAIA HOTEL</div>
+                        <div class="quotation-title">${translations[currentLang].quotationTitle}</div>
+                    </div>
+                    <div class="quotation-body" style="text-align: center; padding: 40px;">
+                        <p style="color: #666; font-size: 16px;">
+                            ${currentLang === 'pt' ? 'Configure os grupos para gerar a cotação' : 
+                              currentLang === 'en' ? 'Configure groups to generate the quotation' :
+                              currentLang === 'fr' ? 'Configurez les groupes pour générer le devis' : 
+                              'Configure los grupos para generar la cotización'}
+                        </p>
                     </div>
                 `;
                 return;
             }
             
-            let totalAmount = 0;
-            let accommodationAmount = 0; // Apenas hospedagem para cálculo da diária média
-            let groupHTML = '';
-            let totalNights = 0;
-            let totalApartments = 0;
-            let groupSubtotals = [];
+            // Calculate base amount (diária por quarto)
+            let baseAmount = totalDailyRate;
             
-            groups.forEach((group, index) => {
-                const qty = parseInt(group.querySelector('.qty').value) || 0;
-                const guests = parseInt(group.querySelector('.guests').value) || 0;
-                const rate = parseFloat(group.querySelector('.rate').value) || 0;
-                const checkin = group.querySelector('.checkin').value;
-                const checkout = group.querySelector('.checkout').value;
-                const mealType = group.querySelector(`input[name="meal-${index}"]:checked`).value;
-                const mealPrice = parseFloat(group.querySelector('.meal-price').value) || 0;
-                const parking = group.querySelector('.parking').value;
-                
-                let nights = 0;
-                if (checkin && checkout) {
-                    const checkinDate = new Date(checkin);
-                    const checkoutDate = new Date(checkout);
-                    nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
-                }
-                
-                totalNights += nights;
-                totalApartments += qty;
-                
-                // Calcular custo da hospedagem (sem estacionamento)
-                const accommodationCost = qty * guests * rate * nights;
-                accommodationAmount += accommodationCost;
-                
-                // Calcular custo das refeições
-                let mealCost = 0;
-                let mealDetails = '';
-                
-                if (mealType === 'breakfast') {
-                    mealCost = qty * guests * nights * mealPrice;
-                    mealDetails = `${translations[currentLang].breakfast} - ${qty} x ${guests} x ${nights} x R$ ${mealPrice.toFixed(2)}`;
-                } else if (mealType === 'halfBoard') {
-                    mealCost = qty * guests * nights * mealPrice * 2;
-                    mealDetails = `${translations[currentLang].halfBoard} - ${qty} x ${guests} x ${nights} x 2 x R$ ${mealPrice.toFixed(2)}`;
-                } else if (mealType === 'fullBoard') {
-                    mealCost = qty * guests * nights * mealPrice * 3;
-                    mealDetails = `${translations[currentLang].fullBoard} - ${qty} x ${guests} x ${nights} x 3 x R$ ${mealPrice.toFixed(2)}`;
-                }
-                
-                // Calcular custo do estacionamento (separado)
-                let parkingCost = 0;
-                if (parking === 'yes') {
-                    parkingCost = qty * nights * 45;
-                }
-                
-                // Calcular total do grupo
-                const groupTotal = accommodationCost + mealCost + parkingCost;
-                totalAmount += groupTotal;
-                groupSubtotals.push({
-                    groupNumber: index + 1,
-                    subtotal: groupTotal
-                });
-                
-                const formatDate = (dateStr) => {
-                    return correctTimezone(dateStr);
-                };
-                
-                groupHTML += `
-                    <div style="margin-bottom: 25px;">
-                        <h3 style="color: #1a6bb3; margin-bottom: 10px;">${translations[currentLang].group} ${index + 1}:</h3>
-                        <div style="margin-bottom: 10px;">
-                            ${qty} ${translations[currentLang].apartment} • ${guests} ${translations[currentLang].guestWord} • R$ ${rate.toFixed(2)}${translations[currentLang].perDay}
-                        </div>
-                        <div style="margin-bottom: 10px;">
-                            <strong>${translations[currentLang].period} ${index + 1}:</strong><br>
-                            ${formatDate(checkin)} ${translations[currentLang].until} ${formatDate(checkout)} (${nights} ${translations[currentLang].nights})
-                        </div>
-                        <div style="margin-bottom: 10px;">
-                            <strong>${translations[currentLang].mealPlan}:</strong><br>
-                            ${translations[currentLang][mealType]}
-                        </div>
-                        ${showMealDetails && mealDetails ? `
-                        <div style="margin-bottom: 10px;">
-                            <strong>${translations[currentLang].mealDetails}:</strong><br>
-                            ${mealDetails}
-                        </div>
-                        ` : ''}
-                        <div style="margin-bottom: 10px;">
-                            <strong>${translations[currentLang].parking}:</strong><br>
-                            ${translations[currentLang][parking]} ${parking === 'yes' ? `(R$ ${parkingCost.toFixed(2)})` : ''}
-                        </div>
+            // Calculate meal costs (por pessoa)
+            let mealDescription = '';
+            let mealCost = 0;
+            let mealsPerDay = 0;
+            let mealInfoNotice = '';
+            
+            const mealTypes = {
+                'breakfast': translations[currentLang].breakfastLabel,
+                'noBreakfast': translations[currentLang].noBreakfastLabel,
+                'halfBoard': translations[currentLang].halfBoardLabel,
+                'fullBoard': translations[currentLang].fullBoardLabel
+            };
+            
+            switch(mealType) {
+                case 'breakfast':
+                    mealDescription = mealTypes.breakfast;
+                    break;
+                case 'noBreakfast':
+                    mealDescription = mealTypes.noBreakfast;
+                    break;
+                case 'halfBoard':
+                    mealDescription = mealTypes.halfBoard;
+                    mealsPerDay = 1;
+                    mealCost = mealPrice * totalGuests * mealsPerDay * totalNights;
+                    mealInfoNotice = showMealDetails ? translations[currentLang].halfBoardNotice : '';
+                    break;
+                case 'fullBoard':
+                    mealDescription = mealTypes.fullBoard;
+                    mealsPerDay = 2;
+                    mealCost = mealPrice * totalGuests * mealsPerDay * totalNights;
+                    mealInfoNotice = showMealDetails ? translations[currentLang].fullBoardNotice : '';
+                    break;
+            }
+            
+            // Calculate parking cost (por quarto)
+            let parkingCost = 0;
+            if (parking === 'yes') {
+                parkingCost = 45 * totalGroups * totalNights;
+            }
+            
+            // Calculate ISS tax (2% sobre diárias e refeições, excluindo estacionamento)
+            const issTax = (baseAmount + mealCost) * 0.02;
+            
+            // Calculate final total
+            const total = baseAmount + mealCost + parkingCost + issTax;
+            
+            // Calculate average rate per night (sem ISS e sem estacionamento)
+            const avgRatePerNight = totalNights > 0 ? (baseAmount + mealCost) / totalNights : 0;
+            
+            // Format currency
+            const formatCurrency = (value) => {
+                return 'R$ ' + value.toFixed(2).replace('.', ',').replace(/\d(?=(\d{3})+,)/g, '$&.');
+            };
+            
+            // Format dates for display
+            const formatDateForDisplay = (dateString) => {
+                if (!dateString) return '-';
+                const date = new Date(dateString);
+                return date.toLocaleDateString('pt-BR');
+            };
+            
+            // Generate group details HTML
+            let groupDetailsHTML = '';
+            groupDetails.forEach((group, index) => {
+                groupDetailsHTML += `
+                    <div class="detail-row">
+                        <span class="detail-label">${currentLang === 'pt' ? 'Grupo' : 
+                                                   currentLang === 'en' ? 'Group' :
+                                                   currentLang === 'fr' ? 'Groupe' : 
+                                                   'Grupo'} ${index + 1}:</span>
+                        <span class="detail-value">${group.quantity} ${currentLang === 'pt' ? 'apartamento(s)' : 
+                                                                     currentLang === 'en' ? 'apartment(s)' :
+                                                                     currentLang === 'fr' ? 'appartement(s)' : 
+                                                                     'apartamento(s)'} • ${group.guests} ${currentLang === 'pt' ? 'hóspede(s)' : 
+                                                                                                        currentLang === 'en' ? 'guest(s)' :
+                                                                                                        currentLang === 'fr' ? 'client(s)' : 
+                                                                                                        'huésped(es)'} • ${formatCurrency(group.rate)}/${currentLang === 'pt' ? 'dia' : 
+                                                                                                                                                     currentLang === 'en' ? 'day' :
+                                                                                                                                                     currentLang === 'fr' ? 'jour' : 
+                                                                                                                                                     'día'}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">${currentLang === 'pt' ? 'Período' : 
+                                                   currentLang === 'en' ? 'Period' :
+                                                   currentLang === 'fr' ? 'Période' : 
+                                                   'Período'} ${index + 1}:</span>
+                        <span class="detail-value">${formatDateForDisplay(group.checkIn)} - ${formatDateForDisplay(group.checkOut)} (${group.nights} ${currentLang === 'pt' ? 'noite(s)' : 
+                                                                                                                                    currentLang === 'en' ? 'night(s)' :
+                                                                                                                                    currentLang === 'fr' ? 'nuit(s)' : 
+                                                                                                                                    'noche(s)'})</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">${currentLang === 'pt' ? 'Subtotal Grupo' : 
+                                                   currentLang === 'en' ? 'Group Subtotal' :
+                                                   currentLang === 'fr' ? 'Sous-total Groupe' : 
+                                                   'Subtotal Grupo'} ${index + 1}:</span>
+                        <span class="detail-value">${formatCurrency(group.groupTotal)}</span>
+                    </div>
+                    <div class="detail-row">
+                        <span class="detail-label">${currentLang === 'pt' ? 'Diária Média Grupo' : 
+                                                   currentLang === 'en' ? 'Group Average Rate' :
+                                                   currentLang === 'fr' ? 'Tarif Moyen Groupe' : 
+                                                   'Tarifa Media Grupo'} ${index + 1}:</span>
+                        <span class="detail-value">${group.nights > 0 ? formatCurrency(group.groupTotal / group.nights) : formatCurrency(0)}/${currentLang === 'pt' ? 'noite' : 
+                                                                                                                                             currentLang === 'en' ? 'night' :
+                                                                                                                                             currentLang === 'fr' ? 'nuit' : 
+                                                                                                                                             'noche'}</span>
                     </div>
                 `;
             });
             
-            // Calcular ISS
-            const issAmount = totalAmount * (hotelConfig.iss / 100);
-            const totalWithISS = totalAmount + issAmount;
-            
-            // CORREÇÃO: Calcular diária média APENAS com hospedagem (sem estacionamento)
-            const averageRate = totalNights > 0 ? accommodationAmount / totalNights / totalApartments : 0;
-            
-            const servicesContent = {
-                pt: [
-                    'Café da manhã incluso das 6h às 10h, servido no restaurante',
-                    'Internet (wi-fi)',
-                    'Estacionamento R$ 45,00 por dia - sujeito à disponibilidade, solicitação prévia e confirmação - vagas limitadas',
-                    'Apartamentos Standard com Smart TV, ar condicionado, telefone, frigobar, internet e cofre individual',
-                    'Restaurante próprio (das 6h às 22h)'
-                ],
-                en: [
-                    'Breakfast included from 6am to 10am, served in the restaurant',
-                    'Internet (wi-fi)',
-                    'Parking R$ 45.00 per day - subject to availability, prior request and confirmation - limited spaces',
-                    'Standard Apartments with Smart TV, air conditioning, telephone, minibar, internet and individual safe',
-                    'Own restaurant (from 6am to 10pm)'
-                ],
-                fr: [
-                    'Petit-déjeuner inclus de 6h à 10h, servi au restaurant',
-                    'Internet (wi-fi)',
-                    'Parking R$ 45,00 par jour - sous réserve de disponibilité, demande préalable et confirmation - places limitées',
-                    'Appartements Standard avec Smart TV, climatisation, téléphone, minibar, internet et coffre-fort individuel',
-                    'Restaurant propre (de 6h à 22h)'
-                ],
-                es: [
-                    'Desayuno incluido de 6h a 10h, servido en el restaurante',
-                    'Internet (wi-fi)',
-                    'Estacionamiento R$ 45,00 por día - sujeto a disponibilidad, solicitud previa y confirmación - plazas limitadas',
-                    'Apartamentos Standard con Smart TV, aire acondicionado, teléfono, minibar, internet y caja fuerte individual',
-                    'Restaurante propio (de 6h a 22h)'
-                ]
-            };
-
-            const policiesContent = {
-                pt: {
-                    checkin: 'Check-in / Check-out',
-                    checkinList: [
-                        'Check-in: 14:00 / Check-out: 12:00',
-                        'Não aceitamos Pets'
-                    ],
-                    minors: 'Política para Menores',
-                    minorsList: [
-                        'Acompanhado pelos pais: Apresentar RG ou certidão de nascimento no check-in comprovando ser filho de um dos pais presentes',
-                        'Desacompanhado dos pais: Apresentar RG ou certidão de nascimento E autorização de ambos os pais reconhecida em cartório, por exigência legal'
-                    ],
-                    paragraphs: [
-                        'Para garantir a sua reserva, solicitamos o pagamento da primeira diária + 2% ISS, lembrando que em caso de cancelamento da sua reserva fora do prazo, não devolvemos o valor pago.',
-                        'Caso tenha feito sua reserva com condição de tarifa não reembolsável, iremos cobrar o valor total da reserva e em caso de cancelamento e/ou alterações, não devolvemos o valor pré-pago.'
-                    ]
-                },
-                en: {
-                    checkin: 'Check-in / Check-out',
-                    checkinList: [
-                        'Check-in: 14:00 / Check-out: 12:00',
-                        'We do not accept Pets'
-                    ],
-                    minors: 'Policy for Minors',
-                    minorsList: [
-                        'Accompanied by parents: Present ID or birth certificate at check-in proving to be the child of one of the present parents',
-                        'Unaccompanied by parents: Present ID or birth certificate AND authorization from both parents notarized, by legal requirement'
-                    ],
-                    paragraphs: [
-                        'To guarantee your reservation, we request payment of the first night + 2% ISS, remembering that in case of cancellation of your reservation outside the deadline, we do not refund the amount paid.',
-                        'If you made your reservation with a non-refundable rate condition, we will charge the total amount of the reservation and in case of cancellation and/or changes, we do not refund the pre-paid amount.'
-                    ]
-                },
-                fr: {
-                    checkin: 'Arrivée / Départ',
-                    checkinList: [
-                        'Arrivée: 14:00 / Départ: 12:00',
-                        'Nous n\'acceptons pas les Animaux'
-                    ],
-                    minors: 'Politique pour les Mineurs',
-                    minorsList: [
-                        'Accompagné par les parents: Présenter une pièce d\'identité ou un acte de naissance à l\'arrivée prouvant qu\'il est l\'enfant de l\'un des parents présents',
-                        'Non accompagné par les parents: Présenter une pièce d\'identité ou un acte de naissance ET une autorisation des deux parents notariée, par exigence légale'
-                    ],
-                    paragraphs: [
-                        'Pour garantir votre réservation, nous demandons le paiement de la première nuit + 2% ISS, en rappelant qu\'en cas d\'annulation de votre réservation hors délai, nous ne remboursons pas le montant payé.',
-                        'Si vous avez fait votre réservation avec une condition de tarif non remboursable, nous facturerons le montant total de la réservation et en cas d\'annulation et/ou de modifications, nous ne remboursons pas le montant prépayé.'
-                    ]
-                },
-                es: {
-                    checkin: 'Check-in / Check-out',
-                    checkinList: [
-                        'Check-in: 14:00 / Check-out: 12:00',
-                        'No aceptamos Mascotas'
-                    ],
-                    minors: 'Política para Menores',
-                    minorsList: [
-                        'Acompañado por los padres: Presentar DNI o certificado de nacimiento en el check-in que acredite ser hijo de uno de los padres presentes',
-                        'No acompañado por los padres: Presentar DNI o certificado de nacimiento Y autorización de ambos padres reconocida en notaría, por exigencia legal'
-                    ],
-                    paragraphs: [
-                        'Para garantizar su reserva, solicitamos el pago de la primera noche + 2% ISS, recordando que en caso de cancelación de su reserva fuera del plazo, no devolvemos el valor pagado.',
-                        'Si ha realizado su reserva con condición de tarifa no reembolsable, cobraremos el valor total de la reserva y en caso de cancelación y/o alteraciones, no devolvemos el valor prepago.'
-                    ]
-                }
-            };
-
-            const guaranteeContent = {
-                pt: {
-                    deposit: 'Depósito Bancário ou Pix',
-                    depositText: [
-                        `${hotelConfig.bank.name} - Agência ${hotelConfig.bank.agency} - Conta ${hotelConfig.bank.account}`,
-                        `${hotelConfig.name} CNPJ: ${hotelConfig.cnpj}`,
-                        `Pix: ${hotelConfig.email}`
-                    ],
-                    depositNote: 'Após realizar o depósito, favor enviar o comprovante para que possamos identificá-lo com a sua reserva.',
-                    creditCard: 'Cartão de Crédito',
-                    creditCardText: [
-                        'Solicite o link de pagamento por e-mail ou, se preferir, clique aqui para receber via WhatsApp.',
-                        'Iremos debitar apenas o valor da primeira diária + 2% ISS, porém caso tenha reserva com tarifa não reembolsável, Carnaval, Reveillon e grandes eventos, será debitado o valor total.'
-                    ],
-                    company: 'Empresa/Agência',
-                    companyText: [
-                        'Solicitamos garantia para no-show, caso o hóspede não se apresente no hotel ou seja solicitado cancelamento fora do prazo, será cobrado o valor correspondente a primeira diária + 2% ISS.',
-                        'Reservas sem garantia de no-show ou sem pré-pagamento poderão ser canceladas sem aviso prévio.'
-                    ],
-                    cancellation: 'Prazo para Cancelamento',
-                    cancellationText: [
-                        'Cancelamento da reserva sem ônus, até 72 horas antes do Check-in. Exceto para tarifas não reembolsáveis - estas não permitem cancelamento.',
-                        'Os pedidos de cancelamento devem ser feito somente por e-mail e só serão validados após a confirmação do hotel.'
-                    ]
-                },
-                en: {
-                    deposit: 'Bank Deposit or Pix',
-                    depositText: [
-                        `${hotelConfig.bank.name} - Agency ${hotelConfig.bank.agency} - Account ${hotelConfig.bank.account}`,
-                        `${hotelConfig.name} CNPJ: ${hotelConfig.cnpj}`,
-                        `Pix: ${hotelConfig.email}`
-                    ],
-                    depositNote: 'After making the deposit, please send the receipt so we can identify it with your reservation.',
-                    creditCard: 'Credit Card',
-                    creditCardText: [
-                        'Request the payment link by email or, if you prefer, click here to receive it via WhatsApp.',
-                        'We will only charge the amount of the first night + 2% ISS, but if you have a reservation with a non-refundable rate, Carnival, New Year\'s Eve and major events, the total amount will be charged.'
-                    ],
-                    company: 'Company/Agency',
-                    companyText: [
-                        'We request a no-show guarantee, if the guest does not show up at the hotel or cancellation is requested outside the deadline, the amount corresponding to the first night + 2% ISS will be charged.',
-                        'Reservations without a no-show guarantee or without pre-payment may be canceled without prior notice.'
-                    ],
-                    cancellation: 'Cancellation Deadline',
-                    cancellationText: [
-                        'Reservation cancellation free of charge, up to 72 hours before Check-in. Except for non-refundable rates - these do not allow cancellation.',
-                        'Cancellation requests must be made only by email and will only be validated after hotel confirmation.'
-                    ]
-                },
-                fr: {
-                    deposit: 'Dépôt Bancaire ou Pix',
-                    depositText: [
-                        `${hotelConfig.bank.name} - Agence ${hotelConfig.bank.agency} - Compte ${hotelConfig.bank.account}`,
-                        `${hotelConfig.name} CNPJ: ${hotelConfig.cnpj}`,
-                        `Pix: ${hotelConfig.email}`
-                    ],
-                    depositNote: 'Après avoir effectué le dépôt, veuillez envoyer le reçu afin que nous puissions l\'identifier avec votre réservation.',
-                    creditCard: 'Carte de Crédit',
-                    creditCardText: [
-                        'Demandez le lien de paiement par e-mail ou, si vous préférez, cliquez ici pour le recevoir via WhatsApp.',
-                        'Nous ne débiterons que le montant de la première nuit + 2% ISS, mais si vous avez une réservation avec un tarif non remboursable, Carnaval, Réveillon et grands événements, le montant total sera débité.'
-                    ],
-                    company: 'Entreprise/Agence',
-                    companyText: [
-                        'Nous demandons une garantie no-show, si le client ne se présente pas à l\'hôtel ou si une annulation est demandée en dehors du délai, le montant correspondant à la première nuit + 2% ISS sera facturé.',
-                        'Les réservations sans garantie no-show ou sans prépaiement peuvent être annulées sans préavis.'
-                    ],
-                    cancellation: 'Délai d\'Annulation',
-                    cancellationText: [
-                        'Annulation de réservation sans frais, jusqu\'à 72 heures avant l\'arrivée. Sauf pour les tarifs non remboursables - celles-ci ne permettent pas l\'annulation.',
-                        'Les demandes d\'annulation doivent être faites uniquement par e-mail et ne seront validées qu\'après confirmation de l\'hôtel.'
-                    ]
-                },
-                es: {
-                    deposit: 'Depósito Bancario o Pix',
-                    depositText: [
-                        `${hotelConfig.bank.name} - Agencia ${hotelConfig.bank.agency} - Cuenta ${hotelConfig.bank.account}`,
-                        `${hotelConfig.name} CNPJ: ${hotelConfig.cnpj}`,
-                        `Pix: ${hotelConfig.email}`
-                    ],
-                    depositNote: 'Después de realizar el depósito, envíe el comprobante para que podamos identificarlo con su reserva.',
-                    creditCard: 'Tarjeta de Crédit',
-                    creditCardText: [
-                        'Solicite el enlace de pago por correo electrónico o, si lo prefiere, haga clic aquí para recibirlo por WhatsApp.',
-                        'Solo debitaremos el valor de la primera noche + 2% ISS, pero si tiene una reserva con tarifa no reembolsable, Carnaval, Año Nuevo y eventos importantes, se debitara el valor total.'
-                    ],
-                    company: 'Empresa/Agencia',
-                    companyText: [
-                        'Solicitamos garantía para no-show, si el huésped no se presenta en el hotel o se solicita cancelación fuera del plazo, se cobrará el valor correspondiente a la primera noche + 2% ISS.',
-                        'Las reservas sin garantía de no-show o sin prepago podrán ser canceladas sin previo aviso.'
-                    ],
-                    cancellation: 'Plazo para Cancelación',
-                    cancellationText: [
-                        'Cancelación de la reserva sin costo, hasta 72 horas antes del Check-in. Excepto para tarifas no reembolsables - estas no permiten cancelación.',
-                        'Las solicitudes de cancelación deben realizarse únicamente por correo electrónico y solo serán validadas después de la confirmación del hotel.'
-                    ]
-                }
-            };
-
-            const invoicesContent = {
-                pt: [
-                    'As notas fiscais serão enviadas por e-mail em até 03 dias úteis após el check-out.',
-                    'As notas fiscais de serviço serão emitidas de acordo com os serviços prestados, além da nota de F&B em caso de consumo.',
-                    'As notas fiscais devem ser conferidas no recebimento, pois temos prazo para alterações, substituição e/ou cancelamento até o 5º dia útil do mês siguiente.',
-                    'Caso o destinatario da nota não seja informado no pedido de reserva, a mesma será emitida em nome da empresa solicitante. Em caso de pessoa física, será emitida em nome do hóspede.',
-                    'Caso haja algún error/discrepância ou se não receber as notas dentro do prazo, favor entrar em contato imediatamente com o departamento financeiro.',
-                    'Luciana Felix - Tel.(21) 2612-5030 ramal 3 - Whatsapp (21)2710-6142 - Email: financeiro@icaraipraiahotel.com.br',
-                    'Mantenha sempre seu cadastro atualizado para evitar possíveis problemas no recebimento das notas fiscais.'
-                ],
-                en: [
-                    'Invoices will be sent by email within 03 business days after check-out.',
-                    'Service invoices will be issued according to the services provided, in addition to the F&B invoice in case of consumption.',
-                    'Invoices must be checked upon receipt, as we have a deadline for changes, replacement and/or cancellation until the 5th business day of the following month.',
-                    'If the invoice recipient is not informed in the reservation request, it will be issued in the name of the requesting company. In the case of an individual, it will be issued in the name of the guest.',
-                    'If there is any error/discrepancy or if you do not receive the invoices within the deadline, please contact the financial department immediately.',
-                    'Luciana Felix - Tel.(21) 2612-5030 extension 3 - Whatsapp (21)2710-6142 - Email: financeiro@icaraipraiahotel.com.br',
-                    'Always keep your registration updated to avoid possible problems in receiving invoices.'
-                ],
-                fr: [
-                    'Les factures seront envoyées par e-mail dans les 03 jours ouvrables après le départ.',
-                    'Les factures de service seront émises en fonction des services fournis, en plus de la facture F&B en cas de consommation.',
-                    'Les factures doivent être vérifiées lors de la réception, car nous avons un délai pour les modifications, le remplacement et/ou l\'annulation jusqu\'au 5ème jour ouvrable du mois suivant.',
-                    'Si le destinataire de la facture n\'est pas informé dans la demande de réservation, elle sera émise au nom de l\'entreprise demanderesse. Dans le cas d\'un particulier, elle sera émise au nom du client.',
-                    'S\'il y a une erreur / divergence ou si vous ne recevez pas les factures dans le délai, veuillez contacter immédiatement le service financier.',
-                    'Luciana Felix - Tel.(21) 2612-5030 poste 3 - Whatsapp (21)2710-6142 - Email: financeiro@icaraipraiahotel.com.br',
-                    'Tenez toujours votre inscription à jour pour éviter d\'éventuels problèmes de réception des factures.'
-                ],
-                es: [
-                    'Las facturas se enviarán por correo electrónico en hasta 03 días hábiles después del check-out.',
-                    'Las facturas de servicio se emitirán de acuerdo con los servicios prestados, además de la factura de F&B en caso de consumo.',
-                    'Las facturas deben ser verificadas al recibirlas, ya que tenemos plazo para cambios, sustitución y/o cancelación hasta el 5º día hábil del mes siguiente.',
-                    'Si no se informa el destinatario de la factura en la solicitud de reserva, se emitirá a nombre de la empresa solicitante. En caso de persona física, se emitirá a nombre del huésped.',
-                    'Si hay algún error/discrepancia o si no recibe las facturas dentro del plazo, comuníquese inmediatamente con el departamento financiero.',
-                    'Luciana Felix - Tel.(21) 2612-5030 extensión 3 - Whatsapp (21)2710-6142 - Email: financeiro@icaraipraiahotel.com.br',
-                    'Mantenga siempre sus datos actualizados para evitar posibles problemas en la recepción de las facturas.'
-                ]
-            };
-
-            // Verificar se é grupo (mais de 1 apartamento)
-            const isGroup = document.querySelectorAll('.group-container').length > 1 || 
-                           (document.querySelectorAll('.group-container').length === 1 && 
-                            parseInt(document.querySelector('.qty').value) > 1);
-
+            // Generate quotation HTML
+            const langData = translations[currentLang];
             const quotationHTML = `
                 <div class="quotation-header">
-                    <div class="hotel-name">${hotelConfig.name}</div>
-                    <div class="quotation-title">${translations[currentLang].title}</div>
-                    <div class="quotation-badge">${currentLang === 'pt' ? 'COTAÇÃO • VÁLIDA 24 HORAS' : 
-                                               currentLang === 'en' ? 'QUOTATION • VALID 24 HOURS' :
-                                               currentLang === 'fr' ? 'DEVIS • VALABLE 24 HEURES' :
-                                               'COTIZACIÓN • VÁLIDA 24 HORAS'}</div>
+                    <div class="hotel-name">ICARAÍ PRAIA HOTEL</div>
+                    <div class="quotation-title">${langData.quotationTitle}</div>
+                    <div class="quotation-badge">${langData.quotationBadge}</div>
+                </div>
+                
+                <div class="validity-notice">
+                    <span>⚠️</span>
+                    ${langData.validityNotice}
                 </div>
                 
                 <div class="quotation-body">
-                    <div class="validity-notice">
-                        <span style="font-size: 20px;">⚠️</span>
-                        <span>${translations[currentLang].validity}</span>
-                    </div>
-                    
-                    ${isGroup ? `<div style="background: #ffebee; padding: 15px; border-radius: 10px; margin: 15px 0; border-left: 5px solid #f44336;">
-                        <strong>${translations[currentLang].paymentNote}</strong>
-                    </div>` : ''}
-                    
-                    <h2 style="color: #1a6bb3; margin: 25px 0 15px;">${currentLang === 'pt' ? 'INFORMAÇÕES DA RESERVA' : 
-                                                                     currentLang === 'en' ? 'RESERVATION INFORMATION' :
-                                                                     currentLang === 'fr' ? 'INFORMATIONS DE RÉSERVATION' :
-                                                                     'INFORMACIÓN DE LA RESERVA'}</h2>
-                    
-                    <div style="margin-bottom: 25px;">
-                        <strong>${translations[currentLang].guest}:</strong><br>
-                        ${mainGuest}
-                    </div>
-                    
-                    ${groupHTML}
-                    
-                    <h2 style="color: #1a6bb3; margin: 25px 0 15px;">${translations[currentLang].financialDetails}</h2>
-                    
-                    ${groupSubtotals.map(subtotal => `
-                        <div class="subtotal-row">
-                            <strong>${translations[currentLang].groupSubtotal} ${subtotal.groupNumber}:</strong><br>
-                            R$ ${subtotal.subtotal.toFixed(2)}
+                    <div class="section-title">${langData.reservationInfo}</div>
+                    <div class="details-grid">
+                        <div class="detail-row">
+                            <span class="detail-label">${langData.guestName}</span>
+                            <span class="detail-value">${guestName || (currentLang === 'pt' ? 'Não informado' : 
+                                                                      currentLang === 'en' ? 'Not informed' :
+                                                                      currentLang === 'fr' ? 'Non informé' : 
+                                                                      'No informado')}</span>
                         </div>
-                    `).join('')}
-                    
-                    <div style="margin-bottom: 15px;">
-                        <strong>${translations[currentLang].subtotal}:</strong><br>
-                        R$ ${totalAmount.toFixed(2)}
-                    </div>
-                    <div style="margin-bottom: 15px;">
-                        <strong>${translations[currentLang].iss}:</strong><br>
-                        R$ ${issAmount.toFixed(2)}
-                    </div>
-                    <div style="margin-bottom: 15px;">
-                        <strong>${translations[currentLang].averageRate}:</strong><br>
-                        R$ ${averageRate.toFixed(2)}
-                    </div>
-                    <div class="total-row">
-                        ${translations[currentLang].total}: R$ ${totalWithISS.toFixed(2)}
-                    </div>
-                    
-                    <div class="info-section">
-                        <h3>${translations[currentLang].services}</h3>
-                        <ul>
-                            ${servicesContent[currentLang].map(service => `<li>${service}</li>`).join('')}
-                        </ul>
+                        ${groupDetailsHTML}
+                        <div class="detail-row">
+                            <span class="detail-label">${langData.mealType}</span>
+                            <span class="detail-value">${mealDescription}</span>
+                        </div>
+                        <div class="detail-row">
+                            <span class="detail-label">${langData.parking}</span>
+                            <span class="detail-value">${parking === 'yes' ? 
+                                (currentLang === 'pt' ? 'Sim' : 
+                                 currentLang === 'en' ? 'Yes' :
+                                 currentLang === 'fr' ? 'Oui' : 
+                                 'Sí') : 
+                                (currentLang === 'pt' ? 'Não' : 
+                                 currentLang === 'en' ? 'No' :
+                                 currentLang === 'fr' ? 'Non' : 
+                                 'No')}</span>
+                        </div>
                     </div>
                     
-                    <div class="info-section">
-                        <h3>${translations[currentLang].policies}</h3>
-                        <h4 style="margin: 15px 0 10px;">${policiesContent[currentLang].checkin}</h4>
-                        <ul>
-                            ${policiesContent[currentLang].checkinList.map(item => `<li>${item}</li>`).join('')}
-                        </ul>
-                        
-                        <h4 style="margin: 15px 0 10px;">${policiesContent[currentLang].minors}</h4>
-                        <ul>
-                            ${policiesContent[currentLang].minorsList.map(item => `<li>${item}</li>`).join('')}
-                        </ul>
-                        
-                        ${policiesContent[currentLang].paragraphs.map(paragraph => `<p style="margin-top: 15px;">${paragraph}</p>`).join('')}
+                    <div class="section-title">${langData.financialDetails}</div>
+                    <div class="pricing-breakdown">
+                        ${groupDetails.map((group, index) => `
+                            <div class="price-row">
+                                <span>${currentLang === 'pt' ? 'Grupo' : 
+                                       currentLang === 'en' ? 'Group' :
+                                       currentLang === 'fr' ? 'Groupe' : 
+                                       'Grupo'} ${index + 1} (${group.quantity} ${currentLang === 'pt' ? 'apto(s)' : 
+                                                                               currentLang === 'en' ? 'room(s)' :
+                                                                               currentLang === 'fr' ? 'chambre(s)' : 
+                                                                               'habitación(es)'} × ${group.nights} ${currentLang === 'pt' ? 'noite(s)' : 
+                                                                                                                    currentLang === 'en' ? 'night(s)' :
+                                                                                                                    currentLang === 'fr' ? 'nuit(s)' : 
+                                                                                                                    'noche(s)'}):</span>
+                                <span>${formatCurrency(group.groupTotal)}</span>
+                            </div>
+                        `).join('')}
+                        ${mealCost > 0 && showMealDetails ? `
+                        <div class="price-row">
+                            <span>${langData.mealsIncluded} (${totalGuests} ${currentLang === 'pt' ? 'hóspedes' : 
+                                                                             currentLang === 'en' ? 'guests' :
+                                                                             currentLang === 'fr' ? 'clients' : 
+                                                                             'huéspedes'} × ${mealsPerDay} ${currentLang === 'pt' ? 'refeições/dia' : 
+                                                                                                          currentLang === 'en' ? 'meals/day' :
+                                                                                                          currentLang === 'fr' ? 'repas/jour' : 
+                                                                                                          'comidas/día'} × ${totalNights} ${currentLang === 'pt' ? 'noites' : 
+                                                                                                                                         currentLang === 'en' ? 'nights' :
+                                                                                                                                         currentLang === 'fr' ? 'nuits' : 
+                                                                                                                                         'noches'})</span>
+                            <span>${formatCurrency(mealCost)}</span>
+                        </div>
+                        ` : ''}
+                        ${parkingCost > 0 ? `
+                        <div class="price-row">
+                            <span>${langData.parkingCost} (${totalGroups} ${currentLang === 'pt' ? 'vaga(s)' : 
+                                                                          currentLang === 'en' ? 'spot(s)' :
+                                                                          currentLang === 'fr' ? 'place(s)' : 
+                                                                          'plaza(s)'} × ${totalNights} ${currentLang === 'pt' ? 'noites' : 
+                                                                                                      currentLang === 'en' ? 'nights' :
+                                                                                                      currentLang === 'fr' ? 'nuits' : 
+                                                                                                      'noches'})</span>
+                            <span>${formatCurrency(parkingCost)}</span>
+                        </div>
+                        ` : ''}
+                        <div class="price-row">
+                            <span>${langData.subtotal}</span>
+                            <span>${formatCurrency(baseAmount + mealCost + parkingCost)}</span>
+                        </div>
+                        <div class="price-row">
+                            <span>${langData.issTax}</span>
+                            <span>${formatCurrency(issTax)}</span>
+                        </div>
+                        <div class="price-row total-row">
+                            <span>${langData.total}</span>
+                            <span>${formatCurrency(total)}</span>
+                        </div>
+                        <div class="price-row">
+                            <span>${currentLang === 'pt' ? 'Diária Média Total (sem ISS e estacionamento):' : 
+                                 currentLang === 'en' ? 'Total Average Rate (without ISS and parking):' :
+                                 currentLang === 'fr' ? 'Tarif Moyen Total (sans ISS et stationnement):' : 
+                                 'Tarifa Media Total (sin ISS y estacionamiento):'}</span>
+                            <span>${formatCurrency(avgRatePerNight)}/${currentLang === 'pt' ? 'noite' : 
+                                                                      currentLang === 'en' ? 'night' :
+                                                                      currentLang === 'fr' ? 'nuit' : 
+                                                                      'noche'}</span>
+                        </div>
                     </div>
                     
-                    <div class="info-section">
-                        <h3>${translations[currentLang].guarantee}</h3>
-                        <h4 style="margin: 15px 0 10px;">${guaranteeContent[currentLang].deposit}</h4>
-                        <p>
-                            ${guaranteeContent[currentLang].depositText.join('<br>')}
-                        </p>
-                        <p style="margin-top: 10px;">
-                            ${guaranteeContent[currentLang].depositNote}
-                        </p>
-                        
-                        <h4 style="margin: 15px 0 10px;">${guaranteeContent[currentLang].creditCard}</h4>
-                        <p>
-                            ${guaranteeContent[currentLang].creditCardText.join('</p><p>')}
-                        </p>
-                        
-                        <h4 style="margin: 15px 0 10px;">${guaranteeContent[currentLang].company}</h4>
-                        <p>
-                            ${guaranteeContent[currentLang].companyText.join('</p><p>')}
-                        </p>
-                        
-                        <h4 style="margin: 15px 0 10px;">${guaranteeContent[currentLang].cancellation}</h4>
-                        <p>
-                            ${guaranteeContent[currentLang].cancellationText.join('</p><p>')}
-                        </p>
+                    <div class="section-title">${langData.includedServices}</div>
+                    <ul class="amenities-list">
+                        ${mealType !== 'noBreakfast' ? `<li>${langData.breakfastIncluded}</li>` : ''}
+                        <li>${langData.wifi}</li>
+                        <li>${langData.parkingInfo}</li>
+                        <li>${langData.roomsInfo}</li>
+                        <li>${langData.restaurant}</li>
+                    </ul>
+                    
+                    ${mealType === 'noBreakfast' ? `
+                    <div class="no-breakfast-notice">
+                        <strong>${currentLang === 'pt' ? 'Observação:' : 
+                                 currentLang === 'en' ? 'Note:' :
+                                 currentLang === 'fr' ? 'Remarque:' : 
+                                 'Nota:'}</strong> ${langData.noBreakfastNotice}
+                    </div>
+                    ` : ''}
+                    
+                    ${mealInfoNotice ? `
+                    <div class="meal-info-notice">
+                        ${mealInfoNotice}
+                    </div>
+                    ` : ''}
+                    
+                    <div class="group-payment-notice">
+                        ${langData.groupPaymentNotice}
                     </div>
                     
-                    <div class="info-section">
-                        <h3>${translations[currentLang].invoices}</h3>
-                        ${invoicesContent[currentLang].map(paragraph => `<p>${paragraph}</p>`).join('')}
+                    <div class="section-title">${langData.hotelPolicies}</div>
+                    <div class="policy-section">
+                        <div class="policy-title">${langData.checkInOut}</div>
+                        <div class="policy-content">
+                            ${langData.checkInOutDetails}
+                        </div>
                     </div>
                     
-                    <div style="text-align: center; margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0;">
-                        <h3 style="color: #1a6bb3; margin-bottom: 15px;">${hotelConfig.name}</h3>
-                        <p>${hotelConfig.address}</p>
-                        <p>📞 ${hotelConfig.phone} • 📧 ${hotelConfig.email}</p>
-                        <p>🌐 ${hotelConfig.site}</p>
+                    <div class="policy-section">
+                        <div class="policy-title">${langData.minorsPolicy}</div>
+                        <div class="policy-content">
+                            ${langData.minorsPolicyDetails}
+                        </div>
+                    </div>
+                    
+                    <div class="policy-notice">
+                        ${langData.guaranteeNotice}
+                    </div>
+                    
+                    <div class="warning-notice">
+                        ${langData.nonRefundableNotice}
+                    </div>
+                    
+                    <div class="section-title">${langData.reservationGuarantee}</div>
+                    
+                    <div class="policy-section">
+                        <div class="policy-title">${langData.bankDeposit}</div>
+                        <div class="policy-content">
+                            ${langData.bankDetails}
+                        </div>
+                    </div>
+                    
+                    <div class="policy-section">
+                        <div class="policy-title">${langData.creditCard}</div>
+                        <div class="policy-content">
+                            ${langData.creditCardDetails}
+                        </div>
+                    </div>
+                    
+                    <div class="policy-section">
+                        <div class="policy-title">${langData.companyAgency}</div>
+                        <div class="policy-content">
+                            ${langData.companyAgencyDetails}
+                        </div>
+                    </div>
+                    
+                    <div class="policy-section">
+                        <div class="policy-title">${langData.cancellationPolicy}</div>
+                        <div class="policy-content">
+                            ${langData.cancellationDetails}
+                        </div>
+                    </div>
+                    
+                    <div class="section-title">${langData.taxNotes}</div>
+                    <div class="policy-content">
+                        ${langData.taxNotesDetails}
+                    </div>
+                </div>
+                
+                <div class="quotation-footer">
+                    <div class="contact-info">
+                        <strong>ICARAÍ PRAIA HOTEL</strong><br>
+                        Rua Belisário Augusto 21, Icaraí, Niterói - 24.230-200<br>
+                        📞 (21) 2612-5030 • 📧 reservas@icaraipraiahotel.com.br<br>
+                        🌐 www.icaraipraiahotel.com.br
                     </div>
                 </div>
             `;
             
+            // Update preview
             document.getElementById('quotationPreview').innerHTML = quotationHTML;
         }
-
-        function showNotification(message, type = 'success') {
-            const notification = document.getElementById('notification');
-            notification.textContent = message;
-            notification.style.background = type === 'success' ? '#4CAF50' : '#f44336';
-            notification.classList.add('show');
-            
-            setTimeout(() => {
-                notification.classList.remove('show');
-            }, 3000);
-        }
-
+        
         function copyQuotation() {
-            const quotationContent = document.getElementById('quotationPreview').innerText;
+            // Create a temporary container to preserve styling
+            const tempContainer = document.createElement('div');
+            tempContainer.style.position = 'absolute';
+            tempContainer.style.left = '-9999px';
+            tempContainer.style.width = '600px';
+            tempContainer.style.padding = '20px';
+            tempContainer.style.backgroundColor = 'white';
+            tempContainer.style.fontFamily = 'Segoe UI, system-ui, sans-serif';
             
-            navigator.clipboard.writeText(quotationContent)
-                .then(() => {
-                    showNotification(translations[currentLang].copySuccess);
-                })
-                .catch(err => {
-                    console.error('Erro ao copiar: ', err);
-                    showNotification('Erro ao copiar a cotação', 'error');
-                });
-        }
-
-        function copyForEmail() {
-            const quotationContent = document.getElementById('quotationPreview').innerHTML;
+            // Clone the preview content
+            const previewContent = document.getElementById('quotationPreview').cloneNode(true);
+            tempContainer.appendChild(previewContent);
+            document.body.appendChild(tempContainer);
             
-            navigator.clipboard.writeText(quotationContent)
-                .then(() => {
-                    showNotification(translations[currentLang].emailSuccess);
-                })
-                .catch(err => {
-                    console.error('Erro ao copiar: ', err);
-                    showNotification('Erro ao copiar para e-mail', 'error');
-                });
-        }
-
-        function generatePDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            const quotationElement = document.getElementById('quotationPreview');
+            // Select the content
+            const range = document.createRange();
+            range.selectNode(tempContainer);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
             
-            html2canvas(quotationElement).then(canvas => {
-                const imgData = canvas.toDataURL('image/png');
-                const imgWidth = doc.internal.pageSize.getWidth();
-                const imgHeight = (canvas.height * imgWidth) / canvas.width;
+            try {
+                const successful = document.execCommand('copy');
+                window.getSelection().removeAllRanges();
+                document.body.removeChild(tempContainer);
                 
-                doc.addImage(imgData, 'PNG', 0, 0, imgWidth, imgHeight);
-                doc.save(`cotacao-${hotelConfig.name}-${new Date().toISOString().slice(0,10)}.pdf`);
-                
-                showNotification(translations[currentLang].pdfSuccess);
-            });
-        }
-
-        function shareWhatsApp() {
-            const phoneNumber = document.getElementById('whatsappNumber').value;
-            const mainGuest = document.getElementById('mainGuest').value;
-            const groups = document.querySelectorAll('.group-container');
-            
-            if (!phoneNumber) {
-                showNotification('Por favor, insira um número de WhatsApp', 'error');
-                return;
+                if (successful) {
+                    alert(currentLang === 'pt' ? 'Cotação copiada para a área de transferência!' :
+                          currentLang === 'en' ? 'Quotation copied to clipboard!' :
+                          currentLang === 'fr' ? 'Devis copié dans le presse-papiers !' :
+                          '¡Cotización copiada al portapapeles!');
+                } else {
+                    alert(currentLang === 'pt' ? 'Erro ao copiar a cotação. Tente novamente.' :
+                          currentLang === 'en' ? 'Error copying quotation. Please try again.' :
+                          currentLang === 'fr' ? 'Erreur lors de la copie du devis. Veuillez réessayer.' :
+                          'Error al copiar la cotización. Por favor, inténtelo de nuevo.');
+                }
+            } catch (err) {
+                document.body.removeChild(tempContainer);
+                alert(currentLang === 'pt' ? 'Erro ao copiar a cotação: ' + err :
+                      currentLang === 'en' ? 'Error copying quotation: ' + err :
+                      currentLang === 'fr' ? 'Erreur lors de la copie du devis : ' + err :
+                      'Error al copiar la cotización: ' + err);
             }
-            
-            let whatsappMessage = `*🏨 ${hotelConfig.name} - COTAÇÃO DE RESERVA* 🏨\n\n`;
-            whatsappMessage += `*Responsável:* ${mainGuest}\n\n`;
-            
-            let totalAmount = 0;
-            
-            groups.forEach((group, index) => {
-                const qty = parseInt(group.querySelector('.qty').value) || 0;
-                const guests = parseInt(group.querySelector('.guests').value) || 0;
-                const rate = parseFloat(group.querySelector('.rate').value) || 0;
-                const checkin = group.querySelector('.checkin').value;
-                const checkout = group.querySelector('.checkout').value;
-                const mealType = group.querySelector(`input[name="meal-${index}"]:checked`).value;
-                const parking = group.querySelector('.parking').value;
-                
+        }
+        
+        function shareWhatsApp() {
+            const guestName = document.getElementById('guestName').value || '';
+            const mealType = document.querySelector('input[name="mealType"]:checked').value;
+            const parking = document.getElementById('parking').value;
+
+            // Calculate room configurations
+            const roomItems = document.querySelectorAll('.room-item');
+            let totalGroups = 0;
+            let totalGuests = 0;
+            let totalNights = 0;
+            const groupDetails = [];
+
+            roomItems.forEach(room => {
+                const quantity = parseInt(room.querySelector('input[type="number"]:first-of-type').value) || 0;
+                const guests = parseInt(room.querySelector('select').value) || 0;
+                const checkIn = room.querySelectorAll('input[type="date"]')[0].value;
+                const checkOut = room.querySelectorAll('input[type="date"]')[1].value;
+
+                // Calculate nights for this group
                 let nights = 0;
-                if (checkin && checkout) {
-                    const checkinDate = new Date(checkin);
-                    const checkoutDate = new Date(checkout);
-                    nights = Math.ceil((checkoutDate - checkinDate) / (1000 * 60 * 60 * 24));
+                if (checkIn && checkOut) {
+                    const checkInDate = new Date(checkIn);
+                    const checkOutDate = new Date(checkOut);
+                    const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
+                    nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
+                    totalNights += nights * quantity;
                 }
-                
-                const accommodationCost = qty * guests * rate * nights;
-                let mealCost = 0;
-                const mealPrice = parseFloat(group.querySelector('.meal-price').value) || 0;
-                
-                if (mealType === 'breakfast') {
-                    mealCost = qty * guests * nights * mealPrice;
-                } else if (mealType === 'halfBoard') {
-                    mealCost = qty * guests * nights * mealPrice * 2;
-                } else if (mealType === 'fullBoard') {
-                    mealCost = qty * guests * nights * mealPrice * 3;
+
+                totalGroups += quantity;
+                totalGuests += quantity * guests;
+
+                if (quantity > 0) {
+                    groupDetails.push({
+                        quantity: quantity,
+                        guests: guests,
+                        checkIn: checkIn,
+                        checkOut: checkOut,
+                        nights: nights
+                    });
                 }
-                
-                let parkingCost = 0;
-                if (parking === 'yes') {
-                    parkingCost = qty * nights * 45;
-                }
-                
-                const groupTotal = accommodationCost + mealCost + parkingCost;
-                totalAmount += groupTotal;
-                
-                whatsappMessage += `*Grupo ${index + 1}:*\n`;
-                whatsappMessage += `📦 ${qty} apto(s) • 👥 ${guests} hóspede(s)\n`;
-                whatsappMessage += `💰 Diária: R$ ${rate.toFixed(2)}\n`;
-                whatsappMessage += `📅 ${correctTimezone(checkin)} ➝ ${correctTimezone(checkout)} (${nights} noite(s))\n`;
-                whatsappMessage += `🍽️ ${translations[currentLang][mealType]}\n`;
-                whatsappMessage += `🅿️ Estacionamento: ${parking === 'yes' ? 'Sim' : 'Não'}\n`;
-                whatsappMessage += `💵 Subtotal: R$ ${groupTotal.toFixed(2)}\n\n`;
             });
+
+            // Get meal type description and info
+            const mealTypes = {
+                'breakfast': translations[currentLang].breakfastLabel,
+                'noBreakfast': translations[currentLang].noBreakfastLabel,
+                'halfBoard': translations[currentLang].halfBoardLabel,
+                'fullBoard': translations[currentLang].fullBoardLabel
+            };
+
+            // Sempre incluir informações das pensões no WhatsApp
+            let mealInfoNotice = '';
+            if (mealType === 'halfBoard') {
+                mealInfoNotice = translations[currentLang].halfBoardNotice;
+            } else if (mealType === 'fullBoard') {
+                mealInfoNotice = translations[currentLang].fullBoardNotice;
+            }
+
+            // Format dates for WhatsApp message
+            const formatDateForMessage = (dateString) => {
+                if (!dateString) return '-';
+                const date = new Date(dateString);
+                return date.toLocaleDateString('pt-BR');
+            };
+
+            // Generate group details for WhatsApp
+            let groupDetailsText = '';
+            groupDetails.forEach((group, index) => {
+                groupDetailsText += `• ${currentLang === 'pt' ? 'Grupo' : 
+                                   currentLang === 'en' ? 'Group' :
+                                   currentLang === 'fr' ? 'Groupe' : 
+                                   'Grupo'} ${index + 1}: ${group.quantity} ${currentLang === 'pt' ? 'apartamento(s)' : 
+                                                                           currentLang === 'en' ? 'apartment(s)' :
+                                                                           currentLang === 'fr' ? 'appartement(s)' : 
+                                                                           'apartamento(s)'} • ${group.guests} ${currentLang === 'pt' ? 'hóspede(s)' : 
+                                                                                                              currentLang === 'en' ? 'guest(s)' :
+                                                                                                              currentLang === 'fr' ? 'client(s)' : 
+                                                                                                              'huésped(es)'}\n`;
+                groupDetailsText += `  ${formatDateForMessage(group.checkIn)} - ${formatDateForMessage(group.checkOut)} (${group.nights} ${currentLang === 'pt' ? 'noites' : 
+                                                                                                              currentLang === 'en' ? 'nights' :
+                                                                                                              currentLang === 'fr' ? 'nuits' : 
+                                                                                                              'noches'})\n\n`;
+            });
+
+            // Create WhatsApp message - SEM PREÇOS
+            const message = `🏨 *ICARAÍ PRAIA HOTEL*\n\n` +
+                   
+                   `✅ ${currentLang === 'pt' ? 'COTAÇÃO DE RESERVA' : 
+                         currentLang === 'en' ? 'RESERVATION QUOTATION' :
+                         currentLang === 'fr' ? 'DEVIS DE RÉSERVATION' : 
+                         'COTIZACIÓN DE RESERVA'}\n\n` +
+                   
+                   `${currentLang === 'pt' ? 'Conforme sua solicitação, seguem nossas melhores tarifas e condições:' :
+                     currentLang === 'en' ? 'As per your request, here are our best rates and conditions:' :
+                     currentLang === 'fr' ? 'Conformément à votre demande, voici nos meilleurs tarifs et conditions :' : 
+                     'Conforme a su solicitud, aquí están nuestras mejores tarifas y condiciones:'}\n\n` +
+                   
+                   `👤 *${currentLang === 'pt' ? 'Hóspede Principal:' : 
+                         currentLang === 'en' ? 'Main Guest:' :
+                         currentLang === 'fr' ? 'Client Principal :' : 
+                         'Huésped Principal:'}* ${guestName || (currentLang === 'pt' ? 'Não informado' : 
+                                                              currentLang === 'en' ? 'Not informed' :
+                                                              currentLang === 'fr' ? 'Non informé' : 
+                                                              'No informado')}\n\n` +
+                   
+                   `🏠 *${currentLang === 'pt' ? 'Configuração de Grupos:' : 
+                         currentLang === 'en' ? 'Group Configuration:' :
+                         currentLang === 'fr' ? 'Configuration des Groupes :' : 
+                         'Configuración de Grupos:'}*\n` +
+                   `${groupDetailsText}\n` +
+                   
+                   `👨‍👩‍👧‍👦 *${currentLang === 'pt' ? 'Número total de hóspedes:' : 
+                         currentLang === 'en' ? 'Total number of guests:' :
+                         currentLang === 'fr' ? 'Nombre total d\'invités :' : 
+                         'Número total de huéspedes:'}* ${totalGuests}\n` +
+                   `🍽️ *${currentLang === 'pt' ? 'Tipo de Refeição:' : 
+                         currentLang === 'en' ? 'Meal Type:' :
+                         currentLang === 'fr' ? 'Type de Repas :' : 
+                         'Tipo de Comida:'}* ${mealTypes[mealType]}\n` +
+                   `✅ *${currentLang === 'pt' ? 'Número total de noites:' : 
+                         currentLang === 'en' ? 'Total number of nights:' :
+                         currentLang === 'fr' ? 'Nombre total de nuits :' : 
+                         'Número total de noches:'}* ${totalNights}\n` +
+                   `🚗 *${currentLang === 'pt' ? 'Estacionamento:' : 
+                         currentLang === 'en' ? 'Parking:' :
+                         currentLang === 'fr' ? 'Stationnement :' : 
+                         'Estacionamiento:'}* ${parking === 'yes' ? 
+                        (currentLang === 'pt' ? 'Sim' : 
+                         currentLang === 'en' ? 'Yes' :
+                         currentLang === 'fr' ? 'Oui' : 
+                         'Sí') : 
+                        (currentLang === 'pt' ? 'Não' : 
+                         currentLang === 'en' ? 'No' :
+                         currentLang === 'fr' ? 'Non' : 
+                         'No')}\n\n` +
+                   
+                   `${mealInfoNotice ? `🍽️ *${currentLang === 'pt' ? 'Detalhes das Refeições:' : 
+                                           currentLang === 'en' ? 'Meal Details:' :
+                                           currentLang === 'fr' ? 'Détails des Repas :' : 
+                                           'Detalles de las Comidas:'}*\n${mealInfoNotice}\n\n` : ''}` +
+                   
+                   `🟢 *${currentLang === 'pt' ? 'Serviços Inclusos:' : 
+                         currentLang === 'en' ? 'Included Services:' :
+                         currentLang === 'fr' ? 'Services Inclus :' : 
+                         'Servicios Incluidos:'}*\n` +
+                   `• ${currentLang === 'pt' ? 'Apartamentos Standard com Smart TV, ar condicionado, telefone, frigobar, internet e cofre individual' :
+                         currentLang === 'en' ? 'Standard Apartments with Smart TV, air conditioning, telephone, minibar, internet and individual safe' :
+                         currentLang === 'fr' ? 'Appartements Standard avec Smart TV, climatisation, téléphone, minibar, internet et coffre-fort individuel' : 
+                         'Apartamentos Standard con Smart TV, aire acondicionado, teléfono, minibar, internet y caja fuerte individual'}\n` +
+                   `${mealType !== 'noBreakfast' ? `• ${currentLang === 'pt' ? 'Café da manhã incluso das 6h às 10h, servido no restaurante' :
+                                                   currentLang === 'en' ? 'Breakfast included from 6am to 10am, served in the restaurant' :
+                                                   currentLang === 'fr' ? 'Petit déjeuner inclus de 6h à 10h, servi au restaurant' : 
+                                                   'Desayuno incluido de 6h a 10h, servido en el restaurante'}\n` : ''}` +
+                   `• ${currentLang === 'pt' ? 'Internet (wi-fi)' :
+                         currentLang === 'en' ? 'Internet (wi-fi)' :
+                         currentLang === 'fr' ? 'Internet (wi-fi)' : 
+                         'Internet (wi-fi)'}\n` +
+                   `• ${currentLang === 'pt' ? 'Restaurante próprio (das 6h às 22h)' :
+                         currentLang === 'en' ? 'Own restaurant (from 6am to 10pm)' :
+                         currentLang === 'fr' ? 'Restaurant propre (de 6h à 22h)' : 
+                         'Restaurante propio (de 6h a 22h)'}\n\n` +
+                   
+                   `ℹ️ *${currentLang === 'pt' ? 'Informações Importantes:' : 
+                         currentLang === 'en' ? 'Important Information:' :
+                         currentLang === 'fr' ? 'Informations Importantes :' : 
+                         'Información Importante:'}*\n\n` +
+                   
+                   `${currentLang === 'pt' ? '• Check-in: 14:00 / Check-out: 12:00' :
+                         currentLang === 'en' ? '• Check-in: 14:00 / Check-out: 12:00' :
+                         currentLang === 'fr' ? '• Check-in: 14:00 / Check-out: 12:00' : 
+                         '• Check-in: 14:00 / Check-out: 12:00'}\n` +
+                   `${currentLang === 'pt' ? '• Não aceitamos Pets' :
+                         currentLang === 'en' ? '• We do not accept Pets' :
+                         currentLang === 'fr' ? '• Nous n\'acceptons pas les animaux' : 
+                         '• No aceptamos mascotas'}\n` +
+                   `${currentLang === 'pt' ? '• Estacionamento: R$ 45,00 por dia - sujeito à disponibilidade' :
+                         currentLang === 'en' ? '• Parking: R$ 45.00 per day - subject to availability' :
+                         currentLang === 'fr' ? '• Stationnement: R$ 45,00 par jour - sous réserve de disponibilité' : 
+                         '• Estacionamiento: R$ 45,00 por día - sujeto a disponibilidad'}\n\n` +
+                   
+                   `💳 *${currentLang === 'pt' ? 'Política de Pagamento para Grupos:' : 
+                         currentLang === 'en' ? 'Group Payment Policy:' :
+                         currentLang === 'fr' ? 'Politique de Paiement pour Groupes :' : 
+                         'Política de Pago para Grupos:'}*\n` +
+                   `${currentLang === 'pt' ? 'Toda reserva de grupo requer pré-pagamento integral antecipado ou 50% logo após a confirmação e o restante em até 15 dias antes do Check-in.' :
+                         currentLang === 'en' ? 'All group reservations require full prepayment in advance or 50% upon confirmation and the remainder up to 15 days before Check-in.' :
+                         currentLang === 'fr' ? 'Toute réservation de groupe nécessite un prépaiement intégral à l\'avance ou 50% dès confirmation et le reste jusqu\'à 15 jours avant l\'arrivée.' : 
+                         'Toda reserva de grupo requiere prepago integral anticipado o 50% tras la confirmación y el resto hasta 15 días antes del Check-in.'}\n\n` +
+                   
+                   `${currentLang === 'pt' ? 'Cotação válida por 24 horas. Tarifas e disponibilidade podem mudar após a expiração.' :
+                         currentLang === 'en' ? 'Quotation valid for 24 hours. Rates and availability may change after expiration.' :
+                         currentLang === 'fr' ? 'Devis valable 24 heures. Les tarifs et la disponibilité peuvent changer après expiration.' : 
+                         'Cotización válida por 24 horas. Las tarifas y disponibilidad pueden cambiar después de la expiración.'}\n\n` +
+                   
+                   `${currentLang === 'pt' ? 'Agradecemos sua confiança!' :
+                         currentLang === 'en' ? 'Thank you for your trust!' :
+                         currentLang === 'fr' ? 'Merci de votre confiance !' : 
+                         '¡Gracias por su confianza!'}\n\n` +
+                   
+                   `${currentLang === 'pt' ? 'Atenciosamente,' :
+                         currentLang === 'en' ? 'Sincerely,' :
+                         currentLang === 'fr' ? 'Cordialement,' : 
+                         'Atentamente,'}\n` +
+                   `*${currentLang === 'pt' ? 'Equipe de Reservas' :
+                         currentLang === 'en' ? 'Reservations Team' :
+                         currentLang === 'fr' ? 'Service des Réservations' : 
+                         'Equipo de Reservas'}*\n` +
+                   `*ICARAÍ PRAIA HOTEL*\n` +
+                   `📞 (21) 2612-5030\n` +
+                   `📧 reservas@icaraipraiahotel.com.br`;
             
-            const issAmount = totalAmount * (hotelConfig.iss / 100);
-            const totalWithISS = totalAmount + issAmount;
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
             
-            whatsappMessage += `*💰 RESUMO FINANCEIRO:*\n`;
-            whatsappMessage += `Subtotal: R$ ${totalAmount.toFixed(2)}\n`;
-            whatsappMessage += `ISS (2%): R$ ${issAmount.toFixed(2)}\n`;
-            whatsappMessage += `*TOTAL: R$ ${totalWithISS.toFixed(2)}*\n\n`;
-            
-            whatsappMessage += `*📋 INFORMAÇÕES IMPORTANTES:*\n`;
-            whatsappMessage += `• Cotação válida por 24 horas\n`;
-            whatsappMessage += `• Check-in: 14:00 / Check-out: 12:00\n`;
-            whatsappMessage += `• Pagamento via PIX, cartão ou transferência\n\n`;
-            
-            whatsappMessage += `*📞 CONTATO:*\n`;
-            whatsappMessage += `Telefone: ${hotelConfig.phone}\n`;
-            whatsappMessage += `E-mail: ${hotelConfig.email}\n`;
-            whatsappMessage += `Site: ${hotelConfig.site}\n\n`;
-            
-            whatsappMessage += `_Enviado via Cotador de Reservas_`;
-            
-            const encodedMessage = encodeURIComponent(whatsappMessage);
-            const whatsappURL = `https://wa.me/55${phoneNumber}?text=${encodedMessage}`;
-            
-            window.open(whatsappURL, '_blank');
-            showNotification(translations[currentLang].whatsappSuccess);
+            window.open(whatsappUrl, '_blank');
         }
     </script>
 </body>
