@@ -476,6 +476,38 @@
             color: #7f8c8d;
         }
 
+        .totais-container {
+            margin-top: 20px;
+            padding: 15px;
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            border: 2px solid #e0e0e0;
+        }
+
+        .totais-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+
+        .total-item {
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            border-left: 4px solid #3498db;
+        }
+
+        .total-label {
+            font-size: 0.8rem;
+            color: #7f8c8d;
+        }
+
+        .total-value {
+            font-size: 1rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -550,6 +582,10 @@
                     <tbody id="previewBody"></tbody>
                 </table>
                 <div id="dataStats" class="data-stats"></div>
+                <div id="totaisPreview" class="totais-container" style="display: none;">
+                    <h4>📊 Totais por Campo</h4>
+                    <div id="totaisGrid" class="totais-grid"></div>
+                </div>
             </div>
         </section>
 
@@ -713,12 +749,36 @@
         dayjs.locale('pt-br');
         window.jsPDF = window.jspdf.jsPDF;
         
-        // Campos esperados
+        // Campos esperados EXATAMENTE como na planilha
         const CAMPOS_ESPERADOS = [
-            'Status', 'Data Transacao', 'Data Recebimento', 'Total Diarias', 
-            'Valor Extras', 'Valor Taxas', 'Valor Impostos', 'Valor total da transacao', 
-            'Tarifa', 'Comissoes', 'Taxa de Servico B2B', 'Valor Adquirencia', 
-            'Valor Liquido', 'Número do Cartao', 'Bandeira do Cartao'
+            'Status',
+            'Data Transacao',
+            'Data Recebimento',
+            'Total Diarias',
+            'Valor Extras',
+            'Valor Taxas',
+            'Valor Impostos',
+            'Valor total da transacao',
+            'Tarifa',
+            'Comissoes',
+            'Taxa de Servico B2B',
+            'Valor Adquirencia',
+            'Valor Liquido',
+            'Número do Cartao',
+            'Bandeira do Cartao'
+        ];
+        
+        // Campos que são numéricos - CADA UM COM SEU PRÓPRIO TOTAL
+        const CAMPOS_NUMERICOS = [
+            'Total Diarias',
+            'Valor Extras',
+            'Valor Taxas',
+            'Valor Impostos',
+            'Valor total da transacao',
+            'Comissoes',
+            'Taxa de Servico B2B',
+            'Valor Adquirencia',
+            'Valor Liquido'
         ];
         
         // Variáveis globais
@@ -733,6 +793,8 @@
         const dataPreview = document.getElementById('dataPreview');
         const previewBody = document.getElementById('previewBody');
         const dataStats = document.getElementById('dataStats');
+        const totaisPreview = document.getElementById('totaisPreview');
+        const totaisGrid = document.getElementById('totaisGrid');
         const pdfModal = document.getElementById('pdfModal');
         const loadingOverlay = document.getElementById('loadingOverlay');
         
@@ -820,14 +882,13 @@
         
         // Inicialização
         function inicializarApp() {
-            const hoje = dayjs();
-            const primeiroDiaMes = hoje.startOf('month');
-            filterDataInicio.value = primeiroDiaMes.format('YYYY-MM-DD');
-            filterDataFim.value = hoje.format('YYYY-MM-DD');
+            // Configurar datas padrão para novembro 2025 (como na planilha de exemplo)
+            filterDataInicio.value = '2025-11-01';
+            filterDataFim.value = '2025-11-30';
             console.log('✅ Sistema B2B PDF inicializado!');
         }
         
-        // Funções principais
+        // Função principal para processar upload
         function handleFileUpload() {
             const file = fileInput.files[0];
             if (!file) return;
@@ -850,7 +911,7 @@
                     }
                 } catch (error) {
                     mostrarNotificacao(`Erro: ${error.message}`, 'error');
-                    console.error(error);
+                    console.error('Erro no processamento:', error);
                     limparDados();
                 } finally {
                     mostrarLoading(false);
@@ -864,11 +925,17 @@
             }
         }
         
+        // Processar Excel CORRETAMENTE - SEM REMOVER PONTOS DOS NÚMEROS
         function processarExcel(data) {
             try {
-                const workbook = XLSX.read(data, { type: 'array', cellDates: true });
+                const workbook = XLSX.read(data, { 
+                    type: 'array', 
+                    cellDates: true,
+                    raw: true // IMPORTANTE: manter raw true para não converter automaticamente
+                });
+                
                 const firstSheet = workbook.Sheets[workbook.SheetNames[0]];
-                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1 });
+                const jsonData = XLSX.utils.sheet_to_json(firstSheet, { header: 1, defval: '' });
                 
                 if (jsonData.length < 2) {
                     mostrarNotificacao('Arquivo vazio ou inválido', 'error');
@@ -878,27 +945,43 @@
                 const cabecalhos = jsonData[0];
                 dadosOriginais = [];
                 
+                // Mapear índices dos campos
+                const indicesCampos = {};
+                cabecalhos.forEach((cabecalho, index) => {
+                    const nomeNormalizado = normalizarNomeCampo(cabecalho);
+                    indicesCampos[nomeNormalizado] = index;
+                });
+                
                 for (let i = 1; i < jsonData.length; i++) {
                     const linha = jsonData[i];
                     if (!linha || linha.length === 0) continue;
                     
                     const registro = {};
-                    cabecalhos.forEach((cabecalho, index) => {
-                        let valor = linha[index];
-                        if (valor instanceof Date) {
-                            valor = dayjs(valor).format('DD/MM/YYYY HH:mm:ss');
-                        } else if (valor !== undefined && valor !== null) {
-                            valor = String(valor).trim();
-                        } else {
-                            valor = '';
+                    
+                    // Processar cada campo esperado
+                    CAMPOS_ESPERADOS.forEach(campo => {
+                        const nomeNormalizado = normalizarNomeCampo(campo);
+                        const indice = indicesCampos[nomeNormalizado];
+                        
+                        let valor = '';
+                        if (indice !== undefined && linha[indice] !== undefined) {
+                            valor = linha[indice];
+                            
+                            // Converter datas
+                            if (valor instanceof Date) {
+                                valor = dayjs(valor).format('DD/MM/YYYY HH:mm:ss');
+                            } else if (valor !== null && valor !== undefined) {
+                                valor = String(valor).trim();
+                            }
                         }
                         
-                        const nomeCampo = normalizarCampo(cabecalho);
-                        registro[nomeCampo] = valor;
+                        registro[campo] = valor;
                     });
                     
+                    // Validar registro mínimo
                     if (registro['Data Transacao'] && registro['Valor total da transacao']) {
-                        converterValoresNumericos(registro);
+                        // Converter valores numéricos CORRETAMENTE
+                        converterValoresNumericosFIXO(registro);
                         dadosOriginais.push(registro);
                     }
                 }
@@ -908,19 +991,112 @@
                     return;
                 }
                 
+                console.log('Primeiros 3 registros processados:', dadosOriginais.slice(0, 3));
+                
                 dadosFiltrados = [...dadosOriginais];
                 mostrarPreviaDados();
                 atualizarResumo();
                 atualizarFiltrosBandeira();
+                calcularTotaisIndividuais();
                 
-                mostrarNotificacao(`${dadosOriginais.length} registros carregados!`, 'success');
+                mostrarNotificacao(`${dadosOriginais.length} registros carregados com sucesso!`, 'success');
                 
             } catch (error) {
-                mostrarNotificacao('Erro ao processar Excel', 'error');
-                console.error(error);
+                mostrarNotificacao('Erro ao processar arquivo Excel', 'error');
+                console.error('Erro no Excel:', error);
             }
         }
         
+        // Função para normalizar nomes de campos
+        function normalizarNomeCampo(nome) {
+            return String(nome)
+                .toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
+                .replace(/[^a-z0-9\s]/gi, '')
+                .replace(/\s+/g, ' ')
+                .trim();
+        }
+        
+        // Converter valores numéricos CORRETAMENTE - SEM REMOVER PONTOS
+        function converterValoresNumericosFIXO(registro) {
+            CAMPOS_NUMERICOS.forEach(campo => {
+                if (registro[campo] !== undefined && registro[campo] !== null && registro[campo] !== '') {
+                    let valorStr = String(registro[campo]).trim();
+                    
+                    // Se já for número, usar direto
+                    if (typeof registro[campo] === 'number') {
+                        registro[`${campo}_NUM`] = registro[campo];
+                        return;
+                    }
+                    
+                    // Remover símbolos de moeda e espaços
+                    valorStr = valorStr.replace(/[R$\s]/g, '').trim();
+                    
+                    // Se estiver vazio após remoção, definir como 0
+                    if (valorStr === '') {
+                        registro[`${campo}_NUM`] = 0;
+                        return;
+                    }
+                    
+                    // Verificar formato
+                    const temVirgula = valorStr.includes(',');
+                    const temPonto = valorStr.includes('.');
+                    
+                    let valorNumerico;
+                    
+                    if (temVirgula && !temPonto) {
+                        // Formato: "1234,56" - vírgula decimal
+                        valorStr = valorStr.replace(',', '.');
+                        valorNumerico = parseFloat(valorStr);
+                    } else if (!temVirgula && temPonto) {
+                        // Formato: "1234.56" - ponto decimal (formato internacional)
+                        // Contar pontos para verificar se é separador de milhar
+                        const partes = valorStr.split('.');
+                        
+                        if (partes.length === 2) {
+                            // Apenas um ponto - é decimal
+                            valorNumerico = parseFloat(valorStr);
+                        } else if (partes.length > 2) {
+                            // Múltiplos pontos - pode ser formato com separador de milhar (ex: 1.234.567,89)
+                            // Mas no formato brasileiro, isso seria com vírgula decimal
+                            // Vamos tratar como número sem pontos e depois verificar casas decimais
+                            const semPontos = valorStr.replace(/\./g, '');
+                            // Assumir 2 casas decimais se o último segmento tiver 2 dígitos
+                            const ultimoSegmento = partes[partes.length - 1];
+                            if (ultimoSegmento.length === 2) {
+                                // É provavelmente formato com separador de milhar e 2 casas decimais
+                                const numeroInteiro = semPontos.slice(0, -2);
+                                const decimais = semPontos.slice(-2);
+                                valorNumerico = parseFloat(numeroInteiro + '.' + decimais);
+                            } else {
+                                valorNumerico = parseFloat(semPontos);
+                            }
+                        } else {
+                            valorNumerico = parseFloat(valorStr);
+                        }
+                    } else if (temVirgula && temPonto) {
+                        // Formato: "1.234,56" - ponto é separador de milhar, vírgula é decimal
+                        valorStr = valorStr.replace(/\./g, '').replace(',', '.');
+                        valorNumerico = parseFloat(valorStr);
+                    } else {
+                        // Nenhum separador - número inteiro
+                        valorNumerico = parseFloat(valorStr);
+                    }
+                    
+                    if (!isNaN(valorNumerico)) {
+                        registro[`${campo}_NUM`] = valorNumerico;
+                        console.log(`Campo ${campo}: "${registro[campo]}" -> ${valorNumerico}`);
+                    } else {
+                        registro[`${campo}_NUM`] = 0;
+                        console.warn(`Não foi possível converter ${campo}: "${registro[campo]}"`);
+                    }
+                } else {
+                    registro[`${campo}_NUM`] = 0;
+                }
+            });
+        }
+        
+        // Processar CSV
         function processarCSV(content) {
             try {
                 const linhas = content.split('\n');
@@ -931,6 +1107,14 @@
                 
                 const separador = linhas[0].includes(';') ? ';' : ',';
                 const cabecalhos = parseCSVLine(linhas[0], separador);
+                
+                // Mapear índices
+                const indicesCampos = {};
+                cabecalhos.forEach((cabecalho, index) => {
+                    const nomeNormalizado = normalizarNomeCampo(cabecalho);
+                    indicesCampos[nomeNormalizado] = index;
+                });
+                
                 dadosOriginais = [];
                 
                 for (let i = 1; i < linhas.length; i++) {
@@ -939,13 +1123,21 @@
                     const valores = parseCSVLine(linhas[i], separador);
                     const registro = {};
                     
-                    cabecalhos.forEach((cabecalho, index) => {
-                        const nomeCampo = normalizarCampo(cabecalho);
-                        registro[nomeCampo] = valores[index] ? valores[index].trim() : '';
+                    // Processar cada campo esperado
+                    CAMPOS_ESPERADOS.forEach(campo => {
+                        const nomeNormalizado = normalizarNomeCampo(campo);
+                        const indice = indicesCampos[nomeNormalizado];
+                        
+                        let valor = '';
+                        if (indice !== undefined && valores[indice] !== undefined) {
+                            valor = valores[indice].trim();
+                        }
+                        
+                        registro[campo] = valor;
                     });
                     
                     if (registro['Data Transacao'] && registro['Valor total da transacao']) {
-                        converterValoresNumericos(registro);
+                        converterValoresNumericosFIXO(registro);
                         dadosOriginais.push(registro);
                     }
                 }
@@ -959,12 +1151,13 @@
                 mostrarPreviaDados();
                 atualizarResumo();
                 atualizarFiltrosBandeira();
+                calcularTotaisIndividuais();
                 
-                mostrarNotificacao(`${dadosOriginais.length} registros carregados!`, 'success');
+                mostrarNotificacao(`${dadosOriginais.length} registros carregados com sucesso!`, 'success');
                 
             } catch (error) {
                 mostrarNotificacao('Erro ao processar CSV', 'error');
-                console.error(error);
+                console.error('Erro no CSV:', error);
             }
         }
         
@@ -990,63 +1183,7 @@
             return result.map(cell => cell.replace(/^"+|"+$/g, ''));
         }
         
-        function normalizarCampo(nome) {
-            const nomeLower = String(nome).toLowerCase().trim();
-            
-            const mapeamentos = {
-                'status': 'Status',
-                'data transacao': 'Data Transacao',
-                'data recebimento': 'Data Recebimento',
-                'total diarias': 'Total Diarias',
-                'valor extras': 'Valor Extras',
-                'valor taxas': 'Valor Taxas',
-                'valor impostos': 'Valor Impostos',
-                'valor total da transacao': 'Valor total da transacao',
-                'tarifa': 'Tarifa',
-                'comissoes': 'Comissoes',
-                'taxa de servico b2b': 'Taxa de Servico B2B',
-                'valor adquirencia': 'Valor Adquirencia',
-                'valor liquido': 'Valor Liquido',
-                'numero do cartao': 'Número do Cartao',
-                'bandeira do cartao': 'Bandeira do Cartao'
-            };
-            
-            for (const [chave, valor] of Object.entries(mapeamentos)) {
-                if (nomeLower.includes(chave) || chave.includes(nomeLower)) {
-                    return valor;
-                }
-            }
-            
-            return nome;
-        }
-        
-        function converterValoresNumericos(registro) {
-            const camposNumericos = [
-                'Total Diarias', 'Valor Extras', 'Valor Taxas', 'Valor Impostos',
-                'Valor total da transacao', 'Comissoes', 'Taxa de Servico B2B',
-                'Valor Adquirencia', 'Valor Liquido'
-            ];
-            
-            camposNumericos.forEach(campo => {
-                if (registro[campo] && registro[campo] !== '') {
-                    let valorStr = String(registro[campo])
-                        .replace(/[R$\s]/g, '')
-                        .replace(/\./g, '')
-                        .replace(',', '.')
-                        .trim();
-                    
-                    const valor = parseFloat(valorStr);
-                    if (!isNaN(valor)) {
-                        registro[`${campo}_NUM`] = valor;
-                    } else {
-                        registro[`${campo}_NUM`] = 0;
-                    }
-                } else {
-                    registro[`${campo}_NUM`] = 0;
-                }
-            });
-        }
-        
+        // Mostrar prévia dos dados
         function mostrarPreviaDados() {
             if (dadosOriginais.length === 0) {
                 dataPreview.style.display = 'none';
@@ -1062,10 +1199,10 @@
                 const registro = dadosOriginais[i];
                 const tr = document.createElement('tr');
                 
-                let statusClass = 'status-' + (registro.Status || '').toLowerCase();
-                if (!['status-aprovada', 'status-cancelada', 'status-pendente'].includes(statusClass)) {
-                    statusClass = '';
-                }
+                let statusClass = '';
+                if (registro.Status === 'Aprovada') statusClass = 'status-aprovada';
+                else if (registro.Status === 'Cancelada') statusClass = 'status-cancelada';
+                else if (registro.Status === 'Pendente') statusClass = 'status-pendente';
                 
                 tr.innerHTML = `
                     <td class="${statusClass}">${registro.Status || 'N/A'}</td>
@@ -1082,6 +1219,60 @@
             atualizarEstatisticasPrevia();
         }
         
+        // Calcular totais individuais para CADA CAMPO
+        function calcularTotaisIndividuais() {
+            if (dadosFiltrados.length === 0) {
+                totaisPreview.style.display = 'none';
+                return;
+            }
+            
+            totaisPreview.style.display = 'block';
+            
+            // Calcular totais para cada campo numérico
+            const totais = {};
+            CAMPOS_NUMERICOS.forEach(campo => {
+                const total = dadosFiltrados.reduce((soma, registro) => {
+                    return soma + (registro[`${campo}_NUM`] || 0);
+                }, 0);
+                totais[campo] = total;
+            });
+            
+            // Exibir totais
+            let html = '';
+            
+            // Agrupar por categoria
+            const grupos = {
+                'Diárias': ['Total Diarias'],
+                'Valores Principais': ['Valor total da transacao', 'Valor Liquido'],
+                'Taxas e Impostos': ['Valor Taxas', 'Valor Impostos'],
+                'Comissões': ['Comissoes', 'Taxa de Servico B2B', 'Valor Adquirencia'],
+                'Extras': ['Valor Extras']
+            };
+            
+            for (const [grupo, campos] of Object.entries(grupos)) {
+                html += `<div style="grid-column: 1 / -1; font-weight: bold; margin-top: 10px; color: #2c3e50;">${grupo}</div>`;
+                
+                campos.forEach(campo => {
+                    if (totais[campo] !== undefined) {
+                        const isMoeda = campo.includes('Valor') || campo.includes('Comissoes') || campo.includes('Taxa');
+                        const valorFormatado = isMoeda ? 
+                            `R$ ${formatarMoeda(totais[campo])}` : 
+                            formatarNumero(totais[campo]);
+                        
+                        html += `
+                            <div class="total-item">
+                                <div class="total-label">${campo}</div>
+                                <div class="total-value">${valorFormatado}</div>
+                            </div>
+                        `;
+                    }
+                });
+            }
+            
+            totaisGrid.innerHTML = html;
+        }
+        
+        // Atualizar estatísticas da prévia
         function atualizarEstatisticasPrevia() {
             const total = dadosOriginais.length;
             const aprovadas = dadosOriginais.filter(r => r.Status === 'Aprovada').length;
@@ -1109,6 +1300,7 @@
             `;
         }
         
+        // Funções de formatação
         function formatarMoeda(valor) {
             return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
@@ -1117,6 +1309,7 @@
             return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
         
+        // Atualizar filtros de bandeira
         function atualizarFiltrosBandeira() {
             const bandeiras = new Set();
             dadosOriginais.forEach(r => {
@@ -1133,13 +1326,16 @@
             });
         }
         
+        // Limpar dados
         function limparDados() {
             dadosOriginais = [];
             dadosFiltrados = [];
             dataPreview.style.display = 'none';
+            totaisPreview.style.display = 'none';
             atualizarResumo();
         }
         
+        // Aplicar filtros
         function aplicarFiltros() {
             if (dadosOriginais.length === 0) {
                 mostrarNotificacao('Carregue um arquivo primeiro', 'error');
@@ -1171,9 +1367,11 @@
             });
             
             atualizarResumo();
+            calcularTotaisIndividuais();
             mostrarNotificacao(`${dadosFiltrados.length} transações encontradas`, 'success');
         }
         
+        // Parsear data
         function parsearData(dataString) {
             if (!dataString) return null;
             try {
@@ -1195,19 +1393,22 @@
             }
         }
         
+        // Limpar filtros
         function limparFiltros() {
             filterStatus.value = '';
-            filterDataInicio.value = '';
-            filterDataFim.value = '';
+            filterDataInicio.value = '2025-11-01';
+            filterDataFim.value = '2025-11-30';
             filterValorMin.value = '';
             filterValorMax.value = '';
             filterBandeira.value = '';
             
             dadosFiltrados = [...dadosOriginais];
             atualizarResumo();
+            calcularTotaisIndividuais();
             mostrarNotificacao('Filtros limpos', 'success');
         }
         
+        // Atualizar resumo
         function atualizarResumo() {
             if (dadosFiltrados.length === 0) {
                 totalTransacoes.textContent = '0';
@@ -1228,6 +1429,7 @@
             diariasTotal.textContent = formatarNumero(diariasSum);
         }
         
+        // Exportar para Excel
         function exportarParaExcel() {
             if (dadosFiltrados.length === 0) {
                 mostrarNotificacao('Não há dados para exportar', 'error');
@@ -1260,6 +1462,7 @@
             mostrarNotificacao('CSV exportado com sucesso!', 'success');
         }
         
+        // Selecionar tipo de relatório
         function selecionarTipoRelatorio(tipo) {
             tipoRelatorioAtual = tipo;
             
@@ -1280,6 +1483,7 @@
             btnGerarPDF.innerHTML = `📊 ${btnTexto[tipo]}`;
         }
         
+        // Abrir modal PDF
         function abrirModalPDF() {
             if (dadosOriginais.length === 0) {
                 mostrarNotificacao('Carregue um arquivo primeiro', 'error');
@@ -1288,10 +1492,12 @@
             pdfModal.style.display = 'block';
         }
         
+        // Fechar modal PDF
         function fecharModalPDF() {
             pdfModal.style.display = 'none';
         }
         
+        // Gerar PDF principal
         function gerarPDF() {
             if (dadosFiltrados.length === 0) {
                 mostrarNotificacao('Não há dados para gerar relatório', 'error');
@@ -1318,6 +1524,7 @@
             }, 100);
         }
         
+        // Gerar PDF Filipeta POS
         function gerarPDFFilipeta() {
             const doc = new jsPDF({
                 orientation: pdfOrientation.value,
@@ -1345,6 +1552,45 @@
             doc.setFontSize(9);
             doc.text(`Gerado em: ${dayjs().format('DD/MM/YYYY HH:mm:ss')}`, pageWidth - 15, yPos - 10, { align: 'right' });
             yPos += 10;
+            
+            // Calcular totais individuais
+            const totais = {};
+            CAMPOS_NUMERICOS.forEach(campo => {
+                totais[campo] = dadosFiltrados.reduce((soma, r) => soma + (r[`${campo}_NUM`] || 0), 0);
+            });
+            
+            // Adicionar resumo de totais se configurado
+            if (pdfIncludeSummary.value === 'true') {
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text('TOTAIS POR CATEGORIA:', 15, yPos);
+                yPos += 7;
+                
+                doc.setFontSize(10);
+                doc.setFont('helvetica', 'normal');
+                
+                // Mostrar alguns totais principais
+                const principaisTotais = [
+                    ['Valor Total', totais['Valor total da transacao']],
+                    ['Valor Líquido', totais['Valor Liquido']],
+                    ['Diárias Totais', totais['Total Diarias']],
+                    ['Comissões', totais['Comissoes']],
+                    ['Taxa B2B', totais['Taxa de Servico B2B']],
+                    ['Adquirente', totais['Valor Adquirencia']]
+                ];
+                
+                principaisTotais.forEach(([label, valor]) => {
+                    const isMoeda = label.includes('Valor') || label.includes('Comiss') || label.includes('Taxa') || label.includes('Adquirente');
+                    const valorFormatado = isMoeda ? 
+                        `R$ ${formatarMoeda(valor)}` : 
+                        formatarNumero(valor);
+                    
+                    doc.text(`• ${label}: ${valorFormatado}`, 20, yPos);
+                    yPos += 5;
+                });
+                
+                yPos += 10;
+            }
             
             // Tabela principal
             const headers = ['#', 'Data/Hora', 'Status', 'Valor Total', 'Valor Líquido', 'Cartão', 'Bandeira'];
@@ -1380,6 +1626,7 @@
             mostrarNotificacao(`Filipeta gerada: ${fileName}`, 'success');
         }
         
+        // Gerar PDF Detalhado com TODOS os totais individuais
         function gerarPDFDetalhado() {
             const doc = new jsPDF({
                 orientation: 'landscape',
@@ -1396,23 +1643,52 @@
             yPos += 8;
             
             doc.setFontSize(14);
-            doc.text('RELATÓRIO DETALHADO', pageWidth / 2, yPos, { align: 'center' });
+            doc.text('RELATÓRIO DETALHADO COMPLETO', pageWidth / 2, yPos, { align: 'center' });
             yPos += 10;
+            
+            // Calcular TODOS os totais individuais
+            const totais = {};
+            CAMPOS_NUMERICOS.forEach(campo => {
+                totais[campo] = dadosFiltrados.reduce((soma, r) => soma + (r[`${campo}_NUM`] || 0), 0);
+            });
             
             // Tabela com todos os campos
             const headers = CAMPOS_ESPERADOS;
             const data = dadosFiltrados.map((registro, index) => {
                 return headers.map(campo => {
                     let valor = registro[campo] || '';
-                    if (campo.includes('Valor') || campo.includes('Total') || campo.includes('Comissoes') || campo.includes('Taxa')) {
+                    
+                    // Formatar valores numéricos
+                    if (CAMPOS_NUMERICOS.includes(campo)) {
                         const valorNum = registro[`${campo}_NUM`];
                         if (valorNum !== undefined) {
-                            valor = `R$ ${formatarMoeda(valorNum)}`;
+                            const isMoeda = campo.includes('Valor') || campo.includes('Comissoes') || campo.includes('Taxa');
+                            valor = isMoeda ? 
+                                `R$ ${formatarMoeda(valorNum)}` : 
+                                formatarNumero(valorNum);
                         }
                     }
+                    
                     return valor;
                 });
             });
+            
+            // Adicionar linha de TOTAIS no final
+            const linhaTotais = headers.map(campo => {
+                if (CAMPOS_NUMERICOS.includes(campo)) {
+                    const total = totais[campo];
+                    const isMoeda = campo.includes('Valor') || campo.includes('Comissoes') || campo.includes('Taxa');
+                    return isMoeda ? 
+                        `R$ ${formatarMoeda(total)}` : 
+                        formatarNumero(total);
+                } else if (campo === 'Status') {
+                    return 'TOTAIS';
+                } else {
+                    return '';
+                }
+            });
+            
+            data.push(linhaTotais);
             
             doc.autoTable({
                 startY: yPos,
@@ -1421,7 +1697,15 @@
                 theme: 'striped',
                 headStyles: { fillColor: [44, 62, 80], textColor: 255, fontSize: 8, fontStyle: 'bold' },
                 bodyStyles: { fontSize: 7, cellPadding: 2 },
-                margin: { left: 10, right: 10 }
+                margin: { left: 10, right: 10 },
+                // Estilo especial para a última linha (totais)
+                didParseCell: function(data) {
+                    if (data.row.index === data.table.body.length - 1) {
+                        data.cell.styles.fontStyle = 'bold';
+                        data.cell.styles.fillColor = [241, 196, 15]; // Amarelo para totais
+                        data.cell.styles.textColor = [0, 0, 0];
+                    }
+                }
             });
             
             const fileName = `relatorio_detalhado_${dayjs().format('YYYY-MM-DD_HHmm')}.pdf`;
@@ -1429,6 +1713,7 @@
             mostrarNotificacao(`Relatório detalhado gerado: ${fileName}`, 'success');
         }
         
+        // Gerar PDF Resumo Aprovadas
         function gerarPDFResumoAprovadas() {
             const transacoesAprovadas = dadosFiltrados.filter(r => r.Status === 'Aprovada');
             
@@ -1452,8 +1737,62 @@
             yPos += 8;
             
             doc.setFontSize(14);
-            doc.text('RELATÓRIO DE APROVADAS', pageWidth / 2, yPos, { align: 'center' });
+            doc.text('RELATÓRIO DE TRANSAÇÕES APROVADAS', pageWidth / 2, yPos, { align: 'center' });
             yPos += 15;
+            
+            // Calcular totais das aprovadas
+            const totais = {};
+            CAMPOS_NUMERICOS.forEach(campo => {
+                totais[campo] = transacoesAprovadas.reduce((soma, r) => soma + (r[`${campo}_NUM`] || 0), 0);
+            });
+            
+            // Adicionar resumo de totais
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text('TOTAIS DAS APROVADAS:', 15, yPos);
+            yPos += 7;
+            
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            
+            // Listar totais principais
+            const principaisCampos = [
+                'Valor total da transacao',
+                'Valor Liquido',
+                'Total Diarias',
+                'Comissoes',
+                'Taxa de Servico B2B',
+                'Valor Adquirencia',
+                'Valor Impostos',
+                'Valor Taxas',
+                'Valor Extras'
+            ];
+            
+            let xPos = 15;
+            let colCount = 0;
+            
+            principaisCampos.forEach(campo => {
+                const total = totais[campo] || 0;
+                const isMoeda = campo.includes('Valor') || campo.includes('Comissoes') || campo.includes('Taxa');
+                const valorFormatado = isMoeda ? 
+                    `R$ ${formatarMoeda(total)}` : 
+                    formatarNumero(total);
+                
+                const label = campo.length > 20 ? campo.substring(0, 20) + '...' : campo;
+                
+                doc.text(`• ${label}:`, xPos, yPos);
+                doc.text(valorFormatado, xPos + 45, yPos);
+                
+                colCount++;
+                if (colCount % 5 === 0) {
+                    xPos += 60;
+                    yPos = 30;
+                } else {
+                    yPos += 5;
+                }
+            });
+            
+            yPos += 10;
             
             // Tabela simplificada
             const headers = ['#', 'Data', 'Valor Total', 'Valor Líquido', 'Cartão', 'Bandeira'];
@@ -1468,6 +1807,18 @@
                 ];
             });
             
+            // Adicionar linha de totais
+            const totalValor = totais['Valor total da transacao'];
+            const totalLiquido = totais['Valor Liquido'];
+            data.push([
+                'TOTAIS',
+                '',
+                `R$ ${formatarMoeda(totalValor)}`,
+                `R$ ${formatarMoeda(totalLiquido)}`,
+                '',
+                ''
+            ]);
+            
             doc.autoTable({
                 startY: yPos,
                 head: [headers],
@@ -1475,7 +1826,14 @@
                 theme: 'grid',
                 headStyles: { fillColor: [46, 204, 113], textColor: 255, fontSize: 9 },
                 bodyStyles: { fontSize: 8 },
-                margin: { left: 15, right: 15 }
+                margin: { left: 15, right: 15 },
+                didParseCell: function(data) {
+                    if (data.row.index === data.table.body.length - 1) {
+                        data.cell.styles.fontStyle = 'bold';
+                        data.cell.styles.fillColor = [241, 196, 15];
+                        data.cell.styles.textColor = [0, 0, 0];
+                    }
+                }
             });
             
             const fileName = `aprovadas_${dayjs().format('YYYY-MM-DD_HHmm')}.pdf`;
@@ -1483,6 +1841,7 @@
             mostrarNotificacao(`Resumo de aprovadas gerado: ${fileName}`, 'success');
         }
         
+        // Gerar filipetas individuais
         function gerarTodasFilipetas() {
             if (dadosFiltrados.length === 0) {
                 mostrarNotificacao('Não há dados para gerar filipetas', 'error');
@@ -1530,14 +1889,39 @@
                         yPos += 7;
                         
                         doc.setFont('helvetica', 'bold');
+                        doc.text('Valor Líquido:', 5, yPos);
+                        doc.setFont('helvetica', 'normal');
+                        doc.text(`R$ ${formatarMoeda(registro['Valor Liquido_NUM'] || 0)}`, 25, yPos);
+                        yPos += 7;
+                        
+                        doc.setFont('helvetica', 'bold');
                         doc.text('Cartão:', 5, yPos);
                         doc.setFont('helvetica', 'normal');
                         doc.text(registro['Número do Cartao'] || '', 25, yPos);
                         yPos += 7;
                         
+                        // Detalhes financeiros
+                        doc.setFontSize(7);
+                        doc.text('Detalhes Financeiros:', 5, yPos);
+                        yPos += 4;
+                        
+                        doc.text(`• Diárias: ${formatarNumero(registro['Total Diarias_NUM'] || 0)}`, 10, yPos);
+                        yPos += 3.5;
+                        
+                        doc.text(`• Comissões: R$ ${formatarMoeda(registro['Comissoes_NUM'] || 0)}`, 10, yPos);
+                        yPos += 3.5;
+                        
+                        doc.text(`• Taxa B2B: R$ ${formatarMoeda(registro['Taxa de Servico B2B_NUM'] || 0)}`, 10, yPos);
+                        yPos += 3.5;
+                        
+                        doc.text(`• Adquirente: R$ ${formatarMoeda(registro['Valor Adquirencia_NUM'] || 0)}`, 10, yPos);
+                        yPos += 5;
+                        
+                        // Rodapé
                         doc.setFontSize(6);
-                        doc.text('Sistema B2B Reservas', 40, 140, { align: 'center' });
+                        doc.text('Sistema B2B Reservas - Comprovante não fiscal', 40, 140, { align: 'center' });
                         doc.text(dayjs().format('DD/MM/YYYY HH:mm:ss'), 40, 143, { align: 'center' });
+                        doc.text(`Transação ${index + 1} de ${dadosFiltrados.length}`, 40, 146, { align: 'center' });
                     });
                     
                     const fileName = `filipetas_${dayjs().format('YYYY-MM-DD')}.pdf`;
