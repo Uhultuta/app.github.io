@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>B2B Reservas - Sistema de Relatórios PDF</title>
     <style>
+        /* Estilos mantidos iguais */
         * {
             margin: 0;
             padding: 0;
@@ -611,7 +612,7 @@
                     <thead>
                         <tr>
                             <th>Status</th>
-                            <th>Data</th>
+                            <th>Data Transacao</th>
                             <th>Valor Total</th>
                             <th>Valor Líquido</th>
                             <th>Cartão</th>
@@ -854,6 +855,39 @@
             paperSize: 'letter',
             margins: 'normal'
         };
+        
+        // Mapeamento exato dos campos esperados
+        const CAMPOS_ESPERADOS = [
+            'Status',
+            'Data Transacao',
+            'Data Recebimento',
+            'Total Diarias',
+            'Valor Extras',
+            'Valor Taxas',
+            'Valor Impostos',
+            'Valor total da transacao',
+            'Tarifa',
+            'Comissoes',
+            'Taxa de Servico B2B',
+            'Valor Adquirencia',
+            'Valor Liquido',
+            'Número do Cartao',
+            'Bandeira do Cartao'
+        ];
+        
+        // Campos que são numéricos (para conversão)
+        const CAMPOS_NUMERICOS = [
+            'Total Diarias',
+            'Valor Extras',
+            'Valor Taxas',
+            'Valor Impostos',
+            'Valor total da transacao',
+            'Tarifa',
+            'Comissoes',
+            'Taxa de Servico B2B',
+            'Valor Adquirencia',
+            'Valor Liquido'
+        ];
         
         // Carregar configurações salvas
         function carregarConfiguracoes() {
@@ -1122,6 +1156,54 @@
             atualizarResumo();
         }
         
+        // Função para normalizar nomes de campos
+        function normalizarNomeCampo(nome) {
+            return nome
+                .trim()
+                .toLowerCase()
+                .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // Remove acentos
+                .replace(/[^a-z0-9\s]/gi, '') // Remove caracteres especiais
+                .replace(/\s+/g, ' ') // Remove espaços múltiplos
+                .trim();
+        }
+        
+        // Mapear nomes de campos para os nomes padrão
+        function mapearCampo(nomeCampo) {
+            const nomeNormalizado = normalizarNomeCampo(nomeCampo);
+            
+            const mapeamentos = {
+                'status': 'Status',
+                'data transacao': 'Data Transacao',
+                'data recebimento': 'Data Recebimento',
+                'total diarias': 'Total Diarias',
+                'valor extras': 'Valor Extras',
+                'valor taxas': 'Valor Taxas',
+                'valor impostos': 'Valor Impostos',
+                'valor total da transacao': 'Valor total da transacao',
+                'tarifa': 'Tarifa',
+                'comissoes': 'Comissoes',
+                'taxa de servico b2b': 'Taxa de Servico B2B',
+                'valor adquirencia': 'Valor Adquirencia',
+                'valor liquido': 'Valor Liquido',
+                'numero do cartao': 'Número do Cartao',
+                'bandeira do cartao': 'Bandeira do Cartao'
+            };
+            
+            // Verifica mapeamento exato
+            if (mapeamentos[nomeNormalizado]) {
+                return mapeamentos[nomeNormalizado];
+            }
+            
+            // Verifica se contém parte do nome
+            for (const [chave, valor] of Object.entries(mapeamentos)) {
+                if (nomeNormalizado.includes(chave) || chave.includes(nomeNormalizado)) {
+                    return valor;
+                }
+            }
+            
+            return nomeCampo; // Retorna original se não encontrar
+        }
+        
         // Processar Excel usando SheetJS
         function processarExcel(data) {
             try {
@@ -1129,7 +1211,7 @@
                 const firstSheetName = workbook.SheetNames[0];
                 const worksheet = workbook.Sheets[firstSheetName];
                 
-                // Converter para JSON
+                // Converter para JSON mantendo todos os dados
                 const jsonData = XLSX.utils.sheet_to_json(worksheet, {
                     header: 1,
                     raw: false,
@@ -1143,8 +1225,15 @@
                     return;
                 }
                 
-                // A primeira linha é o cabeçalho
-                const cabecalhos = jsonData[0].map(h => String(h).trim());
+                // Obter cabeçalhos da primeira linha
+                const cabecalhosOriginais = jsonData[0];
+                
+                // Mapear cabeçalhos para nomes padrão
+                const cabecalhosMapeados = cabecalhosOriginais.map(cabecalho => {
+                    return mapearCampo(String(cabecalho));
+                });
+                
+                console.log('Cabeçalhos mapeados:', cabecalhosMapeados);
                 
                 // Processar linhas de dados
                 dadosOriginais = [];
@@ -1155,8 +1244,8 @@
                     
                     const registro = {};
                     
-                    // Mapear cada coluna
-                    cabecalhos.forEach((cabecalho, index) => {
+                    // Mapear cada coluna usando cabeçalhos mapeados
+                    cabecalhosMapeados.forEach((cabecalho, index) => {
                         let valor = linha[index];
                         
                         // Converter datas do Excel para formato legível
@@ -1166,7 +1255,7 @@
                             valor = valor.trim();
                         } else if (typeof valor === 'number') {
                             // Se for um número de data Excel (formato OADate)
-                            if (cabecalho.includes('Data') && valor > 25569) {
+                            if (cabecalho.toLowerCase().includes('data') && valor > 25569) {
                                 const dataExcel = new Date((valor - 25569) * 86400 * 1000);
                                 valor = dayjs(dataExcel).format('DD/MM/YYYY HH:mm:ss');
                             }
@@ -1181,6 +1270,8 @@
                     // Validar registro
                     if (validarRegistro(registro)) {
                         dadosOriginais.push(registro);
+                    } else {
+                        console.warn('Registro inválido ignorado:', registro);
                     }
                 }
                 
@@ -1221,7 +1312,14 @@
                 const separador = temPontoVirgula ? ';' : ',';
                 
                 // Extrair cabeçalhos
-                const cabecalhos = primeiraLinha.split(separador).map(h => h.trim().replace(/"/g, ''));
+                const cabecalhosOriginais = parseCSVLine(primeiraLinha, separador).map(h => h.trim().replace(/"/g, ''));
+                
+                // Mapear cabeçalhos para nomes padrão
+                const cabecalhosMapeados = cabecalhosOriginais.map(cabecalho => {
+                    return mapearCampo(String(cabecalho));
+                });
+                
+                console.log('Cabeçalhos mapeados (CSV):', cabecalhosMapeados);
                 
                 // Processar linhas de dados
                 dadosOriginais = [];
@@ -1232,7 +1330,7 @@
                     const valores = parseCSVLine(linhas[i], separador);
                     const registro = {};
                     
-                    cabecalhos.forEach((cabecalho, index) => {
+                    cabecalhosMapeados.forEach((cabecalho, index) => {
                         let valor = valores[index] ? valores[index].trim().replace(/"/g, '') : '';
                         registro[cabecalho] = valor;
                     });
@@ -1243,6 +1341,8 @@
                     // Validar registro
                     if (validarRegistro(registro)) {
                         dadosOriginais.push(registro);
+                    } else {
+                        console.warn('Registro inválido ignorado (CSV):', registro);
                     }
                 }
                 
@@ -1289,7 +1389,7 @@
             return result.map(cell => cell.replace(/^"+|"+$/g, ''));
         }
         
-        // Validar registro
+        // Validar registro - agora mais flexível
         function validarRegistro(registro) {
             // Verificar se tem pelo menos alguns dados essenciais
             const camposRequeridos = ['Data Transacao', 'Valor total da transacao'];
@@ -1303,36 +1403,43 @@
             return true;
         }
         
-        // Converter valores numéricos
+        // Converter valores numéricos para os campos esperados
         function converterValoresNumericos(registro) {
-            // Identificar campos que provavelmente são numéricos
-            Object.keys(registro).forEach(campo => {
-                if (typeof registro[campo] === 'string') {
-                    const valorStr = registro[campo].trim();
+            CAMPOS_NUMERICOS.forEach(campo => {
+                if (registro[campo] !== undefined && registro[campo] !== null && registro[campo] !== '') {
+                    let valorStr = String(registro[campo]).trim();
                     
-                    // Verificar se parece ser um valor monetário ou numérico
-                    if (valorStr.match(/^[R$]?\s*[\d.,]+\s*$/) || 
-                        campo.toLowerCase().includes('valor') ||
-                        campo.toLowerCase().includes('total') ||
-                        campo.toLowerCase().includes('taxa') ||
-                        campo.toLowerCase().includes('comiss') ||
-                        campo.toLowerCase().includes('diaria') ||
-                        campo.toLowerCase().includes('imposto')) {
-                        
-                        // Remover R$, pontos e converter vírgula decimal
-                        let valor = valorStr
-                            .replace('R$', '')
-                            .replace(/\./g, '')
-                            .replace(',', '.')
-                            .trim();
-                        
-                        const valorNumerico = parseFloat(valor);
-                        if (!isNaN(valorNumerico)) {
-                            registro[`${campo}_NUM`] = valorNumerico;
-                        }
+                    // Remover R$, símbolos de moeda, pontos e converter vírgula decimal
+                    valorStr = valorStr
+                        .replace(/R\$/g, '')
+                        .replace(/\$/g, '')
+                        .replace(/\./g, '')
+                        .replace(',', '.')
+                        .trim();
+                    
+                    const valorNumerico = parseFloat(valorStr);
+                    if (!isNaN(valorNumerico)) {
+                        registro[`${campo}_NUM`] = valorNumerico;
+                    } else {
+                        registro[`${campo}_NUM`] = 0;
                     }
+                } else {
+                    registro[`${campo}_NUM`] = 0;
                 }
             });
+            
+            // Garantir que campos obrigatórios tenham valores numéricos
+            if (!registro['Valor total da transacao_NUM']) {
+                registro['Valor total da transacao_NUM'] = 0;
+            }
+            
+            if (!registro['Valor Liquido_NUM']) {
+                registro['Valor Liquido_NUM'] = 0;
+            }
+            
+            if (!registro['Total Diarias_NUM']) {
+                registro['Total Diarias_NUM'] = 0;
+            }
         }
         
         // Mostrar prévia dos dados
@@ -1362,8 +1469,8 @@
                     <td>${registro['Data Transacao'] || 'N/A'}</td>
                     <td class="currency">R$ ${(registro['Valor total da transacao_NUM'] || 0).toFixed(2)}</td>
                     <td class="currency">R$ ${(registro['Valor Liquido_NUM'] || 0).toFixed(2)}</td>
-                    <td>${registro['Número do Cartao'] || registro['Cartão'] || 'N/A'}</td>
-                    <td>${registro['Total Diarias'] || registro['Diárias'] || '0'}</td>
+                    <td>${registro['Número do Cartao'] || 'N/A'}</td>
+                    <td>${registro['Total Diarias_NUM'] || 0}</td>
                 `;
                 
                 previewBody.appendChild(tr);
@@ -1405,7 +1512,7 @@
             const bandeiras = new Set();
             
             dadosOriginais.forEach(registro => {
-                const bandeira = registro['Bandeira do Cartao'] || registro['Bandeira'];
+                const bandeira = registro['Bandeira do Cartao'];
                 if (bandeira && bandeira.trim() !== '') {
                     bandeiras.add(bandeira.trim());
                 }
@@ -1483,7 +1590,7 @@
                 
                 // Filtro por bandeira
                 if (filterBandeira.value) {
-                    const bandeiraRegistro = registro['Bandeira do Cartao'] || registro['Bandeira'];
+                    const bandeiraRegistro = registro['Bandeira do Cartao'];
                     if (bandeiraRegistro !== filterBandeira.value) {
                         return false;
                     }
@@ -1581,24 +1688,8 @@
                 return;
             }
             
-            // Definir colunas para exportação
-            const colunasExport = [
-                'Status',
-                'Data Transacao',
-                'Data Recebimento',
-                'Total Diarias',
-                'Valor Extras',
-                'Valor Taxas',
-                'Valor Impostos',
-                'Valor total da transacao',
-                'Tipo Tarifa',
-                'Valor Comissoes',
-                'Taxa de Servico B2B',
-                'Valor Adquirencia',
-                'Valor Liquido',
-                'Número do Cartao',
-                'Bandeira do Cartao'
-            ];
+            // Usar os campos esperados
+            const colunasExport = CAMPOS_ESPERADOS;
             
             // Converter dados para formato CSV
             const cabecalhos = colunasExport.join(';');
@@ -1606,7 +1697,7 @@
                 return colunasExport.map(coluna => {
                     let valor = registro[coluna] || '';
                     // Formatar valores monetários
-                    if (registro[`${coluna}_NUM`] !== undefined) {
+                    if (registro[`${coluna}_NUM`] !== undefined && coluna !== 'Status' && coluna !== 'Data Transacao' && coluna !== 'Data Recebimento' && coluna !== 'Número do Cartao' && coluna !== 'Bandeira do Cartao') {
                         valor = `R$ ${registro[`${coluna}_NUM`].toFixed(2).replace('.', ',')}`;
                     }
                     // Escapar ponto e vírgula
@@ -1822,8 +1913,8 @@
                     registro.Status || '',
                     `R$ ${(registro['Valor total da transacao_NUM'] || 0).toFixed(2).replace('.', ',')}`,
                     `R$ ${(registro['Valor Liquido_NUM'] || 0).toFixed(2).replace('.', ',')}`,
-                    registro['Número do Cartao'] || registro['Cartão'] || '',
-                    registro['Bandeira do Cartao'] || registro['Bandeira'] || ''
+                    registro['Número do Cartao'] || '',
+                    registro['Bandeira do Cartao'] || ''
                 ];
             });
             
@@ -1891,7 +1982,7 @@
             mostrarNotificacao(`✅ Filipeta POS gerada com sucesso!\n📂 ${fileName}`, 'success');
         }
         
-        // Gerar PDF Detalhado
+        // Gerar PDF Detalhado com todos os 15 campos
         function gerarPDFDetalhado() {
             // Obter configurações
             const titulo = pdfTitle.value || 'RELATÓRIO DETALHADO - B2B RESERVAS';
@@ -2036,62 +2127,15 @@
                 yPos += 10;
             }
             
-            // Tabela detalhada
-            // Identificar todas as colunas disponíveis nos dados
-            const todasColunas = new Set();
-            dadosFiltrados.forEach(registro => {
-                Object.keys(registro).forEach(key => {
-                    if (!key.endsWith('_NUM')) {
-                        todasColunas.add(key);
-                    }
-                });
-            });
-            
-            // Selecionar colunas mais importantes para o relatório detalhado
-            const colunasImportantes = [
-                'Status',
-                'Data Transacao',
-                'Data Recebimento',
-                'Total Diarias',
-                'Valor Extras',
-                'Valor Taxas',
-                'Valor Impostos',
-                'Valor total da transacao',
-                'Tipo Tarifa',
-                'Valor Comissoes',
-                'Taxa de Servico B2B',
-                'Valor Adquirencia',
-                'Valor Liquido',
-                'Número do Cartao',
-                'Bandeira do Cartao'
-            ];
-            
-            // Filtrar colunas que existem nos dados
-            const headers = colunasImportantes.filter(coluna => 
-                Array.from(todasColunas).some(tc => 
-                    tc.toLowerCase().includes(coluna.toLowerCase().replace(/_/g, ' ')) ||
-                    coluna.toLowerCase().includes(tc.toLowerCase().replace(/_/g, ' '))
-                )
-            );
-            
-            // Se não encontrou as colunas padrão, usar as que existem
-            if (headers.length === 0) {
-                headers.push(...Array.from(todasColunas).slice(0, 10));
-            }
-            
-            const data = dadosFiltrados.map(registro => {
-                return headers.map(coluna => {
-                    // Encontrar o nome exato da coluna nos dados
-                    const chaveExata = Array.from(todasColunas).find(tc => 
-                        tc.toLowerCase().includes(coluna.toLowerCase().replace(/_/g, ' ')) ||
-                        coluna.toLowerCase().includes(tc.toLowerCase().replace(/_/g, ' '))
-                    );
-                    
-                    let valor = registro[chaveExata] || '';
+            // Tabela detalhada com todos os 15 campos
+            const headers = CAMPOS_ESPERADOS;
+            const data = dadosFiltrados.map((registro, index) => {
+                return headers.map(campo => {
+                    let valor = registro[campo] || '';
                     
                     // Formatar valores numéricos
-                    if (registro[`${chaveExata}_NUM`] !== undefined) {
-                        valor = `R$ ${registro[`${chaveExata}_NUM`].toFixed(2).replace('.', ',')}`;
+                    if (registro[`${campo}_NUM`] !== undefined && campo !== 'Status' && campo !== 'Data Transacao' && campo !== 'Data Recebimento' && campo !== 'Número do Cartao' && campo !== 'Bandeira do Cartao') {
+                        valor = `R$ ${registro[`${campo}_NUM`].toFixed(2).replace('.', ',')}`;
                     }
                     
                     return valor;
@@ -2260,9 +2304,9 @@
                     registro['Data Transacao'] || '',
                     `R$ ${(registro['Valor total da transacao_NUM'] || 0).toFixed(2).replace('.', ',')}`,
                     `R$ ${(registro['Valor Liquido_NUM'] || 0).toFixed(2).replace('.', ',')}`,
-                    registro['Número do Cartao'] || registro['Cartão'] || '',
-                    registro['Bandeira do Cartao'] || registro['Bandeira'] || '',
-                    registro['Total Diarias'] || registro['Diárias'] || '0'
+                    registro['Número do Cartao'] || '',
+                    registro['Bandeira do Cartao'] || '',
+                    registro['Total Diarias_NUM'] || 0
                 ];
             });
             
@@ -2426,19 +2470,19 @@
                         doc.setFont('helvetica', 'bold');
                         doc.text('Cartão:', 5, yPos);
                         doc.setFont('helvetica', 'normal');
-                        doc.text(registro['Número do Cartao'] || registro['Cartão'] || '', 25, yPos);
+                        doc.text(registro['Número do Cartao'] || '', 25, yPos);
                         yPos += 7;
                         
                         doc.setFont('helvetica', 'bold');
                         doc.text('Bandeira:', 5, yPos);
                         doc.setFont('helvetica', 'normal');
-                        doc.text(registro['Bandeira do Cartao'] || registro['Bandeira'] || '', 25, yPos);
+                        doc.text(registro['Bandeira do Cartao'] || '', 25, yPos);
                         yPos += 7;
                         
                         doc.setFont('helvetica', 'bold');
                         doc.text('Diárias:', 5, yPos);
                         doc.setFont('helvetica', 'normal');
-                        doc.text(registro['Total Diarias'] || registro['Diárias'] || '0', 25, yPos);
+                        doc.text(registro['Total Diarias_NUM'] || 0, 25, yPos);
                         yPos += 7;
                         
                         // Linha separadora
@@ -2452,7 +2496,7 @@
                         doc.text('Taxas e Comissões:', 5, yPos);
                         yPos += 4;
                         
-                        doc.text(`• Comissões: R$ ${(registro['Valor Comissoes_NUM'] || 0).toFixed(2).replace('.', ',')}`, 10, yPos);
+                        doc.text(`• Comissões: R$ ${(registro['Comissoes_NUM'] || 0).toFixed(2).replace('.', ',')}`, 10, yPos);
                         yPos += 3.5;
                         
                         doc.text(`• Taxa B2B: R$ ${(registro['Taxa de Servico B2B_NUM'] || 0).toFixed(2).replace('.', ',')}`, 10, yPos);
@@ -2496,6 +2540,7 @@
             carregarConfiguracoes();
             
             console.log('✅ Sistema B2B PDF inicializado. Pronto para uso!');
+            console.log('📋 Campos esperados:', CAMPOS_ESPERADOS);
         });
     </script>
 </body>
