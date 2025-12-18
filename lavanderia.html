@@ -1,0 +1,1676 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema de Lavanderia</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ========== RESET E ESTILOS GERAIS ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        /* ========== LAYOUT PRINCIPAL ========== */
+        .app-container {
+            max-width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            min-height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ========== HEADER ========== */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary), #1a2530);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-header .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== CONTEÚDO ========== */
+        .content {
+            padding: 25px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .content h2 {
+            color: var(--primary);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        /* ========== COMPONENTES COMUNS ========== */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border: 1px solid #eef1f5;
+        }
+
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0,0,0,0.1);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary), #2980b9);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #219653);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #e67e22);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #c0392b);
+            color: white;
+        }
+
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+        }
+
+        .btn-bluetooth {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+        }
+
+        .btn-block {
+            width: 100%;
+            display: flex;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* ========== SISTEMA LAVANDERIA ========== */
+        .apartment-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .apartment-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        @media (max-width: 480px) {
+            .apartment-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        .apartment-btn {
+            padding: 15px 10px;
+            background: #e3f2fd;
+            border: 2px solid #bbdefb;
+            border-radius: 8px;
+            color: var(--secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .apartment-btn:hover {
+            background: #bbdefb;
+            transform: scale(1.05);
+        }
+
+        .floor-title {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin: 20px 0 10px;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .lavanderia-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .lavanderia-table th {
+            background: #f8f9fa;
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary);
+            border-bottom: 2px solid #e1e8ed;
+        }
+
+        .lavanderia-table td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .lavanderia-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .service-badge {
+            background: #e3f2fd;
+            color: var(--secondary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .service-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .service-btn.lavar {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .service-btn.lavar:hover {
+            background: #c3e6cb;
+        }
+
+        .service-btn.passar {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #bee5eb;
+        }
+
+        .service-btn.passar:hover {
+            background: #bee5eb;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .btn-quantity {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--secondary);
+            background: white;
+            color: var(--secondary);
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-quantity:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #f8fafc, #e3f2fd);
+            border: 2px solid #bbdefb;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        /* ========== BLUETOOTH ========== */
+        .bluetooth-config-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bluetooth-config-btn:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 12px 30px rgba(52, 152, 219, 0.4);
+        }
+
+        .bluetooth-indicator {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 999;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .bluetooth-indicator.connected {
+            background: var(--success);
+        }
+
+        .bluetooth-indicator.disconnected {
+            background: var(--danger);
+        }
+
+        .bluetooth-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+        }
+
+        .bluetooth-modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+        }
+
+        .bluetooth-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .bluetooth-body {
+            padding: 25px;
+        }
+
+        .bluetooth-status {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            background: #f8fafc;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .bluetooth-device-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 20px 0;
+            border: 1px solid #e1e8ed;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .bluetooth-device-item {
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .bluetooth-device-item:hover {
+            border-color: var(--secondary);
+            background: #f0f7ff;
+        }
+
+        .bluetooth-options {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        /* ========== MODAIS ========== */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+        }
+
+        .print-progress {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .print-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e1e8ed;
+            border-top: 4px solid var(--secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ========== UTILITÁRIOS ========== */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-3 { margin-top: 1rem; }
+        .mb-3 { margin-bottom: 1rem; }
+        .mt-4 { margin-top: 1.5rem; }
+        .mb-4 { margin-bottom: 1.5rem; }
+
+        /* ========== ANIMAÇÕES ========== */
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* ========== RESPONSIVIDADE ========== */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .app-container {
+                min-height: calc(100vh - 20px);
+            }
+            
+            .content {
+                padding: 20px 15px;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .bluetooth-config-btn {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+            }
+            
+            .bluetooth-indicator {
+                bottom: 80px;
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .lavanderia-table {
+                font-size: 0.9rem;
+            }
+            
+            .lavanderia-table th,
+            .lavanderia-table td {
+                padding: 12px 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Modal Bluetooth -->
+    <div id="bluetoothModal" class="bluetooth-modal">
+        <div class="bluetooth-modal-content">
+            <div class="bluetooth-header">
+                <h3>
+                    <i class="fas fa-bluetooth"></i>
+                    Configuração Bluetooth
+                </h3>
+            </div>
+            <div class="bluetooth-body">
+                <div class="bluetooth-status" id="bluetoothStatus">
+                    <p style="font-weight: 600; margin-bottom: 5px;">Status do Sistema:</p>
+                    <p id="bluetoothStatusText">Verificando suporte Bluetooth...</p>
+                </div>
+                
+                <div class="btn-group" style="margin-bottom: 20px;">
+                    <button id="scanBluetoothBtn" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Buscar Impressoras
+                    </button>
+                    <button id="connectBluetoothBtn" class="btn btn-success" disabled>
+                        <i class="fas fa-link"></i> Conectar
+                    </button>
+                    <button id="disconnectBluetoothBtn" class="btn btn-danger" disabled>
+                        <i class="fas fa-unlink"></i> Desconectar
+                    </button>
+                </div>
+                
+                <div class="bluetooth-device-list" id="bluetoothDeviceList">
+                    <p style="text-align: center; color: #666; padding: 30px;">
+                        Nenhum dispositivo encontrado
+                    </p>
+                </div>
+                
+                <div class="bluetooth-options">
+                    <h4 style="margin-bottom: 15px; color: var(--primary);">
+                        <i class="fas fa-cog"></i> Opções
+                    </h4>
+                    <div class="bluetooth-option">
+                        <input type="checkbox" id="autoPrintCheckbox" checked>
+                        <label for="autoPrintCheckbox">Imprimir automaticamente ao enviar pedidos</label>
+                    </div>
+                    <div class="bluetooth-option">
+                        <input type="checkbox" id="enableBluetoothPrinting" checked>
+                        <label for="enableBluetoothPrinting">Habilitar impressão Bluetooth</label>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 25px; padding-top: 25px; border-top: 1px solid #e1e8ed;">
+                    <button id="testPrintBtn" class="btn btn-warning btn-block" disabled>
+                        <i class="fas fa-print"></i> Testar Impressão
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Progresso Impressão -->
+    <div id="printProgressModal" class="modal">
+        <div class="modal-content print-progress">
+            <div class="print-spinner"></div>
+            <h3 id="printProgressText" style="margin-bottom: 10px;">Enviando para impressora...</h3>
+            <p id="printProgressDetails" style="color: #666;">Por favor, aguarde</p>
+        </div>
+    </div>
+
+    <!-- Botão Bluetooth -->
+    <button id="bluetoothConfigBtn" class="bluetooth-config-btn">
+        <i class="fas fa-bluetooth"></i>
+    </button>
+
+    <!-- Indicador Bluetooth -->
+    <div id="bluetoothIndicator" class="bluetooth-indicator disconnected">
+        <i class="fas fa-bluetooth"></i>
+        <span>Bluetooth: Desconectado</span>
+    </div>
+
+    <!-- APLICATIVO PRINCIPAL -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1><i class="fas fa-tshirt"></i> Sistema de Lavanderia</h1>
+            <p class="subtitle">Controle de pedidos de lavanderia do hotel</p>
+        </header>
+
+        <!-- Conteúdo -->
+        <main class="content">
+            <h2><i class="fas fa-tshirt"></i> Pedidos de Lavanderia</h2>
+            
+            <div class="card">
+                <h3><i class="fas fa-building"></i> Seleção do Apartamento</h3>
+                <input type="text" 
+                       id="lavanderiaApartment" 
+                       class="form-control mb-3" 
+                       placeholder="Digite o número do apartamento">
+                <button id="showLavanderiaApartmentsBtn" class="btn btn-primary">
+                    <i class="fas fa-list"></i> Mostrar Apartamentos
+                </button>
+                
+                <div id="lavanderiaApartmentGrid" class="apartment-grid mt-3">
+                    <!-- Apartamentos serão gerados por JavaScript -->
+                </div>
+            </div>
+
+            <div id="lavanderiaContent" class="hidden">
+                <!-- Tabela de Serviços -->
+                <div class="card">
+                    <h3><i class="fas fa-concierge-bell"></i> Serviços Disponíveis</h3>
+                    <table class="lavanderia-table" id="lavanderiaTable">
+                        <thead>
+                            <tr>
+                                <th>Item</th>
+                                <th>Lavar</th>
+                                <th>Passar</th>
+                                <th>Ações</th>
+                            </tr>
+                        </thead>
+                        <tbody id="lavanderiaItems">
+                            <!-- Itens serão gerados por JavaScript -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Resumo -->
+                <div id="lavanderiaResumo" class="card">
+                    <h3><i class="fas fa-clipboard-list"></i> Resumo do Pedido</h3>
+                    <div id="resumoContent">
+                        <!-- Conteúdo será gerado por JavaScript -->
+                    </div>
+                    
+                    <div class="summary-card mt-3">
+                        <div class="summary-row">
+                            <span>Subtotal:</span>
+                            <span id="lavanderiaSubtotal">R$ 0,00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>ISS (5%):</span>
+                            <span id="lavanderiaISS">R$ 0,00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span><strong>Total:</strong></span>
+                            <span id="lavanderiaTotal"><strong>R$ 0,00</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botões de Ação -->
+                <div class="btn-group mt-4">
+                    <button id="sendLavanderiaWhatsApp" class="btn btn-whatsapp">
+                        <i class="fab fa-whatsapp"></i> WhatsApp
+                    </button>
+                    <button id="printLavanderiaBluetooth" class="btn btn-bluetooth" disabled>
+                        <i class="fas fa-bluetooth"></i> Imprimir
+                    </button>
+                    <button id="undoLavanderiaBtn" class="btn btn-warning">
+                        <i class="fas fa-undo"></i> Desfazer
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // ============================================
+        // SISTEMA LAVANDERIA
+        // ============================================
+        class LavanderiaSystem {
+            constructor() {
+                this.apartment = '';
+                this.items = [];
+                this.history = [];
+                this.services = [
+                    { nome: "Bermuda", lavar: 18, passar: 10, icon: "🩳" },
+                    { nome: "Blusa", lavar: 18, passar: 14, icon: "👚" },
+                    { nome: "Calça comprida", lavar: 22, passar: 14, icon: "👖" },
+                    { nome: "Calcinha", lavar: 7, passar: 5, icon: "🩲" },
+                    { nome: "Camiseta", lavar: 14, passar: 8, icon: "👕" },
+                    { nome: "Camisa Social", lavar: 22, passar: 17, icon: "👔" },
+                    { nome: "Cueca", lavar: 8, passar: 5, icon: "🩲" },
+                    { nome: "Meias (par)", lavar: 10, passar: 5, icon: "🧦" },
+                    { nome: "Pijama", lavar: 20, passar: 17, icon: "🛌" },
+                    { nome: "Saia", lavar: 22, passar: 15, icon: "👗" },
+                    { nome: "Toalha de banho", lavar: 20, passar: null, icon: "🛀" },
+                    { nome: "Vestido", lavar: 50, passar: 40, icon: "👗" }
+                ];
+                this.init();
+            }
+
+            init() {
+                this.generateApartments();
+                this.createServiceTable();
+                this.setupEventListeners();
+            }
+
+            generateApartments() {
+                const container = document.getElementById('lavanderiaApartmentGrid');
+                container.innerHTML = '';
+                
+                for (let floor = 3; floor <= 10; floor++) {
+                    const floorTitle = document.createElement('div');
+                    floorTitle.className = 'floor-title';
+                    floorTitle.textContent = `${floor}º Andar`;
+                    container.appendChild(floorTitle);
+                    
+                    const roomCount = floor === 10 ? 7 : 8;
+                    for (let room = 1; room <= roomCount; room++) {
+                        const apt = floor === 10 ? `10${room}` : `${floor}0${room}`;
+                        const aptBtn = document.createElement('button');
+                        aptBtn.className = 'apartment-btn';
+                        aptBtn.textContent = apt;
+                        aptBtn.dataset.apartment = apt;
+                        aptBtn.addEventListener('click', () => {
+                            this.selectApartment(apt);
+                        });
+                        container.appendChild(aptBtn);
+                    }
+                }
+            }
+
+            selectApartment(apt) {
+                this.apartment = apt;
+                document.getElementById('lavanderiaApartment').value = apt;
+                document.getElementById('lavanderiaApartmentGrid').style.display = 'none';
+                document.getElementById('lavanderiaContent').classList.remove('hidden');
+                
+                // Feedback visual
+                const buttons = document.querySelectorAll('#lavanderiaApartmentGrid .apartment-btn');
+                buttons.forEach(btn => {
+                    if (btn.dataset.apartment === apt) {
+                        btn.style.background = '#bbdefb';
+                        btn.style.borderColor = '#2196f3';
+                    } else {
+                        btn.style.background = '';
+                        btn.style.borderColor = '';
+                    }
+                });
+            }
+
+            createServiceTable() {
+                const container = document.getElementById('lavanderiaItems');
+                container.innerHTML = '';
+                
+                this.services.forEach(service => {
+                    const row = document.createElement('tr');
+                    
+                    const lavarCount = this.items.filter(item => 
+                        item.nome === service.nome && item.tipo === 'lavar'
+                    ).reduce((sum, item) => sum + item.quantidade, 0);
+                    
+                    const passarCount = this.items.filter(item => 
+                        item.nome === service.nome && item.tipo === 'passar'
+                    ).reduce((sum, item) => sum + item.quantidade, 0);
+                    
+                    row.innerHTML = `
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.2em;">${service.icon}</span>
+                                <span>${service.nome}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 5px;">
+                                <span>R$ ${service.lavar},00</span>
+                                ${lavarCount > 0 ? `<span class="service-badge">${lavarCount}x</span>` : ''}
+                            </div>
+                        </td>
+                        <td>
+                            ${service.passar ? 
+                                `<div style="display: flex; align-items: center; gap: 5px;">
+                                    <span>R$ ${service.passar},00</span>
+                                    ${passarCount > 0 ? `<span class="service-badge">${passarCount}x</span>` : ''}
+                                </div>` : 
+                                '-'
+                            }
+                        </td>
+                        <td>
+                            <button class="service-btn lavar" data-service="${service.nome}" data-type="lavar">
+                                <i class="fas fa-soap"></i> Lavar
+                            </button>
+                            ${service.passar ? 
+                                `<button class="service-btn passar" data-service="${service.nome}" data-type="passar">
+                                    <i class="fas fa-iron"></i> Passar
+                                </button>` : 
+                                ''
+                            }
+                        </td>
+                    `;
+                    
+                    container.appendChild(row);
+                });
+            }
+
+            setupEventListeners() {
+                // Mostrar/ocultar apartamentos
+                document.getElementById('showLavanderiaApartmentsBtn').addEventListener('click', () => {
+                    const grid = document.getElementById('lavanderiaApartmentGrid');
+                    grid.style.display = grid.style.display === 'grid' ? 'none' : 'grid';
+                });
+
+                // Input manual
+                document.getElementById('lavanderiaApartment').addEventListener('input', (e) => {
+                    this.apartment = e.target.value.trim();
+                    if (this.apartment) {
+                        document.getElementById('lavanderiaContent').classList.remove('hidden');
+                    }
+                });
+
+                // Adicionar serviços
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.service-btn')) {
+                        const button = e.target.closest('.service-btn');
+                        const service = button.dataset.service;
+                        const type = button.dataset.type;
+                        
+                        this.addService(service, type);
+                    }
+                    
+                    // Controles de quantidade no resumo
+                    if (e.target.closest('.item-controls button')) {
+                        const button = e.target.closest('.item-controls button');
+                        const action = button.dataset.action;
+                        const service = button.dataset.service;
+                        const type = button.dataset.type;
+                        
+                        if (action === 'add') {
+                            this.addService(service, type);
+                        } else if (action === 'remove') {
+                            this.removeService(service, type);
+                        }
+                    }
+                });
+
+                // Enviar por WhatsApp
+                document.getElementById('sendLavanderiaWhatsApp').addEventListener('click', () => {
+                    this.sendWhatsApp();
+                });
+
+                // Imprimir via Bluetooth
+                document.getElementById('printLavanderiaBluetooth').addEventListener('click', () => {
+                    this.printBluetooth();
+                });
+
+                // Desfazer
+                document.getElementById('undoLavanderiaBtn').addEventListener('click', () => {
+                    this.undoLastAction();
+                });
+            }
+
+            addService(serviceName, type) {
+                // Salvar estado atual no histórico
+                this.history.push([...this.items]);
+                
+                const service = this.services.find(s => s.nome === serviceName);
+                if (!service) return;
+                
+                const price = type === 'lavar' ? service.lavar : service.passar;
+                
+                // Verificar se já existe
+                const existingIndex = this.items.findIndex(item => 
+                    item.nome === serviceName && item.tipo === type
+                );
+                
+                if (existingIndex !== -1) {
+                    this.items[existingIndex].quantidade++;
+                } else {
+                    this.items.push({
+                        nome: serviceName,
+                        tipo: type,
+                        quantidade: 1,
+                        preco: price
+                    });
+                }
+                
+                this.updateDisplay();
+            }
+
+            removeService(serviceName, type) {
+                const index = this.items.findIndex(item => 
+                    item.nome === serviceName && item.tipo === type
+                );
+                
+                if (index !== -1) {
+                    this.history.push([...this.items]);
+                    
+                    this.items[index].quantidade--;
+                    
+                    if (this.items[index].quantidade === 0) {
+                        this.items.splice(index, 1);
+                    }
+                    
+                    this.updateDisplay();
+                }
+            }
+
+            undoLastAction() {
+                if (this.history.length > 0) {
+                    this.items = this.history.pop();
+                    this.updateDisplay();
+                }
+            }
+
+            updateDisplay() {
+                this.createServiceTable();
+                this.updateResumo();
+            }
+
+            updateResumo() {
+                const container = document.getElementById('resumoContent');
+                container.innerHTML = '';
+                
+                // Agrupar por tipo
+                const grouped = {};
+                this.items.forEach(item => {
+                    if (!grouped[item.tipo]) grouped[item.tipo] = [];
+                    
+                    const existing = grouped[item.tipo].find(i => i.nome === item.nome);
+                    if (existing) {
+                        existing.quantidade += item.quantidade;
+                    } else {
+                        grouped[item.tipo].push({...item});
+                    }
+                });
+                
+                // Calcular totais
+                let subtotal = 0;
+                this.items.forEach(item => {
+                    subtotal += item.preco * item.quantidade;
+                });
+                
+                const iss = subtotal * 0.05;
+                const total = subtotal + iss;
+                
+                // Renderizar grupos
+                Object.entries(grouped).forEach(([tipo, items]) => {
+                    const groupTitle = document.createElement('h4');
+                    groupTitle.style.color = 'var(--primary)';
+                    groupTitle.style.margin = '15px 0 10px';
+                    groupTitle.innerHTML = `
+                        <i class="fas ${tipo === 'lavar' ? 'fa-soap' : 'fa-iron'}"></i>
+                        ${tipo === 'lavar' ? 'Lavar' : 'Passar'}
+                    `;
+                    container.appendChild(groupTitle);
+                    
+                    items.forEach(item => {
+                        const itemTotal = item.preco * item.quantidade;
+                        const itemElement = document.createElement('div');
+                        itemElement.className = 'item-row';
+                        itemElement.innerHTML = `
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600;">${item.nome}</div>
+                                <div style="color: #666; font-size: 0.9em;">R$ ${item.preco},00 cada</div>
+                            </div>
+                            <div class="item-controls">
+                                <button class="btn-quantity" data-action="remove" data-service="${item.nome}" data-type="${tipo}">-</button>
+                                <span style="width: 30px; text-align: center;">${item.quantidade}</span>
+                                <button class="btn-quantity" data-action="add" data-service="${item.nome}" data-type="${tipo}">+</button>
+                                <div style="min-width: 80px; text-align: right; font-weight: 600; color: var(--success);">
+                                    R$ ${itemTotal.toFixed(2)}
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(itemElement);
+                    });
+                });
+                
+                // Atualizar totais
+                document.getElementById('lavanderiaSubtotal').textContent = `R$ ${subtotal.toFixed(2)}`;
+                document.getElementById('lavanderiaISS').textContent = `R$ ${iss.toFixed(2)}`;
+                document.getElementById('lavanderiaTotal').textContent = `R$ ${total.toFixed(2)}`;
+            }
+
+            sendWhatsApp() {
+                if (!this.apartment) {
+                    alert('Selecione um apartamento.');
+                    return;
+                }
+                
+                if (this.items.length === 0) {
+                    alert('Adicione serviços à lavanderia antes de enviar.');
+                    return;
+                }
+                
+                let message = `*LAVANDERIA - APARTAMENTO ${this.apartment}*\n\n`;
+                message += `*Data:* ${new Date().toLocaleDateString('pt-BR')}\n`;
+                message += `*Hora:* ${new Date().toLocaleTimeString('pt-BR')}\n\n`;
+                
+                let subtotal = 0;
+                
+                // Agrupar por tipo
+                const grouped = {};
+                this.items.forEach(item => {
+                    if (!grouped[item.tipo]) grouped[item.tipo] = [];
+                    
+                    const existing = grouped[item.tipo].find(i => i.nome === item.nome);
+                    if (existing) {
+                        existing.quantidade += item.quantidade;
+                    } else {
+                        grouped[item.tipo].push({...item});
+                    }
+                });
+                
+                Object.entries(grouped).forEach(([tipo, items]) => {
+                    message += `*${tipo.toUpperCase()}:*\n`;
+                    items.forEach(item => {
+                        const itemTotal = item.preco * item.quantidade;
+                        subtotal += itemTotal;
+                        message += `• ${item.quantidade}x ${item.nome} - R$ ${itemTotal.toFixed(2)}\n`;
+                    });
+                    message += '\n';
+                });
+                
+                const iss = subtotal * 0.05;
+                const total = subtotal + iss;
+                
+                message += `*Subtotal:* R$ ${subtotal.toFixed(2)}\n`;
+                message += `*ISS (5%):* R$ ${iss.toFixed(2)}\n`;
+                message += `*TOTAL:* R$ ${total.toFixed(2)}\n`;
+                message += `\n---\n*Sistema de Lavanderia*`;
+                
+                const encodedMessage = encodeURIComponent(message);
+                window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+                
+                // Imprimir automaticamente se configurado
+                if (window.bluetoothSystem && window.bluetoothSystem.isConnected && window.bluetoothSystem.autoPrint) {
+                    this.printBluetooth();
+                }
+            }
+
+            async printBluetooth() {
+                if (!window.bluetoothSystem || !window.bluetoothSystem.isConnected) {
+                    alert('Conecte uma impressora Bluetooth primeiro.');
+                    return;
+                }
+                
+                if (!this.apartment) {
+                    alert('Selecione um apartamento.');
+                    return;
+                }
+                
+                if (this.items.length === 0) {
+                    alert('Adicione serviços à lavanderia antes de imprimir.');
+                    return;
+                }
+                
+                // Gerar texto para impressão térmica
+                let printData = '\x1B\x40'; // Inicializar
+                printData += '\x1B\x61\x01'; // Centralizar
+                printData += 'LAVANDERIA\n';
+                printData += '\x1B\x61\x00'; // Alinhar à esquerda
+                printData += '====================\n';
+                printData += `Apto: ${this.apartment}\n`;
+                printData += `Data: ${new Date().toLocaleDateString('pt-BR')}\n`;
+                printData += `Hora: ${new Date().toLocaleTimeString('pt-BR')}\n`;
+                printData += '====================\n';
+                
+                // Agrupar por tipo
+                const grouped = {};
+                this.items.forEach(item => {
+                    if (!grouped[item.tipo]) grouped[item.tipo] = [];
+                    
+                    const existing = grouped[item.tipo].find(i => i.nome === item.nome);
+                    if (existing) {
+                        existing.quantidade += item.quantidade;
+                    } else {
+                        grouped[item.tipo].push({...item});
+                    }
+                });
+                
+                let subtotal = 0;
+                
+                Object.entries(grouped).forEach(([tipo, items]) => {
+                    printData += `${tipo.toUpperCase()}:\n`;
+                    items.forEach(item => {
+                        const itemTotal = item.preco * item.quantidade;
+                        subtotal += itemTotal;
+                        printData += ` ${item.quantidade}x ${item.nome.substring(0, 18)}\n`;
+                    });
+                });
+                
+                const iss = subtotal * 0.05;
+                const total = subtotal + iss;
+                
+                printData += '====================\n';
+                printData += `Subtotal: R$ ${subtotal.toFixed(2)}\n`;
+                printData += `ISS (5%): R$ ${iss.toFixed(2)}\n`;
+                printData += `TOTAL: R$ ${total.toFixed(2)}\n`;
+                printData += '====================\n\n\n\n';
+                printData += '\x1B\x69'; // Cortar papel
+                
+                await window.bluetoothSystem.printText(printData);
+            }
+        }
+
+        // ============================================
+        // SISTEMA BLUETOOTH
+        // ============================================
+        class BluetoothSystem {
+            constructor() {
+                this.device = null;
+                this.server = null;
+                this.service = null;
+                this.characteristic = null;
+                this.selectedDevice = null;
+                this.isDemoMode = false;
+                this.isConnected = false;
+                this.autoPrint = true;
+                this.printingEnabled = true;
+                this.init();
+            }
+
+            init() {
+                this.checkSupport();
+                this.loadSettings();
+                this.setupEventListeners();
+                this.updateUI();
+            }
+
+            checkSupport() {
+                this.supported = !!navigator.bluetooth;
+                
+                if (!this.supported) {
+                    this.isDemoMode = true;
+                    this.updateStatus('API Bluetooth não suportada. Modo de demonstração ativado.', 'warning');
+                }
+            }
+
+            loadSettings() {
+                try {
+                    const settings = JSON.parse(localStorage.getItem('bluetoothSettings') || '{}');
+                    this.autoPrint = settings.autoPrint !== false;
+                    this.printingEnabled = settings.printingEnabled !== false;
+                    
+                    document.getElementById('autoPrintCheckbox').checked = this.autoPrint;
+                    document.getElementById('enableBluetoothPrinting').checked = this.printingEnabled;
+                } catch (e) {
+                    console.error('Erro ao carregar configurações:', e);
+                }
+            }
+
+            saveSettings() {
+                const settings = {
+                    autoPrint: this.autoPrint,
+                    printingEnabled: this.printingEnabled
+                };
+                localStorage.setItem('bluetoothSettings', JSON.stringify(settings));
+            }
+
+            setupEventListeners() {
+                // Botão de configuração
+                document.getElementById('bluetoothConfigBtn').addEventListener('click', () => {
+                    this.openModal();
+                });
+
+                // Fechar modal
+                document.getElementById('bluetoothModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'bluetoothModal') {
+                        this.closeModal();
+                    }
+                });
+
+                // Buscar dispositivos
+                document.getElementById('scanBluetoothBtn').addEventListener('click', () => {
+                    this.scanDevices();
+                });
+
+                // Conectar
+                document.getElementById('connectBluetoothBtn').addEventListener('click', () => {
+                    this.connect();
+                });
+
+                // Desconectar
+                document.getElementById('disconnectBluetoothBtn').addEventListener('click', () => {
+                    this.disconnect();
+                });
+
+                // Teste de impressão
+                document.getElementById('testPrintBtn').addEventListener('click', () => {
+                    this.testPrint();
+                });
+
+                // Opções
+                document.getElementById('autoPrintCheckbox').addEventListener('change', (e) => {
+                    this.autoPrint = e.target.checked;
+                    this.saveSettings();
+                });
+
+                document.getElementById('enableBluetoothPrinting').addEventListener('change', (e) => {
+                    this.printingEnabled = e.target.checked;
+                    this.saveSettings();
+                    this.updatePrintButtons();
+                });
+            }
+
+            openModal() {
+                document.getElementById('bluetoothModal').style.display = 'flex';
+                this.updateUI();
+            }
+
+            closeModal() {
+                document.getElementById('bluetoothModal').style.display = 'none';
+            }
+
+            updateStatus(message, type = 'info') {
+                const statusElement = document.getElementById('bluetoothStatus');
+                let icon = 'ℹ️';
+                
+                switch(type) {
+                    case 'error': icon = '❌'; break;
+                    case 'success': icon = '✅'; break;
+                    case 'warning': icon = '⚠️'; break;
+                }
+                
+                statusElement.innerHTML = `
+                    <p style="font-weight: 600; margin-bottom: 5px;">Status do Sistema:</p>
+                    <p>${icon} ${message}</p>
+                `;
+                statusElement.className = `bluetooth-status ${type}`;
+                
+                document.getElementById('bluetoothStatusText').textContent = message;
+            }
+
+            updateUI() {
+                const isConnected = this.isConnected;
+                
+                // Atualizar botões
+                document.getElementById('scanBluetoothBtn').disabled = this.isDemoMode && isConnected;
+                document.getElementById('connectBluetoothBtn').disabled = !this.selectedDevice || isConnected;
+                document.getElementById('disconnectBluetoothBtn').disabled = !isConnected;
+                document.getElementById('testPrintBtn').disabled = !isConnected;
+                
+                // Atualizar indicador
+                const indicator = document.getElementById('bluetoothIndicator');
+                if (isConnected) {
+                    indicator.className = 'bluetooth-indicator connected';
+                    indicator.innerHTML = `
+                        <i class="fas fa-bluetooth"></i>
+                        <span>Bluetooth: Conectado</span>
+                    `;
+                } else if (this.isDemoMode) {
+                    indicator.className = 'bluetooth-indicator warning';
+                    indicator.innerHTML = `
+                        <i class="fas fa-bluetooth"></i>
+                        <span>Bluetooth: Modo Demo</span>
+                    `;
+                } else {
+                    indicator.className = 'bluetooth-indicator disconnected';
+                    indicator.innerHTML = `
+                        <i class="fas fa-bluetooth"></i>
+                        <span>Bluetooth: Desconectado</span>
+                    `;
+                }
+                
+                // Atualizar status
+                if (this.isDemoMode) {
+                    this.updateStatus('Modo de demonstração ativo', 'warning');
+                } else if (isConnected) {
+                    const name = this.device?.name || 'Impressora Bluetooth';
+                    this.updateStatus(`Conectado: ${name}`, 'success');
+                } else {
+                    this.updateStatus('Pronto para conectar', 'info');
+                }
+                
+                // Atualizar botões de impressão
+                this.updatePrintButtons();
+            }
+
+            updatePrintButtons() {
+                const canPrint = this.isConnected && this.printingEnabled;
+                document.getElementById('printLavanderiaBluetooth').disabled = !canPrint;
+            }
+
+            async scanDevices() {
+                if (this.isDemoMode) {
+                    this.simulateDevices();
+                    return;
+                }
+                
+                if (!this.supported) {
+                    this.updateStatus('Bluetooth não suportado neste navegador', 'error');
+                    return;
+                }
+                
+                try {
+                    this.updateStatus('Buscando impressoras...', 'warning');
+                    
+                    // Solicitar dispositivo
+                    const device = await navigator.bluetooth.requestDevice({
+                        filters: [
+                            { services: ['00001101-0000-1000-8000-00805f9b34fb'] } // SPP
+                        ],
+                        optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb'] // Serviço genérico
+                    });
+                    
+                    this.showDevice(device);
+                    this.updateStatus('Impressora encontrada!', 'success');
+                    
+                } catch (error) {
+                    console.error('Erro na busca:', error);
+                    
+                    if (error.name === 'NotFoundError') {
+                        this.updateStatus('Nenhuma impressora encontrada', 'error');
+                        this.simulateDevices();
+                    } else {
+                        this.updateStatus(`Erro: ${error.message}`, 'error');
+                    }
+                }
+            }
+
+            simulateDevices() {
+                this.isDemoMode = true;
+                
+                const devices = [
+                    { id: 'demo-001', name: 'Impressora Térmica Demo' },
+                    { id: 'demo-002', name: 'POS-58 Bluetooth' },
+                    { id: 'demo-003', name: 'Impressora XP-80' }
+                ];
+                
+                this.showDeviceList(devices);
+                this.updateStatus('Modo demo: Dispositivos simulados', 'warning');
+            }
+
+            showDevice(device) {
+                const devices = [device];
+                this.showDeviceList(devices);
+                this.selectDevice(device);
+            }
+
+            showDeviceList(devices) {
+                const container = document.getElementById('bluetoothDeviceList');
+                container.innerHTML = '';
+                
+                if (devices.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #666; padding: 30px;">Nenhum dispositivo encontrado</p>';
+                    return;
+                }
+                
+                devices.forEach(device => {
+                    const div = document.createElement('div');
+                    div.className = 'bluetooth-device-item';
+                    div.dataset.deviceId = device.id;
+                    div.innerHTML = `
+                        <i class="fas fa-print" style="color: var(--secondary);"></i>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600;">${device.name || 'Dispositivo Bluetooth'}</div>
+                            <div style="font-size: 0.9em; color: #666;">
+                                ${this.isDemoMode ? 'Dispositivo simulado' : 'Clique para selecionar'}
+                            </div>
+                        </div>
+                        <i class="fas fa-check" style="color: var(--success); display: none;"></i>
+                    `;
+                    
+                    div.addEventListener('click', () => {
+                        this.selectDevice(device);
+                    });
+                    
+                    container.appendChild(div);
+                });
+            }
+
+            selectDevice(device) {
+                this.selectedDevice = device;
+                
+                // Atualizar seleção visual
+                document.querySelectorAll('.bluetooth-device-item').forEach(item => {
+                    const check = item.querySelector('.fa-check');
+                    item.classList.remove('selected');
+                    if (check) check.style.display = 'none';
+                });
+                
+                const selectedItem = document.querySelector(`[data-device-id="${device.id}"]`);
+                if (selectedItem) {
+                    selectedItem.classList.add('selected');
+                    const check = selectedItem.querySelector('.fa-check');
+                    if (check) check.style.display = 'inline-block';
+                }
+                
+                this.updateUI();
+            }
+
+            async connect() {
+                if (!this.selectedDevice) {
+                    this.updateStatus('Selecione um dispositivo primeiro', 'error');
+                    return;
+                }
+                
+                if (this.isDemoMode) {
+                    // Simular conexão
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    this.device = {
+                        ...this.selectedDevice,
+                        gatt: { connected: true }
+                    };
+                    this.isConnected = true;
+                    this.updateStatus('Conectado (Modo Demo)', 'success');
+                    this.updateUI();
+                    return;
+                }
+                
+                try {
+                    this.updateStatus('Conectando...', 'warning');
+                    
+                    this.device = this.selectedDevice;
+                    this.server = await this.device.gatt.connect();
+                    
+                    try {
+                        this.service = await this.server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
+                        const characteristics = await this.service.getCharacteristics();
+                        
+                        if (characteristics.length > 0) {
+                            this.characteristic = characteristics[0];
+                        }
+                    } catch (e) {
+                        console.warn('Serviço específico não encontrado, usando padrão');
+                    }
+                    
+                    this.isConnected = true;
+                    this.updateStatus('Conectado com sucesso!', 'success');
+                    
+                    this.device.addEventListener('gattserverdisconnected', () => {
+                        this.onDisconnected();
+                    });
+                    
+                } catch (error) {
+                    console.error('Erro na conexão:', error);
+                    this.updateStatus(`Falha na conexão: ${error.message}`, 'error');
+                    this.device = null;
+                    this.server = null;
+                    this.service = null;
+                    this.characteristic = null;
+                    this.isConnected = false;
+                }
+                
+                this.updateUI();
+            }
+
+            disconnect() {
+                if (this.device && this.device.gatt?.connected) {
+                    this.device.gatt.disconnect();
+                }
+                
+                this.device = null;
+                this.server = null;
+                this.service = null;
+                this.characteristic = null;
+                this.selectedDevice = null;
+                this.isConnected = false;
+                
+                this.updateStatus('Desconectado', 'info');
+                this.updateUI();
+            }
+
+            onDisconnected() {
+                this.device = null;
+                this.server = null;
+                this.service = null;
+                this.characteristic = null;
+                this.isConnected = false;
+                
+                this.updateStatus('Impressora desconectada', 'error');
+                this.updateUI();
+            }
+
+            async printText(text) {
+                if (!this.isConnected) {
+                    throw new Error('Impressora não conectada');
+                }
+                
+                if (!this.printingEnabled) {
+                    throw new Error('Impressão Bluetooth desabilitada');
+                }
+                
+                // Mostrar progresso
+                this.showPrintProgress('Enviando para impressora...');
+                
+                try {
+                    if (this.isDemoMode) {
+                        // Simular impressão
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        console.log('Simulação de impressão:', text.substring(0, 100) + '...');
+                        this.hidePrintProgress();
+                        alert('✓ Impressão simulada com sucesso!');
+                        return true;
+                    }
+                    
+                    // Converter texto para bytes
+                    const encoder = new TextEncoder();
+                    const data = encoder.encode(text);
+                    
+                    // Enviar para impressora
+                    if (this.characteristic) {
+                        await this.characteristic.writeValue(data);
+                    } else {
+                        throw new Error('Característica de impressão não disponível');
+                    }
+                    
+                    this.hidePrintProgress();
+                    return true;
+                    
+                } catch (error) {
+                    this.hidePrintProgress();
+                    console.error('Erro na impressão:', error);
+                    alert(`Erro na impressão: ${error.message}`);
+                    return false;
+                }
+            }
+
+            async testPrint() {
+                const testText = `
+                    \x1B\x40
+                    \x1B\x61\x01
+                    TESTE DE IMPRESSÃO
+                    \x1B\x61\x00
+                    ====================
+                    
+                    Sistema de Lavanderia
+                    Data: ${new Date().toLocaleDateString('pt-BR')}
+                    Hora: ${new Date().toLocaleTimeString('pt-BR')}
+                    
+                    Este é um teste de impressão
+                    Bluetooth do sistema.
+                    
+                    ====================
+                    \x1B\x69
+                `;
+                
+                await this.printText(testText);
+            }
+
+            showPrintProgress(message) {
+                document.getElementById('printProgressText').textContent = message;
+                document.getElementById('printProgressModal').style.display = 'flex';
+            }
+
+            hidePrintProgress() {
+                document.getElementById('printProgressModal').style.display = 'none';
+            }
+        }
+
+        // ============================================
+        // INICIALIZAÇÃO DO SISTEMA
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar Sistema de Lavanderia
+            window.lavanderiaSystem = new LavanderiaSystem();
+            
+            // Inicializar Bluetooth
+            window.bluetoothSystem = new BluetoothSystem();
+            
+            console.log('✅ Sistema de Lavanderia inicializado com sucesso!');
+        });
+
+        // ============================================
+        // FUNÇÕES GLOBAIS
+        // ============================================
+        function hideModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Fechar modais com ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hideModal('bluetoothModal');
+                hideModal('printProgressModal');
+            }
+        });
+    </script>
+</body>
+</html>
