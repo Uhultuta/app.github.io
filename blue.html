@@ -1,0 +1,3373 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hotel App - Sistema Completo</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* ========== RESET E ESTILOS GERAIS ========== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --primary: #2c3e50;
+            --secondary: #3498db;
+            --success: #27ae60;
+            --danger: #e74c3c;
+            --warning: #f39c12;
+            --light: #ecf0f1;
+            --dark: #2c3e50;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            line-height: 1.6;
+        }
+
+        /* ========== LAYOUT PRINCIPAL ========== */
+        .app-container {
+            max-width: 100%;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+            min-height: calc(100vh - 40px);
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ========== HEADER ========== */
+        .app-header {
+            background: linear-gradient(135deg, var(--primary), #1a2530);
+            color: white;
+            padding: 25px 20px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .app-header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url("data:image/svg+xml,%3Csvg width='100' height='100' viewBox='0 0 100 100' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M11 18c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm48 25c3.866 0 7-3.134 7-7s-3.134-7-7-7-7 3.134-7 7 3.134 7 7 7zm-43-7c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm63 31c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM34 90c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zm56-76c1.657 0 3-1.343 3-3s-1.343-3-3-3-3 1.343-3 3 1.343 3 3 3zM12 86c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm28-65c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm23-11c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-6 60c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm29 22c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zM32 63c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm57-13c2.76 0 5-2.24 5-5s-2.24-5-5-5-5 2.24-5 5 2.24 5 5 5zm-9-21c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM60 91c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM35 41c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2zM12 60c1.105 0 2-.895 2-2s-.895-2-2-2-2 .895-2 2 .895 2 2 2z' fill='%23ffffff' fill-opacity='0.05' fill-rule='evenodd'/%3E%3C/svg%3E");
+            opacity: 0.1;
+        }
+
+        .app-header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+            position: relative;
+            z-index: 1;
+        }
+
+        .app-header .subtitle {
+            font-size: 1rem;
+            opacity: 0.9;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* ========== NAVEGAÇÃO POR TABS ========== */
+        .tabs-container {
+            background: white;
+            border-bottom: 1px solid #e1e8ed;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .tabs {
+            display: flex;
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+            scrollbar-width: none;
+        }
+
+        .tabs::-webkit-scrollbar {
+            display: none;
+        }
+
+        .tab {
+            flex: 1;
+            min-width: 120px;
+            padding: 18px 15px;
+            background: none;
+            border: none;
+            color: #7f8c8d;
+            font-weight: 600;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .tab i {
+            font-size: 1.1rem;
+        }
+
+        .tab.active {
+            color: var(--secondary);
+        }
+
+        .tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: 0;
+            left: 10%;
+            right: 10%;
+            height: 3px;
+            background: var(--secondary);
+            border-radius: 3px 3px 0 0;
+        }
+
+        .tab:hover:not(.active) {
+            background: #f8f9fa;
+            color: #34495e;
+        }
+
+        /* ========== CONTEÚDO DAS TABS ========== */
+        .tab-content {
+            display: none;
+            padding: 25px;
+            flex: 1;
+            overflow-y: auto;
+        }
+
+        .tab-content.active {
+            display: block;
+            animation: fadeIn 0.3s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .tab-content h2 {
+            color: var(--primary);
+            margin-bottom: 25px;
+            font-size: 1.8rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .tab-content h2 i {
+            color: var(--secondary);
+        }
+
+        /* ========== COMPONENTES COMUNS ========== */
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 20px rgba(0,0,0,0.08);
+            border: 1px solid #eef1f5;
+        }
+
+        .card h3 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h3 i {
+            color: var(--secondary);
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 16px;
+            border: 2px solid #e1e8ed;
+            border-radius: 10px;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--secondary);
+            background: white;
+            box-shadow: 0 0 0 3px rgba(52, 152, 219, 0.1);
+        }
+
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 14px 28px;
+            border: none;
+            border-radius: 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 7px 14px rgba(0,0,0,0.1);
+        }
+
+        .btn:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--secondary), #2980b9);
+            color: white;
+        }
+
+        .btn-success {
+            background: linear-gradient(135deg, var(--success), #219653);
+            color: white;
+        }
+
+        .btn-warning {
+            background: linear-gradient(135deg, var(--warning), #e67e22);
+            color: white;
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, var(--danger), #c0392b);
+            color: white;
+        }
+
+        .btn-whatsapp {
+            background: linear-gradient(135deg, #25D366, #128C7E);
+            color: white;
+        }
+
+        .btn-bluetooth {
+            background: linear-gradient(135deg, #2c3e50, #3498db);
+            color: white;
+        }
+
+        .btn-block {
+            width: 100%;
+            display: flex;
+        }
+
+        .btn-group {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        /* ========== SISTEMA FRIGOBAR ========== */
+        .apartment-input-container {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .apartment-input-container input {
+            max-width: 300px;
+            margin: 0 auto 15px;
+            text-align: center;
+            font-size: 1.1rem;
+        }
+
+        .apartment-grid {
+            display: none;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .apartment-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+
+        .apartment-btn {
+            padding: 15px 10px;
+            background: #e3f2fd;
+            border: 2px solid #bbdefb;
+            border-radius: 8px;
+            color: var(--secondary);
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .apartment-btn:hover {
+            background: #bbdefb;
+            transform: scale(1.05);
+        }
+
+        .floor-title {
+            grid-column: 1 / -1;
+            text-align: center;
+            margin: 20px 0 10px;
+            color: var(--primary);
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .items-container {
+            display: grid;
+            gap: 15px;
+        }
+
+        .item-card {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 18px;
+            background: #f8fafc;
+            border-radius: 10px;
+            border-left: 4px solid var(--secondary);
+            transition: all 0.3s ease;
+        }
+
+        .item-card:hover {
+            background: #e3f2fd;
+            transform: translateX(5px);
+        }
+
+        .item-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            flex: 1;
+        }
+
+        .item-icon {
+            width: 50px;
+            height: 50px;
+            background: white;
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.08);
+        }
+
+        .item-name {
+            font-weight: 600;
+            color: var(--primary);
+            margin-bottom: 5px;
+        }
+
+        .item-price {
+            color: var(--success);
+            font-weight: 600;
+        }
+
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .quantity-display {
+            min-width: 30px;
+            text-align: center;
+            font-weight: 600;
+            color: var(--primary);
+        }
+
+        .total-display {
+            min-width: 80px;
+            text-align: right;
+            font-weight: 600;
+            color: var(--success);
+            font-size: 1.1rem;
+        }
+
+        .btn-quantity {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            border: 2px solid var(--secondary);
+            background: white;
+            color: var(--secondary);
+            font-size: 1.2rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-quantity:hover {
+            background: var(--secondary);
+            color: white;
+        }
+
+        .summary-card {
+            background: linear-gradient(135deg, #f8fafc, #e3f2fd);
+            border: 2px solid #bbdefb;
+        }
+
+        .summary-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 12px 0;
+            border-bottom: 1px solid #e1e8ed;
+        }
+
+        .summary-row:last-child {
+            border-bottom: none;
+            font-weight: 700;
+            font-size: 1.2rem;
+            color: var(--primary);
+        }
+
+        /* ========== SISTEMA LAVANDERIA ========== */
+        .lavanderia-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .lavanderia-header img {
+            max-width: 250px;
+            margin: 0 auto 20px;
+            display: block;
+        }
+
+        .lavanderia-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 25px 0;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+        }
+
+        .lavanderia-table th {
+            background: #f8f9fa;
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            color: var(--primary);
+            border-bottom: 2px solid #e1e8ed;
+        }
+
+        .lavanderia-table td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #f1f1f1;
+        }
+
+        .lavanderia-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .service-badge {
+            background: #e3f2fd;
+            color: var(--secondary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-left: 8px;
+        }
+
+        .service-btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+        }
+
+        .service-btn.lavar {
+            background: #d4edda;
+            color: #155724;
+            border: 2px solid #c3e6cb;
+        }
+
+        .service-btn.lavar:hover {
+            background: #c3e6cb;
+        }
+
+        .service-btn.passar {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 2px solid #bee5eb;
+        }
+
+        .service-btn.passar:hover {
+            background: #bee5eb;
+        }
+
+        .lavanderia-resumo {
+            display: none;
+        }
+
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            background: white;
+            border-radius: 10px;
+            margin-bottom: 10px;
+            border: 1px solid #e1e8ed;
+        }
+
+        .item-controls {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        /* ========== SISTEMA VALE ========== */
+        .date-info {
+            background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid var(--secondary);
+        }
+
+        .days-left {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--secondary);
+            margin: 15px 0;
+        }
+
+        .message {
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            border-left: 4px solid;
+        }
+
+        .message-success {
+            background: #d4edda;
+            border-color: var(--success);
+            color: #155724;
+        }
+
+        .message-error {
+            background: #f8d7da;
+            border-color: var(--danger);
+            color: #721c24;
+        }
+
+        .message-warning {
+            background: #fff3cd;
+            border-color: var(--warning);
+            color: #856404;
+        }
+
+        .message-info {
+            background: #d1ecf1;
+            border-color: var(--secondary);
+            color: #0c5460;
+        }
+
+        .step {
+            margin-bottom: 30px;
+        }
+
+        .step-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 35px;
+            height: 35px;
+            background: var(--secondary);
+            color: white;
+            border-radius: 50%;
+            font-weight: 700;
+            margin-right: 15px;
+        }
+
+        /* ========== SISTEMA COTAÇÃO ========== */
+        .language-selector {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .lang-btn {
+            padding: 10px 20px;
+            border: 2px solid #e1e8ed;
+            border-radius: 25px;
+            background: white;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .lang-btn.active {
+            background: var(--secondary);
+            color: white;
+            border-color: var(--secondary);
+        }
+
+        .room-config {
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+        }
+
+        .room-item {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+        }
+
+        .room-item input {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        .btn-add-room {
+            background: #e3f2fd;
+            color: var(--secondary);
+            border: 2px dashed #bbdefb;
+            padding: 12px;
+        }
+
+        .btn-add-room:hover {
+            background: #bbdefb;
+        }
+
+        .quotation-preview {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-top: 30px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+
+        .quotation-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .quotation-body {
+            padding: 25px;
+        }
+
+        /* ========== SISTEMA BLUETOOTH ========== */
+        .bluetooth-config-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 8px 25px rgba(52, 152, 219, 0.3);
+            z-index: 1000;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .bluetooth-config-btn:hover {
+            transform: scale(1.1) rotate(15deg);
+            box-shadow: 0 12px 30px rgba(52, 152, 219, 0.4);
+        }
+
+        .bluetooth-indicator {
+            position: fixed;
+            bottom: 100px;
+            right: 30px;
+            background: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            z-index: 999;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+        }
+
+        .bluetooth-indicator.connected {
+            background: var(--success);
+        }
+
+        .bluetooth-indicator.disconnected {
+            background: var(--danger);
+        }
+
+        .bluetooth-indicator.scanning {
+            background: var(--warning);
+            animation: pulse 1.5s infinite;
+        }
+
+        .bluetooth-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.9);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 2000;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .bluetooth-modal-content {
+            background: white;
+            border-radius: 20px;
+            width: 90%;
+            max-width: 500px;
+            max-height: 90vh;
+            overflow-y: auto;
+            position: relative;
+            animation: slideUp 0.3s ease;
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .bluetooth-header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 25px;
+            border-radius: 20px 20px 0 0;
+        }
+
+        .bluetooth-header h3 {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.5rem;
+        }
+
+        .bluetooth-body {
+            padding: 25px;
+        }
+
+        .bluetooth-status {
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 25px;
+            background: #f8fafc;
+            border-left: 4px solid var(--secondary);
+        }
+
+        .bluetooth-status.error {
+            border-left-color: var(--danger);
+            background: #fef2f2;
+        }
+
+        .bluetooth-status.success {
+            border-left-color: var(--success);
+            background: #f0fdf4;
+        }
+
+        .bluetooth-device-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin: 20px 0;
+            border: 1px solid #e1e8ed;
+            border-radius: 10px;
+            padding: 15px;
+        }
+
+        .bluetooth-device-item {
+            padding: 15px;
+            border: 2px solid #e1e8ed;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .bluetooth-device-item:hover {
+            border-color: var(--secondary);
+            background: #f0f7ff;
+        }
+
+        .bluetooth-device-item.selected {
+            border-color: var(--secondary);
+            background: #e3f2fd;
+        }
+
+        .bluetooth-options {
+            margin-top: 25px;
+            padding-top: 25px;
+            border-top: 1px solid #e1e8ed;
+        }
+
+        .bluetooth-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .bluetooth-option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+        }
+
+        /* ========== MODAIS ========== */
+        .modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.8);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1001;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            max-width: 400px;
+            width: 90%;
+            text-align: center;
+            animation: slideUp 0.3s ease;
+        }
+
+        .print-progress {
+            text-align: center;
+            padding: 30px;
+        }
+
+        .print-spinner {
+            width: 60px;
+            height: 60px;
+            border: 4px solid #e1e8ed;
+            border-top: 4px solid var(--secondary);
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        /* ========== RESPONSIVIDADE ========== */
+        @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+            
+            .app-container {
+                min-height: calc(100vh - 20px);
+            }
+            
+            .tab {
+                padding: 15px 10px;
+                min-width: 100px;
+                font-size: 0.9rem;
+            }
+            
+            .tab i {
+                font-size: 1rem;
+            }
+            
+            .tab-content {
+                padding: 20px 15px;
+            }
+            
+            .item-card {
+                flex-direction: column;
+                align-items: stretch;
+                gap: 15px;
+            }
+            
+            .item-controls {
+                justify-content: space-between;
+            }
+            
+            .btn-group {
+                flex-direction: column;
+            }
+            
+            .bluetooth-config-btn {
+                bottom: 20px;
+                right: 20px;
+                width: 50px;
+                height: 50px;
+            }
+            
+            .bluetooth-indicator {
+                bottom: 80px;
+                right: 20px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .app-header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .card {
+                padding: 20px;
+            }
+            
+            .apartment-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .lavanderia-table {
+                font-size: 0.9rem;
+            }
+            
+            .lavanderia-table th,
+            .lavanderia-table td {
+                padding: 12px 8px;
+            }
+        }
+
+        /* ========== UTILITÁRIOS ========== */
+        .hidden {
+            display: none !important;
+        }
+
+        .text-center {
+            text-align: center;
+        }
+
+        .mt-3 { margin-top: 1rem; }
+        .mb-3 { margin-bottom: 1rem; }
+        .mt-4 { margin-top: 1.5rem; }
+        .mb-4 { margin-bottom: 1.5rem; }
+
+        .pulse {
+            animation: pulse 1.5s infinite;
+        }
+
+        /* ========== ANIMAÇÕES ========== */
+        @keyframes pulse {
+            0% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+            100% { transform: scale(1); }
+        }
+
+        .fade-in {
+            animation: fadeIn 0.3s ease;
+        }
+
+        /* ========== SCROLLBAR PERSONALIZADA ========== */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--secondary);
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <!-- ========== MODAIS ========== -->
+    <!-- Modal de Confirmação Frigobar -->
+    <div id="confirmationModal" class="modal">
+        <div class="modal-content">
+            <h3 style="margin-bottom: 20px; color: var(--primary);">
+                <i class="fas fa-question-circle"></i> Tipo de Ocorrência
+            </h3>
+            <p style="margin-bottom: 25px; font-size: 1.1rem;">
+                O frigobar foi consumido durante a <strong>saída</strong> ou <strong>arrumação</strong>?
+            </p>
+            <div class="btn-group">
+                <button id="confirmExit" class="btn btn-danger">
+                    <i class="fas fa-door-open"></i> Saída
+                </button>
+                <button id="confirmCleaning" class="btn btn-primary">
+                    <i class="fas fa-broom"></i> Arrumação
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Bluetooth -->
+    <div id="bluetoothModal" class="bluetooth-modal">
+        <div class="bluetooth-modal-content">
+            <div class="bluetooth-header">
+                <h3>
+                    <i class="fas fa-bluetooth pulse"></i>
+                    Configuração Bluetooth
+                </h3>
+            </div>
+            <div class="bluetooth-body">
+                <div class="bluetooth-status" id="bluetoothStatus">
+                    <p style="font-weight: 600; margin-bottom: 5px;">Status do Sistema:</p>
+                    <p id="bluetoothStatusText">Verificando suporte Bluetooth...</p>
+                </div>
+                
+                <div class="btn-group" style="margin-bottom: 20px;">
+                    <button id="scanBluetoothBtn" class="btn btn-primary">
+                        <i class="fas fa-search"></i> Buscar Impressoras
+                    </button>
+                    <button id="connectBluetoothBtn" class="btn btn-success" disabled>
+                        <i class="fas fa-link"></i> Conectar
+                    </button>
+                    <button id="disconnectBluetoothBtn" class="btn btn-danger" disabled>
+                        <i class="fas fa-unlink"></i> Desconectar
+                    </button>
+                </div>
+                
+                <div class="bluetooth-device-list" id="bluetoothDeviceList">
+                    <p style="text-align: center; color: #666; padding: 30px;">
+                        Nenhum dispositivo encontrado
+                    </p>
+                </div>
+                
+                <div class="bluetooth-options">
+                    <h4 style="margin-bottom: 15px; color: var(--primary);">
+                        <i class="fas fa-cog"></i> Opções
+                    </h4>
+                    <div class="bluetooth-option">
+                        <input type="checkbox" id="autoPrintCheckbox" checked>
+                        <label for="autoPrintCheckbox">Imprimir automaticamente ao enviar pedidos</label>
+                    </div>
+                    <div class="bluetooth-option">
+                        <input type="checkbox" id="enableBluetoothPrinting" checked>
+                        <label for="enableBluetoothPrinting">Habilitar impressão Bluetooth</label>
+                    </div>
+                </div>
+                
+                <div style="margin-top: 25px; padding-top: 25px; border-top: 1px solid #e1e8ed;">
+                    <button id="testPrintBtn" class="btn btn-warning btn-block" disabled>
+                        <i class="fas fa-print"></i> Testar Impressão
+                    </button>
+                </div>
+                
+                <div style="margin-top: 20px; font-size: 0.85rem; color: #666; text-align: center;">
+                    <p><i class="fas fa-info-circle"></i> Compatível com Chrome/Edge 56+ e impressoras térmicas Bluetooth</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal Progresso Impressão -->
+    <div id="printProgressModal" class="modal">
+        <div class="modal-content print-progress">
+            <div class="print-spinner"></div>
+            <h3 id="printProgressText" style="margin-bottom: 10px;">Enviando para impressora...</h3>
+            <p id="printProgressDetails" style="color: #666;">Por favor, aguarde</p>
+        </div>
+    </div>
+
+    <!-- ========== COMPONENTES FIXOS ========== -->
+    <!-- Botão Bluetooth -->
+    <button id="bluetoothConfigBtn" class="bluetooth-config-btn">
+        <i class="fas fa-bluetooth"></i>
+    </button>
+
+    <!-- Indicador Bluetooth -->
+    <div id="bluetoothIndicator" class="bluetooth-indicator disconnected">
+        <i class="fas fa-bluetooth"></i>
+        <span>Bluetooth: Desconectado</span>
+    </div>
+
+    <!-- ========== APLICATIVO PRINCIPAL ========== -->
+    <div class="app-container">
+        <!-- Header -->
+        <header class="app-header">
+            <h1><i class="fas fa-hotel"></i> Hotel App Completo</h1>
+            <p class="subtitle">Sistema Integrado de Gestão Hoteleira</p>
+        </header>
+
+        <!-- Tabs de Navegação -->
+        <nav class="tabs-container">
+            <div class="tabs">
+                <button class="tab active" data-tab="frigobar">
+                    <i class="fas fa-wine-bottle"></i> Frigobar
+                </button>
+                <button class="tab" data-tab="lavanderia">
+                    <i class="fas fa-tshirt"></i> Lavanderia
+                </button>
+                <button class="tab" data-tab="vale">
+                    <i class="fas fa-money-bill-wave"></i> Vale
+                </button>
+                <button class="tab" data-tab="cotacao">
+                    <i class="fas fa-calculator"></i> Cotação
+                </button>
+            </div>
+        </nav>
+
+        <!-- Conteúdo das Tabs -->
+        <main>
+            <!-- FRIGOBAR -->
+            <section id="frigobar" class="tab-content active">
+                <h2><i class="fas fa-wine-bottle"></i> Controle do Frigobar</h2>
+                
+                <div class="card">
+                    <h3><i class="fas fa-building"></i> Seleção do Apartamento</h3>
+                    <div class="apartment-input-container">
+                        <input type="text" 
+                               id="apartmentNumber" 
+                               class="form-control" 
+                               placeholder="Digite o número do apartamento"
+                               maxlength="4">
+                        <button id="showApartmentsBtn" class="btn btn-primary">
+                            <i class="fas fa-list"></i> Mostrar Todos os Apartamentos
+                        </button>
+                    </div>
+                    
+                    <div id="apartmentGrid" class="apartment-grid">
+                        <!-- Apartamentos serão gerados por JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Bebidas -->
+                <div class="card">
+                    <h3><i class="fas fa-glass-whiskey"></i> Bebidas</h3>
+                    <div class="items-container" id="beveragesContainer">
+                        <!-- Itens serão gerados por JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Snacks -->
+                <div class="card">
+                    <h3><i class="fas fa-cookie-bite"></i> Snacks</h3>
+                    <div class="items-container" id="snacksContainer">
+                        <!-- Itens serão gerados por JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Resumo -->
+                <div class="card summary-card">
+                    <h3><i class="fas fa-file-invoice-dollar"></i> Resumo do Consumo</h3>
+                    <div id="summaryContent">
+                        <div class="summary-row">
+                            <span>Total Bebidas:</span>
+                            <span id="totalBeverages">R$ 0,00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Total Snacks:</span>
+                            <span id="totalSnacks">R$ 0,00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span><strong>Total Geral:</strong></span>
+                            <span id="totalCost"><strong>R$ 0,00</strong></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Botões de Ação -->
+                <div class="btn-group mt-4">
+                    <button id="sendFrigobarWhatsApp" class="btn btn-whatsapp btn-block">
+                        <i class="fab fa-whatsapp"></i> Enviar por WhatsApp
+                    </button>
+                    <button id="printFrigobarBluetooth" class="btn btn-bluetooth btn-block" disabled>
+                        <i class="fas fa-bluetooth"></i> Imprimir via Bluetooth
+                    </button>
+                </div>
+            </section>
+
+            <!-- LAVANDERIA -->
+            <section id="lavanderia" class="tab-content">
+                <h2><i class="fas fa-tshirt"></i> Sistema de Lavanderia</h2>
+                
+                <div class="lavanderia-header">
+                    <div class="card">
+                        <h3><i class="fas fa-building"></i> Seleção do Apartamento</h3>
+                        <input type="text" 
+                               id="lavanderiaApartment" 
+                               class="form-control mb-3" 
+                               placeholder="Digite o número do apartamento">
+                        <button id="showLavanderiaApartmentsBtn" class="btn btn-primary">
+                            <i class="fas fa-list"></i> Mostrar Apartamentos
+                        </button>
+                        
+                        <div id="lavanderiaApartmentGrid" class="apartment-grid mt-3">
+                            <!-- Apartamentos serão gerados por JavaScript -->
+                        </div>
+                    </div>
+                </div>
+
+                <div id="lavanderiaContent" class="hidden">
+                    <!-- Tabela de Serviços -->
+                    <div class="card">
+                        <h3><i class="fas fa-concierge-bell"></i> Serviços Disponíveis</h3>
+                        <table class="lavanderia-table" id="lavanderiaTable">
+                            <thead>
+                                <tr>
+                                    <th>Item</th>
+                                    <th>Lavar</th>
+                                    <th>Passar</th>
+                                    <th>Ações</th>
+                                </tr>
+                            </thead>
+                            <tbody id="lavanderiaItems">
+                                <!-- Itens serão gerados por JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Resumo -->
+                    <div id="lavanderiaResumo" class="card lavanderia-resumo">
+                        <h3><i class="fas fa-clipboard-list"></i> Resumo do Pedido</h3>
+                        <div id="resumoContent">
+                            <!-- Conteúdo será gerado por JavaScript -->
+                        </div>
+                        
+                        <div class="summary-card mt-3">
+                            <div class="summary-row">
+                                <span>Subtotal:</span>
+                                <span id="lavanderiaSubtotal">R$ 0,00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span>ISS (5%):</span>
+                                <span id="lavanderiaISS">R$ 0,00</span>
+                            </div>
+                            <div class="summary-row">
+                                <span><strong>Total:</strong></span>
+                                <span id="lavanderiaTotal"><strong>R$ 0,00</strong></span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Botões de Ação -->
+                    <div class="btn-group mt-4">
+                        <button id="sendLavanderiaWhatsApp" class="btn btn-whatsapp">
+                            <i class="fab fa-whatsapp"></i> WhatsApp
+                        </button>
+                        <button id="printLavanderiaBluetooth" class="btn btn-bluetooth" disabled>
+                            <i class="fas fa-bluetooth"></i> Imprimir
+                        </button>
+                        <button id="undoLavanderiaBtn" class="btn btn-warning">
+                            <i class="fas fa-undo"></i> Desfazer
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- VALE -->
+            <section id="vale" class="tab-content">
+                <h2><i class="fas fa-money-bill-wave"></i> Sistema de Vale</h2>
+                
+                <div class="date-info">
+                    <p id="currentDateDisplay">Carregando data...</p>
+                    <p id="dayStatusDisplay"></p>
+                    <p id="daysLeftDisplay" class="days-left"></p>
+                </div>
+
+                <!-- Tela Inicial -->
+                <div id="initialScreen">
+                    <div class="card">
+                        <h3><i class="fas fa-hand-holding-usd"></i> Solicitação de Vale</h3>
+                        <p style="margin-bottom: 20px;">Clique no botão abaixo para solicitar seu vale deste mês:</p>
+                        <button id="requestValeBtn" class="btn btn-success btn-block">
+                            <i class="fas fa-paper-plane"></i> Solicitar Vale
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tela de Confirmação -->
+                <div id="confirmationScreen" class="hidden">
+                    <div class="card">
+                        <h3><i class="fas fa-question-circle"></i> Confirmação</h3>
+                        <p style="margin-bottom: 25px; font-size: 1.1rem;">Deseja solicitar vale este mês?</p>
+                        <div class="btn-group">
+                            <button id="confirmYesBtn" class="btn btn-success">
+                                <i class="fas fa-check"></i> Sim
+                            </button>
+                            <button id="confirmNoBtn" class="btn btn-danger">
+                                <i class="fas fa-times"></i> Não
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tela do Nome -->
+                <div id="nameScreen" class="hidden">
+                    <div class="card">
+                        <div class="step">
+                            <span class="step-number">1</span>
+                            <span class="step-content">
+                                <strong>Informe seu nome completo:</strong>
+                            </span>
+                        </div>
+                        <div class="form-group mt-3">
+                            <input type="text" 
+                                   id="employeeName" 
+                                   class="form-control" 
+                                   placeholder="Digite seu nome completo">
+                        </div>
+                        <button id="confirmNameBtn" class="btn btn-success btn-block mt-3">
+                            <i class="fas fa-check"></i> Confirmar Nome
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tela do Valor -->
+                <div id="valueScreen" class="hidden">
+                    <div class="card">
+                        <div class="step">
+                            <span class="step-number">2</span>
+                            <span class="step-content">
+                                <strong>Informe o valor desejado:</strong>
+                            </span>
+                        </div>
+                        <div class="form-group mt-3">
+                            <input type="number" 
+                                   id="valeValue" 
+                                   class="form-control" 
+                                   placeholder="R$ 0,00"
+                                   min="0"
+                                   step="0.01">
+                        </div>
+                        <button id="confirmValueBtn" class="btn btn-success btn-block mt-3">
+                            <i class="fas fa-check"></i> Confirmar Valor
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tela Final -->
+                <div id="finalScreen" class="hidden">
+                    <div class="message message-success" id="successMessage"></div>
+                    <div class="message message-info" id="infoMessage"></div>
+                    <div class="btn-group mt-3">
+                        <button id="sendValeWhatsAppBtn" class="btn btn-whatsapp">
+                            <i class="fab fa-whatsapp"></i> Enviar Solicitação
+                        </button>
+                        <button id="backToFrigobarBtn" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> Voltar ao Início
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tela de Recusa -->
+                <div id="refusalScreen" class="hidden">
+                    <div class="message message-warning">
+                        <p><strong>Obrigado!</strong> Não desejo pedir vale este mês.</p>
+                    </div>
+                    <div class="message message-info" id="refusalInfo"></div>
+                    <div class="btn-group mt-3">
+                        <button id="sendRefusalWhatsAppBtn" class="btn btn-whatsapp">
+                            <i class="fab fa-whatsapp"></i> Enviar Recusa
+                        </button>
+                        <button id="backFromRefusalBtn" class="btn btn-primary">
+                            <i class="fas fa-arrow-left"></i> Voltar
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- COTAÇÃO -->
+            <section id="cotacao" class="tab-content">
+                <h2><i class="fas fa-calculator"></i> Cotação de Reservas</h2>
+                
+                <div class="card">
+                    <h3><i class="fas fa-hotel"></i> Icaraí Praia Hotel</h3>
+                    
+                    <div class="language-selector">
+                        <button class="lang-btn active" data-lang="pt">🇧🇷 Português</button>
+                        <button class="lang-btn" data-lang="en">🇺🇸 English</button>
+                        <button class="lang-btn" data-lang="es">🇪🇸 Español</button>
+                    </div>
+
+                    <form id="quotationForm">
+                        <div class="form-group">
+                            <label class="form-label">Nome do Hóspede Principal</label>
+                            <input type="text" 
+                                   id="quotationGuestName" 
+                                   class="form-control" 
+                                   placeholder="Digite o nome completo"
+                                   required>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Período da Estadia</label>
+                            <div class="btn-group">
+                                <input type="date" 
+                                       id="quotationCheckIn" 
+                                       class="form-control"
+                                       required>
+                                <span style="align-self: center;">até</span>
+                                <input type="date" 
+                                       id="quotationCheckOut" 
+                                       class="form-control"
+                                       required>
+                            </div>
+                        </div>
+
+                        <div class="room-config">
+                            <h4 style="margin-bottom: 15px; color: var(--primary);">
+                                <i class="fas fa-bed"></i> Configuração de Quartos
+                            </h4>
+                            <div id="roomsContainer">
+                                <div class="room-item">
+                                    <input type="number" 
+                                           class="form-control" 
+                                           placeholder="Qtd" 
+                                           min="1" 
+                                           value="1"
+                                           required>
+                                    <input type="number" 
+                                           class="form-control" 
+                                           placeholder="Hóspedes" 
+                                           min="1" 
+                                           max="4" 
+                                           value="2"
+                                           required>
+                                    <input type="number" 
+                                           class="form-control" 
+                                           placeholder="Diária (R$)" 
+                                           min="0" 
+                                           step="0.01"
+                                           required>
+                                </div>
+                            </div>
+                            <button type="button" id="addRoomBtn" class="btn btn-add-room btn-block mt-3">
+                                <i class="fas fa-plus"></i> Adicionar Quarto
+                            </button>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Tipo de Refeição</label>
+                            <select id="quotationMealType" class="form-control">
+                                <option value="breakfast">Com Café da Manhã</option>
+                                <option value="noBreakfast">Sem Café da Manhã</option>
+                                <option value="halfBoard">Meia Pensão</option>
+                                <option value="fullBoard">Pensão Completa</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Estacionamento</label>
+                            <select id="quotationParking" class="form-control">
+                                <option value="no">Não</option>
+                                <option value="yes">Sim (R$ 45/dia)</option>
+                            </select>
+                        </div>
+
+                        <div class="btn-group mt-4">
+                            <button type="button" id="calculateQuotationBtn" class="btn btn-success">
+                                <i class="fas fa-calculator"></i> Calcular Cotação
+                            </button>
+                            <button type="button" id="printQuotationBluetooth" class="btn btn-bluetooth" disabled>
+                                <i class="fas fa-bluetooth"></i> Imprimir
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Resultado da Cotação -->
+                <div id="quotationResult" class="quotation-preview hidden">
+                    <div class="quotation-header">
+                        <h3>ICARAÍ PRAIA HOTEL</h3>
+                        <p>COTAÇÃO DE RESERVA</p>
+                    </div>
+                    <div class="quotation-body" id="quotationPreview">
+                        <!-- Conteúdo será gerado por JavaScript -->
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script>
+        // ============================================
+        // SISTEMA DE NAVEGAÇÃO
+        // ============================================
+        class NavigationSystem {
+            constructor() {
+                this.currentTab = 'frigobar';
+                this.init();
+            }
+
+            init() {
+                // Configurar eventos das tabs
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.addEventListener('click', (e) => {
+                        const tabId = e.currentTarget.dataset.tab;
+                        this.switchTab(tabId);
+                    });
+                });
+
+                // Inicializar primeira tab
+                this.switchTab('frigobar');
+            }
+
+            switchTab(tabId) {
+                // Remover active de todas as tabs
+                document.querySelectorAll('.tab').forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                document.querySelectorAll('.tab-content').forEach(content => {
+                    content.classList.remove('active');
+                });
+
+                // Ativar nova tab
+                const activeTab = document.querySelector(`[data-tab="${tabId}"]`);
+                const activeContent = document.getElementById(tabId);
+                
+                if (activeTab && activeContent) {
+                    activeTab.classList.add('active');
+                    activeContent.classList.add('active');
+                    this.currentTab = tabId;
+                    
+                    // Inicializar sistemas específicos
+                    this.initializeTabSystem(tabId);
+                }
+            }
+
+            initializeTabSystem(tabId) {
+                switch(tabId) {
+                    case 'frigobar':
+                        if (!window.frigobarSystem) {
+                            window.frigobarSystem = new FrigobarSystem();
+                        }
+                        break;
+                    case 'lavanderia':
+                        if (!window.lavanderiaSystem) {
+                            window.lavanderiaSystem = new LavanderiaSystem();
+                        }
+                        break;
+                    case 'vale':
+                        if (!window.valeSystem) {
+                            window.valeSystem = new ValeSystem();
+                        }
+                        break;
+                    case 'cotacao':
+                        if (!window.quotationSystem) {
+                            window.quotationSystem = new QuotationSystem();
+                        }
+                        break;
+                }
+            }
+        }
+
+        // ============================================
+        // SISTEMA FRIGOBAR
+        // ============================================
+        class FrigobarSystem {
+            constructor() {
+                this.apartment = '';
+                this.items = {};
+                this.prices = {
+                    // Bebidas
+                    'Água Mineral s/Gás (500ml)': 8.00,
+                    'Água Mineral c/Gás (310ml)': 8.00,
+                    'Coca-cola (lata 350ml)': 9.00,
+                    'Fanta (lata 350ml)': 9.00,
+                    'Guaraná (lata 350ml)': 9.00,
+                    'Toddynho (200ml)': 10.00,
+                    'Antarctica (lata 350ml)': 12.00,
+                    // Snacks
+                    'Castanha de Caju (50g)': 17.00,
+                    'Batata (40g)': 11.00,
+                    'Chocolate Kit Kat (41,5g)': 10.00,
+                    'Bala Mentos crazyfruit (41,5g)': 8.00,
+                    'Bala Mentos mint (41,5g)': 8.00
+                };
+                this.init();
+            }
+
+            init() {
+                this.generateApartments();
+                this.createItems();
+                this.setupEventListeners();
+                this.updateSummary();
+            }
+
+            generateApartments() {
+                const container = document.getElementById('apartmentGrid');
+                container.innerHTML = '';
+                
+                // Gerar apartamentos do 3º ao 10º andar
+                for (let floor = 3; floor <= 10; floor++) {
+                    const floorTitle = document.createElement('div');
+                    floorTitle.className = 'floor-title';
+                    floorTitle.textContent = `${floor}º Andar`;
+                    container.appendChild(floorTitle);
+                    
+                    const roomCount = floor === 10 ? 7 : 8;
+                    for (let room = 1; room <= roomCount; room++) {
+                        const apt = floor === 10 ? `10${room}` : `${floor}0${room}`;
+                        const aptBtn = document.createElement('button');
+                        aptBtn.className = 'apartment-btn';
+                        aptBtn.textContent = apt;
+                        aptBtn.dataset.apartment = apt;
+                        aptBtn.addEventListener('click', () => {
+                            this.selectApartment(apt);
+                        });
+                        container.appendChild(aptBtn);
+                    }
+                }
+            }
+
+            selectApartment(apt) {
+                this.apartment = apt;
+                document.getElementById('apartmentNumber').value = apt;
+                document.getElementById('apartmentGrid').style.display = 'none';
+                
+                // Feedback visual
+                const buttons = document.querySelectorAll('.apartment-btn');
+                buttons.forEach(btn => {
+                    if (btn.dataset.apartment === apt) {
+                        btn.style.background = '#bbdefb';
+                        btn.style.borderColor = '#2196f3';
+                    } else {
+                        btn.style.background = '';
+                        btn.style.borderColor = '';
+                    }
+                });
+            }
+
+            createItems() {
+                const items = [
+                    // Bebidas
+                    { name: 'Água Mineral s/Gás (500ml)', category: 'beverage', icon: '💧' },
+                    { name: 'Água Mineral c/Gás (310ml)', category: 'beverage', icon: '💦' },
+                    { name: 'Coca-cola (lata 350ml)', category: 'beverage', icon: '🥤' },
+                    { name: 'Fanta (lata 350ml)', category: 'beverage', icon: '🧃' },
+                    { name: 'Guaraná (lata 350ml)', category: 'beverage', icon: '🍹' },
+                    { name: 'Toddynho (200ml)', category: 'beverage', icon: '☕' },
+                    { name: 'Antarctica (lata 350ml)', category: 'beverage', icon: '🍺' },
+                    // Snacks
+                    { name: 'Castanha de Caju (50g)', category: 'snack', icon: '🥜' },
+                    { name: 'Batata (40g)', category: 'snack', icon: '🍟' },
+                    { name: 'Chocolate Kit Kat (41,5g)', category: 'snack', icon: '🍫' },
+                    { name: 'Bala Mentos crazyfruit (41,5g)', category: 'snack', icon: '🍬' },
+                    { name: 'Bala Mentos mint (41,5g)', category: 'snack', icon: '🍭' }
+                ];
+
+                const beveragesContainer = document.getElementById('beveragesContainer');
+                const snacksContainer = document.getElementById('snacksContainer');
+                
+                beveragesContainer.innerHTML = '';
+                snacksContainer.innerHTML = '';
+
+                items.forEach(item => {
+                    const container = item.category === 'beverage' ? beveragesContainer : snacksContainer;
+                    const price = this.prices[item.name];
+                    
+                    const itemCard = document.createElement('div');
+                    itemCard.className = 'item-card';
+                    itemCard.dataset.item = item.name;
+                    
+                    itemCard.innerHTML = `
+                        <div class="item-info">
+                            <div class="item-icon">${item.icon}</div>
+                            <div>
+                                <div class="item-name">${item.name}</div>
+                                <div class="item-price">R$ ${price.toFixed(2)}</div>
+                            </div>
+                        </div>
+                        <div class="item-controls">
+                            <button class="btn-quantity" data-action="decrease">-</button>
+                            <div class="quantity-display">0</div>
+                            <button class="btn-quantity" data-action="increase">+</button>
+                            <div class="total-display">R$ 0,00</div>
+                        </div>
+                    `;
+                    
+                    container.appendChild(itemCard);
+                });
+            }
+
+            setupEventListeners() {
+                // Mostrar/ocultar lista de apartamentos
+                document.getElementById('showApartmentsBtn').addEventListener('click', () => {
+                    const grid = document.getElementById('apartmentGrid');
+                    grid.style.display = grid.style.display === 'grid' ? 'none' : 'grid';
+                });
+
+                // Input manual do apartamento
+                document.getElementById('apartmentNumber').addEventListener('input', (e) => {
+                    this.apartment = e.target.value.trim();
+                });
+
+                // Eventos dos itens
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.btn-quantity')) {
+                        const button = e.target.closest('.btn-quantity');
+                        const action = button.dataset.action;
+                        const itemCard = button.closest('.item-card');
+                        const itemName = itemCard.dataset.item;
+                        
+                        this.updateItemQuantity(itemName, action);
+                    }
+                });
+
+                // Enviar por WhatsApp
+                document.getElementById('sendFrigobarWhatsApp').addEventListener('click', () => {
+                    this.sendWhatsApp();
+                });
+
+                // Imprimir via Bluetooth
+                document.getElementById('printFrigobarBluetooth').addEventListener('click', () => {
+                    this.printBluetooth();
+                });
+
+                // Modal de confirmação
+                document.getElementById('confirmExit').addEventListener('click', () => {
+                    this.sendWhatsApp(true);
+                    document.getElementById('confirmationModal').style.display = 'none';
+                });
+
+                document.getElementById('confirmCleaning').addEventListener('click', () => {
+                    this.sendWhatsApp(false);
+                    document.getElementById('confirmationModal').style.display = 'none';
+                });
+
+                // Fechar modal ao clicar fora
+                document.getElementById('confirmationModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'confirmationModal') {
+                        document.getElementById('confirmationModal').style.display = 'none';
+                    }
+                });
+            }
+
+            updateItemQuantity(itemName, action) {
+                if (!this.items[itemName]) {
+                    this.items[itemName] = 0;
+                }
+
+                if (action === 'increase') {
+                    this.items[itemName]++;
+                } else if (action === 'decrease' && this.items[itemName] > 0) {
+                    this.items[itemName]--;
+                    if (this.items[itemName] === 0) {
+                        delete this.items[itemName];
+                    }
+                }
+
+                this.updateItemDisplay(itemName);
+                this.updateSummary();
+            }
+
+            updateItemDisplay(itemName) {
+                const itemCard = document.querySelector(`[data-item="${itemName}"]`);
+                if (!itemCard) return;
+
+                const quantity = this.items[itemName] || 0;
+                const price = this.prices[itemName];
+                const total = quantity * price;
+
+                itemCard.querySelector('.quantity-display').textContent = quantity;
+                itemCard.querySelector('.total-display').textContent = `R$ ${total.toFixed(2)}`;
+            }
+
+            updateSummary() {
+                let totalBeverages = 0;
+                let totalSnacks = 0;
+                let totalGeral = 0;
+
+                Object.entries(this.items).forEach(([itemName, quantity]) => {
+                    const price = this.prices[itemName];
+                    const total = quantity * price;
+                    totalGeral += total;
+
+                    // Determinar categoria (baseado no nome ou preço)
+                    if (itemName.includes('Água') || itemName.includes('Coca') || 
+                        itemName.includes('Fanta') || itemName.includes('Guaraná') ||
+                        itemName.includes('Toddynho') || itemName.includes('Antarctica')) {
+                        totalBeverages += total;
+                    } else {
+                        totalSnacks += total;
+                    }
+                });
+
+                document.getElementById('totalBeverages').textContent = `R$ ${totalBeverages.toFixed(2)}`;
+                document.getElementById('totalSnacks').textContent = `R$ ${totalSnacks.toFixed(2)}`;
+                document.getElementById('totalCost').textContent = `R$ ${totalGeral.toFixed(2)}`;
+            }
+
+            sendWhatsApp(isExit = true) {
+                if (!this.apartment) {
+                    alert('Por favor, selecione um apartamento.');
+                    return;
+                }
+
+                if (Object.keys(this.items).length === 0) {
+                    alert('Adicione itens ao frigobar antes de enviar.');
+                    return;
+                }
+
+                const status = isExit ? 'SAÍDA' : 'ARRUMAÇÃO';
+                let message = `*FRIGOBAR - APARTAMENTO ${this.apartment} (${status})*\n\n`;
+                message += `*Data:* ${new Date().toLocaleDateString('pt-BR')}\n`;
+                message += `*Hora:* ${new Date().toLocaleTimeString('pt-BR')}\n\n`;
+                message += '*ITENS CONSUMIDOS:*\n';
+
+                let total = 0;
+                Object.entries(this.items).forEach(([itemName, quantity]) => {
+                    const price = this.prices[itemName];
+                    const itemTotal = price * quantity;
+                    total += itemTotal;
+                    message += `• ${quantity}x ${itemName} - R$ ${itemTotal.toFixed(2)}\n`;
+                });
+
+                message += `\n*TOTAL: R$ ${total.toFixed(2)}*\n`;
+                message += `\n---\n*Hotel App Completo*`;
+
+                const encodedMessage = encodeURIComponent(message);
+                window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+
+                // Imprimir automaticamente se configurado
+                if (window.bluetoothSystem && window.bluetoothSystem.isConnected && window.bluetoothSystem.autoPrint) {
+                    this.printBluetooth(isExit ? 'Saída' : 'Arrumação');
+                }
+            }
+
+            async printBluetooth(status = '') {
+                if (!window.bluetoothSystem || !window.bluetoothSystem.isConnected) {
+                    alert('Conecte uma impressora Bluetooth primeiro.');
+                    return;
+                }
+
+                if (!this.apartment) {
+                    alert('Selecione um apartamento.');
+                    return;
+                }
+
+                if (Object.keys(this.items).length === 0) {
+                    alert('Adicione itens ao frigobar antes de imprimir.');
+                    return;
+                }
+
+                // Gerar texto para impressão térmica
+                let printData = '\x1B\x40'; // Inicializar
+                printData += '\x1B\x61\x01'; // Centralizar
+                printData += 'FRIGOBAR\n';
+                printData += '\x1B\x61\x00'; // Alinhar à esquerda
+                printData += '====================\n';
+                printData += `Apto: ${this.apartment}\n`;
+                if (status) {
+                    printData += `Status: ${status}\n`;
+                }
+                printData += `Data: ${new Date().toLocaleDateString('pt-BR')}\n`;
+                printData += `Hora: ${new Date().toLocaleTimeString('pt-BR')}\n`;
+                printData += '====================\n';
+                printData += 'ITENS:\n';
+
+                Object.entries(this.items).forEach(([itemName, quantity]) => {
+                    printData += `${quantity}x ${itemName.substring(0, 20)}\n`;
+                });
+
+                let total = 0;
+                Object.entries(this.items).forEach(([itemName, quantity]) => {
+                    total += this.prices[itemName] * quantity;
+                });
+
+                printData += '====================\n';
+                printData += `TOTAL: R$ ${total.toFixed(2)}\n`;
+                printData += '====================\n\n\n\n';
+                printData += '\x1B\x69'; // Cortar papel
+
+                await window.bluetoothSystem.printText(printData);
+            }
+        }
+
+        // ============================================
+        // SISTEMA LAVANDERIA
+        // ============================================
+        class LavanderiaSystem {
+            constructor() {
+                this.apartment = '';
+                this.items = [];
+                this.history = [];
+                this.services = [
+                    { nome: "Bermuda", lavar: 18, passar: 10, icon: "🩳" },
+                    { nome: "Blusa", lavar: 18, passar: 14, icon: "👚" },
+                    { nome: "Calça comprida", lavar: 22, passar: 14, icon: "👖" },
+                    { nome: "Calcinha", lavar: 7, passar: 5, icon: "🩲" },
+                    { nome: "Camiseta", lavar: 14, passar: 8, icon: "👕" },
+                    { nome: "Camisa Social", lavar: 22, passar: 17, icon: "👔" },
+                    { nome: "Cueca", lavar: 8, passar: 5, icon: "🩲" },
+                    { nome: "Meias (par)", lavar: 10, passar: 5, icon: "🧦" },
+                    { nome: "Pijama", lavar: 20, passar: 17, icon: "🛌" },
+                    { nome: "Saia", lavar: 22, passar: 15, icon: "👗" },
+                    { nome: "Toalha de banho", lavar: 20, passar: null, icon: "🛀" },
+                    { nome: "Vestido", lavar: 50, passar: 40, icon: "👗" }
+                ];
+                this.init();
+            }
+
+            init() {
+                this.generateApartments();
+                this.createServiceTable();
+                this.setupEventListeners();
+            }
+
+            generateApartments() {
+                const container = document.getElementById('lavanderiaApartmentGrid');
+                container.innerHTML = '';
+                
+                for (let floor = 3; floor <= 10; floor++) {
+                    const floorTitle = document.createElement('div');
+                    floorTitle.className = 'floor-title';
+                    floorTitle.textContent = `${floor}º Andar`;
+                    container.appendChild(floorTitle);
+                    
+                    const roomCount = floor === 10 ? 7 : 8;
+                    for (let room = 1; room <= roomCount; room++) {
+                        const apt = floor === 10 ? `10${room}` : `${floor}0${room}`;
+                        const aptBtn = document.createElement('button');
+                        aptBtn.className = 'apartment-btn';
+                        aptBtn.textContent = apt;
+                        aptBtn.dataset.apartment = apt;
+                        aptBtn.addEventListener('click', () => {
+                            this.selectApartment(apt);
+                        });
+                        container.appendChild(aptBtn);
+                    }
+                }
+            }
+
+            selectApartment(apt) {
+                this.apartment = apt;
+                document.getElementById('lavanderiaApartment').value = apt;
+                document.getElementById('lavanderiaApartmentGrid').style.display = 'none';
+                document.getElementById('lavanderiaContent').classList.remove('hidden');
+                
+                // Feedback visual
+                const buttons = document.querySelectorAll('#lavanderiaApartmentGrid .apartment-btn');
+                buttons.forEach(btn => {
+                    if (btn.dataset.apartment === apt) {
+                        btn.style.background = '#bbdefb';
+                        btn.style.borderColor = '#2196f3';
+                    } else {
+                        btn.style.background = '';
+                        btn.style.borderColor = '';
+                    }
+                });
+            }
+
+            createServiceTable() {
+                const container = document.getElementById('lavanderiaItems');
+                container.innerHTML = '';
+                
+                this.services.forEach(service => {
+                    const row = document.createElement('tr');
+                    
+                    const lavarCount = this.items.filter(item => 
+                        item.nome === service.nome && item.tipo === 'lavar'
+                    ).reduce((sum, item) => sum + item.quantidade, 0);
+                    
+                    const passarCount = this.items.filter(item => 
+                        item.nome === service.nome && item.tipo === 'passar'
+                    ).reduce((sum, item) => sum + item.quantidade, 0);
+                    
+                    row.innerHTML = `
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 10px;">
+                                <span style="font-size: 1.2em;">${service.icon}</span>
+                                <span>${service.nome}</span>
+                            </div>
+                        </td>
+                        <td>
+                            <div style="display: flex; align-items: center; gap: 5px;">
+                                <span>R$ ${service.lavar},00</span>
+                                ${lavarCount > 0 ? `<span class="service-badge">${lavarCount}x</span>` : ''}
+                            </div>
+                        </td>
+                        <td>
+                            ${service.passar ? 
+                                `<div style="display: flex; align-items: center; gap: 5px;">
+                                    <span>R$ ${service.passar},00</span>
+                                    ${passarCount > 0 ? `<span class="service-badge">${passarCount}x</span>` : ''}
+                                </div>` : 
+                                '-'
+                            }
+                        </td>
+                        <td>
+                            <button class="service-btn lavar" data-service="${service.nome}" data-type="lavar">
+                                <i class="fas fa-soap"></i> Lavar
+                            </button>
+                            ${service.passar ? 
+                                `<button class="service-btn passar" data-service="${service.nome}" data-type="passar">
+                                    <i class="fas fa-iron"></i> Passar
+                                </button>` : 
+                                ''
+                            }
+                        </td>
+                    `;
+                    
+                    container.appendChild(row);
+                });
+            }
+
+            setupEventListeners() {
+                // Mostrar/ocultar apartamentos
+                document.getElementById('showLavanderiaApartmentsBtn').addEventListener('click', () => {
+                    const grid = document.getElementById('lavanderiaApartmentGrid');
+                    grid.style.display = grid.style.display === 'grid' ? 'none' : 'grid';
+                });
+
+                // Input manual
+                document.getElementById('lavanderiaApartment').addEventListener('input', (e) => {
+                    this.apartment = e.target.value.trim();
+                    if (this.apartment) {
+                        document.getElementById('lavanderiaContent').classList.remove('hidden');
+                    }
+                });
+
+                // Adicionar serviços
+                document.addEventListener('click', (e) => {
+                    if (e.target.closest('.service-btn')) {
+                        const button = e.target.closest('.service-btn');
+                        const service = button.dataset.service;
+                        const type = button.dataset.type;
+                        
+                        this.addService(service, type);
+                    }
+                    
+                    // Controles de quantidade no resumo
+                    if (e.target.closest('.item-controls button')) {
+                        const button = e.target.closest('.item-controls button');
+                        const action = button.dataset.action;
+                        const service = button.dataset.service;
+                        const type = button.dataset.type;
+                        
+                        if (action === 'add') {
+                            this.addService(service, type);
+                        } else if (action === 'remove') {
+                            this.removeService(service, type);
+                        }
+                    }
+                });
+
+                // Enviar por WhatsApp
+                document.getElementById('sendLavanderiaWhatsApp').addEventListener('click', () => {
+                    this.sendWhatsApp();
+                });
+
+                // Imprimir via Bluetooth
+                document.getElementById('printLavanderiaBluetooth').addEventListener('click', () => {
+                    this.printBluetooth();
+                });
+
+                // Desfazer
+                document.getElementById('undoLavanderiaBtn').addEventListener('click', () => {
+                    this.undoLastAction();
+                });
+            }
+
+            addService(serviceName, type) {
+                // Salvar estado atual no histórico
+                this.history.push([...this.items]);
+                
+                const service = this.services.find(s => s.nome === serviceName);
+                if (!service) return;
+                
+                const price = type === 'lavar' ? service.lavar : service.passar;
+                
+                // Verificar se já existe
+                const existingIndex = this.items.findIndex(item => 
+                    item.nome === serviceName && item.tipo === type
+                );
+                
+                if (existingIndex !== -1) {
+                    this.items[existingIndex].quantidade++;
+                } else {
+                    this.items.push({
+                        nome: serviceName,
+                        tipo: type,
+                        quantidade: 1,
+                        preco: price
+                    });
+                }
+                
+                this.updateDisplay();
+            }
+
+            removeService(serviceName, type) {
+                const index = this.items.findIndex(item => 
+                    item.nome === serviceName && item.tipo === type
+                );
+                
+                if (index !== -1) {
+                    this.history.push([...this.items]);
+                    
+                    this.items[index].quantidade--;
+                    
+                    if (this.items[index].quantidade === 0) {
+                        this.items.splice(index, 1);
+                    }
+                    
+                    this.updateDisplay();
+                }
+            }
+
+            undoLastAction() {
+                if (this.history.length > 0) {
+                    this.items = this.history.pop();
+                    this.updateDisplay();
+                }
+            }
+
+            updateDisplay() {
+                this.createServiceTable();
+                this.updateResumo();
+                
+                // Mostrar/ocultar resumo
+                const resumoElement = document.getElementById('lavanderiaResumo');
+                if (this.items.length > 0) {
+                    resumoElement.classList.remove('hidden');
+                } else {
+                    resumoElement.classList.add('hidden');
+                }
+            }
+
+            updateResumo() {
+                const container = document.getElementById('resumoContent');
+                container.innerHTML = '';
+                
+                // Agrupar por tipo
+                const grouped = {};
+                this.items.forEach(item => {
+                    if (!grouped[item.tipo]) grouped[item.tipo] = [];
+                    
+                    const existing = grouped[item.tipo].find(i => i.nome === item.nome);
+                    if (existing) {
+                        existing.quantidade += item.quantidade;
+                    } else {
+                        grouped[item.tipo].push({...item});
+                    }
+                });
+                
+                // Calcular totais
+                let subtotal = 0;
+                this.items.forEach(item => {
+                    subtotal += item.preco * item.quantidade;
+                });
+                
+                const iss = subtotal * 0.05;
+                const total = subtotal + iss;
+                
+                // Renderizar grupos
+                Object.entries(grouped).forEach(([tipo, items]) => {
+                    const groupTitle = document.createElement('h4');
+                    groupTitle.style.color = 'var(--primary)';
+                    groupTitle.style.margin = '15px 0 10px';
+                    groupTitle.innerHTML = `
+                        <i class="fas ${tipo === 'lavar' ? 'fa-soap' : 'fa-iron'}"></i>
+                        ${tipo === 'lavar' ? 'Lavar' : 'Passar'}
+                    `;
+                    container.appendChild(groupTitle);
+                    
+                    items.forEach(item => {
+                        const itemTotal = item.preco * item.quantidade;
+                        const itemElement = document.createElement('div');
+                        itemElement.className = 'item-row';
+                        itemElement.innerHTML = `
+                            <div style="flex: 1;">
+                                <div style="font-weight: 600;">${item.nome}</div>
+                                <div style="color: #666; font-size: 0.9em;">R$ ${item.preco},00 cada</div>
+                            </div>
+                            <div class="item-controls">
+                                <button class="btn-quantity" data-action="remove" data-service="${item.nome}" data-type="${tipo}">-</button>
+                                <span style="width: 30px; text-align: center;">${item.quantidade}</span>
+                                <button class="btn-quantity" data-action="add" data-service="${item.nome}" data-type="${tipo}">+</button>
+                                <div style="min-width: 80px; text-align: right; font-weight: 600; color: var(--success);">
+                                    R$ ${itemTotal.toFixed(2)}
+                                </div>
+                            </div>
+                        `;
+                        container.appendChild(itemElement);
+                    });
+                });
+                
+                // Atualizar totais
+                document.getElementById('lavanderiaSubtotal').textContent = subtotal.toFixed(2);
+                document.getElementById('lavanderiaISS').textContent = iss.toFixed(2);
+                document.getElementById('lavanderiaTotal').textContent = total.toFixed(2);
+            }
+
+            sendWhatsApp() {
+                if (!this.apartment) {
+                    alert('Selecione um apartamento.');
+                    return;
+                }
+                
+                if (this.items.length === 0) {
+                    alert('Adicione serviços à lavanderia antes de enviar.');
+                    return;
+                }
+                
+                let message = `*LAVANDERIA - APARTAMENTO ${this.apartment}*\n\n`;
+                message += `*Data:* ${new Date().toLocaleDateString('pt-BR')}\n`;
+                message += `*Hora:* ${new Date().toLocaleTimeString('pt-BR')}\n\n`;
+                
+                let subtotal = 0;
+                
+                // Agrupar por tipo
+                const grouped = {};
+                this.items.forEach(item => {
+                    if (!grouped[item.tipo]) grouped[item.tipo] = [];
+                    
+                    const existing = grouped[item.tipo].find(i => i.nome === item.nome);
+                    if (existing) {
+                        existing.quantidade += item.quantidade;
+                    } else {
+                        grouped[item.tipo].push({...item});
+                    }
+                });
+                
+                Object.entries(grouped).forEach(([tipo, items]) => {
+                    message += `*${tipo.toUpperCase()}:*\n`;
+                    items.forEach(item => {
+                        const itemTotal = item.preco * item.quantidade;
+                        subtotal += itemTotal;
+                        message += `• ${item.quantidade}x ${item.nome} - R$ ${itemTotal.toFixed(2)}\n`;
+                    });
+                    message += '\n';
+                });
+                
+                const iss = subtotal * 0.05;
+                const total = subtotal + iss;
+                
+                message += `*Subtotal:* R$ ${subtotal.toFixed(2)}\n`;
+                message += `*ISS (5%):* R$ ${iss.toFixed(2)}\n`;
+                message += `*TOTAL:* R$ ${total.toFixed(2)}\n`;
+                message += `\n---\n*Hotel App Completo*`;
+                
+                const encodedMessage = encodeURIComponent(message);
+                window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+                
+                // Imprimir automaticamente se configurado
+                if (window.bluetoothSystem && window.bluetoothSystem.isConnected && window.bluetoothSystem.autoPrint) {
+                    this.printBluetooth();
+                }
+            }
+
+            async printBluetooth() {
+                if (!window.bluetoothSystem || !window.bluetoothSystem.isConnected) {
+                    alert('Conecte uma impressora Bluetooth primeiro.');
+                    return;
+                }
+                
+                if (!this.apartment) {
+                    alert('Selecione um apartamento.');
+                    return;
+                }
+                
+                if (this.items.length === 0) {
+                    alert('Adicione serviços à lavanderia antes de imprimir.');
+                    return;
+                }
+                
+                // Gerar texto para impressão térmica
+                let printData = '\x1B\x40'; // Inicializar
+                printData += '\x1B\x61\x01'; // Centralizar
+                printData += 'LAVANDERIA\n';
+                printData += '\x1B\x61\x00'; // Alinhar à esquerda
+                printData += '====================\n';
+                printData += `Apto: ${this.apartment}\n`;
+                printData += `Data: ${new Date().toLocaleDateString('pt-BR')}\n`;
+                printData += `Hora: ${new Date().toLocaleTimeString('pt-BR')}\n`;
+                printData += '====================\n';
+                
+                // Agrupar por tipo
+                const grouped = {};
+                this.items.forEach(item => {
+                    if (!grouped[item.tipo]) grouped[item.tipo] = [];
+                    
+                    const existing = grouped[item.tipo].find(i => i.nome === item.nome);
+                    if (existing) {
+                        existing.quantidade += item.quantidade;
+                    } else {
+                        grouped[item.tipo].push({...item});
+                    }
+                });
+                
+                let subtotal = 0;
+                
+                Object.entries(grouped).forEach(([tipo, items]) => {
+                    printData += `${tipo.toUpperCase()}:\n`;
+                    items.forEach(item => {
+                        const itemTotal = item.preco * item.quantidade;
+                        subtotal += itemTotal;
+                        printData += ` ${item.quantidade}x ${item.nome.substring(0, 18)}\n`;
+                    });
+                });
+                
+                const iss = subtotal * 0.05;
+                const total = subtotal + iss;
+                
+                printData += '====================\n';
+                printData += `Subtotal: R$ ${subtotal.toFixed(2)}\n`;
+                printData += `ISS (5%): R$ ${iss.toFixed(2)}\n`;
+                printData += `TOTAL: R$ ${total.toFixed(2)}\n`;
+                printData += '====================\n\n\n\n';
+                printData += '\x1B\x69'; // Cortar papel
+                
+                await window.bluetoothSystem.printText(printData);
+            }
+        }
+
+        // ============================================
+        // SISTEMA VALE
+        // ============================================
+        class ValeSystem {
+            constructor() {
+                this.employeeName = '';
+                this.value = 0;
+                this.init();
+            }
+
+            init() {
+                this.checkCurrentDate();
+                this.setupEventListeners();
+            }
+
+            checkCurrentDate() {
+                const now = new Date();
+                const day = now.getDate();
+                const month = now.getMonth() + 1;
+                const year = now.getFullYear();
+                
+                // Formatar data
+                const formattedDate = `${day.toString().padStart(2, '0')}/${month.toString().padStart(2, '0')}/${year}`;
+                document.getElementById('currentDateDisplay').textContent = `Data atual: ${formattedDate}`;
+                
+                // Verificar se é novembro ou dezembro (13º salário)
+                if (month === 11 || month === 12) {
+                    document.getElementById('initialScreen').classList.add('hidden');
+                    document.getElementById('dayStatusDisplay').textContent = '❌ Período de 13º salário - Solicitações suspensas';
+                    document.getElementById('daysLeftDisplay').textContent = 'As solicitações retornarão em janeiro';
+                    return false;
+                }
+                
+                // Verificar período de solicitação (dias 10 a 20)
+                if (day >= 10 && day <= 20) {
+                    const daysLeft = 20 - day;
+                    document.getElementById('dayStatusDisplay').textContent = '✅ Período de solicitação ativo';
+                    document.getElementById('daysLeftDisplay').innerHTML = `<span class="days-left">${daysLeft} dia(s) restante(s)</span>`;
+                    
+                    // Verificar se já solicitou este mês
+                    const lastRequest = localStorage.getItem('lastValeRequest');
+                    if (lastRequest) {
+                        const lastDate = new Date(lastRequest);
+                        if (lastDate.getMonth() === now.getMonth() && lastDate.getFullYear() === now.getFullYear()) {
+                            document.getElementById('dayStatusDisplay').textContent = '✅ Vale já solicitado este mês';
+                            document.getElementById('requestValeBtn').disabled = true;
+                        }
+                    }
+                    
+                    return true;
+                } else {
+                    if (day < 10) {
+                        const daysUntil = 10 - day;
+                        document.getElementById('dayStatusDisplay').textContent = '❌ Período de solicitação ainda não iniciou';
+                        document.getElementById('daysLeftDisplay').textContent = `Inicia em ${daysUntil} dia(s)`;
+                    } else {
+                        document.getElementById('dayStatusDisplay').textContent = '❌ Período de solicitação encerrado';
+                        document.getElementById('daysLeftDisplay').textContent = 'Aguarde o próximo mês';
+                    }
+                    document.getElementById('requestValeBtn').disabled = true;
+                    return false;
+                }
+            }
+
+            showScreen(screenId) {
+                ['initialScreen', 'confirmationScreen', 'nameScreen', 'valueScreen', 'finalScreen', 'refusalScreen'].forEach(id => {
+                    document.getElementById(id).classList.add('hidden');
+                });
+                document.getElementById(screenId).classList.remove('hidden');
+            }
+
+            setupEventListeners() {
+                // Solicitar vale
+                document.getElementById('requestValeBtn').addEventListener('click', () => {
+                    if (this.checkCurrentDate()) {
+                        this.showScreen('confirmationScreen');
+                    }
+                });
+
+                // Confirmar sim
+                document.getElementById('confirmYesBtn').addEventListener('click', () => {
+                    this.showScreen('nameScreen');
+                    document.getElementById('employeeName').focus();
+                });
+
+                // Confirmar não
+                document.getElementById('confirmNoBtn').addEventListener('click', () => {
+                    this.showScreen('refusalScreen');
+                    
+                    const now = new Date();
+                    const deadline = new Date(now);
+                    deadline.setHours(15, 30, 0, 0);
+                    
+                    if (now < deadline) {
+                        document.getElementById('refusalInfo').textContent = 'Você pode mudar de ideia até às 15:30 de hoje.';
+                    } else {
+                        document.getElementById('refusalInfo').textContent = 'O prazo para mudar de ideia era até às 15:30 de hoje.';
+                    }
+                });
+
+                // Confirmar nome
+                document.getElementById('confirmNameBtn').addEventListener('click', () => {
+                    const name = document.getElementById('employeeName').value.trim();
+                    if (name.length < 3) {
+                        alert('Digite um nome válido (mínimo 3 caracteres)');
+                        return;
+                    }
+                    
+                    this.employeeName = name;
+                    this.showScreen('valueScreen');
+                    document.getElementById('valeValue').focus();
+                });
+
+                // Confirmar valor
+                document.getElementById('confirmValueBtn').addEventListener('click', () => {
+                    const value = parseFloat(document.getElementById('valeValue').value);
+                    if (isNaN(value) || value <= 0) {
+                        alert('Digite um valor válido');
+                        return;
+                    }
+                    
+                    this.value = value;
+                    
+                    // Salvar no localStorage
+                    localStorage.setItem('lastValeRequest', new Date().toISOString());
+                    
+                    // Mostrar tela final
+                    this.showScreen('finalScreen');
+                    
+                    // Configurar mensagens
+                    document.getElementById('successMessage').innerHTML = `
+                        <strong><i class="fas fa-check-circle"></i> Vale Solicitado com Sucesso!</strong><br><br>
+                        <strong>Funcionário:</strong> ${this.employeeName}<br>
+                        <strong>Valor:</strong> R$ ${value.toFixed(2).replace('.', ',')}<br>
+                        <strong>Data:</strong> ${new Date().toLocaleDateString('pt-BR')}
+                    `;
+                    
+                    const now = new Date();
+                    const deadline = new Date(now);
+                    deadline.setHours(15, 30, 0, 0);
+                    
+                    if (now < deadline) {
+                        document.getElementById('infoMessage').textContent = 'Você pode mudar de ideia até às 15:30 de hoje.';
+                    } else {
+                        document.getElementById('infoMessage').textContent = 'O prazo para mudar de ideia era até às 15:30 de hoje.';
+                    }
+                });
+
+                // Enviar vale por WhatsApp
+                document.getElementById('sendValeWhatsAppBtn').addEventListener('click', () => {
+                    let message = `*SOLICITAÇÃO DE VALE*\n\n`;
+                    message += `*Funcionário:* ${this.employeeName}\n`;
+                    message += `*Valor:* R$ ${this.value.toFixed(2).replace('.', ',')}\n`;
+                    message += `*Data:* ${new Date().toLocaleDateString('pt-BR')}\n`;
+                    message += `*Hora:* ${new Date().toLocaleTimeString('pt-BR')}\n\n`;
+                    message += `---\n*Hotel App Completo*`;
+                    
+                    const encodedMessage = encodeURIComponent(message);
+                    window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+                });
+
+                // Enviar recusa por WhatsApp
+                document.getElementById('sendRefusalWhatsAppBtn').addEventListener('click', () => {
+                    const message = '*NÃO DESEJO SOLICITAR VALE ESTE MÊS*';
+                    const encodedMessage = encodeURIComponent(message);
+                    window.open(`https://wa.me/?text=${encodedMessage}`, '_blank');
+                });
+
+                // Voltar ao início
+                document.getElementById('backToFrigobarBtn').addEventListener('click', () => {
+                    this.showScreen('initialScreen');
+                    // Voltar para tab do frigobar
+                    document.querySelector('[data-tab="frigobar"]').click();
+                });
+
+                // Voltar da recusa
+                document.getElementById('backFromRefusalBtn').addEventListener('click', () => {
+                    this.showScreen('initialScreen');
+                });
+
+                // Permitir Enter nos campos
+                document.getElementById('employeeName').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        document.getElementById('confirmNameBtn').click();
+                    }
+                });
+                
+                document.getElementById('valeValue').addEventListener('keypress', (e) => {
+                    if (e.key === 'Enter') {
+                        document.getElementById('confirmValueBtn').click();
+                    }
+                });
+            }
+        }
+
+        // ============================================
+        // SISTEMA COTAÇÃO
+        // ============================================
+        class QuotationSystem {
+            constructor() {
+                this.language = 'pt';
+                this.translations = {
+                    pt: {
+                        guestName: 'Nome do Hóspede',
+                        checkIn: 'Check-in',
+                        checkOut: 'Check-out',
+                        rooms: 'Quartos',
+                        mealType: 'Tipo de Refeição',
+                        parking: 'Estacionamento',
+                        calculate: 'Calcular',
+                        print: 'Imprimir'
+                    },
+                    en: {
+                        guestName: 'Guest Name',
+                        checkIn: 'Check-in',
+                        checkOut: 'Check-out',
+                        rooms: 'Rooms',
+                        mealType: 'Meal Type',
+                        parking: 'Parking',
+                        calculate: 'Calculate',
+                        print: 'Print'
+                    },
+                    es: {
+                        guestName: 'Nombre del Huésped',
+                        checkIn: 'Check-in',
+                        checkOut: 'Check-out',
+                        rooms: 'Habitaciones',
+                        mealType: 'Tipo de Comida',
+                        parking: 'Estacionamiento',
+                        calculate: 'Calcular',
+                        print: 'Imprimir'
+                    }
+                };
+                this.init();
+            }
+
+            init() {
+                this.setupEventListeners();
+                this.setDefaultDates();
+                this.updateLanguage();
+            }
+
+            setDefaultDates() {
+                const today = new Date();
+                const tomorrow = new Date(today);
+                tomorrow.setDate(tomorrow.getDate() + 1);
+                const nextDay = new Date(tomorrow);
+                nextDay.setDate(nextDay.getDate() + 1);
+                
+                document.getElementById('quotationCheckIn').value = tomorrow.toISOString().split('T')[0];
+                document.getElementById('quotationCheckOut').value = nextDay.toISOString().split('T')[0];
+                
+                // Set minimum dates
+                document.getElementById('quotationCheckIn').min = today.toISOString().split('T')[0];
+                document.getElementById('quotationCheckOut').min = tomorrow.toISOString().split('T')[0];
+            }
+
+            updateLanguage() {
+                const lang = this.translations[this.language];
+                
+                // Atualizar labels
+                document.querySelector('label[for="quotationGuestName"]').textContent = lang.guestName;
+                document.querySelector('label[for="quotationCheckIn"]').textContent = lang.checkIn;
+                document.querySelector('label[for="quotationCheckOut"]').textContent = lang.checkOut;
+                
+                // Atualizar botões
+                document.getElementById('calculateQuotationBtn').innerHTML = `<i class="fas fa-calculator"></i> ${lang.calculate}`;
+                document.getElementById('printQuotationBluetooth').innerHTML = `<i class="fas fa-bluetooth"></i> ${lang.print}`;
+            }
+
+            setupEventListeners() {
+                // Seletor de idioma
+                document.querySelectorAll('.lang-btn').forEach(btn => {
+                    btn.addEventListener('click', (e) => {
+                        document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
+                        e.currentTarget.classList.add('active');
+                        this.language = e.currentTarget.dataset.lang;
+                        this.updateLanguage();
+                    });
+                });
+
+                // Adicionar quarto
+                document.getElementById('addRoomBtn').addEventListener('click', () => {
+                    this.addRoom();
+                });
+
+                // Calcular cotação
+                document.getElementById('calculateQuotationBtn').addEventListener('click', () => {
+                    this.calculateQuotation();
+                });
+
+                // Imprimir via Bluetooth
+                document.getElementById('printQuotationBluetooth').addEventListener('click', () => {
+                    this.printBluetooth();
+                });
+            }
+
+            addRoom() {
+                const container = document.getElementById('roomsContainer');
+                const roomDiv = document.createElement('div');
+                roomDiv.className = 'room-item';
+                roomDiv.innerHTML = `
+                    <input type="number" class="form-control" placeholder="Qtd" min="1" value="1" required>
+                    <input type="number" class="form-control" placeholder="Hóspedes" min="1" max="4" value="2" required>
+                    <input type="number" class="form-control" placeholder="Diária (R$)" min="0" step="0.01" required>
+                    <button type="button" class="btn btn-danger" onclick="this.closest('.room-item').remove()">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                container.appendChild(roomDiv);
+            }
+
+            calculateQuotation() {
+                const guestName = document.getElementById('quotationGuestName').value.trim();
+                const checkIn = document.getElementById('quotationCheckIn').value;
+                const checkOut = document.getElementById('quotationCheckOut').value;
+                const mealType = document.getElementById('quotationMealType').value;
+                const parking = document.getElementById('quotationParking').value;
+                
+                if (!guestName) {
+                    alert('Digite o nome do hóspede');
+                    return;
+                }
+                
+                if (!checkIn || !checkOut) {
+                    alert('Selecione as datas de check-in e check-out');
+                    return;
+                }
+                
+                const checkInDate = new Date(checkIn);
+                const checkOutDate = new Date(checkOut);
+                
+                if (checkOutDate <= checkInDate) {
+                    alert('A data de check-out deve ser posterior à data de check-in');
+                    return;
+                }
+                
+                // Calcular noites
+                const nights = Math.ceil((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24));
+                
+                if (nights <= 0) {
+                    alert('Período mínimo: 1 noite');
+                    return;
+                }
+                
+                // Coletar dados dos quartos
+                const rooms = [];
+                let totalRooms = 0;
+                let totalGuests = 0;
+                let totalRoomRate = 0;
+                
+                document.querySelectorAll('.room-item').forEach(item => {
+                    const quantity = parseInt(item.children[0].value) || 0;
+                    const guests = parseInt(item.children[1].value) || 0;
+                    const rate = parseFloat(item.children[2].value) || 0;
+                    
+                    if (quantity > 0 && guests > 0 && rate > 0) {
+                        rooms.push({ quantity, guests, rate });
+                        totalRooms += quantity;
+                        totalGuests += quantity * guests;
+                        totalRoomRate += quantity * rate;
+                    }
+                });
+                
+                if (rooms.length === 0) {
+                    alert('Configure pelo menos um quarto');
+                    return;
+                }
+                
+                // Calcular custos
+                const accommodationCost = totalRoomRate * nights;
+                let mealCost = 0;
+                
+                switch (mealType) {
+                    case 'breakfast':
+                        mealCost = 50 * totalGuests * nights;
+                        break;
+                    case 'halfBoard':
+                        mealCost = 120 * totalGuests * nights;
+                        break;
+                    case 'fullBoard':
+                        mealCost = 200 * totalGuests * nights;
+                        break;
+                }
+                
+                const parkingCost = parking === 'yes' ? 45 * totalRooms * nights : 0;
+                const subtotal = accommodationCost + mealCost + parkingCost;
+                const iss = subtotal * 0.02; // ISS 2%
+                const total = subtotal + iss;
+                
+                // Formatar para exibição
+                const formatCurrency = (value) => {
+                    return `R$ ${value.toFixed(2).replace('.', ',')}`;
+                };
+                
+                // Gerar preview
+                const preview = document.getElementById('quotationPreview');
+                preview.innerHTML = `
+                    <div style="margin-bottom: 20px;">
+                        <div><strong>Hóspede Principal:</strong> ${guestName}</div>
+                        <div><strong>Período:</strong> ${checkInDate.toLocaleDateString('pt-BR')} a ${checkOutDate.toLocaleDateString('pt-BR')}</div>
+                        <div><strong>Noites:</strong> ${nights}</div>
+                        <div><strong>Quartos:</strong> ${totalRooms}</div>
+                        <div><strong>Hóspedes:</strong> ${totalGuests}</div>
+                    </div>
+                    
+                    <div style="background: #f8f9fa; padding: 15px; border-radius: 10px; margin-bottom: 20px;">
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Hospedagem (${nights} noites):</span>
+                            <span>${formatCurrency(accommodationCost)}</span>
+                        </div>
+                        ${mealCost > 0 ? `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Refeições:</span>
+                            <span>${formatCurrency(mealCost)}</span>
+                        </div>
+                        ` : ''}
+                        ${parkingCost > 0 ? `
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>Estacionamento:</span>
+                            <span>${formatCurrency(parkingCost)}</span>
+                        </div>
+                        ` : ''}
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px; padding-top: 10px; border-top: 1px solid #dee2e6;">
+                            <span>Subtotal:</span>
+                            <span>${formatCurrency(subtotal)}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; margin-bottom: 10px;">
+                            <span>ISS (2%):</span>
+                            <span>${formatCurrency(iss)}</span>
+                        </div>
+                        <div style="display: flex; justify-content: space-between; font-weight: bold; font-size: 1.2em; color: var(--success);">
+                            <span>TOTAL:</span>
+                            <span>${formatCurrency(total)}</span>
+                        </div>
+                    </div>
+                    
+                    <div style="font-size: 0.9em; color: #666; text-align: center;">
+                        Cotação válida por 24 horas | Sujeita a disponibilidade
+                    </div>
+                `;
+                
+                // Mostrar resultado
+                document.getElementById('quotationResult').classList.remove('hidden');
+                
+                // Salvar dados para impressão
+                this.quotationData = {
+                    guestName,
+                    checkIn: checkInDate.toLocaleDateString('pt-BR'),
+                    checkOut: checkOutDate.toLocaleDateString('pt-BR'),
+                    nights,
+                    totalRooms,
+                    totalGuests,
+                    accommodationCost,
+                    mealCost,
+                    parkingCost,
+                    subtotal,
+                    iss,
+                    total
+                };
+            }
+
+            async printBluetooth() {
+                if (!window.bluetoothSystem || !window.bluetoothSystem.isConnected) {
+                    alert('Conecte uma impressora Bluetooth primeiro.');
+                    return;
+                }
+                
+                if (!this.quotationData) {
+                    alert('Calcule uma cotação primeiro.');
+                    return;
+                }
+                
+                const data = this.quotationData;
+                
+                // Gerar texto para impressão térmica
+                let printData = '\x1B\x40'; // Inicializar
+                printData += '\x1B\x61\x01'; // Centralizar
+                printData += 'COTAÇÃO DE RESERVA\n';
+                printData += '\x1B\x61\x00'; // Alinhar à esquerda
+                printData += '====================\n';
+                printData += `Hóspede: ${data.guestName.substring(0, 20)}\n`;
+                printData += `Período: ${data.checkIn} a ${data.checkOut}\n`;
+                printData += `Noites: ${data.nights}\n`;
+                printData += `Quartos: ${data.totalRooms}\n`;
+                printData += `Hóspedes: ${data.totalGuests}\n`;
+                printData += '====================\n';
+                printData += 'DETALHES:\n';
+                printData += `Hospedagem: R$ ${data.accommodationCost.toFixed(2)}\n`;
+                if (data.mealCost > 0) {
+                    printData += `Refeições: R$ ${data.mealCost.toFixed(2)}\n`;
+                }
+                if (data.parkingCost > 0) {
+                    printData += `Estacionamento: R$ ${data.parkingCost.toFixed(2)}\n`;
+                }
+                printData += `Subtotal: R$ ${data.subtotal.toFixed(2)}\n`;
+                printData += `ISS (2%): R$ ${data.iss.toFixed(2)}\n`;
+                printData += `TOTAL: R$ ${data.total.toFixed(2)}\n`;
+                printData += '====================\n';
+                printData += `Data: ${new Date().toLocaleDateString('pt-BR')}\n`;
+                printData += '====================\n\n\n\n';
+                printData += '\x1B\x69'; // Cortar papel
+                
+                await window.bluetoothSystem.printText(printData);
+            }
+        }
+
+        // ============================================
+        // SISTEMA BLUETOOTH
+        // ============================================
+        class BluetoothSystem {
+            constructor() {
+                this.device = null;
+                this.server = null;
+                this.service = null;
+                this.characteristic = null;
+                this.selectedDevice = null;
+                this.isDemoMode = false;
+                this.isConnected = false;
+                this.autoPrint = true;
+                this.printingEnabled = true;
+                this.init();
+            }
+
+            init() {
+                this.checkSupport();
+                this.loadSettings();
+                this.setupEventListeners();
+                this.updateUI();
+            }
+
+            checkSupport() {
+                this.supported = !!navigator.bluetooth;
+                
+                if (!this.supported) {
+                    this.isDemoMode = true;
+                    this.updateStatus('API Bluetooth não suportada. Modo de demonstração ativado.', 'warning');
+                }
+            }
+
+            loadSettings() {
+                try {
+                    const settings = JSON.parse(localStorage.getItem('bluetoothSettings') || '{}');
+                    this.autoPrint = settings.autoPrint !== false;
+                    this.printingEnabled = settings.printingEnabled !== false;
+                    
+                    document.getElementById('autoPrintCheckbox').checked = this.autoPrint;
+                    document.getElementById('enableBluetoothPrinting').checked = this.printingEnabled;
+                } catch (e) {
+                    console.error('Erro ao carregar configurações:', e);
+                }
+            }
+
+            saveSettings() {
+                const settings = {
+                    autoPrint: this.autoPrint,
+                    printingEnabled: this.printingEnabled
+                };
+                localStorage.setItem('bluetoothSettings', JSON.stringify(settings));
+            }
+
+            setupEventListeners() {
+                // Botão de configuração
+                document.getElementById('bluetoothConfigBtn').addEventListener('click', () => {
+                    this.openModal();
+                });
+
+                // Fechar modal
+                document.getElementById('bluetoothModal').addEventListener('click', (e) => {
+                    if (e.target.id === 'bluetoothModal') {
+                        this.closeModal();
+                    }
+                });
+
+                // Buscar dispositivos
+                document.getElementById('scanBluetoothBtn').addEventListener('click', () => {
+                    this.scanDevices();
+                });
+
+                // Conectar
+                document.getElementById('connectBluetoothBtn').addEventListener('click', () => {
+                    this.connect();
+                });
+
+                // Desconectar
+                document.getElementById('disconnectBluetoothBtn').addEventListener('click', () => {
+                    this.disconnect();
+                });
+
+                // Teste de impressão
+                document.getElementById('testPrintBtn').addEventListener('click', () => {
+                    this.testPrint();
+                });
+
+                // Opções
+                document.getElementById('autoPrintCheckbox').addEventListener('change', (e) => {
+                    this.autoPrint = e.target.checked;
+                    this.saveSettings();
+                });
+
+                document.getElementById('enableBluetoothPrinting').addEventListener('change', (e) => {
+                    this.printingEnabled = e.target.checked;
+                    this.saveSettings();
+                    this.updatePrintButtons();
+                });
+            }
+
+            openModal() {
+                document.getElementById('bluetoothModal').style.display = 'flex';
+                this.updateUI();
+            }
+
+            closeModal() {
+                document.getElementById('bluetoothModal').style.display = 'none';
+            }
+
+            updateStatus(message, type = 'info') {
+                const statusElement = document.getElementById('bluetoothStatus');
+                let icon = 'ℹ️';
+                
+                switch(type) {
+                    case 'error': icon = '❌'; break;
+                    case 'success': icon = '✅'; break;
+                    case 'warning': icon = '⚠️'; break;
+                }
+                
+                statusElement.innerHTML = `
+                    <p style="font-weight: 600; margin-bottom: 5px;">Status do Sistema:</p>
+                    <p>${icon} ${message}</p>
+                `;
+                statusElement.className = `bluetooth-status ${type}`;
+                
+                document.getElementById('bluetoothStatusText').textContent = message;
+            }
+
+            updateUI() {
+                const isConnected = this.isConnected;
+                
+                // Atualizar botões
+                document.getElementById('scanBluetoothBtn').disabled = this.isDemoMode && isConnected;
+                document.getElementById('connectBluetoothBtn').disabled = !this.selectedDevice || isConnected;
+                document.getElementById('disconnectBluetoothBtn').disabled = !isConnected;
+                document.getElementById('testPrintBtn').disabled = !isConnected;
+                
+                // Atualizar indicador
+                const indicator = document.getElementById('bluetoothIndicator');
+                if (isConnected) {
+                    indicator.className = 'bluetooth-indicator connected';
+                    indicator.innerHTML = `
+                        <i class="fas fa-bluetooth"></i>
+                        <span>Bluetooth: Conectado</span>
+                    `;
+                } else if (this.isDemoMode) {
+                    indicator.className = 'bluetooth-indicator warning';
+                    indicator.innerHTML = `
+                        <i class="fas fa-bluetooth"></i>
+                        <span>Bluetooth: Modo Demo</span>
+                    `;
+                } else {
+                    indicator.className = 'bluetooth-indicator disconnected';
+                    indicator.innerHTML = `
+                        <i class="fas fa-bluetooth"></i>
+                        <span>Bluetooth: Desconectado</span>
+                    `;
+                }
+                
+                // Atualizar status
+                if (this.isDemoMode) {
+                    this.updateStatus('Modo de demonstração ativo', 'warning');
+                } else if (isConnected) {
+                    const name = this.device?.name || 'Impressora Bluetooth';
+                    this.updateStatus(`Conectado: ${name}`, 'success');
+                } else {
+                    this.updateStatus('Pronto para conectar', 'info');
+                }
+                
+                // Atualizar botões de impressão
+                this.updatePrintButtons();
+            }
+
+            updatePrintButtons() {
+                const canPrint = this.isConnected && this.printingEnabled;
+                
+                document.querySelectorAll('#printFrigobarBluetooth, #printLavanderiaBluetooth, #printQuotationBluetooth').forEach(btn => {
+                    btn.disabled = !canPrint;
+                });
+            }
+
+            async scanDevices() {
+                if (this.isDemoMode) {
+                    this.simulateDevices();
+                    return;
+                }
+                
+                if (!this.supported) {
+                    this.updateStatus('Bluetooth não suportado neste navegador', 'error');
+                    return;
+                }
+                
+                try {
+                    this.updateStatus('Buscando impressoras...', 'warning');
+                    
+                    // Solicitar dispositivo
+                    const device = await navigator.bluetooth.requestDevice({
+                        filters: [
+                            { services: ['00001101-0000-1000-8000-00805f9b34fb'] } // SPP
+                        ],
+                        optionalServices: ['000018f0-0000-1000-8000-00805f9b34fb'] // Serviço genérico
+                    });
+                    
+                    this.showDevice(device);
+                    this.updateStatus('Impressora encontrada!', 'success');
+                    
+                } catch (error) {
+                    console.error('Erro na busca:', error);
+                    
+                    if (error.name === 'NotFoundError') {
+                        this.updateStatus('Nenhuma impressora encontrada', 'error');
+                        this.simulateDevices();
+                    } else {
+                        this.updateStatus(`Erro: ${error.message}`, 'error');
+                    }
+                }
+            }
+
+            simulateDevices() {
+                this.isDemoMode = true;
+                
+                const devices = [
+                    { id: 'demo-001', name: 'Impressora Térmica Demo' },
+                    { id: 'demo-002', name: 'POS-58 Bluetooth' },
+                    { id: 'demo-003', name: 'Impressora XP-80' }
+                ];
+                
+                this.showDeviceList(devices);
+                this.updateStatus('Modo demo: Dispositivos simulados', 'warning');
+            }
+
+            showDevice(device) {
+                const devices = [device];
+                this.showDeviceList(devices);
+                this.selectDevice(device);
+            }
+
+            showDeviceList(devices) {
+                const container = document.getElementById('bluetoothDeviceList');
+                container.innerHTML = '';
+                
+                if (devices.length === 0) {
+                    container.innerHTML = '<p style="text-align: center; color: #666; padding: 30px;">Nenhum dispositivo encontrado</p>';
+                    return;
+                }
+                
+                devices.forEach(device => {
+                    const div = document.createElement('div');
+                    div.className = 'bluetooth-device-item';
+                    div.dataset.deviceId = device.id;
+                    div.innerHTML = `
+                        <i class="fas fa-print" style="color: var(--secondary);"></i>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600;">${device.name || 'Dispositivo Bluetooth'}</div>
+                            <div style="font-size: 0.9em; color: #666;">
+                                ${this.isDemoMode ? 'Dispositivo simulado' : 'Clique para selecionar'}
+                            </div>
+                        </div>
+                        <i class="fas fa-check" style="color: var(--success); display: none;"></i>
+                    `;
+                    
+                    div.addEventListener('click', () => {
+                        this.selectDevice(device);
+                    });
+                    
+                    container.appendChild(div);
+                });
+            }
+
+            selectDevice(device) {
+                this.selectedDevice = device;
+                
+                // Atualizar seleção visual
+                document.querySelectorAll('.bluetooth-device-item').forEach(item => {
+                    const check = item.querySelector('.fa-check');
+                    item.classList.remove('selected');
+                    if (check) check.style.display = 'none';
+                });
+                
+                const selectedItem = document.querySelector(`[data-device-id="${device.id}"]`);
+                if (selectedItem) {
+                    selectedItem.classList.add('selected');
+                    const check = selectedItem.querySelector('.fa-check');
+                    if (check) check.style.display = 'inline-block';
+                }
+                
+                this.updateUI();
+            }
+
+            async connect() {
+                if (!this.selectedDevice) {
+                    this.updateStatus('Selecione um dispositivo primeiro', 'error');
+                    return;
+                }
+                
+                if (this.isDemoMode) {
+                    // Simular conexão
+                    await new Promise(resolve => setTimeout(resolve, 1500));
+                    this.device = {
+                        ...this.selectedDevice,
+                        gatt: { connected: true }
+                    };
+                    this.isConnected = true;
+                    this.updateStatus('Conectado (Modo Demo)', 'success');
+                    this.updateUI();
+                    return;
+                }
+                
+                try {
+                    this.updateStatus('Conectando...', 'warning');
+                    
+                    this.device = this.selectedDevice;
+                    this.server = await this.device.gatt.connect();
+                    
+                    try {
+                        this.service = await this.server.getPrimaryService('000018f0-0000-1000-8000-00805f9b34fb');
+                        const characteristics = await this.service.getCharacteristics();
+                        
+                        if (characteristics.length > 0) {
+                            this.characteristic = characteristics[0];
+                        }
+                    } catch (e) {
+                        console.warn('Serviço específico não encontrado, usando padrão');
+                    }
+                    
+                    this.isConnected = true;
+                    this.updateStatus('Conectado com sucesso!', 'success');
+                    
+                    this.device.addEventListener('gattserverdisconnected', () => {
+                        this.onDisconnected();
+                    });
+                    
+                } catch (error) {
+                    console.error('Erro na conexão:', error);
+                    this.updateStatus(`Falha na conexão: ${error.message}`, 'error');
+                    this.device = null;
+                    this.server = null;
+                    this.service = null;
+                    this.characteristic = null;
+                    this.isConnected = false;
+                }
+                
+                this.updateUI();
+            }
+
+            disconnect() {
+                if (this.device && this.device.gatt?.connected) {
+                    this.device.gatt.disconnect();
+                }
+                
+                this.device = null;
+                this.server = null;
+                this.service = null;
+                this.characteristic = null;
+                this.selectedDevice = null;
+                this.isConnected = false;
+                
+                this.updateStatus('Desconectado', 'info');
+                this.updateUI();
+            }
+
+            onDisconnected() {
+                this.device = null;
+                this.server = null;
+                this.service = null;
+                this.characteristic = null;
+                this.isConnected = false;
+                
+                this.updateStatus('Impressora desconectada', 'error');
+                this.updateUI();
+            }
+
+            async printText(text) {
+                if (!this.isConnected) {
+                    throw new Error('Impressora não conectada');
+                }
+                
+                if (!this.printingEnabled) {
+                    throw new Error('Impressão Bluetooth desabilitada');
+                }
+                
+                // Mostrar progresso
+                this.showPrintProgress('Enviando para impressora...');
+                
+                try {
+                    if (this.isDemoMode) {
+                        // Simular impressão
+                        await new Promise(resolve => setTimeout(resolve, 2000));
+                        console.log('Simulação de impressão:', text.substring(0, 100) + '...');
+                        this.hidePrintProgress();
+                        alert('✓ Impressão simulada com sucesso!');
+                        return true;
+                    }
+                    
+                    // Converter texto para bytes
+                    const encoder = new TextEncoder();
+                    const data = encoder.encode(text);
+                    
+                    // Enviar para impressora
+                    if (this.characteristic) {
+                        await this.characteristic.writeValue(data);
+                    } else {
+                        throw new Error('Característica de impressão não disponível');
+                    }
+                    
+                    this.hidePrintProgress();
+                    return true;
+                    
+                } catch (error) {
+                    this.hidePrintProgress();
+                    console.error('Erro na impressão:', error);
+                    alert(`Erro na impressão: ${error.message}`);
+                    return false;
+                }
+            }
+
+            async testPrint() {
+                const testText = `
+                    \x1B\x40
+                    \x1B\x61\x01
+                    TESTE DE IMPRESSÃO
+                    \x1B\x61\x00
+                    ====================
+                    
+                    Hotel App Completo
+                    Data: ${new Date().toLocaleDateString('pt-BR')}
+                    Hora: ${new Date().toLocaleTimeString('pt-BR')}
+                    
+                    Este é um teste de impressão
+                    Bluetooth do sistema.
+                    
+                    ====================
+                    \x1B\x69
+                `;
+                
+                await this.printText(testText);
+            }
+
+            showPrintProgress(message) {
+                document.getElementById('printProgressText').textContent = message;
+                document.getElementById('printProgressModal').style.display = 'flex';
+            }
+
+            hidePrintProgress() {
+                document.getElementById('printProgressModal').style.display = 'none';
+            }
+        }
+
+        // ============================================
+        // INICIALIZAÇÃO DO SISTEMA
+        // ============================================
+        document.addEventListener('DOMContentLoaded', () => {
+            // Inicializar navegação
+            window.navigationSystem = new NavigationSystem();
+            
+            // Inicializar Bluetooth
+            window.bluetoothSystem = new BluetoothSystem();
+            
+            console.log('✅ Sistema Hotel App inicializado com sucesso!');
+            
+            // Configurar data mínima para inputs de data
+            const today = new Date().toISOString().split('T')[0];
+            document.getElementById('quotationCheckIn').min = today;
+            
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('quotationCheckOut').min = tomorrow.toISOString().split('T')[0];
+        });
+
+        // ============================================
+        // FUNÇÕES GLOBAIS
+        // ============================================
+        function showModal(modalId) {
+            document.getElementById(modalId).style.display = 'flex';
+        }
+
+        function hideModal(modalId) {
+            document.getElementById(modalId).style.display = 'none';
+        }
+
+        // Fechar modais com ESC
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                hideModal('confirmationModal');
+                hideModal('bluetoothModal');
+                hideModal('printProgressModal');
+            }
+        });
+    </script>
+</body>
+</html>
