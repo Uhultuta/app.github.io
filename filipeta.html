@@ -202,6 +202,17 @@
             box-shadow: 0 6px 12px rgba(231, 76, 60, 0.4);
         }
 
+        .btn-print {
+            background: linear-gradient(135deg, #f39c12, #d35400);
+            color: white;
+        }
+
+        .btn-print:hover {
+            background: linear-gradient(135deg, #d35400, #a35200);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(243, 156, 18, 0.3);
+        }
+
         .summary-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
@@ -232,6 +243,14 @@
 
         .summary-card:nth-child(4) {
             background: linear-gradient(135deg, #e74c3c, #c0392b);
+        }
+
+        .summary-card:nth-child(5) {
+            background: linear-gradient(135deg, #1abc9c, #16a085);
+        }
+
+        .summary-card:nth-child(6) {
+            background: linear-gradient(135deg, #f39c12, #d35400);
         }
 
         .summary-value {
@@ -294,6 +313,16 @@
 
         .status-pendente {
             color: #f39c12;
+            font-weight: bold;
+        }
+
+        .status-recebido {
+            color: #3498db;
+            font-weight: bold;
+        }
+
+        .status-a-receber {
+            color: #9b59b6;
             font-weight: bold;
         }
 
@@ -508,6 +537,240 @@
             color: #2c3e50;
         }
 
+        .ordenacao-indicador {
+            margin-bottom: 10px;
+            padding: 8px;
+            background-color: #e8f4fc;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            border-left: 4px solid #3498db;
+        }
+
+        .filter-group select#filterOrdenar {
+            background-color: #f8f9fa;
+            border: 2px solid #3498db;
+            font-weight: 600;
+        }
+
+        .filter-group select#filterOrdenar option {
+            font-weight: normal;
+        }
+
+        .recebimento-card {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 20px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            border-left: 4px solid #1abc9c;
+        }
+
+        .recebimento-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+
+        .recebimento-header h3 {
+            color: #2c3e50;
+            font-size: 1.3rem;
+        }
+
+        .recebimento-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        .recebimento-stat {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            text-align: center;
+        }
+
+        .recebimento-stat.recebido {
+            border-left: 4px solid #1abc9c;
+        }
+
+        .recebimento-stat.a-receber {
+            border-left: 4px solid #9b59b6;
+        }
+
+        .recebimento-stat.vencido {
+            border-left: 4px solid #e74c3c;
+        }
+
+        .recebimento-stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .recebimento-stat-label {
+            font-size: 0.9rem;
+            color: #7f8c8d;
+            margin-top: 5px;
+        }
+
+        .cartoes-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .cartao-card {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            transition: all 0.3s;
+        }
+
+        .cartao-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .cartao-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .cartao-numero {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 1.1rem;
+        }
+
+        .cartao-status {
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+
+        .cartao-status.recebido {
+            background-color: #d4edda;
+            color: #155724;
+        }
+
+        .cartao-status.a-receber {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .cartao-status.vencido {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+
+        .cartao-detalhes {
+            margin-top: 10px;
+        }
+
+        .cartao-detalhe {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+        }
+
+        .cartao-detalhe-label {
+            color: #7f8c8d;
+        }
+
+        .cartao-detalhe-value {
+            color: #2c3e50;
+            font-weight: 600;
+        }
+
+        /* Estilos específicos para impressão */
+        @media print {
+            body * {
+                visibility: hidden;
+            }
+            
+            .print-recebimentos,
+            .print-recebimentos * {
+                visibility: visible;
+            }
+            
+            .print-recebimentos {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                padding: 20px;
+                background: white;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+            
+            .print-only {
+                display: block !important;
+            }
+            
+            .page-break {
+                page-break-before: always;
+            }
+            
+            .print-header {
+                text-align: center;
+                margin-bottom: 20px;
+                border-bottom: 2px solid #333;
+                padding-bottom: 10px;
+            }
+            
+            .print-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 10px 0;
+            }
+            
+            .print-table th,
+            .print-table td {
+                border: 1px solid #ddd;
+                padding: 8px;
+                text-align: left;
+            }
+            
+            .print-table th {
+                background-color: #f2f2f2;
+                font-weight: bold;
+            }
+            
+            .print-totals {
+                margin: 20px 0;
+                padding: 15px;
+                background-color: #f9f9f9;
+                border: 1px solid #ddd;
+            }
+            
+            .print-card {
+                border: 1px solid #ddd;
+                padding: 10px;
+                margin-bottom: 10px;
+                page-break-inside: avoid;
+            }
+        }
+
+        .print-only {
+            display: none;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 15px;
@@ -530,7 +793,7 @@
             }
             
             .summary-grid {
-                grid-template-columns: 1fr;
+                grid-template-columns: 1fr 1fr;
             }
             
             .report-type-selector {
@@ -539,6 +802,16 @@
             
             .report-type-btn {
                 min-width: 100%;
+            }
+            
+            .cartoes-container {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .summary-grid {
+                grid-template-columns: 1fr;
             }
         }
     </style>
@@ -568,15 +841,16 @@
             
             <div id="dataPreview" class="data-preview">
                 <h3>📋 Pré-visualização dos Dados</h3>
+                <div id="indicadorOrdenacao" class="ordenacao-indicador">Ordem original do arquivo</div>
                 <table id="previewTable">
                     <thead>
                         <tr>
                             <th>Status</th>
                             <th>Data Transacao</th>
+                            <th>Data Recebimento</th>
                             <th>Valor Total</th>
                             <th>Valor Líquido</th>
                             <th>Cartão</th>
-                            <th>Diárias</th>
                         </tr>
                     </thead>
                     <tbody id="previewBody"></tbody>
@@ -632,6 +906,16 @@
                         <option value="AMEX">AMERICAN EXPRESS</option>
                     </select>
                 </div>
+
+                <!-- NOVO: Controle de Ordenação -->
+                <div class="filter-group">
+                    <label for="filterOrdenar">📈 Ordenar por Data</label>
+                    <select id="filterOrdenar">
+                        <option value="padrao">Padrão (como no arquivo)</option>
+                        <option value="antiga_recente">Mais Antiga → Mais Recente</option>
+                        <option value="recente_antiga">Mais Recente → Mais Antiga</option>
+                    </select>
+                </div>
             </div>
 
             <div class="buttons">
@@ -642,11 +926,11 @@
         </section>
 
         <section class="app-section">
-            <h2>📊 3. RESUMO DO RELATÓRIO</h2>
+            <h2>📊 3. RESUMO DO RELATÓRIO (APENAS APROVADAS)</h2>
             <div class="summary-grid" id="resumo">
                 <div class="summary-card">
                     <div class="summary-value" id="totalTransacoes">0</div>
-                    <div class="summary-label">Transações</div>
+                    <div class="summary-label">Transações Aprovadas</div>
                 </div>
                 <div class="summary-card">
                     <div class="summary-value" id="valorTotal">R$ 0,00</div>
@@ -660,24 +944,106 @@
                     <div class="summary-value" id="diariasTotal">0</div>
                     <div class="summary-label">Diárias Totais</div>
                 </div>
+                <!-- NOVOS CARTÕES PARA RECEBIMENTOS -->
+                <div class="summary-card">
+                    <div class="summary-value" id="totalRecebido">R$ 0,00</div>
+                    <div class="summary-label">Já Recebido</div>
+                </div>
+                <div class="summary-card">
+                    <div class="summary-value" id="totalAReceber">R$ 0,00</div>
+                    <div class="summary-label">A Receber</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- NOVA SEÇÃO: ANÁLISE DE RECEBIMENTOS -->
+        <section class="app-section">
+            <h2>💰 4. ANÁLISE DE RECEBIMENTOS (APENAS APROVADAS)</h2>
+            <div id="recebimentosContainer" class="recebimento-card" style="display: none;">
+                <div class="recebimento-header">
+                    <h3>📅 Status dos Recebimentos</h3>
+                    <div style="color: #7f8c8d; font-size: 0.9rem;">
+                        Data de referência: <span id="dataReferencia"></span>
+                    </div>
+                </div>
+                
+                <div class="recebimento-stats">
+                    <div class="recebimento-stat recebido">
+                        <div class="recebimento-stat-value" id="statsRecebido">R$ 0,00</div>
+                        <div class="recebimento-stat-label">Já Recebido</div>
+                    </div>
+                    <div class="recebimento-stat a-receber">
+                        <div class="recebimento-stat-value" id="statsAReceber">R$ 0,00</div>
+                        <div class="recebimento-stat-label">A Receber</div>
+                    </div>
+                    <div class="recebimento-stat vencido">
+                        <div class="recebimento-stat-value" id="statsVencido">R$ 0,00</div>
+                        <div class="recebimento-stat-label">Vencido</div>
+                    </div>
+                </div>
+                
+                <div class="recebimento-header">
+                    <h3>💳 Cartões com Recebimentos</h3>
+                    <div style="color: #7f8c8d; font-size: 0.9rem;">
+                        <span id="totalCartoes">0</span> cartão(s)
+                    </div>
+                </div>
+                
+                <div id="cartoesContainer" class="cartoes-container">
+                    <!-- Cartões serão inseridos aqui dinamicamente -->
+                </div>
+                
+                <div style="margin-top: 20px; padding: 15px; background-color: #f8f9fa; border-radius: 6px;">
+                    <h4>📋 Detalhamento por Cartão</h4>
+                    <div id="detalhamentoCartoes" style="max-height: 300px; overflow-y: auto; margin-top: 10px;">
+                        <table style="width: 100%; border-collapse: collapse; font-size: 0.9rem;">
+                            <thead>
+                                <tr>
+                                    <th style="padding: 8px; background-color: #2c3e50; color: white;">Cartão</th>
+                                    <th style="padding: 8px; background-color: #2c3e50; color: white;">Status Recebimento</th>
+                                    <th style="padding: 8px; background-color: #2c3e50; color: white; text-align: right;">Valor Total</th>
+                                    <th style="padding: 8px; background-color: #2c3e50; color: white;">Data Recebimento</th>
+                                    <th style="padding: 8px; background-color: #2c3e50; color: white;">Dias</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tabelaDetalhamento">
+                                <!-- Linhas serão inseridas aqui dinamicamente -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- NOVO: Botão de impressão -->
+                <div class="buttons" style="margin-top: 25px; border-top: 1px solid #e0e0e0; padding-top: 15px;">
+                    <button class="btn-print" id="btnImprimirRecebimentos">
+                        🖨️ IMPRIMIR RELATÓRIO DE RECEBIMENTOS
+                    </button>
+                </div>
+            </div>
+            
+            <div id="semRecebimentos" style="display: none; padding: 20px; text-align: center; color: #7f8c8d; background-color: #f8f9fa; border-radius: 8px;">
+                <p style="font-size: 1.1rem;">📭 Nenhum dado de recebimento disponível para análise.</p>
+                <p style="font-size: 0.9rem;">Verifique se o arquivo contém a coluna "Data Recebimento".</p>
             </div>
         </section>
 
         <section class="app-section">
-            <h2>📄 4. GERAR RELATÓRIOS</h2>
+            <h2>📄 5. GERAR RELATÓRIOS</h2>
             
             <div class="report-type-selector">
                 <div class="report-type-btn active" id="btnFilipeta">🏷️ FILIPETA POS</div>
                 <div class="report-type-btn" id="btnRelatorioDetalhado">📊 RELATÓRIO DETALHADO</div>
                 <div class="report-type-btn" id="btnResumoAprovadas">✅ RESUMO APROVADAS</div>
                 <div class="report-type-btn" id="btnFilipetaImpressora">🖨️ FILIPETA IMPRESSORA</div>
+                <div class="report-type-btn" id="btnRelatorioRecebimentos">💰 RELATÓRIO RECEBIMENTOS</div>
             </div>
             
             <p style="margin-bottom: 20px; font-size: 1.1rem; color: #2c3e50;">
                 <strong>🎯 Filipeta POS:</strong> Relatório simplificado para conferência diária.<br>
                 <strong>📊 Relatório Detalhado:</strong> Todos os campos em formato paisagem.<br>
                 <strong>✅ Resumo Aprovadas:</strong> Todas transações aprovadas para impressão.<br>
-                <strong>🖨️ Filipeta Impressora:</strong> Formato longo para máquina de filipeta.
+                <strong>🖨️ Filipeta Impressora:</strong> Formato longo para máquina de filipeta.<br>
+                <strong>💰 Relatório Recebimentos:</strong> Análise detalhada de recebimentos por cartão.
             </p>
             
             <div class="buttons">
@@ -792,6 +1158,7 @@
         let dadosOriginais = [];
         let dadosFiltrados = [];
         let tipoRelatorioAtual = 'filipeta';
+        let ordenarPor = 'padrao'; // NOVO: Variável para controle de ordenação
         
         // Elementos DOM
         const fileInput = document.getElementById('fileInput');
@@ -812,6 +1179,7 @@
         const filterValorMin = document.getElementById('filterValorMin');
         const filterValorMax = document.getElementById('filterValorMax');
         const filterBandeira = document.getElementById('filterBandeira');
+        const filterOrdenar = document.getElementById('filterOrdenar'); // NOVO: Elemento de ordenação
         
         // Botões
         const btnFiltrar = document.getElementById('btnFiltrar');
@@ -823,6 +1191,7 @@
         const btnGerarPDFConfirmar = document.getElementById('btnGerarPDFConfirmar');
         const btnCancelarPDF = document.getElementById('btnCancelarPDF');
         const closeModal = document.getElementById('closeModal');
+        const btnImprimirRecebimentos = document.getElementById('btnImprimirRecebimentos'); // NOVO: Botão de impressão
         
         // Configurações PDF
         const pdfTitle = document.getElementById('pdfTitle');
@@ -837,12 +1206,27 @@
         const valorTotal = document.getElementById('valorTotal');
         const valorLiquido = document.getElementById('valorLiquido');
         const diariasTotal = document.getElementById('diariasTotal');
+        const totalRecebido = document.getElementById('totalRecebido');
+        const totalAReceber = document.getElementById('totalAReceber');
         
         // Botões de tipo de relatório
         const btnFilipeta = document.getElementById('btnFilipeta');
         const btnRelatorioDetalhado = document.getElementById('btnRelatorioDetalhado');
         const btnResumoAprovadas = document.getElementById('btnResumoAprovadas');
         const btnFilipetaImpressora = document.getElementById('btnFilipetaImpressora');
+        const btnRelatorioRecebimentos = document.getElementById('btnRelatorioRecebimentos'); // NOVO: Botão para relatório de recebimentos
+        
+        // Elementos para análise de recebimentos (NOVO)
+        const recebimentosContainer = document.getElementById('recebimentosContainer');
+        const semRecebimentos = document.getElementById('semRecebimentos');
+        const statsRecebido = document.getElementById('statsRecebido');
+        const statsAReceber = document.getElementById('statsAReceber');
+        const statsVencido = document.getElementById('statsVencido');
+        const dataReferencia = document.getElementById('dataReferencia');
+        const totalCartoes = document.getElementById('totalCartoes');
+        const cartoesContainer = document.getElementById('cartoesContainer');
+        const tabelaDetalhamento = document.getElementById('tabelaDetalhamento');
+        const detalhamentoCartoes = document.getElementById('detalhamentoCartoes');
         
         // Event Listeners
         document.addEventListener('DOMContentLoaded', inicializarApp);
@@ -861,6 +1245,13 @@
         btnRelatorioDetalhado.addEventListener('click', () => selecionarTipoRelatorio('detalhado'));
         btnResumoAprovadas.addEventListener('click', () => selecionarTipoRelatorio('aprovadas'));
         btnFilipetaImpressora.addEventListener('click', () => selecionarTipoRelatorio('filipetaImpressora'));
+        btnRelatorioRecebimentos.addEventListener('click', () => selecionarTipoRelatorio('recebimentos')); // NOVO: Listener para relatório de recebimentos
+        
+        // NOVO: Event listener para botão de impressão de recebimentos
+        btnImprimirRecebimentos.addEventListener('click', imprimirRelatorioRecebimentos);
+        
+        // NOVO: Event listener para ordenação
+        filterOrdenar.addEventListener('change', aplicarOrdenacao);
         
         window.addEventListener('click', (e) => { if (e.target === pdfModal) fecharModalPDF(); });
         
@@ -899,6 +1290,9 @@
             // Configurar data do relatório como data atual
             const hoje = new Date().toISOString().split('T')[0];
             pdfDataRelatorio.value = hoje;
+            
+            // Atualizar data de referência
+            dataReferencia.textContent = formatarDataParaExibicao(new Date());
             
             console.log('✅ Sistema B2B PDF inicializado!');
         }
@@ -984,7 +1378,7 @@
                             
                             // Converter datas
                             if (valor instanceof Date) {
-                                valor = dayjs(valor).format('DD/MM/YYYY HH:mm:ss');
+                                valor = dayjs(valor).format('DD/MM/YYYY');
                             } else if (valor !== null && valor !== undefined) {
                                 valor = String(valor).trim();
                             }
@@ -1013,6 +1407,7 @@
                 atualizarResumo();
                 atualizarFiltrosBandeira();
                 calcularTotaisIndividuais();
+                analisarRecebimentos(); // NOVO: Analisar recebimentos
                 
                 mostrarNotificacao(`${dadosOriginais.length} registros carregados com sucesso!`, 'success');
                 
@@ -1167,6 +1562,7 @@
                 atualizarResumo();
                 atualizarFiltrosBandeira();
                 calcularTotaisIndividuais();
+                analisarRecebimentos(); // NOVO: Analisar recebimentos
                 
                 mostrarNotificacao(`${dadosOriginais.length} registros carregados com sucesso!`, 'success');
                 
@@ -1200,7 +1596,7 @@
         
         // Mostrar prévia dos dados
         function mostrarPreviaDados() {
-            if (dadosOriginais.length === 0) {
+            if (dadosFiltrados.length === 0) {
                 dataPreview.style.display = 'none';
                 return;
             }
@@ -1208,10 +1604,29 @@
             dataPreview.style.display = 'block';
             previewBody.innerHTML = '';
             
-            const limite = Math.min(10, dadosOriginais.length);
+            // Atualizar indicador de ordenação
+            const indicadorOrdenacao = document.getElementById('indicadorOrdenacao');
+            let textoOrdenacao = '';
+            
+            switch(ordenarPor) {
+                case 'antiga_recente': 
+                    textoOrdenacao = '✓ Ordenado: Mais Antiga → Mais Recente'; 
+                    break;
+                case 'recente_antiga': 
+                    textoOrdenacao = '✓ Ordenado: Mais Recente → Mais Antiga'; 
+                    break;
+                default: 
+                    textoOrdenacao = 'Ordem original do arquivo';
+            }
+            
+            if (indicadorOrdenacao) {
+                indicadorOrdenacao.textContent = textoOrdenacao;
+            }
+            
+            const limite = Math.min(10, dadosFiltrados.length);
             
             for (let i = 0; i < limite; i++) {
-                const registro = dadosOriginais[i];
+                const registro = dadosFiltrados[i];
                 const tr = document.createElement('tr');
                 
                 let statusClass = '';
@@ -1222,10 +1637,10 @@
                 tr.innerHTML = `
                     <td class="${statusClass}">${registro.Status || 'N/A'}</td>
                     <td>${registro['Data Transacao'] || 'N/A'}</td>
+                    <td>${registro['Data Recebimento'] || 'N/A'}</td>
                     <td class="currency">R$ ${formatarMoeda(registro['Valor total da transacao_NUM'] || 0)}</td>
                     <td class="currency">R$ ${formatarMoeda(registro['Valor Liquido_NUM'] || 0)}</td>
                     <td>${registro['Número do Cartao'] || 'N/A'}</td>
-                    <td>${formatarNumero(registro['Total Diarias_NUM'] || 0)}</td>
                 `;
                 
                 previewBody.appendChild(tr);
@@ -1234,7 +1649,7 @@
             atualizarEstatisticasPrevia();
         }
         
-        // Calcular totais individuais para CADA CAMPO
+        // Calcular totais individuais para CADA CAMPO - APENAS APROVADAS
         function calcularTotaisIndividuais() {
             if (dadosFiltrados.length === 0) {
                 totaisPreview.style.display = 'none';
@@ -1243,10 +1658,22 @@
             
             totaisPreview.style.display = 'block';
             
-            // Calcular totais para cada campo numérico
+            // Filtrar apenas transações aprovadas
+            const transacoesAprovadas = dadosFiltrados.filter(registro => registro.Status === 'Aprovada');
+            
+            if (transacoesAprovadas.length === 0) {
+                totaisGrid.innerHTML = `
+                    <div style="grid-column: 1 / -1; text-align: center; padding: 20px; color: #7f8c8d;">
+                        📭 Nenhuma transação aprovada encontrada
+                    </div>
+                `;
+                return;
+            }
+            
+            // Calcular totais para cada campo numérico (APENAS APROVADAS)
             const totais = {};
             CAMPOS_NUMERICOS.forEach(campo => {
-                const total = dadosFiltrados.reduce((soma, registro) => {
+                const total = transacoesAprovadas.reduce((soma, registro) => {
                     return soma + (registro[`${campo}_NUM`] || 0);
                 }, 0);
                 totais[campo] = total;
@@ -1289,10 +1716,10 @@
         
         // Atualizar estatísticas da prévia
         function atualizarEstatisticasPrevia() {
-            const total = dadosOriginais.length;
-            const aprovadas = dadosOriginais.filter(r => r.Status === 'Aprovada').length;
-            const canceladas = dadosOriginais.filter(r => r.Status === 'Cancelada').length;
-            const valorTotalSum = dadosOriginais.reduce((sum, r) => sum + (r['Valor total da transacao_NUM'] || 0), 0);
+            const total = dadosFiltrados.length;
+            const aprovadas = dadosFiltrados.filter(r => r.Status === 'Aprovada').length;
+            const canceladas = dadosFiltrados.filter(r => r.Status === 'Cancelada').length;
+            const valorTotalSum = dadosFiltrados.reduce((sum, r) => sum + (r['Valor total da transacao_NUM'] || 0), 0);
             const valorMedio = total > 0 ? valorTotalSum / total : 0;
             
             dataStats.innerHTML = `
@@ -1324,6 +1751,10 @@
             return valor.toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
         }
         
+        function formatarDataParaExibicao(data) {
+            return dayjs(data).format('DD/MM/YYYY');
+        }
+        
         // Atualizar filtros de bandeira
         function atualizarFiltrosBandeira() {
             const bandeiras = new Set();
@@ -1345,9 +1776,339 @@
         function limparDados() {
             dadosOriginais = [];
             dadosFiltrados = [];
+            ordenarPor = 'padrao';
             dataPreview.style.display = 'none';
             totaisPreview.style.display = 'none';
+            recebimentosContainer.style.display = 'none';
+            semRecebimentos.style.display = 'block';
+            filterOrdenar.value = 'padrao';
             atualizarResumo();
+        }
+        
+        // Parsear data melhorada para ordenação
+        function parsearData(dataString) {
+            if (!dataString) return null;
+            try {
+                // Se já for um objeto Date
+                if (dataString instanceof Date) return dataString;
+                
+                // Se for string, tentar formatos
+                if (dataString.includes('/')) {
+                    const [datePart, timePart] = dataString.split(' ');
+                    const [day, month, year] = datePart.split('/');
+                    let fullYear = year;
+                    if (year.length === 2) fullYear = `20${year}`;
+                    
+                    if (timePart) {
+                        const [hours, minutes, seconds] = timePart.split(':');
+                        return new Date(fullYear, month - 1, day, hours || 0, minutes || 0, seconds || 0);
+                    }
+                    return new Date(fullYear, month - 1, day);
+                } else if (dataString.includes('-')) {
+                    // Formato YYYY-MM-DD ou YYYY-MM-DD HH:mm:ss
+                    return new Date(dataString);
+                } else {
+                    // Tentar converter diretamente
+                    return new Date(dataString);
+                }
+            } catch (error) {
+                console.warn('Erro ao parsear data:', dataString, error);
+                return null;
+            }
+        }
+        
+        // NOVA FUNÇÃO: Analisar recebimentos - APENAS APROVADAS
+        function analisarRecebimentos() {
+            if (dadosFiltrados.length === 0) {
+                recebimentosContainer.style.display = 'none';
+                semRecebimentos.style.display = 'block';
+                return;
+            }
+            
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+            
+            let totalRecebidoValor = 0;
+            let totalAReceberValor = 0;
+            let totalVencidoValor = 0;
+            
+            // Agrupar por cartão - APENAS APROVADAS
+            const cartoesMap = new Map();
+            
+            dadosFiltrados.forEach(registro => {
+                // FILTRAR APENAS TRANSAÇÕES APROVADAS
+                if (registro.Status !== 'Aprovada') return;
+                
+                const numeroCartao = registro['Número do Cartao'] || 'Sem Cartão';
+                const valorTotal = registro['Valor total da transacao_NUM'] || 0;
+                const dataRecebimentoStr = registro['Data Recebimento'];
+                const dataRecebimento = parsearData(dataRecebimentoStr);
+                
+                // Inicializar dados do cartão se não existir
+                if (!cartoesMap.has(numeroCartao)) {
+                    cartoesMap.set(numeroCartao, {
+                        numero: numeroCartao,
+                        bandeira: registro['Bandeira do Cartao'] || 'N/A',
+                        valorTotal: 0,
+                        valorRecebido: 0,
+                        valorAReceber: 0,
+                        valorVencido: 0,
+                        transacoes: []
+                    });
+                }
+                
+                const cartao = cartoesMap.get(numeroCartao);
+                cartao.valorTotal += valorTotal;
+                cartao.transacoes.push({
+                    dataTransacao: registro['Data Transacao'],
+                    dataRecebimento: dataRecebimentoStr,
+                    valorTotal: valorTotal,
+                    valorLiquido: registro['Valor Liquido_NUM'] || 0,
+                    status: registro.Status || 'N/A',
+                    statusRecebimento: 'a_receber' // Default
+                });
+                
+                // Verificar status do recebimento
+                if (dataRecebimento) {
+                    // Normalizar para comparar apenas datas (sem horas)
+                    const dataReceb = new Date(dataRecebimento);
+                    dataReceb.setHours(0, 0, 0, 0);
+                    
+                    if (dataReceb <= hoje) {
+                        // Já recebido
+                        totalRecebidoValor += valorTotal;
+                        cartao.valorRecebido += valorTotal;
+                        cartao.transacoes[cartao.transacoes.length - 1].statusRecebimento = 'recebido';
+                    } else {
+                        // A receber
+                        totalAReceberValor += valorTotal;
+                        cartao.valorAReceber += valorTotal;
+                        cartao.transacoes[cartao.transacoes.length - 1].statusRecebimento = 'a_receber';
+                        
+                        // Verificar se está vencido (mais de 30 dias da data de transação)
+                        const dataTransacao = parsearData(registro['Data Transacao']);
+                        if (dataTransacao) {
+                            const diferencaDias = Math.floor((hoje - dataTransacao) / (1000 * 60 * 60 * 24));
+                            if (diferencaDias > 30) {
+                                totalVencidoValor += valorTotal;
+                                cartao.valorVencido += valorTotal;
+                                cartao.transacoes[cartao.transacoes.length - 1].statusRecebimento = 'vencido';
+                            }
+                        }
+                    }
+                } else {
+                    // Sem data de recebimento - considerar como a receber
+                    totalAReceberValor += valorTotal;
+                    cartao.valorAReceber += valorTotal;
+                }
+            });
+            
+            // Atualizar totais no resumo - APENAS APROVADAS
+            const transacoesAprovadas = dadosFiltrados.filter(r => r.Status === 'Aprovada');
+            const valorTotalAprovadas = transacoesAprovadas.reduce((sum, r) => sum + (r['Valor total da transacao_NUM'] || 0), 0);
+            const valorLiquidoAprovadas = transacoesAprovadas.reduce((sum, r) => sum + (r['Valor Liquido_NUM'] || 0), 0);
+            const diariasAprovadas = transacoesAprovadas.reduce((sum, r) => sum + (r['Total Diarias_NUM'] || 0), 0);
+            
+            totalTransacoes.textContent = transacoesAprovadas.length.toLocaleString('pt-BR');
+            valorTotal.textContent = `R$ ${formatarMoeda(valorTotalAprovadas)}`;
+            valorLiquido.textContent = `R$ ${formatarMoeda(valorLiquidoAprovadas)}`;
+            diariasTotal.textContent = formatarNumero(diariasAprovadas);
+            
+            // Atualizar totais de recebimento
+            totalRecebido.textContent = `R$ ${formatarMoeda(totalRecebidoValor)}`;
+            totalAReceber.textContent = `R$ ${formatarMoeda(totalAReceberValor)}`;
+            
+            // Atualizar estatísticas detalhadas
+            statsRecebido.textContent = `R$ ${formatarMoeda(totalRecebidoValor)}`;
+            statsAReceber.textContent = `R$ ${formatarMoeda(totalAReceberValor)}`;
+            statsVencido.textContent = `R$ ${formatarMoeda(totalVencidoValor)}`;
+            
+            // Atualizar total de cartões
+            totalCartoes.textContent = cartoesMap.size;
+            
+            // Limpar container de cartões
+            cartoesContainer.innerHTML = '';
+            
+            // Limpar tabela de detalhamento
+            tabelaDetalhamento.innerHTML = '';
+            
+            // Ordenar cartões por valor total (decrescente)
+            const cartoesArray = Array.from(cartoesMap.values());
+            cartoesArray.sort((a, b) => b.valorTotal - a.valorTotal);
+            
+            // Adicionar cartões à interface
+            cartoesArray.forEach(cartao => {
+                // Determinar status principal do cartão
+                let statusPrincipal = 'a_receber';
+                if (cartao.valorRecebido > 0 && cartao.valorAReceber === 0) {
+                    statusPrincipal = 'recebido';
+                } else if (cartao.valorVencido > 0) {
+                    statusPrincipal = 'vencido';
+                }
+                
+                // Criar card do cartão
+                const cartaoCard = document.createElement('div');
+                cartaoCard.className = 'cartao-card';
+                
+                cartaoCard.innerHTML = `
+                    <div class="cartao-header">
+                        <div class="cartao-numero">${formatarNumeroCartao(cartao.numero)}</div>
+                        <div class="cartao-status ${statusPrincipal}">
+                            ${statusPrincipal === 'recebido' ? '✅ Recebido' : 
+                              statusPrincipal === 'vencido' ? '⚠️ Vencido' : '⏳ A Receber'}
+                        </div>
+                    </div>
+                    <div class="cartao-detalhes">
+                        <div class="cartao-detalhe">
+                            <span class="cartao-detalhe-label">Bandeira:</span>
+                            <span class="cartao-detalhe-value">${cartao.bandeira}</span>
+                        </div>
+                        <div class="cartao-detalhe">
+                            <span class="cartao-detalhe-label">Valor Total:</span>
+                            <span class="cartao-detalhe-value">R$ ${formatarMoeda(cartao.valorTotal)}</span>
+                        </div>
+                        <div class="cartao-detalhe">
+                            <span class="cartao-detalhe-label">Já Recebido:</span>
+                            <span class="cartao-detalhe-value" style="color: #27ae60;">R$ ${formatarMoeda(cartao.valorRecebido)}</span>
+                        </div>
+                        <div class="cartao-detalhe">
+                            <span class="cartao-detalhe-label">A Receber:</span>
+                            <span class="cartao-detalhe-value" style="color: #9b59b6;">R$ ${formatarMoeda(cartao.valorAReceber)}</span>
+                        </div>
+                        <div class="cartao-detalhe">
+                            <span class="cartao-detalhe-label">Vencido:</span>
+                            <span class="cartao-detalhe-value" style="color: #e74c3c;">R$ ${formatarMoeda(cartao.valorVencido)}</span>
+                        </div>
+                        <div class="cartao-detalhe">
+                            <span class="cartao-detalhe-label">Transações:</span>
+                            <span class="cartao-detalhe-value">${cartao.transacoes.length}</span>
+                        </div>
+                    </div>
+                `;
+                
+                cartoesContainer.appendChild(cartaoCard);
+                
+                // Adicionar à tabela de detalhamento
+                cartao.transacoes.forEach(transacao => {
+                    const tr = document.createElement('tr');
+                    
+                    let statusClass = '';
+                    let statusText = '';
+                    if (transacao.statusRecebimento === 'recebido') {
+                        statusClass = 'status-recebido';
+                        statusText = '✅ Recebido';
+                    } else if (transacao.statusRecebimento === 'vencido') {
+                        statusClass = 'status-cancelada';
+                        statusText = '⚠️ Vencido';
+                    } else {
+                        statusClass = 'status-a-receber';
+                        statusText = '⏳ A Receber';
+                    }
+                    
+                    // Calcular dias desde a transação
+                    const dataTransacao = parsearData(transacao.dataTransacao);
+                    let diasTexto = 'N/A';
+                    if (dataTransacao) {
+                        const hoje = new Date();
+                        const diferencaDias = Math.floor((hoje - dataTransacao) / (1000 * 60 * 60 * 24));
+                        diasTexto = `${diferencaDias} dias`;
+                    }
+                    
+                    tr.innerHTML = `
+                        <td style="padding: 8px; border-bottom: 1px solid #eee;">${formatarNumeroCartao(cartao.numero)}</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #eee;" class="${statusClass}">${statusText}</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #eee; text-align: right;">R$ ${formatarMoeda(transacao.valorTotal)}</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #eee;">${transacao.dataRecebimento || 'N/A'}</td>
+                        <td style="padding: 8px; border-bottom: 1px solid #eee;">${diasTexto}</td>
+                    `;
+                    
+                    tabelaDetalhamento.appendChild(tr);
+                });
+            });
+            
+            // Mostrar container de recebimentos se houver transações aprovadas
+            if (cartoesArray.length > 0) {
+                recebimentosContainer.style.display = 'block';
+                semRecebimentos.style.display = 'none';
+            } else {
+                recebimentosContainer.style.display = 'none';
+                semRecebimentos.style.display = 'block';
+                semRecebimentos.innerHTML = `
+                    <p style="font-size: 1.1rem;">📭 Nenhuma transação aprovada com dados de recebimento disponível.</p>
+                    <p style="font-size: 0.9rem;">Verifique se o arquivo contém transações com status "Aprovada" e coluna "Data Recebimento".</p>
+                `;
+            }
+        }
+        
+        // Função para formatar número do cartão
+        function formatarNumeroCartao(numero) {
+            if (!numero || numero === 'Sem Cartão') return 'Sem Cartão';
+            
+            // Limpar caracteres não numéricos
+            const apenasNumeros = numero.replace(/\D/g, '');
+            
+            if (apenasNumeros.length <= 4) {
+                return `**** **** **** ${apenasNumeros}`;
+            } else if (apenasNumeros.length <= 8) {
+                return `**** **** ${apenasNumeros.slice(-4)}`;
+            } else if (apenasNumeros.length <= 12) {
+                return `**** ${apenasNumeros.slice(-8, -4)} ${apenasNumeros.slice(-4)}`;
+            } else {
+                return `${apenasNumeros.slice(0, 4)} **** **** ${apenasNumeros.slice(-4)}`;
+            }
+        }
+        
+        // NOVA FUNÇÃO: Aplicar ordenação
+        function aplicarOrdenacao() {
+            if (dadosFiltrados.length === 0) return;
+            
+            ordenarPor = filterOrdenar.value;
+            
+            // Fazer uma cópia para ordenar
+            let dadosParaOrdenar = [...dadosFiltrados];
+            
+            switch(ordenarPor) {
+                case 'antiga_recente':
+                    dadosParaOrdenar.sort((a, b) => {
+                        const dataA = parsearData(a['Data Transacao']);
+                        const dataB = parsearData(b['Data Transacao']);
+                        return (dataA || 0) - (dataB || 0);
+                    });
+                    break;
+                    
+                case 'recente_antiga':
+                    dadosParaOrdenar.sort((a, b) => {
+                        const dataA = parsearData(a['Data Transacao']);
+                        const dataB = parsearData(b['Data Transacao']);
+                        return (dataB || 0) - (dataA || 0);
+                    });
+                    break;
+                    
+                case 'padrao':
+                default:
+                    // Para restaurar a ordem original, precisamos reaplicar os filtros
+                    // mas mantendo a ordem do arquivo original
+                    dadosParaOrdenar = dadosOriginais.filter(registro => 
+                        dadosFiltrados.some(filtrado => 
+                            JSON.stringify(filtrado) === JSON.stringify(registro)
+                        )
+                    );
+                    break;
+            }
+            
+            dadosFiltrados = dadosParaOrdenar;
+            mostrarPreviaDados();
+            atualizarResumo();
+            calcularTotaisIndividuais();
+            analisarRecebimentos(); // NOVO: Reanalisar recebimentos após ordenação
+            
+            // Mostrar notificação apenas se não for a opção padrão
+            if (ordenarPor !== 'padrao') {
+                const mensagem = ordenarPor === 'antiga_recente' 
+                    ? 'Dados ordenados da mais antiga para a mais recente'
+                    : 'Dados ordenados da mais recente para a mais antiga';
+                mostrarNotificacao(mensagem, 'success');
+            }
         }
         
         // Aplicar filtros
@@ -1357,6 +2118,7 @@
                 return;
             }
             
+            // Aplicar filtros primeiro
             dadosFiltrados = dadosOriginais.filter(registro => {
                 if (filterStatus.value && registro.Status !== filterStatus.value) return false;
                 
@@ -1381,31 +2143,10 @@
                 return true;
             });
             
-            atualizarResumo();
-            calcularTotaisIndividuais();
+            // Aplicar ordenação após filtrar
+            aplicarOrdenacao();
+            
             mostrarNotificacao(`${dadosFiltrados.length} transações encontradas`, 'success');
-        }
-        
-        // Parsear data
-        function parsearData(dataString) {
-            if (!dataString) return null;
-            try {
-                if (dataString.includes('/')) {
-                    const [datePart, timePart] = dataString.split(' ');
-                    const [day, month, year] = datePart.split('/');
-                    if (timePart) {
-                        const [hours, minutes, seconds] = timePart.split(':');
-                        return new Date(year, month - 1, day, hours || 0, minutes || 0, seconds || 0);
-                    }
-                    return new Date(year, month - 1, day);
-                } else if (dataString.includes('-')) {
-                    return new Date(dataString);
-                }
-                return null;
-            } catch (error) {
-                console.error('Erro ao parsear data:', error);
-                return null;
-            }
         }
         
         // Limpar filtros
@@ -1416,16 +2157,33 @@
             filterValorMin.value = '';
             filterValorMax.value = '';
             filterBandeira.value = '';
+            filterOrdenar.value = 'padrao';
             
             dadosFiltrados = [...dadosOriginais];
+            ordenarPor = 'padrao';
             atualizarResumo();
             calcularTotaisIndividuais();
-            mostrarNotificacao('Filtros limpos', 'success');
+            analisarRecebimentos(); // NOVO: Reanalisar recebimentos
+            mostrarPreviaDados();
+            mostrarNotificacao('Filtros e ordenação limpos', 'success');
         }
         
-        // Atualizar resumo
+        // Atualizar resumo - APENAS APROVADAS
         function atualizarResumo() {
             if (dadosFiltrados.length === 0) {
+                totalTransacoes.textContent = '0';
+                valorTotal.textContent = 'R$ 0,00';
+                valorLiquido.textContent = 'R$ 0,00';
+                diariasTotal.textContent = '0';
+                totalRecebido.textContent = 'R$ 0,00';
+                totalAReceber.textContent = 'R$ 0,00';
+                return;
+            }
+            
+            // Filtrar apenas transações aprovadas
+            const transacoesAprovadas = dadosFiltrados.filter(r => r.Status === 'Aprovada');
+            
+            if (transacoesAprovadas.length === 0) {
                 totalTransacoes.textContent = '0';
                 valorTotal.textContent = 'R$ 0,00';
                 valorLiquido.textContent = 'R$ 0,00';
@@ -1433,10 +2191,10 @@
                 return;
             }
             
-            const total = dadosFiltrados.length;
-            const valorTotalSum = dadosFiltrados.reduce((sum, r) => sum + (r['Valor total da transacao_NUM'] || 0), 0);
-            const valorLiquidoSum = dadosFiltrados.reduce((sum, r) => sum + (r['Valor Liquido_NUM'] || 0), 0);
-            const diariasSum = dadosFiltrados.reduce((sum, r) => sum + (r['Total Diarias_NUM'] || 0), 0);
+            const total = transacoesAprovadas.length;
+            const valorTotalSum = transacoesAprovadas.reduce((sum, r) => sum + (r['Valor total da transacao_NUM'] || 0), 0);
+            const valorLiquidoSum = transacoesAprovadas.reduce((sum, r) => sum + (r['Valor Liquido_NUM'] || 0), 0);
+            const diariasSum = transacoesAprovadas.reduce((sum, r) => sum + (r['Total Diarias_NUM'] || 0), 0);
             
             totalTransacoes.textContent = total.toLocaleString('pt-BR');
             valorTotal.textContent = `R$ ${formatarMoeda(valorTotalSum)}`;
@@ -1450,6 +2208,9 @@
                 mostrarNotificacao('Não há dados para exportar', 'error');
                 return;
             }
+            
+            // Aplicar ordenação atual antes de exportar
+            aplicarOrdenacao();
             
             const colunasExport = CAMPOS_ESPERADOS;
             const cabecalhos = colunasExport.join(';');
@@ -1481,7 +2242,7 @@
         function selecionarTipoRelatorio(tipo) {
             tipoRelatorioAtual = tipo;
             
-            [btnFilipeta, btnRelatorioDetalhado, btnResumoAprovadas, btnFilipetaImpressora].forEach(btn => {
+            [btnFilipeta, btnRelatorioDetalhado, btnResumoAprovadas, btnFilipetaImpressora, btnRelatorioRecebimentos].forEach(btn => {
                 btn.classList.remove('active');
             });
             
@@ -1489,12 +2250,14 @@
             if (tipo === 'detalhado') btnRelatorioDetalhado.classList.add('active');
             if (tipo === 'aprovadas') btnResumoAprovadas.classList.add('active');
             if (tipo === 'filipetaImpressora') btnFilipetaImpressora.classList.add('active');
+            if (tipo === 'recebimentos') btnRelatorioRecebimentos.classList.add('active'); // NOVO: Ativar botão de recebimentos
             
             const btnTexto = {
                 'filipeta': 'GERAR FILIPETA POS',
                 'detalhado': 'GERAR RELATÓRIO DETALHADO',
                 'aprovadas': 'GERAR RESUMO APROVADAS',
-                'filipetaImpressora': '🖨️ GERAR FILIPETA IMPRESSORA'
+                'filipetaImpressora': '🖨️ GERAR FILIPETA IMPRESSORA',
+                'recebimentos': '💰 GERAR RELATÓRIO RECEBIMENTOS'
             };
             
             btnGerarPDF.innerHTML = `📊 ${btnTexto[tipo]}`;
@@ -1531,11 +2294,15 @@
             
             setTimeout(() => {
                 try {
+                    // Aplicar ordenação atual antes de gerar
+                    aplicarOrdenacao();
+                    
                     switch(tipoRelatorioAtual) {
                         case 'filipeta': gerarPDFFilipeta(); break;
                         case 'detalhado': gerarPDFDetalhado(); break;
                         case 'aprovadas': gerarPDFResumoAprovadas(); break;
                         case 'filipetaImpressora': gerarPDFFilipetaImpressora(); break;
+                        case 'recebimentos': gerarPDFRelatorioRecebimentos(); break; // NOVO: Gerar relatório de recebimentos
                         default: gerarPDFFilipeta();
                     }
                 } catch (error) {
@@ -1556,7 +2323,7 @@
             return dayjs().format('DD/MM/YYYY');
         }
         
-        // Gerar PDF Filipeta POS
+        // Gerar PDF Filipeta POS - APENAS APROVADAS
         function gerarPDFFilipeta() {
             const dataRelatorioFormatada = obterDataRelatorio();
             
@@ -1576,7 +2343,7 @@
             yPos += 8;
             
             doc.setFontSize(14);
-            doc.text('FILIPETA DE VENDAS POS', pageWidth / 2, yPos, { align: 'center' });
+            doc.text('FILIPETA DE VENDAS POS - APROVADAS', pageWidth / 2, yPos, { align: 'center' });
             yPos += 6;
             
             doc.setFontSize(10);
@@ -1587,17 +2354,29 @@
             doc.text(`Gerado em: ${dayjs().format('DD/MM/YYYY HH:mm:ss')}`, pageWidth - 15, yPos - 10, { align: 'right' });
             yPos += 10;
             
-            // Calcular totais individuais
+            // Filtrar apenas transações aprovadas
+            const transacoesAprovadas = dadosFiltrados.filter(r => r.Status === 'Aprovada');
+            
+            if (transacoesAprovadas.length === 0) {
+                doc.setFontSize(12);
+                doc.text('Nenhuma transação aprovada encontrada', pageWidth / 2, yPos + 20, { align: 'center' });
+                const fileName = `filipeta_pos_${dayjs().format('YYYY-MM-DD_HHmm')}.pdf`;
+                doc.save(fileName);
+                mostrarNotificacao('Nenhuma transação aprovada encontrada', 'info');
+                return;
+            }
+            
+            // Calcular totais individuais - APENAS APROVADAS
             const totais = {};
             CAMPOS_NUMERICOS.forEach(campo => {
-                totais[campo] = dadosFiltrados.reduce((soma, r) => soma + (r[`${campo}_NUM`] || 0), 0);
+                totais[campo] = transacoesAprovadas.reduce((soma, r) => soma + (r[`${campo}_NUM`] || 0), 0);
             });
             
             // Adicionar resumo de totais se configurado
             if (pdfIncludeSummary.value === 'true') {
                 doc.setFontSize(11);
                 doc.setFont('helvetica', 'bold');
-                doc.text('TOTAIS POR CATEGORIA:', 15, yPos);
+                doc.text('TOTAIS DAS TRANSAÇÕES APROVADAS:', 15, yPos);
                 yPos += 7;
                 
                 doc.setFontSize(10);
@@ -1626,9 +2405,9 @@
                 yPos += 10;
             }
             
-            // Tabela principal
+            // Tabela principal - APENAS APROVADAS
             const headers = ['#', 'Data/Hora', 'Status', 'Valor Total', 'Valor Líquido', 'Cartão', 'Bandeira'];
-            const data = dadosFiltrados.map((registro, index) => {
+            const data = transacoesAprovadas.map((registro, index) => {
                 return [
                     (index + 1).toString(),
                     registro['Data Transacao'] || '',
@@ -1655,12 +2434,12 @@
                 }
             });
             
-            const fileName = `filipeta_pos_${dayjs().format('YYYY-MM-DD_HHmm')}.pdf`;
+            const fileName = `filipeta_pos_aprovadas_${dayjs().format('YYYY-MM-DD_HHmm')}.pdf`;
             doc.save(fileName);
-            mostrarNotificacao(`Filipeta gerada: ${fileName}`, 'success');
+            mostrarNotificacao(`Filipeta de transações aprovadas gerada: ${fileName}`, 'success');
         }
         
-        // Gerar PDF Detalhado com TODOS os totais individuais
+        // Gerar PDF Detalhado com TODOS os totais individuais - APENAS APROVADAS
         function gerarPDFDetalhado() {
             const dataRelatorioFormatada = obterDataRelatorio();
             
@@ -1679,22 +2458,34 @@
             yPos += 8;
             
             doc.setFontSize(14);
-            doc.text('RELATÓRIO DETALHADO COMPLETO', pageWidth / 2, yPos, { align: 'center' });
+            doc.text('RELATÓRIO DETALHADO COMPLETO - APROVADAS', pageWidth / 2, yPos, { align: 'center' });
             yPos += 8;
             
             doc.setFontSize(10);
             doc.text(`Relatório: ${dataRelatorioFormatada}`, pageWidth / 2, yPos, { align: 'center' });
             yPos += 12;
             
-            // Calcular TODOS os totais individuais
+            // Filtrar apenas transações aprovadas
+            const transacoesAprovadas = dadosFiltrados.filter(r => r.Status === 'Aprovada');
+            
+            if (transacoesAprovadas.length === 0) {
+                doc.setFontSize(12);
+                doc.text('Nenhuma transação aprovada encontrada', pageWidth / 2, yPos + 20, { align: 'center' });
+                const fileName = `relatorio_detalhado_${dayjs().format('YYYY-MM-DD_HHmm')}.pdf`;
+                doc.save(fileName);
+                mostrarNotificacao('Nenhuma transação aprovada encontrada', 'info');
+                return;
+            }
+            
+            // Calcular TODOS os totais individuais - APENAS APROVADAS
             const totais = {};
             CAMPOS_NUMERICOS.forEach(campo => {
-                totais[campo] = dadosFiltrados.reduce((soma, r) => soma + (r[`${campo}_NUM`] || 0), 0);
+                totais[campo] = transacoesAprovadas.reduce((soma, r) => soma + (r[`${campo}_NUM`] || 0), 0);
             });
             
-            // Tabela com todos os campos
+            // Tabela com todos os campos - APENAS APROVADAS
             const headers = CAMPOS_ESPERADOS;
-            const data = dadosFiltrados.map((registro, index) => {
+            const data = transacoesAprovadas.map((registro, index) => {
                 return headers.map(campo => {
                     let valor = registro[campo] || '';
                     
@@ -1713,7 +2504,7 @@
                 });
             });
             
-            // Adicionar linha de TOTAIS no final
+            // Adicionar linha de TOTAIS no final - APENAS APROVADAS
             const linhaTotais = headers.map(campo => {
                 if (CAMPOS_NUMERICOS.includes(campo)) {
                     const total = totais[campo];
@@ -1722,7 +2513,7 @@
                         `R$ ${formatarMoeda(total)}` : 
                         formatarNumero(total);
                 } else if (campo === 'Status') {
-                    return 'TOTAIS';
+                    return 'TOTAIS APROVADAS';
                 } else {
                     return '';
                 }
@@ -1754,9 +2545,9 @@
                 }
             });
             
-            const fileName = `relatorio_detalhado_${dayjs().format('YYYY-MM-DD_HHmm')}.pdf`;
+            const fileName = `relatorio_detalhado_aprovadas_${dayjs().format('YYYY-MM-DD_HHmm')}.pdf`;
             doc.save(fileName);
-            mostrarNotificacao(`Relatório detalhado gerado: ${fileName}`, 'success');
+            mostrarNotificacao(`Relatório detalhado de aprovadas gerado: ${fileName}`, 'success');
         }
         
         // Gerar PDF Resumo Aprovadas
@@ -1899,9 +2690,17 @@
             mostrarNotificacao(`Resumo de aprovadas gerado: ${fileName}`, 'success');
         }
         
-        // NOVA FUNÇÃO: Gerar PDF para Impressora de Filipeta
+        // Gerar PDF para Impressora de Filipeta - APENAS APROVADAS
         function gerarPDFFilipetaImpressora() {
             const dataRelatorioFormatada = obterDataRelatorio();
+            
+            // Filtrar apenas transações aprovadas
+            const transacoesAprovadas = dadosFiltrados.filter(r => r.Status === 'Aprovada');
+            
+            if (transacoesAprovadas.length === 0) {
+                mostrarNotificacao('Não há transações aprovadas', 'error');
+                return;
+            }
             
             // Formato longo para máquina de filipeta (80mm de largura, comprimento variável)
             const doc = new jsPDF({
@@ -1936,13 +2735,13 @@
             doc.line(margin, yPos, pageWidth - margin, yPos);
             yPos += 5;
             
-            // Resumo rápido
-            const totalTransacoes = dadosFiltrados.length;
-            const valorTotalSum = dadosFiltrados.reduce((sum, r) => sum + (r['Valor total da transacao_NUM'] || 0), 0);
-            const valorLiquidoSum = dadosFiltrados.reduce((sum, r) => sum + (r['Valor Liquido_NUM'] || 0), 0);
+            // Resumo rápido - APENAS APROVADAS
+            const totalTransacoes = transacoesAprovadas.length;
+            const valorTotalSum = transacoesAprovadas.reduce((sum, r) => sum + (r['Valor total da transacao_NUM'] || 0), 0);
+            const valorLiquidoSum = transacoesAprovadas.reduce((sum, r) => sum + (r['Valor Liquido_NUM'] || 0), 0);
             
             doc.setFont('helvetica', 'bold');
-            doc.text('RESUMO RÁPIDO:', margin, yPos);
+            doc.text('RESUMO RÁPIDO (APROVADAS):', margin, yPos);
             yPos += 4;
             
             doc.setFont('helvetica', 'normal');
@@ -1959,13 +2758,13 @@
             
             // Listar todas as transações (formato compacto)
             doc.setFont('helvetica', 'bold');
-            doc.text('DETALHES DAS TRANSAÇÕES:', margin, yPos);
+            doc.text('DETALHES DAS TRANSAÇÕES APROVADAS:', margin, yPos);
             yPos += 6;
             
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(7);
             
-            dadosFiltrados.forEach((registro, index) => {
+            transacoesAprovadas.forEach((registro, index) => {
                 // Verificar se precisa de nova página
                 if (yPos > 280) {
                     doc.addPage([80, 297]);
@@ -1980,8 +2779,6 @@
                 const status = registro.Status || '';
                 let statusColor = [0, 0, 0];
                 if (status === 'Aprovada') statusColor = [46, 204, 113];
-                else if (status === 'Cancelada') statusColor = [231, 76, 60];
-                else if (status === 'Pendente') statusColor = [241, 196, 15];
                 
                 doc.setTextColor(statusColor[0], statusColor[1], statusColor[2]);
                 doc.text(status, margin + 10, yPos);
@@ -2015,8 +2812,40 @@
                 
                 doc.setFontSize(7);
                 
+                // Status de recebimento
+                const dataRecebimento = parsearData(registro['Data Recebimento']);
+                const hoje = new Date();
+                hoje.setHours(0, 0, 0, 0);
+                
+                doc.text('Recebimento:', margin, yPos);
+                yPos += 2.5;
+                
+                if (dataRecebimento) {
+                    const dataReceb = new Date(dataRecebimento);
+                    dataReceb.setHours(0, 0, 0, 0);
+                    
+                    if (dataReceb <= hoje) {
+                        doc.setTextColor(46, 204, 113);
+                        doc.text('✅ Já Recebido', margin + 5, yPos);
+                        doc.setTextColor(0, 0, 0);
+                    } else {
+                        doc.setTextColor(241, 196, 15);
+                        doc.text('⏳ A Receber', margin + 5, yPos);
+                        doc.setTextColor(0, 0, 0);
+                    }
+                    yPos += 2.5;
+                    
+                    doc.text(`Data: ${registro['Data Recebimento'] || 'N/A'}`, margin + 5, yPos);
+                    yPos += 2.5;
+                } else {
+                    doc.setTextColor(155, 89, 182);
+                    doc.text('📅 Sem data', margin + 5, yPos);
+                    doc.setTextColor(0, 0, 0);
+                    yPos += 2.5;
+                }
+                
                 // Linha divisória entre transações
-                if (index < dadosFiltrados.length - 1) {
+                if (index < transacoesAprovadas.length - 1) {
                     doc.setDrawColor(200, 200, 200);
                     doc.line(margin, yPos, pageWidth - margin, yPos);
                     yPos += 5;
@@ -2030,18 +2859,18 @@
             doc.line(margin, yPos, pageWidth - margin, yPos);
             yPos += 5;
             
-            // Totais finais
+            // Totais finais - APENAS APROVADAS
             doc.setFont('helvetica', 'bold');
             doc.setFontSize(8);
-            doc.text('TOTAIS FINAIS:', margin, yPos);
+            doc.text('TOTAIS FINAIS (APROVADAS):', margin, yPos);
             yPos += 4;
             
             doc.setFont('helvetica', 'normal');
             
-            // Calcular totais para todos os campos numéricos
+            // Calcular totais para todos os campos numéricos - APENAS APROVADAS
             const totais = {};
             CAMPOS_NUMERICOS.forEach(campo => {
-                totais[campo] = dadosFiltrados.reduce((soma, r) => soma + (r[`${campo}_NUM`] || 0), 0);
+                totais[campo] = transacoesAprovadas.reduce((soma, r) => soma + (r[`${campo}_NUM`] || 0), 0);
             });
             
             // Mostrar totais principais
@@ -2070,17 +2899,524 @@
             doc.setFont('helvetica', 'italic');
             doc.text('Sistema B2B Reservas - Relatório de Filipeta', pageWidth / 2, yPos, { align: 'center' });
             yPos += 3;
-            doc.text(`Total de ${dadosFiltrados.length} transações listadas`, pageWidth / 2, yPos, { align: 'center' });
+            doc.text(`Total de ${transacoesAprovadas.length} transações aprovadas listadas`, pageWidth / 2, yPos, { align: 'center' });
             
-            const fileName = `filipeta_impressora_${dayjs().format('YYYY-MM-DD_HHmm')}.pdf`;
+            const fileName = `filipeta_impressora_aprovadas_${dayjs().format('YYYY-MM-DD_HHmm')}.pdf`;
             doc.save(fileName);
             mostrarNotificacao(`Filipeta para impressora gerada: ${fileName}`, 'success');
         }
         
-        // Gerar filipetas individuais
+        // NOVA FUNÇÃO: Gerar PDF Relatório de Recebimentos - APENAS APROVADAS
+        function gerarPDFRelatorioRecebimentos() {
+            const dataRelatorioFormatada = obterDataRelatorio();
+            
+            // Filtrar apenas transações aprovadas
+            const transacoesAprovadas = dadosFiltrados.filter(r => r.Status === 'Aprovada');
+            
+            if (transacoesAprovadas.length === 0) {
+                mostrarNotificacao('Não há transações aprovadas', 'error');
+                return;
+            }
+            
+            const doc = new jsPDF({
+                orientation: 'portrait',
+                unit: 'mm',
+                format: 'a4'
+            });
+            
+            let yPos = 15;
+            const pageWidth = doc.internal.pageSize.width;
+            const pageHeight = doc.internal.pageSize.height;
+            
+            doc.setFont('helvetica');
+            doc.setFontSize(16);
+            doc.text('💰 B2B RESERVAS', 15, yPos);
+            yPos += 8;
+            
+            doc.setFontSize(14);
+            doc.text('RELATÓRIO DE RECEBIMENTOS - APROVADAS', pageWidth / 2, yPos, { align: 'center' });
+            yPos += 8;
+            
+            doc.setFontSize(10);
+            doc.text(`Data de referência: ${dataRelatorioFormatada}`, pageWidth / 2, yPos, { align: 'center' });
+            yPos += 10;
+            
+            doc.setFontSize(9);
+            doc.text(`Gerado em: ${dayjs().format('DD/MM/YYYY HH:mm:ss')}`, pageWidth - 15, yPos - 10, { align: 'right' });
+            yPos += 10;
+            
+            // Calcular estatísticas de recebimento - APENAS APROVADAS
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+            
+            let totalRecebidoValor = 0;
+            let totalAReceberValor = 0;
+            let totalVencidoValor = 0;
+            
+            // Agrupar por cartão - APENAS APROVADAS
+            const cartoesMap = new Map();
+            
+            transacoesAprovadas.forEach(registro => {
+                const numeroCartao = registro['Número do Cartao'] || 'Sem Cartão';
+                const valorTotal = registro['Valor total da transacao_NUM'] || 0;
+                const dataRecebimento = parsearData(registro['Data Recebimento']);
+                
+                if (!cartoesMap.has(numeroCartao)) {
+                    cartoesMap.set(numeroCartao, {
+                        numero: numeroCartao,
+                        bandeira: registro['Bandeira do Cartao'] || 'N/A',
+                        valorTotal: 0,
+                        valorRecebido: 0,
+                        valorAReceber: 0,
+                        valorVencido: 0,
+                        transacoes: []
+                    });
+                }
+                
+                const cartao = cartoesMap.get(numeroCartao);
+                cartao.valorTotal += valorTotal;
+                
+                if (dataRecebimento) {
+                    const dataReceb = new Date(dataRecebimento);
+                    dataReceb.setHours(0, 0, 0, 0);
+                    
+                    if (dataReceb <= hoje) {
+                        totalRecebidoValor += valorTotal;
+                        cartao.valorRecebido += valorTotal;
+                    } else {
+                        totalAReceberValor += valorTotal;
+                        cartao.valorAReceber += valorTotal;
+                        
+                        // Verificar se está vencido
+                        const dataTransacao = parsearData(registro['Data Transacao']);
+                        if (dataTransacao) {
+                            const diferencaDias = Math.floor((hoje - dataTransacao) / (1000 * 60 * 60 * 24));
+                            if (diferencaDias > 30) {
+                                totalVencidoValor += valorTotal;
+                                cartao.valorVencido += valorTotal;
+                            }
+                        }
+                    }
+                } else {
+                    totalAReceberValor += valorTotal;
+                    cartao.valorAReceber += valorTotal;
+                }
+            });
+            
+            // Resumo estatístico
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text('RESUMO ESTATÍSTICO (APROVADAS)', 15, yPos);
+            yPos += 7;
+            
+            doc.setFontSize(10);
+            doc.setFont('helvetica', 'normal');
+            
+            const estatisticas = [
+                ['Total Já Recebido:', `R$ ${formatarMoeda(totalRecebidoValor)}`],
+                ['Total a Receber:', `R$ ${formatarMoeda(totalAReceberValor)}`],
+                ['Total Vencido:', `R$ ${formatarMoeda(totalVencidoValor)}`],
+                ['Cartões Analisados:', cartoesMap.size],
+                ['Transações Aprovadas:', transacoesAprovadas.length]
+            ];
+            
+            estatisticas.forEach(([label, valor]) => {
+                doc.text(`• ${label} ${valor}`, 20, yPos);
+                yPos += 5;
+            });
+            
+            yPos += 10;
+            
+            // Tabela de cartões
+            doc.setFontSize(11);
+            doc.setFont('helvetica', 'bold');
+            doc.text('DETALHAMENTO POR CARTÃO', 15, yPos);
+            yPos += 7;
+            
+            // Converter Map para array e ordenar por valor total (decrescente)
+            const cartoesArray = Array.from(cartoesMap.values());
+            cartoesArray.sort((a, b) => b.valorTotal - a.valorTotal);
+            
+            const headers = ['Cartão', 'Bandeira', 'Total (R$)', 'Recebido (R$)', 'A Receber (R$)', 'Vencido (R$)', 'Status'];
+            const data = cartoesArray.map(cartao => {
+                // Determinar status principal
+                let status = 'A Receber';
+                if (cartao.valorRecebido > 0 && cartao.valorAReceber === 0) {
+                    status = 'Recebido';
+                } else if (cartao.valorVencido > 0) {
+                    status = 'Vencido';
+                }
+                
+                return [
+                    formatarNumeroCartao(cartao.numero),
+                    cartao.bandeira,
+                    formatarMoeda(cartao.valorTotal),
+                    formatarMoeda(cartao.valorRecebido),
+                    formatarMoeda(cartao.valorAReceber),
+                    formatarMoeda(cartao.valorVencido),
+                    status
+                ];
+            });
+            
+            doc.autoTable({
+                startY: yPos,
+                head: [headers],
+                body: data,
+                theme: 'grid',
+                headStyles: { fillColor: [52, 152, 219], textColor: 255, fontSize: 9, fontStyle: 'bold' },
+                bodyStyles: { fontSize: 8, cellPadding: 2 },
+                margin: { left: 15, right: 15 },
+                didDrawPage: function(data) {
+                    doc.setFontSize(8);
+                    const pageCount = doc.internal.getNumberOfPages();
+                    doc.text(`Página ${data.pageNumber} de ${pageCount}`, pageWidth / 2, pageHeight - 10, { align: 'center' });
+                }
+            });
+            
+            const fileName = `recebimentos_aprovadas_${dayjs().format('YYYY-MM-DD_HHmm')}.pdf`;
+            doc.save(fileName);
+            mostrarNotificacao(`Relatório de recebimentos de aprovadas gerado: ${fileName}`, 'success');
+        }
+        
+        // NOVA FUNÇÃO: Imprimir Relatório de Recebimentos - APENAS APROVADAS
+        function imprimirRelatorioRecebimentos() {
+            if (dadosFiltrados.length === 0) {
+                mostrarNotificacao('Não há dados para imprimir', 'error');
+                return;
+            }
+            
+            // Filtrar apenas transações aprovadas
+            const transacoesAprovadas = dadosFiltrados.filter(r => r.Status === 'Aprovada');
+            
+            if (transacoesAprovadas.length === 0) {
+                mostrarNotificacao('Não há transações aprovadas', 'error');
+                return;
+            }
+            
+            // Calcular estatísticas de recebimento
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+            
+            let totalRecebidoValor = 0;
+            let totalAReceberValor = 0;
+            let totalVencidoValor = 0;
+            
+            // Agrupar por cartão - APENAS APROVADAS
+            const cartoesMap = new Map();
+            
+            transacoesAprovadas.forEach(registro => {
+                const numeroCartao = registro['Número do Cartao'] || 'Sem Cartão';
+                const valorTotal = registro['Valor total da transacao_NUM'] || 0;
+                const dataRecebimento = parsearData(registro['Data Recebimento']);
+                
+                if (!cartoesMap.has(numeroCartao)) {
+                    cartoesMap.set(numeroCartao, {
+                        numero: numeroCartao,
+                        bandeira: registro['Bandeira do Cartao'] || 'N/A',
+                        valorTotal: 0,
+                        valorRecebido: 0,
+                        valorAReceber: 0,
+                        valorVencido: 0,
+                        transacoes: []
+                    });
+                }
+                
+                const cartao = cartoesMap.get(numeroCartao);
+                cartao.valorTotal += valorTotal;
+                
+                if (dataRecebimento) {
+                    const dataReceb = new Date(dataRecebimento);
+                    dataReceb.setHours(0, 0, 0, 0);
+                    
+                    if (dataReceb <= hoje) {
+                        totalRecebidoValor += valorTotal;
+                        cartao.valorRecebido += valorTotal;
+                    } else {
+                        totalAReceberValor += valorTotal;
+                        cartao.valorAReceber += valorTotal;
+                        
+                        // Verificar se está vencido
+                        const dataTransacao = parsearData(registro['Data Transacao']);
+                        if (dataTransacao) {
+                            const diferencaDias = Math.floor((hoje - dataTransacao) / (1000 * 60 * 60 * 24));
+                            if (diferencaDias > 30) {
+                                totalVencidoValor += valorTotal;
+                                cartao.valorVencido += valorTotal;
+                            }
+                        }
+                    }
+                } else {
+                    totalAReceberValor += valorTotal;
+                    cartao.valorAReceber += valorTotal;
+                }
+            });
+            
+            // Converter Map para array e ordenar por valor total (decrescente)
+            const cartoesArray = Array.from(cartoesMap.values());
+            cartoesArray.sort((a, b) => b.valorTotal - a.valorTotal);
+            
+            // Criar conteúdo HTML para impressão
+            let conteudoHTML = `
+                <!DOCTYPE html>
+                <html lang="pt-BR">
+                <head>
+                    <meta charset="UTF-8">
+                    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                    <title>Relatório de Recebimentos - B2B Reservas</title>
+                    <style>
+                        @page {
+                            size: A4;
+                            margin: 20mm;
+                        }
+                        body {
+                            font-family: Arial, sans-serif;
+                            margin: 0;
+                            padding: 0;
+                            color: #333;
+                        }
+                        .print-container {
+                            max-width: 210mm;
+                            margin: 0 auto;
+                            padding: 20px;
+                        }
+                        .print-header {
+                            text-align: center;
+                            border-bottom: 2px solid #333;
+                            padding-bottom: 20px;
+                            margin-bottom: 30px;
+                        }
+                        .print-header h1 {
+                            color: #2c3e50;
+                            margin: 0 0 10px 0;
+                            font-size: 24px;
+                        }
+                        .print-header .subtitle {
+                            color: #7f8c8d;
+                            font-size: 16px;
+                        }
+                        .print-date {
+                            text-align: right;
+                            margin-bottom: 20px;
+                            color: #7f8c8d;
+                            font-size: 14px;
+                        }
+                        .print-summary {
+                            display: grid;
+                            grid-template-columns: repeat(3, 1fr);
+                            gap: 15px;
+                            margin-bottom: 30px;
+                        }
+                        .summary-card {
+                            padding: 15px;
+                            border-radius: 8px;
+                            text-align: center;
+                            color: white;
+                            font-weight: bold;
+                        }
+                        .summary-recebido {
+                            background-color: #27ae60;
+                        }
+                        .summary-a-receber {
+                            background-color: #9b59b6;
+                        }
+                        .summary-vencido {
+                            background-color: #e74c3c;
+                        }
+                        .summary-value {
+                            font-size: 24px;
+                            margin-bottom: 5px;
+                        }
+                        .summary-label {
+                            font-size: 14px;
+                            opacity: 0.9;
+                        }
+                        .print-table {
+                            width: 100%;
+                            border-collapse: collapse;
+                            margin: 20px 0;
+                        }
+                        .print-table th {
+                            background-color: #2c3e50;
+                            color: white;
+                            padding: 12px;
+                            text-align: left;
+                            font-weight: bold;
+                            border: 1px solid #ddd;
+                        }
+                        .print-table td {
+                            padding: 10px;
+                            border: 1px solid #ddd;
+                            text-align: left;
+                        }
+                        .print-table tr:nth-child(even) {
+                            background-color: #f9f9f9;
+                        }
+                        .status-recebido {
+                            color: #27ae60;
+                            font-weight: bold;
+                        }
+                        .status-a-receber {
+                            color: #9b59b6;
+                            font-weight: bold;
+                        }
+                        .status-vencido {
+                            color: #e74c3c;
+                            font-weight: bold;
+                        }
+                        .currency {
+                            text-align: right;
+                            font-family: 'Courier New', monospace;
+                        }
+                        .print-footer {
+                            margin-top: 40px;
+                            padding-top: 20px;
+                            border-top: 1px solid #ddd;
+                            text-align: center;
+                            color: #7f8c8d;
+                            font-size: 12px;
+                        }
+                        .page-break {
+                            page-break-before: always;
+                        }
+                        @media print {
+                            .no-print {
+                                display: none !important;
+                            }
+                            body {
+                                -webkit-print-color-adjust: exact;
+                                print-color-adjust: exact;
+                            }
+                        }
+                    </style>
+                </head>
+                <body>
+                    <div class="print-container">
+                        <div class="print-header">
+                            <h1>💰 B2B RESERVAS - RELATÓRIO DE RECEBIMENTOS</h1>
+                            <div class="subtitle">Análise detalhada de recebimentos por cartão (APENAS APROVADAS)</div>
+                        </div>
+                        
+                        <div class="print-date">
+                            Data de referência: ${formatarDataParaExibicao(hoje)}<br>
+                            Gerado em: ${dayjs().format('DD/MM/YYYY HH:mm:ss')}
+                        </div>
+                        
+                        <div class="print-summary">
+                            <div class="summary-card summary-recebido">
+                                <div class="summary-value">R$ ${formatarMoeda(totalRecebidoValor)}</div>
+                                <div class="summary-label">JÁ RECEBIDO</div>
+                            </div>
+                            <div class="summary-card summary-a-receber">
+                                <div class="summary-value">R$ ${formatarMoeda(totalAReceberValor)}</div>
+                                <div class="summary-label">A RECEBER</div>
+                            </div>
+                            <div class="summary-card summary-vencido">
+                                <div class="summary-value">R$ ${formatarMoeda(totalVencidoValor)}</div>
+                                <div class="summary-label">VENCIDO</div>
+                            </div>
+                        </div>
+                        
+                        <div style="margin-bottom: 20px; font-size: 14px;">
+                            <strong>Resumo:</strong> ${cartoesMap.size} cartão(s) analisado(s) | ${transacoesAprovadas.length} transação(ões) aprovada(s)
+                        </div>
+                        
+                        <table class="print-table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Cartão</th>
+                                    <th>Bandeira</th>
+                                    <th>Total (R$)</th>
+                                    <th>Recebido (R$)</th>
+                                    <th>A Receber (R$)</th>
+                                    <th>Vencido (R$)</th>
+                                    <th>Status</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+            `;
+            
+            // Adicionar linhas da tabela
+            cartoesArray.forEach((cartao, index) => {
+                // Determinar status principal
+                let status = 'A Receber';
+                let statusClass = 'status-a-receber';
+                
+                if (cartao.valorRecebido > 0 && cartao.valorAReceber === 0) {
+                    status = 'Recebido';
+                    statusClass = 'status-recebido';
+                } else if (cartao.valorVencido > 0) {
+                    status = 'Vencido';
+                    statusClass = 'status-vencido';
+                }
+                
+                conteudoHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>${formatarNumeroCartao(cartao.numero)}</td>
+                        <td>${cartao.bandeira}</td>
+                        <td class="currency">${formatarMoeda(cartao.valorTotal)}</td>
+                        <td class="currency">${formatarMoeda(cartao.valorRecebido)}</td>
+                        <td class="currency">${formatarMoeda(cartao.valorAReceber)}</td>
+                        <td class="currency">${formatarMoeda(cartao.valorVencido)}</td>
+                        <td class="${statusClass}">${status}</td>
+                    </tr>
+                `;
+            });
+            
+            // Adicionar linha de totais
+            conteudoHTML += `
+                            </tbody>
+                            <tfoot>
+                                <tr style="font-weight: bold; background-color: #f2f2f2;">
+                                    <td colspan="3" style="text-align: right;">TOTAIS:</td>
+                                    <td class="currency">${formatarMoeda(cartoesArray.reduce((sum, c) => sum + c.valorTotal, 0))}</td>
+                                    <td class="currency">${formatarMoeda(totalRecebidoValor)}</td>
+                                    <td class="currency">${formatarMoeda(totalAReceberValor)}</td>
+                                    <td class="currency">${formatarMoeda(totalVencidoValor)}</td>
+                                    <td></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                        
+                        <div class="print-footer">
+                            <p>Sistema B2B Reservas - Relatório de Recebimentos (APENAS APROVADAS)</p>
+                            <p>Página 1 de 1 | Total de ${cartoesArray.length} cartões listados</p>
+                        </div>
+                    </div>
+                </body>
+                </html>
+            `;
+            
+            // Abrir nova janela para impressão
+            const janelaImpressao = window.open('', '_blank');
+            janelaImpressao.document.write(conteudoHTML);
+            janelaImpressao.document.close();
+            
+            // Esperar o conteúdo carregar e então imprimir
+            janelaImpressao.onload = function() {
+                janelaImpressao.focus();
+                janelaImpressao.print();
+                janelaImpressao.onafterprint = function() {
+                    janelaImpressao.close();
+                };
+            };
+            
+            mostrarNotificacao('Relatório de recebimentos (apenas aprovadas) pronto para impressão', 'success');
+        }
+        
+        // Gerar filipetas individuais - APENAS APROVADAS
         function gerarTodasFilipetas() {
             if (dadosFiltrados.length === 0) {
                 mostrarNotificacao('Não há dados para gerar filipetas', 'error');
+                return;
+            }
+            
+            // Filtrar apenas transações aprovadas
+            const transacoesAprovadas = dadosFiltrados.filter(r => r.Status === 'Aprovada');
+            
+            if (transacoesAprovadas.length === 0) {
+                mostrarNotificacao('Não há transações aprovadas', 'error');
                 return;
             }
             
@@ -2088,13 +3424,16 @@
             
             setTimeout(() => {
                 try {
+                    // Aplicar ordenação atual antes de gerar
+                    aplicarOrdenacao();
+                    
                     const doc = new jsPDF({
                         orientation: 'portrait',
                         unit: 'mm',
                         format: [80, 150]
                     });
                     
-                    dadosFiltrados.forEach((registro, index) => {
+                    transacoesAprovadas.forEach((registro, index) => {
                         if (index > 0) doc.addPage([80, 150]);
                         
                         doc.setFont('helvetica');
@@ -2102,7 +3441,7 @@
                         doc.text('B2B RESERVAS', 40, 10, { align: 'center' });
                         
                         doc.setFontSize(10);
-                        doc.text('COMPROVANTE DE VENDA', 40, 15, { align: 'center' });
+                        doc.text('COMPROVANTE DE VENDA - APROVADA', 40, 15, { align: 'center' });
                         
                         let yPos = 25;
                         doc.setFontSize(9);
@@ -2153,16 +3492,47 @@
                         doc.text(`• Adquirente: R$ ${formatarMoeda(registro['Valor Adquirencia_NUM'] || 0)}`, 10, yPos);
                         yPos += 5;
                         
+                        // Status de recebimento (NOVO)
+                        const dataRecebimento = parsearData(registro['Data Recebimento']);
+                        const hoje = new Date();
+                        hoje.setHours(0, 0, 0, 0);
+                        
+                        doc.text('Status de Recebimento:', 5, yPos);
+                        yPos += 4;
+                        
+                        if (dataRecebimento) {
+                            const dataReceb = new Date(dataRecebimento);
+                            dataReceb.setHours(0, 0, 0, 0);
+                            
+                            if (dataReceb <= hoje) {
+                                doc.setTextColor(46, 204, 113);
+                                doc.text('✅ Já Recebido', 10, yPos);
+                            } else {
+                                doc.setTextColor(241, 196, 15);
+                                doc.text('⏳ A Receber', 10, yPos);
+                            }
+                            doc.setTextColor(0, 0, 0);
+                            yPos += 3.5;
+                            
+                            doc.text(`Data Recebimento: ${registro['Data Recebimento'] || 'N/A'}`, 10, yPos);
+                            yPos += 3.5;
+                        } else {
+                            doc.setTextColor(155, 89, 182);
+                            doc.text('📅 Sem data de recebimento', 10, yPos);
+                            doc.setTextColor(0, 0, 0);
+                            yPos += 3.5;
+                        }
+                        
                         // Rodapé
                         doc.setFontSize(6);
                         doc.text('Sistema B2B Reservas - Comprovante não fiscal', 40, 140, { align: 'center' });
                         doc.text(dayjs().format('DD/MM/YYYY HH:mm:ss'), 40, 143, { align: 'center' });
-                        doc.text(`Transação ${index + 1} de ${dadosFiltrados.length}`, 40, 146, { align: 'center' });
+                        doc.text(`Transação ${index + 1} de ${transacoesAprovadas.length}`, 40, 146, { align: 'center' });
                     });
                     
-                    const fileName = `filipetas_${dayjs().format('YYYY-MM-DD')}.pdf`;
+                    const fileName = `filipetas_aprovadas_${dayjs().format('YYYY-MM-DD')}.pdf`;
                     doc.save(fileName);
-                    mostrarNotificacao(`${dadosFiltrados.length} filipetas geradas!`, 'success');
+                    mostrarNotificacao(`${transacoesAprovadas.length} filipetas de transações aprovadas geradas!`, 'success');
                     
                 } catch (error) {
                     mostrarNotificacao(`Erro: ${error.message}`, 'error');
@@ -2191,3 +3561,5 @@
     </script>
 </body>
 </html>
+
+7 a 08 d s
