@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extrator de Extratos Hoteleiros - Versão Aprimorada</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+        
+        .subtitle {
+            opacity: 0.9;
+            font-weight: 300;
+        }
+        
+        .upload-section {
+            padding: 40px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .upload-area {
+            border: 3px dashed #c7d2fe;
+            border-radius: 12px;
+            padding: 50px 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: #f8fafc;
+        }
+        
+        .upload-area:hover {
+            border-color: #4f46e5;
+            background: #f1f5f9;
+        }
+        
+        .upload-area.dragover {
+            border-color: #4f46e5;
+            background: #e0e7ff;
+            transform: scale(1.01);
+        }
+        
+        .upload-icon {
+            font-size: 48px;
+            color: #4f46e5;
+            margin-bottom: 15px;
+        }
+        
+        .upload-text {
+            font-size: 1.1rem;
+            color: #4b5563;
+            margin-bottom: 10px;
+        }
+        
+        .file-input {
+            display: none;
+        }
+        
+        .browse-btn {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.3s ease;
+            margin-top: 15px;
+        }
+        
+        .browse-btn:hover {
+            background: #4338ca;
+        }
+        
+        .file-list {
+            margin-top: 30px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+        
+        .file-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .file-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .file-icon {
+            color: #4f46e5;
+            font-size: 24px;
+        }
+        
+        .file-name {
+            font-weight: 500;
+            color: #374151;
+        }
+        
+        .file-size {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .remove-file {
+            background: #fee2e2;
+            color: #dc2626;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.3s ease;
+        }
+        
+        .remove-file:hover {
+            background: #fecaca;
+        }
+        
+        .controls {
+            padding: 30px 40px;
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .process-btn, .export-btn, .clear-btn {
+            padding: 14px 32px;
+            border: none;
+            border-radius: 8px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1rem;
+        }
+        
+        .process-btn {
+            background: #10b981;
+            color: white;
+        }
+        
+        .process-btn:hover {
+            background: #059669;
+        }
+        
+        .export-btn {
+            background: #3b82f6;
+            color: white;
+        }
+        
+        .export-btn:hover {
+            background: #2563eb;
+        }
+        
+        .clear-btn {
+            background: #f3f4f6;
+            color: #374151;
+            border: 1px solid #d1d5db;
+        }
+        
+        .clear-btn:hover {
+            background: #e5e7eb;
+        }
+        
+        .results-section {
+            padding: 40px;
+        }
+        
+        .results-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .total-amount {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            font-weight: 600;
+            font-size: 1.2rem;
+        }
+        
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        thead {
+            background: linear-gradient(135deg, #4f46e5 0%, #7c3aed 100%);
+            color: white;
+        }
+        
+        th {
+            padding: 18px 20px;
+            text-align: left;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+        }
+        
+        tbody tr {
+            border-bottom: 1px solid #e5e7eb;
+            transition: background 0.3s ease;
+        }
+        
+        tbody tr:hover {
+            background: #f8fafc;
+        }
+        
+        td {
+            padding: 18px 20px;
+            color: #374151;
+        }
+        
+        .guest-name {
+            font-weight: 500;
+            color: #1f2937;
+        }
+        
+        .balance {
+            font-weight: 600;
+            color: #059669;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+        
+        .spinner {
+            border: 4px solid #f3f4f6;
+            border-top: 4px solid #4f46e5;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .no-files {
+            text-align: center;
+            padding: 40px;
+            color: #6b7280;
+        }
+        
+        .debug-section {
+            margin-top: 40px;
+            padding: 20px;
+            background: #f9fafb;
+            border-radius: 10px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .debug-toggle {
+            background: #4f46e5;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+        
+        .debug-content {
+            display: none;
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border: 1px solid #d1d5db;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: monospace;
+            font-size: 12px;
+            white-space: pre-wrap;
+        }
+        
+        @media (max-width: 768px) {
+            .container {
+                border-radius: 10px;
+            }
+            
+            header {
+                padding: 20px;
+            }
+            
+            h1 {
+                font-size: 1.8rem;
+            }
+            
+            .upload-section, .results-section {
+                padding: 20px;
+            }
+            
+            .controls {
+                flex-direction: column;
+                padding: 20px;
+            }
+            
+            table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1><i class="fas fa-hotel"></i> Extrator de Extratos Hoteleiros</h1>
+            <p class="subtitle">Versão Aprimorada - Processa PDFs complexos</p>
+        </header>
+        
+        <section class="upload-section">
+            <div class="upload-area" id="uploadArea">
+                <div class="upload-icon">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                </div>
+                <div class="upload-text">
+                    <strong>Arraste e solte os arquivos PDF aqui</strong>
+                </div>
+                <p>ou</p>
+                <button class="browse-btn" onclick="document.getElementById('fileInput').click()">
+                    <i class="fas fa-folder-open"></i> Selecione os Arquivos
+                </button>
+                <input type="file" id="fileInput" class="file-input" accept=".pdf" multiple onchange="handleFiles(this.files)">
+            </div>
+            
+            <div class="file-list" id="fileList"></div>
+        </section>
+        
+        <section class="controls">
+            <button class="process-btn" onclick="processFiles()" id="processBtn">
+                <i class="fas fa-cogs"></i> Processar Arquivos
+            </button>
+            <button class="export-btn" onclick="exportToCSV()" id="exportBtn" disabled>
+                <i class="fas fa-file-export"></i> Exportar para CSV
+            </button>
+            <button class="clear-btn" onclick="clearAll()">
+                <i class="fas fa-trash-alt"></i> Limpar Tudo
+            </button>
+        </section>
+        
+        <section class="results-section">
+            <div class="results-header">
+                <h2><i class="fas fa-list-alt"></i> Resultados Extraídos</h2>
+                <div class="total-amount" id="totalAmount" style="display: none;">
+                    Total Pendente: <span id="totalValue">R$ 0,00</span>
+                </div>
+            </div>
+            
+            <div id="resultsContainer">
+                <div class="no-files" id="noFilesMessage">
+                    <i class="fas fa-file-pdf" style="font-size: 48px; margin-bottom: 20px; color: #c7d2fe;"></i>
+                    <p>Nenhum arquivo processado ainda.</p>
+                    <p>Faça upload dos arquivos PDF e clique em "Processar Arquivos".</p>
+                </div>
+            </div>
+            
+            <div class="debug-section" id="debugSection" style="display: none;">
+                <button class="debug-toggle" onclick="toggleDebug()">
+                    <i class="fas fa-bug"></i> Mostrar/Ocultar Debug
+                </button>
+                <div class="debug-content" id="debugContent"></div>
+            </div>
+        </section>
+    </div>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <script>
+        let uploadedFiles = [];
+        let extractedData = [];
+        let debugMode = false;
+        
+        // Configurar área de drag and drop
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const fileList = document.getElementById('fileList');
+        const resultsContainer = document.getElementById('resultsContainer');
+        const noFilesMessage = document.getElementById('noFilesMessage');
+        const processBtn = document.getElementById('processBtn');
+        const exportBtn = document.getElementById('exportBtn');
+        const totalAmount = document.getElementById('totalAmount');
+        const debugSection = document.getElementById('debugSection');
+        const debugContent = document.getElementById('debugContent');
+        
+        // Eventos de drag and drop
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            handleFiles(e.dataTransfer.files);
+        });
+        
+        // Função para lidar com arquivos selecionados
+        function handleFiles(files) {
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                
+                // Verificar se é PDF
+                if (file.type !== 'application/pdf') {
+                    alert(`O arquivo "${file.name}" não é um PDF. Apenas arquivos PDF são aceitos.`);
+                    continue;
+                }
+                
+                // Verificar se o arquivo já foi adicionado
+                if (uploadedFiles.some(f => f.name === file.name && f.size === file.size)) {
+                    continue;
+                }
+                
+                uploadedFiles.push(file);
+                addFileToList(file);
+            }
+            
+            updateProcessButton();
+        }
+        
+        // Adicionar arquivo à lista visual
+        function addFileToList(file) {
+            const fileItem = document.createElement('div');
+            fileItem.className = 'file-item';
+            fileItem.id = `file-${uploadedFiles.length - 1}`;
+            
+            const fileSize = formatFileSize(file.size);
+            
+            fileItem.innerHTML = `
+                <div class="file-info">
+                    <div class="file-icon">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div>
+                        <div class="file-name">${file.name}</div>
+                        <div class="file-size">${fileSize}</div>
+                    </div>
+                </div>
+                <button class="remove-file" onclick="removeFile(${uploadedFiles.length - 1})">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            
+            fileList.appendChild(fileItem);
+        }
+        
+        // Formatar tamanho do arquivo
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+        
+        // Remover arquivo da lista
+        function removeFile(index) {
+            uploadedFiles.splice(index, 1);
+            updateFileList();
+            updateProcessButton();
+        }
+        
+        // Atualizar lista de arquivos
+        function updateFileList() {
+            fileList.innerHTML = '';
+            uploadedFiles.forEach((file, index) => {
+                const fileItem = document.createElement('div');
+                fileItem.className = 'file-item';
+                fileItem.id = `file-${index}`;
+                
+                const fileSize = formatFileSize(file.size);
+                
+                fileItem.innerHTML = `
+                    <div class="file-info">
+                        <div class="file-icon">
+                            <i class="fas fa-file-pdf"></i>
+                        </div>
+                        <div>
+                            <div class="file-name">${file.name}</div>
+                            <div class="file-size">${fileSize}</div>
+                        </div>
+                    </div>
+                    <button class="remove-file" onclick="removeFile(${index})">
+                        <i class="fas fa-times"></i>
+                    </button>
+                `;
+                
+                fileList.appendChild(fileItem);
+            });
+        }
+        
+        // Atualizar estado do botão de processar
+        function updateProcessButton() {
+            processBtn.disabled = uploadedFiles.length === 0;
+            processBtn.innerHTML = uploadedFiles.length === 0 
+                ? '<i class="fas fa-cogs"></i> Processar Arquivos' 
+                : `<i class="fas fa-cogs"></i> Processar ${uploadedFiles.length} Arquivo(s)`;
+        }
+        
+        // Processar todos os arquivos
+        async function processFiles() {
+            if (uploadedFiles.length === 0) return;
+            
+            // Mostrar loading
+            resultsContainer.innerHTML = `
+                <div class="loading">
+                    <div class="spinner"></div>
+                    <p>Processando ${uploadedFiles.length} arquivo(s)...</p>
+                    <p>Isso pode levar alguns segundos para arquivos grandes.</p>
+                </div>
+            `;
+            
+            extractedData = [];
+            debugMode = false;
+            debugSection.style.display = 'none';
+            
+            // Processar cada arquivo
+            for (let i = 0; i < uploadedFiles.length; i++) {
+                const result = await processPDF(uploadedFiles[i], i);
+                if (result.error) {
+                    console.error(`Erro ao processar ${uploadedFiles[i].name}:`, result.error);
+                }
+            }
+            
+            // Exibir resultados
+            displayResults();
+            
+            // Habilitar exportação
+            exportBtn.disabled = extractedData.length === 0;
+            
+            // Mostrar seção de debug se houver arquivos não processados
+            if (extractedData.length < uploadedFiles.length) {
+                debugMode = true;
+                debugSection.style.display = 'block';
+            }
+        }
+        
+        // Processar um arquivo PDF
+        async function processPDF(file, index) {
+            return new Promise(async (resolve) => {
+                try {
+                    const reader = new FileReader();
+                    
+                    reader.onload = async function(e) {
+                        try {
+                            const typedarray = new Uint8Array(e.target.result);
+                            
+                            // Configurar PDF.js
+                            pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js';
+                            
+                            const pdf = await pdfjsLib.getDocument(typedarray).promise;
+                            let fullText = '';
+                            
+                            // Extrair texto de todas as páginas
+                            for (let pageNum = 1; pageNum <= pdf.numPages; pageNum++) {
+                                const page = await pdf.getPage(pageNum);
+                                const textContent = await page.getTextContent();
+                                
+                                // Processar itens de texto para reconstruir o layout
+                                let pageText = '';
+                                let lastY = null;
+                                
+                                // Ordenar por posição vertical e horizontal
+                                const items = textContent.items.sort((a, b) => {
+                                    if (a.transform[5] !== b.transform[5]) {
+                                        return b.transform[5] - a.transform[5]; // Posição Y (de cima para baixo)
+                                    }
+                                    return a.transform[4] - b.transform[4]; // Posição X (esquerda para direita)
+                                });
+                                
+                                for (const item of items) {
+                                    const currentY = Math.round(item.transform[5]);
+                                    
+                                    // Adicionar quebra de linha se mudou de linha
+                                    if (lastY !== null && currentY !== lastY) {
+                                        pageText += '\n';
+                                    }
+                                    
+                                    pageText += item.str + ' ';
+                                    lastY = currentY;
+                                }
+                                
+                                fullText += pageText + '\n\n';
+                            }
+                            
+                            // Adicionar ao debug
+                            if (debugMode) {
+                                debugContent.innerHTML += `=== ARQUIVO: ${file.name} ===\n`;
+                                debugContent.innerHTML += fullText.substring(0, 2000) + '\n\n';
+                            }
+                            
+                            // Extrair informações do extrato
+                            const extractedInfo = extractInfoFromText(fullText, file.name);
+                            if (extractedInfo.name && extractedInfo.balanceValue > 0) {
+                                extractedData.push(extractedInfo);
+                            } else {
+                                // Tentar método alternativo
+                                const altInfo = extractInfoAlternative(fullText, file.name);
+                                if (altInfo.name) {
+                                    extractedData.push(altInfo);
+                                }
+                            }
+                            
+                            resolve({ success: true, file: file.name });
+                        } catch (error) {
+                            console.error(`Erro ao processar PDF ${file.name}:`, error);
+                            resolve({ error: error.message, file: file.name });
+                        }
+                    };
+                    
+                    reader.onerror = function() {
+                        resolve({ error: 'Erro ao ler arquivo', file: file.name });
+                    };
+                    
+                    reader.readAsArrayBuffer(file);
+                } catch (error) {
+                    resolve({ error: error.message, file: file.name });
+                }
+            });
+        }
+        
+        // Extrair informações do texto do PDF - Método Principal
+        function extractInfoFromText(text, filename) {
+            let name = '';
+            let balance = '';
+            let balanceValue = 0;
+            
+            // Limpar e normalizar texto
+            const cleanText = text.replace(/\s+/g, ' ').trim();
+            
+            // ESTRATÉGIA 1: Procurar por "Hóspede" ou "Hospede"
+            const namePatterns = [
+                /H[óo]spede\s*:?\s*([A-ZÀ-Ú\s\.]+(?:DE|DA|DOS|DAS)?[A-ZÀ-Ú\s\.]+)/i,
+                /H[óo]spede\s+([A-ZÀ-Ú\s\.]+(?:DE|DA|DOS|DAS)?[A-ZÀ-Ú\s\.]+)/i,
+                /Nome[:\s]+([A-ZÀ-Ú\s\.]+(?:DE|DA|DOS|DAS)?[A-ZÀ-Ú\s\.]+)/i,
+                /Titular[:\s]+([A-ZÀ-Ú\s\.]+(?:DE|DA|DOS|DAS)?[A-ZÀ-Ú\s\.]+)/i
+            ];
+            
+            for (const pattern of namePatterns) {
+                const match = cleanText.match(pattern);
+                if (match) {
+                    name = match[1].trim().toUpperCase();
+                    // Limpar possíveis dados extras
+                    name = name.split(/(?:\s+Reserva|\s+Check|\s+UH|\s+Nº)/i)[0].trim();
+                    break;
+                }
+            }
+            
+            // Se não encontrou nome, tentar extrair do nome do arquivo
+            if (!name || name.length < 5) {
+                const filenameMatch = filename.match(/([A-ZÀ-Ú\s\.\-]+)\.pdf/i);
+                if (filenameMatch) {
+                    name = filenameMatch[1].trim().replace(/_/g, ' ').replace(/-/g, ' ');
+                }
+            }
+            
+            // ESTRATÉGIA 2: Procurar saldo
+            const balancePatterns = [
+                /Saldo\s*R\$\s*([\d\.]+\,\d{2})/i,
+                /Saldo\s*:?\s*R\$\s*([\d\.]+\,\d{2})/i,
+                /Total\s*a\s*Pagar\s*:?\s*R\$\s*([\d\.]+\,\d{2})/i,
+                /Valor\s*Final\s*:?\s*R\$\s*([\d\.]+\,\d{2})/i,
+                /R\$\s*([\d\.]+\,\d{2})\s*D\s*Saldo/i
+            ];
+            
+            for (const pattern of balancePatterns) {
+                const match = text.match(pattern);
+                if (match) {
+                    balance = match[1];
+                    break;
+                }
+            }
+            
+            // ESTRATÉGIA 3: Procurar na seção de resumo
+            const summaryMatch = text.match(/Resumo\s+D[eé]bitos[\s\S]*?Hospedagem[\s\S]*?(\d[\d\.]*,\d{2})/i);
+            if (summaryMatch && !balance) {
+                balance = summaryMatch[1];
+            }
+            
+            // Converter valor
+            if (balance) {
+                balanceValue = parseFloat(balance.replace(/\./g, '').replace(',', '.'));
+            }
+            
+            return {
+                name: name || `Cliente ${extractedData.length + 1}`,
+                balance: balance || '0,00',
+                balanceValue: isNaN(balanceValue) ? 0 : balanceValue,
+                filename: filename
+            };
+        }
+        
+        // Método alternativo de extração
+        function extractInfoAlternative(text, filename) {
+            let name = '';
+            let balance = '';
+            
+            // Dividir em linhas
+            const lines = text.split('\n');
+            
+            // Procurar nome nas primeiras 30 linhas
+            for (let i = 0; i < Math.min(30, lines.length); i++) {
+                const line = lines[i].trim();
+                
+                // Padrões comuns para nomes em extratos
+                if (line.match(/^[A-ZÀ-Ú\s\.]+(?:DE|DA|DOS|DAS)?[A-ZÀ-Ú\s\.]+$/)) {
+                    // Linha com apenas letras maiúsculas e espaços (provavelmente um nome)
+                    if (line.length > 10 && line.length < 100 && !line.match(/\d/)) {
+                        name = line;
+                        break;
+                    }
+                }
+            }
+            
+            // Procurar saldo nas últimas 30 linhas
+            for (let i = Math.max(0, lines.length - 30); i < lines.length; i++) {
+                const line = lines[i].trim();
+                
+                // Padrões de valores monetários
+                const moneyMatch = line.match(/(\d[\d\.]*,\d{2})\s*D$/);
+                if (moneyMatch) {
+                    balance = moneyMatch[1];
+                    break;
+                }
+                
+                // Outro padrão
+                const altMatch = line.match(/R\$\s*(\d[\d\.]*,\d{2})/);
+                if (altMatch) {
+                    balance = altMatch[1];
+                    break;
+                }
+            }
+            
+            const balanceValue = balance ? parseFloat(balance.replace(/\./g, '').replace(',', '.')) : 0;
+            
+            return {
+                name: name || `Cliente ${extractedData.length + 1}`,
+                balance: balance || '0,00',
+                balanceValue: isNaN(balanceValue) ? 0 : balanceValue,
+                filename: filename
+            };
+        }
+        
+        // Exibir resultados na tabela
+        function displayResults() {
+            if (extractedData.length === 0) {
+                resultsContainer.innerHTML = `
+                    <div class="no-files">
+                        <i class="fas fa-exclamation-triangle" style="font-size: 48px; margin-bottom: 20px; color: #f59e0b;"></i>
+                        <p>Nenhuma informação foi extraída dos arquivos.</p>
+                        <p>Ativando modo debug para análise...</p>
+                        <button class="debug-toggle" onclick="toggleDebug()" style="margin-top: 20px;">
+                            <i class="fas fa-bug"></i> Ver Texto Extraído
+                        </button>
+                    </div>
+                `;
+                totalAmount.style.display = 'none';
+                debugMode = true;
+                debugSection.style.display = 'block';
+                return;
+            }
+            
+            // Calcular total
+            const total = extractedData.reduce((sum, item) => sum + item.balanceValue, 0);
+            
+            // Formatar total
+            const totalFormatted = total.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            
+            // Atualizar total
+            document.getElementById('totalValue').textContent = `R$ ${totalFormatted}`;
+            totalAmount.style.display = 'flex';
+            
+            // Criar tabela
+            let tableHTML = `
+                <table>
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Nome do Titular</th>
+                            <th>Saldo a Quitar</th>
+                            <th>Arquivo</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+            `;
+            
+            extractedData.forEach((item, index) => {
+                tableHTML += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td class="guest-name">${item.name}</td>
+                        <td class="balance">R$ ${item.balance}</td>
+                        <td>${item.filename}</td>
+                    </tr>
+                `;
+            });
+            
+            tableHTML += `
+                    </tbody>
+                </table>
+                <p style="margin-top: 20px; color: #6b7280; text-align: center;">
+                    <i class="fas fa-info-circle"></i> ${extractedData.length} de ${uploadedFiles.length} arquivos processados com sucesso.
+                </p>
+            `;
+            
+            resultsContainer.innerHTML = tableHTML;
+            noFilesMessage.style.display = 'none';
+        }
+        
+        // Exportar para CSV
+        function exportToCSV() {
+            if (extractedData.length === 0) return;
+            
+            let csvContent = "Nº;Nome do Titular;Saldo a Quitar;Arquivo\n";
+            
+            extractedData.forEach((item, index) => {
+                csvContent += `${index + 1};"${item.name}";"R$ ${item.balance}";"${item.filename}"\n`;
+            });
+            
+            // Calcular total
+            const total = extractedData.reduce((sum, item) => sum + item.balanceValue, 0);
+            const totalFormatted = total.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            
+            csvContent += `\nTotal Geral;"R$ ${totalFormatted}";"${extractedData.length} arquivo(s)"`;
+            
+            // Criar blob e fazer download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+            
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'extratos_hoteleiros.csv');
+            link.style.visibility = 'hidden';
+            
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // Limpar tudo
+        function clearAll() {
+            uploadedFiles = [];
+            extractedData = [];
+            
+            fileList.innerHTML = '';
+            resultsContainer.innerHTML = noFilesMessage.innerHTML;
+            noFilesMessage.style.display = 'block';
+            totalAmount.style.display = 'none';
+            exportBtn.disabled = true;
+            debugSection.style.display = 'none';
+            updateProcessButton();
+            
+            fileInput.value = '';
+        }
+        
+        // Alternar visão de debug
+        function toggleDebug() {
+            const debugContent = document.getElementById('debugContent');
+            debugContent.style.display = debugContent.style.display === 'block' ? 'none' : 'block';
+        }
+        
+        // Inicializar
+        document.addEventListener('DOMContentLoaded', () => {
+            updateProcessButton();
+        });
+    </script>
+</body>
+</html>
