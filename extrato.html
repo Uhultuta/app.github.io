@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Extrator de Extratos Hoteleiros - Versão Corrigida</title>
+    <title>Extrator de Extratos Hoteleiros - Versão Aprimorada</title>
     <style>
         * {
             margin: 0;
@@ -19,7 +19,7 @@
         }
         
         .container {
-            max-width: 1400px;
+            max-width: 1200px;
             margin: 0 auto;
             background: white;
             border-radius: 15px;
@@ -219,40 +219,12 @@
         }
         
         .total-amount {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
             color: white;
             padding: 15px 25px;
             border-radius: 10px;
             font-weight: 600;
             font-size: 1.2rem;
-        }
-        
-        .summary-container {
-            display: flex;
-            gap: 15px;
-            margin-bottom: 30px;
-        }
-        
-        .summary-card {
-            flex: 1;
-            padding: 20px;
-            border-radius: 10px;
-            color: white;
-            font-weight: 600;
-            text-align: center;
-        }
-        
-        .summary-card.total-credit {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-        }
-        
-        .summary-card.total-debit {
-            background: linear-gradient(135deg, #ef4444 0%, #dc2626 100%);
-        }
-        
-        .summary-card .value {
-            font-size: 1.5rem;
-            margin-top: 10px;
         }
         
         table {
@@ -295,23 +267,9 @@
             color: #1f2937;
         }
         
-        .reservation-number {
-            font-family: monospace;
-            background: #f3f4f6;
-            padding: 5px 10px;
-            border-radius: 5px;
-            font-weight: 600;
-            color: #374151;
-        }
-        
-        .credit {
+        .balance {
             font-weight: 600;
             color: #059669;
-        }
-        
-        .debit {
-            font-weight: 600;
-            color: #dc2626;
         }
         
         .loading {
@@ -399,10 +357,6 @@
                 display: block;
                 overflow-x: auto;
             }
-            
-            .summary-container {
-                flex-direction: column;
-            }
         }
     </style>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
@@ -411,7 +365,7 @@
     <div class="container">
         <header>
             <h1><i class="fas fa-hotel"></i> Extrator de Extratos Hoteleiros</h1>
-            <p class="subtitle">Versão Corrigida - Foco em Valores Pendentes</p>
+            <p class="subtitle">Versão Aprimorada - Processa PDFs complexos</p>
         </header>
         
         <section class="upload-section">
@@ -448,18 +402,7 @@
             <div class="results-header">
                 <h2><i class="fas fa-list-alt"></i> Resultados Extraídos</h2>
                 <div class="total-amount" id="totalAmount" style="display: none;">
-                    Total a Quitar: <span id="totalValue">R$ 0,00</span>
-                </div>
-            </div>
-            
-            <div class="summary-container" id="summaryContainer" style="display: none;">
-                <div class="summary-card total-credit">
-                    <div>Total Recebido</div>
-                    <div class="value" id="totalCreditValue">R$ 0,00</div>
-                </div>
-                <div class="summary-card total-debit">
-                    <div>Total a Quitar</div>
-                    <div class="value" id="totalDebitValue">R$ 0,00</div>
+                    Total Pendente: <span id="totalValue">R$ 0,00</span>
                 </div>
             </div>
             
@@ -495,7 +438,6 @@
         const processBtn = document.getElementById('processBtn');
         const exportBtn = document.getElementById('exportBtn');
         const totalAmount = document.getElementById('totalAmount');
-        const summaryContainer = document.getElementById('summaryContainer');
         const debugSection = document.getElementById('debugSection');
         const debugContent = document.getElementById('debugContent');
         
@@ -633,7 +575,6 @@
             extractedData = [];
             debugMode = false;
             debugSection.style.display = 'none';
-            summaryContainer.style.display = 'none';
             
             // Processar cada arquivo
             for (let i = 0; i < uploadedFiles.length; i++) {
@@ -712,8 +653,7 @@
                             
                             // Extrair informações do extrato
                             const extractedInfo = extractInfoFromText(fullText, file.name);
-                            
-                            if (extractedInfo.name) {
+                            if (extractedInfo.name && extractedInfo.balanceValue > 0) {
                                 extractedData.push(extractedInfo);
                             } else {
                                 // Tentar método alternativo
@@ -744,11 +684,8 @@
         // Extrair informações do texto do PDF - Método Principal
         function extractInfoFromText(text, filename) {
             let name = '';
-            let reservationNumber = '';
-            let credits = '0,00';
-            let pending = '0,00';
-            let creditsValue = 0;
-            let pendingValue = 0;
+            let balance = '';
+            let balanceValue = 0;
             
             // Limpar e normalizar texto
             const cleanText = text.replace(/\s+/g, ' ').trim();
@@ -779,128 +716,38 @@
                 }
             }
             
-            // ESTRATÉGIA 2: Procurar número da reserva
-            const reservationPatterns = [
-                /Reserva\s*(?:Nº|N°|No\.?)?\s*:?\s*([A-Z0-9\-]+)/i,
-                /N[º°o]\.?\s*Reserva\s*:?\s*([A-Z0-9\-]+)/i,
-                /Reservation\s*(?:No\.?)?\s*:?\s*([A-Z0-9\-]+)/i,
-                /RES\.?\s*:?\s*([A-Z0-9\-]+)/i,
-                /Reserva\s+([A-Z0-9]{6,})/i
+            // ESTRATÉGIA 2: Procurar saldo
+            const balancePatterns = [
+                /Saldo\s*R\$\s*([\d\.]+\,\d{2})/i,
+                /Saldo\s*:?\s*R\$\s*([\d\.]+\,\d{2})/i,
+                /Total\s*a\s*Pagar\s*:?\s*R\$\s*([\d\.]+\,\d{2})/i,
+                /Valor\s*Final\s*:?\s*R\$\s*([\d\.]+\,\d{2})/i,
+                /R\$\s*([\d\.]+\,\d{2})\s*D\s*Saldo/i
             ];
             
-            for (const pattern of reservationPatterns) {
-                const match = cleanText.match(pattern);
-                if (match) {
-                    reservationNumber = match[1].trim().toUpperCase();
-                    break;
-                }
-            }
-            
-            // ESTRATÉGIA 3: Procurar VALOR PENDENTE (O QUE RESTA QUITAR)
-            // Esta é a informação principal que queremos
-            const pendingPatterns = [
-                /(?:Resta a Quitar|Resta Quitar|Valor Pendente|Pendente|A Quitar|Saldo Devedor)[\s:]*R?\$?\s*([\d\.]+\,\d{2})/i,
-                /(?:Total a Pagar|Total Pagar|Valor Total|Total)[\s:]*R?\$?\s*([\d\.]+\,\d{2})/i,
-                /(?:Saldo|Saldo Final|Saldo Total)[\s:]*R?\$?\s*([\d\.]+\,\d{2})/i,
-                /R\$\s*([\d\.]+\,\d{2})\s*(?:D|DEV|DEVEDOR|PENDENTE)/i,
-                /D\s*R\$\s*([\d\.]+\,\d{2})/i,
-                /PAGAMENTO\s+PENDENTE[\s:]*R?\$?\s*([\d\.]+\,\d{2})/i
-            ];
-            
-            for (const pattern of pendingPatterns) {
+            for (const pattern of balancePatterns) {
                 const match = text.match(pattern);
                 if (match) {
-                    pending = match[1];
-                    pendingValue = parseFloat(pending.replace(/\./g, '').replace(',', '.'));
+                    balance = match[1];
                     break;
                 }
             }
             
-            // ESTRATÉGIA 4: Procurar por valores com "D" no final (que indica débito)
-            if (pendingValue === 0) {
-                const lines = text.split('\n');
-                for (let i = 0; i < lines.length; i++) {
-                    const line = lines[i].trim();
-                    const dMatch = line.match(/(\d[\d\.]*,\d{2})\s*D$/i);
-                    if (dMatch) {
-                        pending = dMatch[1];
-                        pendingValue = parseFloat(pending.replace(/\./g, '').replace(',', '.'));
-                        break;
-                    }
-                }
+            // ESTRATÉGIA 3: Procurar na seção de resumo
+            const summaryMatch = text.match(/Resumo\s+D[eé]bitos[\s\S]*?Hospedagem[\s\S]*?(\d[\d\.]*,\d{2})/i);
+            if (summaryMatch && !balance) {
+                balance = summaryMatch[1];
             }
             
-            // ESTRATÉGIA 5: Procurar por valores em tabelas/sumários
-            if (pendingValue === 0) {
-                const lines = text.split('\n');
-                let inSummary = false;
-                
-                for (let i = 0; i < lines.length; i++) {
-                    const line = lines[i].trim();
-                    
-                    // Identificar seção de resumo
-                    if (line.match(/RESUMO|TOTAL|FECHAMENTO|CONTA FINAL/i)) {
-                        inSummary = true;
-                        continue;
-                    }
-                    
-                    // Procurar o maior valor na seção de resumo (geralmente é o total)
-                    if (inSummary) {
-                        const valueMatch = line.match(/(\d[\d\.]*,\d{2})/);
-                        if (valueMatch) {
-                            const value = parseFloat(valueMatch[1].replace(/\./g, '').replace(',', '.'));
-                            // Se for um valor significativo (> 10), assume como pendente
-                            if (value > 10 && value > pendingValue) {
-                                pending = valueMatch[1];
-                                pendingValue = value;
-                            }
-                        }
-                        
-                        // Se encontrar linha que indica fim do resumo
-                        if (line.match(/\.{3,}|_+/)) {
-                            inSummary = false;
-                        }
-                    }
-                }
-            }
-            
-            // ESTRATÉGIA 6: Procurar créditos pagos
-            const creditPatterns = [
-                /(?:Cr[eé]dito|Valor Pago|Pago|Recebido)[\s:]*R?\$?\s*([\d\.]+\,\d{2})/i,
-                /C\s*R\$\s*([\d\.]+\,\d{2})/i,
-                /R\$\s*([\d\.]+\,\d{2})\s*C/i
-            ];
-            
-            for (const pattern of creditPatterns) {
-                const match = text.match(pattern);
-                if (match) {
-                    credits = match[1];
-                    creditsValue = parseFloat(credits.replace(/\./g, '').replace(',', '.'));
-                    break;
-                }
-            }
-            
-            // ESTRATÉGIA 7: Procurar por valores com "C" no final (que indica crédito)
-            if (creditsValue === 0) {
-                const lines = text.split('\n');
-                for (let i = 0; i < lines.length; i++) {
-                    const line = lines[i].trim();
-                    const cMatch = line.match(/(\d[\d\.]*,\d{2})\s*C$/i);
-                    if (cMatch) {
-                        credits = cMatch[1];
-                        creditsValue = parseFloat(credits.replace(/\./g, '').replace(',', '.'));
-                        break;
-                    }
-                }
+            // Converter valor
+            if (balance) {
+                balanceValue = parseFloat(balance.replace(/\./g, '').replace(',', '.'));
             }
             
             return {
                 name: name || `Cliente ${extractedData.length + 1}`,
-                reservationNumber: reservationNumber || 'NÃO ENCONTRADO',
-                credits: credits,
-                creditsValue: isNaN(creditsValue) ? 0 : creditsValue,
-                pending: pending,
-                pendingValue: isNaN(pendingValue) ? 0 : pendingValue,
+                balance: balance || '0,00',
+                balanceValue: isNaN(balanceValue) ? 0 : balanceValue,
                 filename: filename
             };
         }
@@ -908,9 +755,7 @@
         // Método alternativo de extração
         function extractInfoAlternative(text, filename) {
             let name = '';
-            let reservationNumber = '';
-            let credits = '0,00';
-            let pending = '0,00';
+            let balance = '';
             
             // Dividir em linhas
             const lines = text.split('\n');
@@ -929,60 +774,31 @@
                 }
             }
             
-            // Procurar número da reserva
-            for (let i = 0; i < Math.min(20, lines.length); i++) {
-                const line = lines[i].trim();
-                
-                // Padrões para número de reserva
-                const reservationMatch = line.match(/(?:RES|RESERVA)[:\s]*([A-Z0-9]{6,})/i);
-                if (reservationMatch) {
-                    reservationNumber = reservationMatch[1];
-                    break;
-                }
-                
-                // Procurar padrão de código alfanumérico
-                const codeMatch = line.match(/\b[A-Z]{2,}\d{4,}\b/);
-                if (codeMatch) {
-                    reservationNumber = codeMatch[0];
-                    break;
-                }
-            }
-            
-            // Procurar valores na parte final do documento
-            let lastValues = [];
-            for (let i = Math.max(0, lines.length - 20); i < lines.length; i++) {
+            // Procurar saldo nas últimas 30 linhas
+            for (let i = Math.max(0, lines.length - 30); i < lines.length; i++) {
                 const line = lines[i].trim();
                 
                 // Padrões de valores monetários
-                const valueMatch = line.match(/(\d[\d\.]*,\d{2})/g);
-                if (valueMatch) {
-                    lastValues = lastValues.concat(valueMatch);
+                const moneyMatch = line.match(/(\d[\d\.]*,\d{2})\s*D$/);
+                if (moneyMatch) {
+                    balance = moneyMatch[1];
+                    break;
+                }
+                
+                // Outro padrão
+                const altMatch = line.match(/R\$\s*(\d[\d\.]*,\d{2})/);
+                if (altMatch) {
+                    balance = altMatch[1];
+                    break;
                 }
             }
             
-            // Analisar os últimos valores encontrados
-            if (lastValues.length > 0) {
-                // Se tiver apenas um valor, assume como pendente
-                if (lastValues.length === 1) {
-                    pending = lastValues[0];
-                } 
-                // Se tiver dois valores, assume que o último é pendente e o primeiro é crédito
-                else if (lastValues.length >= 2) {
-                    credits = lastValues[0];
-                    pending = lastValues[lastValues.length - 1];
-                }
-            }
-            
-            const creditsValue = credits ? parseFloat(credits.replace(/\./g, '').replace(',', '.')) : 0;
-            const pendingValue = pending ? parseFloat(pending.replace(/\./g, '').replace(',', '.')) : 0;
+            const balanceValue = balance ? parseFloat(balance.replace(/\./g, '').replace(',', '.')) : 0;
             
             return {
                 name: name || `Cliente ${extractedData.length + 1}`,
-                reservationNumber: reservationNumber || 'NÃO ENCONTRADO',
-                credits: credits || '0,00',
-                creditsValue: isNaN(creditsValue) ? 0 : creditsValue,
-                pending: pending || '0,00',
-                pendingValue: isNaN(pendingValue) ? 0 : pendingValue,
+                balance: balance || '0,00',
+                balanceValue: isNaN(balanceValue) ? 0 : balanceValue,
                 filename: filename
             };
         }
@@ -1006,31 +822,18 @@
                 return;
             }
             
-            // Calcular totais
-            const totalCredits = extractedData.reduce((sum, item) => sum + item.creditsValue, 0);
-            const totalPending = extractedData.reduce((sum, item) => sum + item.pendingValue, 0);
+            // Calcular total
+            const total = extractedData.reduce((sum, item) => sum + item.balanceValue, 0);
             
-            // Formatar valores
-            const totalCreditsFormatted = totalCredits.toLocaleString('pt-BR', {
+            // Formatar total
+            const totalFormatted = total.toLocaleString('pt-BR', {
                 minimumFractionDigits: 2,
                 maximumFractionDigits: 2
             });
             
-            const totalPendingFormatted = totalPending.toLocaleString('pt-BR', {
-                minimumFractionDigits: 2,
-                maximumFractionDigits: 2
-            });
-            
-            // Atualizar totais
-            document.getElementById('totalCreditValue').textContent = `R$ ${totalCreditsFormatted}`;
-            document.getElementById('totalDebitValue').textContent = `R$ ${totalPendingFormatted}`;
-            
-            // Atualizar total geral (agora é o total pendente)
-            document.getElementById('totalValue').textContent = `R$ ${totalPendingFormatted}`;
-            
-            // Mostrar elementos
+            // Atualizar total
+            document.getElementById('totalValue').textContent = `R$ ${totalFormatted}`;
             totalAmount.style.display = 'flex';
-            summaryContainer.style.display = 'flex';
             
             // Criar tabela
             let tableHTML = `
@@ -1039,9 +842,7 @@
                         <tr>
                             <th>#</th>
                             <th>Nome do Titular</th>
-                            <th>Nº Reserva</th>
-                            <th>Créditos (Recebido)</th>
-                            <th>Débitos (A Quitar)</th>
+                            <th>Saldo a Quitar</th>
                             <th>Arquivo</th>
                         </tr>
                     </thead>
@@ -1053,9 +854,7 @@
                     <tr>
                         <td>${index + 1}</td>
                         <td class="guest-name">${item.name}</td>
-                        <td><span class="reservation-number">${item.reservationNumber}</span></td>
-                        <td class="credit">R$ ${item.credits}</td>
-                        <td class="debit">R$ ${item.pending}</td>
+                        <td class="balance">R$ ${item.balance}</td>
                         <td>${item.filename}</td>
                     </tr>
                 `;
@@ -1077,21 +876,20 @@
         function exportToCSV() {
             if (extractedData.length === 0) return;
             
-            // Calcular totais
-            const totalCredits = extractedData.reduce((sum, item) => sum + item.creditsValue, 0);
-            const totalPending = extractedData.reduce((sum, item) => sum + item.pendingValue, 0);
-            
-            let csvContent = "Nº;Nome do Titular;Nº Reserva;Créditos (Recebido);Débitos (A Quitar);Arquivo\n";
+            let csvContent = "Nº;Nome do Titular;Saldo a Quitar;Arquivo\n";
             
             extractedData.forEach((item, index) => {
-                csvContent += `${index + 1};"${item.name}";"${item.reservationNumber}";"R$ ${item.credits}";"R$ ${item.pending}";"${item.filename}"\n`;
+                csvContent += `${index + 1};"${item.name}";"R$ ${item.balance}";"${item.filename}"\n`;
             });
             
-            // Adicionar linha de totais
-            csvContent += `\n;;;;;;\n`;
-            csvContent += `"TOTAL RECEBIDO";;"R$ ${totalCredits.toLocaleString('pt-BR', {minimumFractionDigits: 2})}";;;\n`;
-            csvContent += `"TOTAL A QUITAR";;"R$ ${totalPending.toLocaleString('pt-BR', {minimumFractionDigits: 2})}";;;\n`;
-            csvContent += `"TOTAL GERAL";;"R$ ${totalPending.toLocaleString('pt-BR', {minimumFractionDigits: 2})}";"${extractedData.length} arquivo(s)";;`;
+            // Calcular total
+            const total = extractedData.reduce((sum, item) => sum + item.balanceValue, 0);
+            const totalFormatted = total.toLocaleString('pt-BR', {
+                minimumFractionDigits: 2,
+                maximumFractionDigits: 2
+            });
+            
+            csvContent += `\nTotal Geral;"R$ ${totalFormatted}";"${extractedData.length} arquivo(s)"`;
             
             // Criar blob e fazer download
             const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
@@ -1116,7 +914,6 @@
             resultsContainer.innerHTML = noFilesMessage.innerHTML;
             noFilesMessage.style.display = 'block';
             totalAmount.style.display = 'none';
-            summaryContainer.style.display = 'none';
             exportBtn.disabled = true;
             debugSection.style.display = 'none';
             updateProcessButton();
