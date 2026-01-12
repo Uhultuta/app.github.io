@@ -1614,7 +1614,7 @@
                             Subtotal: R$ <span id="subtotal">0</span>,00
                         </div>
                         <div style="font-size: 1.1em; color: #666;">
-                            Taxa de ISS (5%): R$ <span id="iss">0.00</span>
+                            Taxa: R$ <span id="iss">0.00</span>
                         </div>
                         <div style="font-size: 1.4em; font-weight: bold; color: #28a745;">
                             Total: R$ <span id="totalLavanderia">0.00</span>
@@ -2344,7 +2344,7 @@ function sendFrigobarMessage(isExit) {
                 return acc + (item.tipo === 'lavar' ? item.lavar : item.passar) * item.quantidade;
             }, 0);
             
-            const iss = subtotal * 0.05;
+            const iss = subtotal * 0.00;
             const total = subtotal + iss;
             
             let message = `*ICARAÍ PRAIA HOTEL LTDA*\n`;
@@ -2368,7 +2368,7 @@ function sendFrigobarMessage(isExit) {
             });
             
             message += `\nSubtotal: R$ ${subtotal},00\n`;
-            message += `ISS (5%): R$ ${iss.toFixed(2)}\n`;
+            message += `: R$ ${iss.toFixed(2)}\n`;
             message += `*Total: R$ ${total.toFixed(2)}*`;
             
             const encodedMessage = encodeURIComponent(message);
@@ -2400,7 +2400,7 @@ function sendFrigobarMessage(isExit) {
                 return acc + (item.tipo === 'lavar' ? item.lavar : item.passar) * item.quantidade;
             }, 0);
             
-            const iss = subtotal * 0.05;
+            const iss = subtotal * 0.00;
             const total = subtotal + iss;
             
             // Gerar número de comanda único
@@ -2627,7 +2627,6 @@ function sendFrigobarMessage(isExit) {
                             <div>R$ ${subtotal},00</div>
                         </div>
                         <div class="total-row">
-                            <div>ISS (5%):</div>
                             <div>R$ ${iss.toFixed(2)}</div>
                         </div>
                         <div class="total-row grand-total">
@@ -2637,14 +2636,6 @@ function sendFrigobarMessage(isExit) {
                     </div>
                     
                     <div class="divider"></div>
-                    
-                    <!-- Informações -->
-                    <div class="warning">
-                        <strong>ATENÇÃO:</strong><br>
-                        1. Prazo: 24 horas<br>
-                        2. Responsabilidade do cliente<br>
-                        3. Taxa após 48h
-                    </div>
                     
                     <!-- Código de barras -->
                     <div class="barcode">*${comandaNumber}*</div>
