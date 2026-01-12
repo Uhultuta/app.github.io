@@ -1312,32 +1312,42 @@
             height: 16px;
         }
 
-        /* Estilos para impressão 40x80 */
+        /* Estilos para impressão 40x80 CORRIGIDOS */
         @media print {
+            body, html {
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 40mm !important;
+                height: 80mm !important;
+                background: white !important;
+            }
+            
             body * {
                 visibility: hidden;
             }
             
             .thermal-print-content,
             .thermal-print-content * {
-                visibility: visible;
+                visibility: visible !important;
             }
             
             .thermal-print-content {
-                position: absolute;
-                left: 0;
-                top: 0;
-                width: 40mm;
-                min-height: 80mm;
-                padding: 2mm;
-                font-family: 'Courier New', monospace;
-                font-size: 8px;
-                line-height: 1.2;
-                background: white;
-                color: black;
-                border: none;
-                margin: 0;
-                box-shadow: none;
+                position: absolute !important;
+                left: 0 !important;
+                top: 0 !important;
+                width: 40mm !important;
+                min-height: 80mm !important;
+                max-height: 80mm !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                font-family: 'Courier New', monospace !important;
+                font-size: 8px !important;
+                line-height: 1.2 !important;
+                background: white !important;
+                color: black !important;
+                border: none !important;
+                box-shadow: none !important;
+                overflow: hidden !important;
             }
             
             .thermal-print-content .no-print {
@@ -1346,7 +1356,8 @@
             
             @page {
                 size: 40mm 80mm;
-                margin: 0;
+                margin: 0 !important;
+                padding: 0 !important;
             }
         }
 
@@ -1867,206 +1878,205 @@
         }
 
         // ========== SISTEMA FRIGOBAR ==========
-        // ========== SISTEMA FRIGOBAR (CORRIGIDO) ==========
-document.addEventListener('DOMContentLoaded', function() {
-    initializeFrigobar();
-    initializeValeSystem();
-});
-
-function initializeFrigobar() {
-    // Preços dos itens
-    const prices = {
-        'Água Mineral s/Gás (500ml)': 9,
-        'Água Mineral c/Gás (310ml)': 9,
-        'Coca-cola (lata 350ml)': 10,
-        'Fanta (lata 350ml)': 10,
-        'Guaraná (lata 350ml)': 10,
-        'Toddynho (200ml)': 12,
-        'Antarctica (lata 350ml)': 14,
-        'Castanha de Caju (50g)': 19,
-        'Batata (40g)': 12,
-        'Chocolate Kit Kat (41,5g)': 12,
-        'Bala Mentos crazyfruit (41,5g)': 10,
-        'Bala Mentos mint (41,5g)': 10
-    };
-
-    // CORREÇÃO: Configurar eventos UMA ÚNICA VEZ
-    document.querySelectorAll('.item').forEach(item => {
-        const img = item.querySelector('img');
-        const removeBtn = item.querySelector('.remove');
-        const itemName = item.querySelector('span').textContent;
-        const price = prices[itemName];
-        
-        // Remover event listeners anteriores para evitar duplicação
-        const newImg = img.cloneNode(true);
-        img.parentNode.replaceChild(newImg, img);
-        
-        const newRemoveBtn = removeBtn.cloneNode(true);
-        removeBtn.parentNode.replaceChild(newRemoveBtn, removeBtn);
-        
-        // Adicionar novo evento à imagem (clonada)
-        newImg.addEventListener('click', () => {
-            console.log('Clicou na imagem:', itemName); // Para debug
-            addItem(item, price);
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeFrigobar();
+            initializeValeSystem();
         });
-        
-        // Adicionar novo evento ao botão remover (clonado)
-        newRemoveBtn.addEventListener('click', () => {
-            console.log('Clicou em remover:', itemName); // Para debug
-            removeItem(item, price);
-        });
-    });
 
-    // Gerar apartamentos
-    const apartmentList = document.getElementById('apartment-list');
-    
-    // Limpar lista existente para evitar duplicação
-    apartmentList.innerHTML = '';
-    
-    for (let floor = 3; floor <= 10; floor++) {
-        const floorDiv = document.createElement('div');
-        floorDiv.classList.add('floor');
-        const floorTitle = document.createElement('h4');
-        floorTitle.textContent = `Andar ${floor}`;
-        floorDiv.appendChild(floorTitle);
+        function initializeFrigobar() {
+            // Preços dos itens
+            const prices = {
+                'Água Mineral s/Gás (500ml)': 9,
+                'Água Mineral c/Gás (310ml)': 9,
+                'Coca-cola (lata 350ml)': 10,
+                'Fanta (lata 350ml)': 10,
+                'Guaraná (lata 350ml)': 10,
+                'Toddynho (200ml)': 12,
+                'Antarctica (lata 350ml)': 14,
+                'Castanha de Caju (50g)': 19,
+                'Batata (40g)': 12,
+                'Chocolate Kit Kat (41,5g)': 12,
+                'Bala Mentos crazyfruit (41,5g)': 10,
+                'Bala Mentos mint (41,5g)': 10
+            };
 
-        const roomCount = floor === 10 ? 7 : 8;
-        for (let room = 1; room <= roomCount; room++) {
-            const apartment = floor === 10 ? `100${room}` : `${floor}0${room}`;
-            const apartmentDiv = document.createElement('div');
-            apartmentDiv.classList.add('apartment');
-            apartmentDiv.textContent = apartment;
-            apartmentDiv.addEventListener('click', () => {
-                document.getElementById('apartmentNumber').value = apartment;
-                apartmentList.style.display = 'none';
+            // Configurar eventos UMA ÚNICA VEZ
+            document.querySelectorAll('.item').forEach(item => {
+                const img = item.querySelector('img');
+                const removeBtn = item.querySelector('.remove');
+                const itemName = item.querySelector('span').textContent;
+                const price = prices[itemName];
+                
+                // Remover event listeners anteriores para evitar duplicação
+                const newImg = img.cloneNode(true);
+                img.parentNode.replaceChild(newImg, img);
+                
+                const newRemoveBtn = removeBtn.cloneNode(true);
+                removeBtn.parentNode.replaceChild(newRemoveBtn, removeBtn);
+                
+                // Adicionar novo evento à imagem (clonada)
+                newImg.addEventListener('click', () => {
+                    console.log('Clicou na imagem:', itemName);
+                    addItem(item, price);
+                });
+                
+                // Adicionar novo evento ao botão remover (clonado)
+                newRemoveBtn.addEventListener('click', () => {
+                    console.log('Clicou em remover:', itemName);
+                    removeItem(item, price);
+                });
             });
-            floorDiv.appendChild(apartmentDiv);
+
+            // Gerar apartamentos
+            const apartmentList = document.getElementById('apartment-list');
+            
+            // Limpar lista existente para evitar duplicação
+            apartmentList.innerHTML = '';
+            
+            for (let floor = 3; floor <= 10; floor++) {
+                const floorDiv = document.createElement('div');
+                floorDiv.classList.add('floor');
+                const floorTitle = document.createElement('h4');
+                floorTitle.textContent = `Andar ${floor}`;
+                floorDiv.appendChild(floorTitle);
+
+                const roomCount = floor === 10 ? 7 : 8;
+                for (let room = 1; room <= roomCount; room++) {
+                    const apartment = floor === 10 ? `100${room}` : `${floor}0${room}`;
+                    const apartmentDiv = document.createElement('div');
+                    apartmentDiv.classList.add('apartment');
+                    apartmentDiv.textContent = apartment;
+                    apartmentDiv.addEventListener('click', () => {
+                        document.getElementById('apartmentNumber').value = apartment;
+                        apartmentList.style.display = 'none';
+                    });
+                    floorDiv.appendChild(apartmentDiv);
+                }
+                apartmentList.appendChild(floorDiv);
+            }
+
+            // Botão mostrar/ocultar apartamentos
+            const showApartmentsBtn = document.getElementById('show-apartments');
+            const newShowApartmentsBtn = showApartmentsBtn.cloneNode(true);
+            showApartmentsBtn.parentNode.replaceChild(newShowApartmentsBtn, showApartmentsBtn);
+            
+            newShowApartmentsBtn.addEventListener('click', () => {
+                const list = document.getElementById('apartment-list');
+                list.style.display = list.style.display === 'none' ? 'block' : 'none';
+            });
+
+            // WhatsApp do Frigobar
+            const sendWhatsAppBtn = document.getElementById('send-frigobar-whatsapp');
+            const newSendWhatsAppBtn = sendWhatsAppBtn.cloneNode(true);
+            sendWhatsAppBtn.parentNode.replaceChild(newSendWhatsAppBtn, sendWhatsAppBtn);
+            
+            newSendWhatsAppBtn.addEventListener('click', sendFrigobarWhatsApp);
+
+            // Modal do Frigobar
+            document.getElementById('confirmExit').addEventListener('click', () => sendFrigobarMessage(true));
+            document.getElementById('confirmCleaning').addEventListener('click', () => sendFrigobarMessage(false));
         }
-        apartmentList.appendChild(floorDiv);
-    }
 
-    // Botão mostrar/ocultar apartamentos
-    const showApartmentsBtn = document.getElementById('show-apartments');
-    // Clonar e substituir para evitar duplicação de eventos
-    const newShowApartmentsBtn = showApartmentsBtn.cloneNode(true);
-    showApartmentsBtn.parentNode.replaceChild(newShowApartmentsBtn, showApartmentsBtn);
-    
-    newShowApartmentsBtn.addEventListener('click', () => {
-        const list = document.getElementById('apartment-list');
-        list.style.display = list.style.display === 'none' ? 'block' : 'none';
-    });
+        function addItem(item, price) {
+            console.log('addItem chamado para:', item.querySelector('span').textContent);
+            
+            const quantityElement = item.querySelector('.quantity');
+            const totalElement = item.querySelector('.total');
 
-    // WhatsApp do Frigobar
-    const sendWhatsAppBtn = document.getElementById('send-frigobar-whatsapp');
-    const newSendWhatsAppBtn = sendWhatsAppBtn.cloneNode(true);
-    sendWhatsAppBtn.parentNode.replaceChild(newSendWhatsAppBtn, sendWhatsAppBtn);
-    
-    newSendWhatsAppBtn.addEventListener('click', sendFrigobarWhatsApp);
+            let quantity = parseInt(quantityElement.textContent) + 1;
+            quantityElement.textContent = quantity;
 
-    // Modal do Frigobar
-    document.getElementById('confirmExit').addEventListener('click', () => sendFrigobarMessage(true));
-    document.getElementById('confirmCleaning').addEventListener('click', () => sendFrigobarMessage(false));
-}
+            let total = quantity * price;
+            totalElement.textContent = total.toFixed(2);
 
-function addItem(item, price) {
-    console.log('addItem chamado para:', item.querySelector('span').textContent); // Debug
-    
-    const quantityElement = item.querySelector('.quantity');
-    const totalElement = item.querySelector('.total');
-
-    let quantity = parseInt(quantityElement.textContent) + 1;
-    quantityElement.textContent = quantity;
-
-    let total = quantity * price;
-    totalElement.textContent = total.toFixed(2);
-
-    updateFrigobarSummary();
-}
-
-function removeItem(item, price) {
-    console.log('removeItem chamado para:', item.querySelector('span').textContent); // Debug
-    
-    const quantityElement = item.querySelector('.quantity');
-    const totalElement = item.querySelector('.total');
-
-    let quantity = parseInt(quantityElement.textContent);
-    if (quantity > 0) {
-        quantity -= 1;
-        quantityElement.textContent = quantity;
-        let total = quantity * price;
-        totalElement.textContent = total.toFixed(2);
-    }
-
-    updateFrigobarSummary();
-}
-
-function updateFrigobarSummary() {
-    const beverageItems = document.querySelectorAll('#beverages .item');
-    const snackItems = document.querySelectorAll('#snacks .item');
-
-    let totalBeverages = 0;
-    let totalSnacks = 0;
-
-    beverageItems.forEach(item => {
-        totalBeverages += parseFloat(item.querySelector('.total').textContent);
-    });
-
-    snackItems.forEach(item => {
-        totalSnacks += parseFloat(item.querySelector('.total').textContent);
-    });
-
-    const totalCost = totalBeverages + totalSnacks;
-
-    document.getElementById('totalBeverages').textContent = totalBeverages.toFixed(2);
-    document.getElementById('totalSnacks').textContent = totalSnacks.toFixed(2);
-    document.getElementById('totalCost').textContent = totalCost.toFixed(2);
-}
-
-function sendFrigobarWhatsApp() {
-    const apartmentNumber = document.getElementById('apartmentNumber').value.trim();
-
-    if (!apartmentNumber) {
-        alert("Por favor, insira o número do apartamento.");
-        return;
-    }
-
-    document.getElementById('confirmationModal').style.display = 'flex';
-}
-
-function sendFrigobarMessage(isExit) {
-    const apartmentNumber = document.getElementById('apartmentNumber').value.trim();
-    const status = isExit ? ' (Saída)' : ' (Arrumação)';
-
-    let message = `*Uh: ${apartmentNumber}${status} - Frigobar* \n\n`;
-
-    // Coleta os itens de bebidas
-    document.querySelectorAll('#beverages .item').forEach(item => {
-        const name = item.querySelector('span').textContent;
-        const quantity = item.querySelector('.quantity').textContent;
-        if (parseInt(quantity) > 0) {
-            message += `*${quantity}* ${name}\n`;
+            updateFrigobarSummary();
         }
-    });
 
-    // Coleta os itens de snacks
-    document.querySelectorAll('#snacks .item').forEach(item => {
-        const name = item.querySelector('span').textContent;
-        const quantity = item.querySelector('.quantity').textContent;
-        if (parseInt(quantity) > 0) {
-            message += `*${quantity}* ${name}\n`;
+        function removeItem(item, price) {
+            console.log('removeItem chamado para:', item.querySelector('span').textContent);
+            
+            const quantityElement = item.querySelector('.quantity');
+            const totalElement = item.querySelector('.total');
+
+            let quantity = parseInt(quantityElement.textContent);
+            if (quantity > 0) {
+                quantity -= 1;
+                quantityElement.textContent = quantity;
+                let total = quantity * price;
+                totalElement.textContent = total.toFixed(2);
+            }
+
+            updateFrigobarSummary();
         }
-    });
 
-    // Adiciona o custo total à mensagem
-    const totalCost = document.getElementById('totalCost').textContent;
-    message += `\n*Custo Total: R$ ${totalCost}*`;
+        function updateFrigobarSummary() {
+            const beverageItems = document.querySelectorAll('#beverages .item');
+            const snackItems = document.querySelectorAll('#snacks .item');
 
-    const encodedMessage = encodeURIComponent(message);
-    const whatsappUrl = 'https://wa.me/?text=' + encodedMessage;
+            let totalBeverages = 0;
+            let totalSnacks = 0;
 
-    document.getElementById('confirmationModal').style.display = 'none';
-    window.open(whatsappUrl, '_blank');
-}
+            beverageItems.forEach(item => {
+                totalBeverages += parseFloat(item.querySelector('.total').textContent);
+            });
+
+            snackItems.forEach(item => {
+                totalSnacks += parseFloat(item.querySelector('.total').textContent);
+            });
+
+            const totalCost = totalBeverages + totalSnacks;
+
+            document.getElementById('totalBeverages').textContent = totalBeverages.toFixed(2);
+            document.getElementById('totalSnacks').textContent = totalSnacks.toFixed(2);
+            document.getElementById('totalCost').textContent = totalCost.toFixed(2);
+        }
+
+        function sendFrigobarWhatsApp() {
+            const apartmentNumber = document.getElementById('apartmentNumber').value.trim();
+
+            if (!apartmentNumber) {
+                alert("Por favor, insira o número do apartamento.");
+                return;
+            }
+
+            document.getElementById('confirmationModal').style.display = 'flex';
+        }
+
+        function sendFrigobarMessage(isExit) {
+            const apartmentNumber = document.getElementById('apartmentNumber').value.trim();
+            const status = isExit ? ' (Saída)' : ' (Arrumação)';
+
+            let message = `*Uh: ${apartmentNumber}${status} - Frigobar* \n\n`;
+
+            // Coleta os itens de bebidas
+            document.querySelectorAll('#beverages .item').forEach(item => {
+                const name = item.querySelector('span').textContent;
+                const quantity = item.querySelector('.quantity').textContent;
+                if (parseInt(quantity) > 0) {
+                    message += `*${quantity}* ${name}\n`;
+                }
+            });
+
+            // Coleta os itens de snacks
+            document.querySelectorAll('#snacks .item').forEach(item => {
+                const name = item.querySelector('span').textContent;
+                const quantity = item.querySelector('.quantity').textContent;
+                if (parseInt(quantity) > 0) {
+                    message += `*${quantity}* ${name}\n`;
+                }
+            });
+
+            // Adiciona o custo total à mensagem
+            const totalCost = document.getElementById('totalCost').textContent;
+            message += `\n*Custo Total: R$ ${totalCost}*`;
+
+            const encodedMessage = encodeURIComponent(message);
+            const whatsappUrl = 'https://wa.me/?text=' + encodedMessage;
+
+            document.getElementById('confirmationModal').style.display = 'none';
+            window.open(whatsappUrl, '_blank');
+        }
+
         // ========== SISTEMA LAVANDERIA ==========
         let lavanderiaInitialized = false;
         let lavanderiaItems = [];
@@ -2368,7 +2378,7 @@ function sendFrigobarMessage(isExit) {
             });
             
             message += `\nSubtotal: R$ ${subtotal},00\n`;
-            message += `: R$ ${iss.toFixed(2)}\n`;
+            message += `ISS: R$ ${iss.toFixed(2)}\n`;
             message += `*Total: R$ ${total.toFixed(2)}*`;
             
             const encodedMessage = encodeURIComponent(message);
@@ -2409,7 +2419,7 @@ function sendFrigobarMessage(isExit) {
             // Criar janela de impressão
             const printWindow = window.open('', '_blank', 'width=400,height=600');
             
-            // HTML para impressão 40x80
+            // HTML para impressão 40x80 - CORRIGIDO
             printWindow.document.write(`
                 <!DOCTYPE html>
                 <html>
@@ -2417,7 +2427,6 @@ function sendFrigobarMessage(isExit) {
                     <title>Comanda de Lavanderia</title>
                     <style>
                         @import url('https://fonts.googleapis.com/css2?family=Libre+Barcode+39&display=swap');
-                        @import url('https://fonts.googleapis.com/css2?family=Courier+Prime&display=swap');
                         
                         * {
                             margin: 0;
@@ -2426,13 +2435,17 @@ function sendFrigobarMessage(isExit) {
                         }
                         
                         body {
-                            font-family: 'Courier Prime', monospace;
-                            font-size: 9px;
+                            font-family: 'Courier New', monospace;
+                            font-size: 8px;
                             line-height: 1.2;
                             width: 40mm;
                             min-height: 80mm;
-                            padding: 2mm;
+                            max-height: 80mm;
+                            padding: 0;
+                            margin: 0;
                             color: #000;
+                            background: white;
+                            overflow: hidden;
                         }
                         
                         @page {
@@ -2440,40 +2453,47 @@ function sendFrigobarMessage(isExit) {
                             margin: 0;
                         }
                         
+                        .thermal-content {
+                            width: 40mm;
+                            min-height: 80mm;
+                            padding: 1mm;
+                            box-sizing: border-box;
+                        }
+                        
                         .header {
                             text-align: center;
-                            margin-bottom: 3px;
+                            margin-bottom: 2px;
                         }
                         
                         .hotel-name {
                             font-weight: bold;
-                            font-size: 10px;
+                            font-size: 9px;
                             margin-bottom: 1px;
                         }
                         
                         .hotel-info {
-                            font-size: 7px;
+                            font-size: 6px;
                             margin-bottom: 2px;
                         }
                         
                         .divider {
                             border-top: 1px dashed #000;
-                            margin: 3px 0;
+                            margin: 2px 0;
                             width: 100%;
                         }
                         
                         .comanda-title {
                             font-weight: bold;
                             text-align: center;
-                            font-size: 10px;
-                            margin: 3px 0;
+                            font-size: 9px;
+                            margin: 2px 0;
                         }
                         
                         .info-row {
                             display: flex;
                             justify-content: space-between;
                             margin: 2px 0;
-                            font-size: 8px;
+                            font-size: 7px;
                         }
                         
                         .section-title {
@@ -2482,7 +2502,7 @@ function sendFrigobarMessage(isExit) {
                             background: #f0f0f0;
                             padding: 1px;
                             margin: 2px 0;
-                            font-size: 9px;
+                            font-size: 8px;
                         }
                         
                         .item-row {
@@ -2495,48 +2515,53 @@ function sendFrigobarMessage(isExit) {
                         
                         .item-name {
                             flex: 2;
+                            font-size: 7px;
                         }
                         
                         .item-qty {
                             flex: 0.5;
                             text-align: center;
+                            font-size: 7px;
                         }
                         
                         .item-price {
                             flex: 1;
                             text-align: right;
+                            font-size: 7px;
                         }
                         
                         .item-total {
                             flex: 1;
                             text-align: right;
                             font-weight: bold;
+                            font-size: 7px;
                         }
                         
                         .total-section {
-                            margin-top: 4px;
-                            padding-top: 3px;
-                            border-top: 2px solid #000;
+                            margin-top: 3px;
+                            padding-top: 2px;
+                            border-top: 1px solid #000;
                         }
                         
                         .total-row {
                             display: flex;
                             justify-content: space-between;
                             margin: 1px 0;
+                            font-size: 8px;
                         }
                         
                         .grand-total {
                             font-weight: bold;
-                            font-size: 10px;
+                            font-size: 9px;
                             padding-top: 2px;
                             border-top: 1px solid #000;
                         }
                         
                         .barcode {
                             font-family: 'Libre Barcode 39', monospace;
-                            font-size: 16px;
+                            font-size: 14px;
                             text-align: center;
-                            margin: 4px 0;
+                            margin: 3px 0;
                             letter-spacing: 1px;
                         }
                         
@@ -2544,12 +2569,12 @@ function sendFrigobarMessage(isExit) {
                             text-align: center;
                             font-size: 6px;
                             color: #666;
-                            margin-top: 4px;
+                            margin-top: 3px;
                         }
                         
                         .warning {
-                            font-size: 7px;
-                            margin: 3px 0;
+                            font-size: 6px;
+                            margin: 2px 0;
                             padding: 2px;
                             border-left: 2px solid #000;
                             background: #f8f8f8;
@@ -2557,15 +2582,15 @@ function sendFrigobarMessage(isExit) {
                         
                         .cut-line {
                             text-align: center;
-                            font-size: 7px;
+                            font-size: 6px;
                             color: #999;
-                            margin-top: 5px;
-                            border-top: 1px dashed #999;
-                            padding-top: 2px;
+                            margin-top: 4px;
+                            border-top: 0.5px dashed #999;
+                            padding-top: 1px;
                         }
                     </style>
                 </head>
-                <body>
+                <body class="thermal-content">
                     <div class="header">
                         <div class="hotel-name">ICARAÍ PRAIA HOTEL</div>
                         <div class="hotel-info">
@@ -2592,7 +2617,6 @@ function sendFrigobarMessage(isExit) {
                     
                     <div class="divider"></div>
                     
-                    <!-- Itens Lavar -->
                     ${groupedItems['lavar'] && groupedItems['lavar'].length > 0 ? `
                     <div class="section-title">LAVAR</div>
                     ${groupedItems['lavar'].map(item => `
@@ -2605,7 +2629,6 @@ function sendFrigobarMessage(isExit) {
                     `).join('')}
                     ` : ''}
                     
-                    <!-- Itens Passar -->
                     ${groupedItems['passar'] && groupedItems['passar'].length > 0 ? `
                     <div class="section-title">PASSAR</div>
                     ${groupedItems['passar'].map(item => `
@@ -2620,13 +2643,13 @@ function sendFrigobarMessage(isExit) {
                     
                     <div class="divider"></div>
                     
-                    <!-- Totais -->
                     <div class="total-section">
                         <div class="total-row">
                             <div>SUBTOTAL:</div>
                             <div>R$ ${subtotal},00</div>
                         </div>
                         <div class="total-row">
+                            <div>ISS (0%):</div>
                             <div>R$ ${iss.toFixed(2)}</div>
                         </div>
                         <div class="total-row grand-total">
@@ -2637,11 +2660,9 @@ function sendFrigobarMessage(isExit) {
                     
                     <div class="divider"></div>
                     
-                    <!-- Código de barras -->
                     <div class="barcode">*${comandaNumber}*</div>
-                    <div style="text-align: center; font-size: 7px;">${comandaNumber}</div>
+                    <div style="text-align: center; font-size: 6px;">${comandaNumber}</div>
                     
-                    <!-- Rodapé -->
                     <div class="footer">
                         Obrigado pela preferência!<br>
                         (21) 2612-5030 • lavanderia@icaraipraiahotel.com.br
@@ -2714,7 +2735,7 @@ function sendFrigobarMessage(isExit) {
             function checkDate() {
                 const today = new Date();
                 const day = today.getDate();
-                const month = today.getMonth() + 1; // Janeiro = 1, Dezembro = 12
+                const month = today.getMonth() + 1;
                 const year = today.getFullYear();
                 
                 // Formatar data para exibição
@@ -2792,7 +2813,6 @@ function sendFrigobarMessage(isExit) {
             
             // Voltar para a aba frigobar
             function goBackToFrigobar() {
-                // Ativar a aba frigobar
                 document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
                 document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
                 
