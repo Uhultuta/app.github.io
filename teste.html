@@ -869,7 +869,7 @@
         <div class="modal">
             <h2>Lembrete de Solicitação de Vale</h2>
             <p>Você ainda não solicitou seu vale para este mês.</p>
-            <p>O prazo para solicitação é entre os dias <strong>10 e 20</strong> de cada mês.</p>
+            <p>O prazo para solicitação é entre os dias <strong>10 e 14</strong> de cada mês.</p> <!-- ALTERADO: 10-14 -->
             <p id="modal-days-left" class="days-left"></p>
             <div class="modal-buttons">
                 <button id="modal-request-btn" class="vale-btn">Solicitar Agora</button>
@@ -1971,7 +1971,7 @@ function imprimirComanda(dados) {
             let daysRemaining = 0;
             let isThirteenthSalaryMonth = false;
 
-            // Verificar se está no período de solicitação (dias 10 a 20) e se é novembro/dezembro
+            // Verificar se está no período de solicitação (dias 10 a 14) e se é novembro/dezembro
             function checkDate() {
                 const today = new Date();
                 const day = today.getDate();
@@ -1996,12 +1996,12 @@ function imprimirComanda(dados) {
                     initialScreen.classList.remove('hidden');
                 }
                 
-                // Verificar se está no período de solicitação (dias 10 a 20)
-                if (day >= 10 && day <= 20) {
+                // Verificar se está no período de solicitação (dias 10 a 14) - ALTERADO
+                if (day >= 10 && day <= 14) {
                     isRequestPeriod = true;
-                    daysRemaining = 20 - day;
+                    daysRemaining = 14 - day; // ALTERADO: 14 em vez de 20
                     
-                    if (day === 20) {
+                    if (day === 14) {
                         dayStatusEl.textContent = "✅ Hoje é o último dia para solicitar o vale!";
                     } else {
                         dayStatusEl.textContent = "✅ Estamos no período de solicitação de vale.";
@@ -2152,18 +2152,18 @@ function imprimirComanda(dados) {
                 }
             });
             
-            // Configurar botões do WhatsApp
+            // Configurar botões do WhatsApp - DIRECIONADO PARA NÚMERO ESPECÍFICO
             whatsappBtn.addEventListener('click', function() {
                 const message = `Solicitação de Vale\nFuncionário: ${employeeName}\nValor: R$ ${selectedValue.toFixed(2).replace('.', ',')}`;
                 const encodedMessage = encodeURIComponent(message);
-                const whatsappURL = `https://wa.me/?text=${encodedMessage}`;
+                const whatsappURL = `https://wa.me/552127106142?text=${encodedMessage}`; // ALTERADO: número específico
                 window.open(whatsappURL, '_blank');
             });
             
             refusalWhatsappBtn.addEventListener('click', function() {
                 const message = "Obrigado, não desejo pedir vale";
                 const encodedMessage = encodeURIComponent(message);
-                const whatsappURL = `https://wa.me/?text=${encodedMessage}`;
+                const whatsappURL = `https://wa.me/552127106142?text=${encodedMessage}`; // ALTERADO: número específico
                 window.open(whatsappURL, '_blank');
             });
             
