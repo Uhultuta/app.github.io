@@ -27,6 +27,7 @@
             background: white;
             min-height: 100vh;
             box-shadow: 0 0 20px rgba(0,0,0,0.1);
+            position: relative; /* Adicionado para posicionamento do botão de instalação */
         }
 
         /* Header */
@@ -739,25 +740,27 @@
             padding: 3px;
         }
 
-        /* Botão de instalação */
+        /* Botão de instalação - ADICIONADO DO CÓDIGO 2 */
         .install-button {
             background: #4CAF50;
             color: white;
             padding: 10px;
             border: none;
-            border-radius: 50%;
+            border-radius: 50%; /* Faz o botão redondo */
             cursor: pointer;
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            width: 40px;
-            height: 40px;
+            position: fixed; /* Posiciona-o fixo */
+            bottom: 20px; /* Distância do fundo */
+            right: 20px; /* Distância da direita */
+            width: 50px; /* Largura fixa */
+            height: 50px; /* Altura fixa */
             display: flex;
             justify-content: center;
             align-items: center;
             transition: background-color 0.3s;
             z-index: 1000;
             box-shadow: 0 2px 10px rgba(0,0,0,0.2);
+            font-size: 24px;
+            font-weight: bold;
         }
 
         .install-button:hover {
@@ -839,6 +842,14 @@
             .vale-btn {
                 width: 100%;
                 margin: 5px 0;
+            }
+            
+            .install-button {
+                width: 45px;
+                height: 45px;
+                bottom: 15px;
+                right: 15px;
+                font-size: 20px;
             }
         }
     </style>
@@ -1138,6 +1149,7 @@
             </div>
         </div>
 
+        <!-- BOTÃO DE INSTALAÇÃO - ADICIONADO DO CÓDIGO 2 -->
         <button class="install-button" id="install-button" style="display: none;">
             +
         </button>
@@ -2204,22 +2216,27 @@ function imprimirComanda(dados) {
             checkDate();
         }
 
-        // ========== PWA INSTALL BUTTON ==========
+        // ========== PWA INSTALL BUTTON - ADICIONADO DO CÓDIGO 2 ==========
         let deferredPrompt;
         const installButton = document.getElementById('install-button');
 
         window.addEventListener('beforeinstallprompt', (event) => {
             event.preventDefault();
             deferredPrompt = event;
-            installButton.style.display = 'block';
+            installButton.style.display = 'block'; // Mostra o botão de instalação
         });
 
         installButton.addEventListener('click', () => {
-            installButton.style.display = 'none';
+            installButton.style.display = 'none'; // Esconde o botão após o clique
             if (deferredPrompt) {
-                deferredPrompt.prompt();
+                deferredPrompt.prompt(); // Mostra o prompt de instalação
                 deferredPrompt.userChoice.then((choiceResult) => {
-                    deferredPrompt = null;
+                    if (choiceResult.outcome === 'accepted') {
+                        console.log('Usuário aceitou a instalação da aplicação');
+                    } else {
+                        console.log('Usuário recusou a instalação da aplicação');
+                    }
+                    deferredPrompt = null; // Limpa a variável
                 });
             }
         });
