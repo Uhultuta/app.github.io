@@ -869,7 +869,7 @@
         <div class="modal">
             <h2>Lembrete de Solicitação de Vale</h2>
             <p>Você ainda não solicitou seu vale para este mês.</p>
-            <p>O prazo para solicitação é entre os dias <strong>10 e 14</strong> de cada mês.</p> <!-- ALTERADO: 10-14 -->
+            <p>O prazo para solicitação é entre os dias <strong>10 e 14</strong> de cada mês.</p>
             <p id="modal-days-left" class="days-left"></p>
             <div class="modal-buttons">
                 <button id="modal-request-btn" class="vale-btn">Solicitar Agora</button>
@@ -1996,10 +1996,10 @@ function imprimirComanda(dados) {
                     initialScreen.classList.remove('hidden');
                 }
                 
-                // Verificar se está no período de solicitação (dias 10 a 14) - ALTERADO
+                // Verificar se está no período de solicitação (dias 10 a 14)
                 if (day >= 10 && day <= 14) {
                     isRequestPeriod = true;
-                    daysRemaining = 14 - day; // ALTERADO: 14 em vez de 20
+                    daysRemaining = 14 - day;
                     
                     if (day === 14) {
                         dayStatusEl.textContent = "✅ Hoje é o último dia para solicitar o vale!";
@@ -2072,8 +2072,18 @@ function imprimirComanda(dados) {
                 closeReminderModal();
             });
             
+            // ALTERADO: Agora o botão "Solicitar Agora" no modal direciona para a aba de vale
             modalRequestBtn.addEventListener('click', function() {
                 closeReminderModal();
+                
+                // Mudar para a aba "Solicitar Vale"
+                document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+                document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+                
+                document.querySelector('[onclick="openTab(\'vale\')"]').classList.add('active');
+                document.getElementById('vale').classList.add('active');
+                
+                // Mostrar a tela de confirmação na aba de vale
                 initialScreen.classList.add('hidden');
                 confirmationScreen.classList.remove('hidden');
             });
@@ -2156,14 +2166,14 @@ function imprimirComanda(dados) {
             whatsappBtn.addEventListener('click', function() {
                 const message = `Solicitação de Vale\nFuncionário: ${employeeName}\nValor: R$ ${selectedValue.toFixed(2).replace('.', ',')}`;
                 const encodedMessage = encodeURIComponent(message);
-                const whatsappURL = `https://wa.me/552127106142?text=${encodedMessage}`; // ALTERADO: número específico
+                const whatsappURL = `https://wa.me/552127106142?text=${encodedMessage}`;
                 window.open(whatsappURL, '_blank');
             });
             
             refusalWhatsappBtn.addEventListener('click', function() {
                 const message = "Obrigado, não desejo pedir vale";
                 const encodedMessage = encodeURIComponent(message);
-                const whatsappURL = `https://wa.me/552127106142?text=${encodedMessage}`; // ALTERADO: número específico
+                const whatsappURL = `https://wa.me/552127106142?text=${encodedMessage}`;
                 window.open(whatsappURL, '_blank');
             });
             
