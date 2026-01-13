@@ -764,562 +764,17 @@
             background-color: #45a049;
         }
 
-        /* Estilos da Cotação de Reservas */
-        .quotation-container {
-            max-width: 100%;
-            margin: 0 auto;
-        }
-
-        .language-selector {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 20px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        
-        .lang-btn {
-            padding: 8px 16px;
-            border: 2px solid rgba(0,0,0,0.1);
-            border-radius: 20px;
-            background: #f8f9fa;
-            color: #333;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 12px;
-        }
-        
-        .lang-btn.active {
-            background: #007bff;
-            color: white;
-            border-color: #007bff;
-        }
-        
-        .lang-btn:hover {
-            background: #e9ecef;
-        }
-
-        .lang-btn.active:hover {
-            background: #0056b3;
-        }
-
-        .calculator-title {
-            font-size: 20px;
-            font-weight: 700;
-            color: #1a6bb3;
-            margin-bottom: 20px;
-            text-align: center;
-        }
-        
-        .form-group {
-            margin-bottom: 15px;
-        }
-        
-        .form-label {
-            display: block;
-            font-weight: 600;
-            color: #333;
-            margin-bottom: 8px;
-            font-size: 14px;
-        }
-        
-        .form-input, .form-select {
-            width: 100%;
-            padding: 10px 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            font-size: 14px;
-            transition: all 0.3s ease;
-        }
-        
-        .form-input:focus, .form-select:focus {
-            outline: none;
-            border-color: #1a6bb3;
-            box-shadow: 0 0 0 3px rgba(26, 107, 179, 0.1);
-        }
-        
-        .radio-group {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 8px;
-        }
-        
-        .radio-label {
-            display: flex;
-            align-items: center;
-            padding: 10px 12px;
-            border: 2px solid #e0e0e0;
-            border-radius: 8px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            font-size: 12px;
-        }
-        
-        .radio-label:hover {
-            border-color: #1a6bb3;
-        }
-        
-        .radio-label.selected {
-            border-color: #1a6bb3;
-            background: #f0f7ff;
-        }
-        
-        .radio-input {
-            margin-right: 8px;
-        }
-        
-        .meal-options {
-            background: #f8fafc;
-            padding: 12px;
-            border-radius: 8px;
-            margin-top: 8px;
-            border-left: 4px solid #1a6bb3;
-        }
-        
-        /* Room Configuration Styles */
-        .room-configuration {
-            background: #f8fafc;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 15px;
-            border: 1px solid #e0e0e0;
-        }
-        
-        .room-config-title {
-            font-size: 14px;
-            font-weight: 700;
-            color: #1a6bb3;
-            margin-bottom: 12px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-        
-        .add-room-btn {
-            background: #1a6bb3;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-        }
-        
-        .add-room-btn:hover {
-            background: #155a9d;
-            transform: translateY(-1px);
-        }
-        
-        .room-item {
-            background: white;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            border: 1px solid #e0e0e0;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-        
-        .room-input {
-            flex: 1;
-            padding: 6px 10px;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-        
-        .remove-room-btn {
-            background: #ff6b6b;
-            color: white;
-            border: none;
-            width: 25px;
-            height: 25px;
-            border-radius: 4px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 12px;
-        }
-        
-        .remove-room-btn:hover {
-            background: #ff5252;
-        }
-        
-        .rooms-summary {
-            background: #e7f3ff;
-            padding: 10px 12px;
-            border-radius: 6px;
-            margin-top: 8px;
-            font-size: 12px;
-            color: #1a6bb3;
-            font-weight: 600;
-        }
-        
-        .quotation-action-buttons {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 8px;
-            margin-top: 15px;
-        }
-        
-        .quotation-action-btn {
-            padding: 12px;
-            border: none;
-            border-radius: 8px;
-            font-size: 13px;
-            font-weight: 700;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 6px;
-        }
-        
-        .copy-btn {
-            background: linear-gradient(135deg, #1a6bb3, #2c8cda);
-            color: white;
-        }
-        
-        .quotation-whatsapp-btn {
-            background: linear-gradient(135deg, #25D366, #128C7E);
-            color: white;
-        }
-        
-        .quotation-action-btn:hover {
-            transform: translateY(-1px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-        }
-
-        /* Preview Styles */
-        .quotation-preview {
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-            margin-top: 20px;
-            max-height: 70vh;
-            overflow-y: auto;
-        }
-        
-        .quotation-header {
-            background: linear-gradient(135deg, #1a6bb3, #2c8cda);
-            padding: 20px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .quotation-header::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.1) 1px, transparent 1px);
-            background-size: 15px 15px;
-        }
-        
-        .hotel-name {
-            font-size: 18px;
-            font-weight: 800;
-            color: white;
-            margin-bottom: 5px;
-            text-shadow: 0 1px 3px rgba(0,0,0,0.3);
-        }
-        
-        .quotation-title {
-            font-size: 14px;
-            font-weight: 600;
-            color: rgba(255,255,255,0.9);
-        }
-
-        .quotation-badge {
-            background: #ff6b6b;
-            color: white;
-            padding: 4px 10px;
-            border-radius: 15px;
-            font-weight: 700;
-            font-size: 10px;
-            display: inline-block;
-            margin-top: 8px;
-        }
-
-        .validity-notice {
-            background: linear-gradient(135deg, #fff3cd, #ffeaa7);
-            border-left: 4px solid #ffc107;
-            padding: 10px 15px;
-            font-weight: 600;
-            color: #856404;
-            font-size: 11px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
-        }
-
-        .quotation-body {
-            padding: 20px;
-        }
-
-        .section-title {
-            font-size: 14px;
-            color: #1a6bb3;
-            font-weight: 700;
-            margin-bottom: 12px;
-            padding-bottom: 6px;
-            border-bottom: 2px solid #eaeaea;
-        }
-
-        .details-grid {
-            display: grid;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .detail-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px solid #f5f5f5;
-        }
-
-        .detail-label {
-            font-weight: 600;
-            color: #555;
-            font-size: 12px;
-        }
-
-        .detail-value {
-            color: #333;
-            font-weight: 500;
-            font-size: 12px;
-        }
-
-        .dates-container {
-            display: flex;
-            gap: 12px;
-            margin: 15px 0;
-        }
-
-        .date-column {
-            flex: 1;
-            text-align: center;
-            background: #f0f7ff;
-            padding: 12px;
-            border-radius: 8px;
-            border: 2px solid #1a6bb3;
-        }
-
-        .date-label {
-            font-size: 11px;
-            color: #1a6bb3;
-            font-weight: 700;
-            margin-bottom: 4px;
-            text-transform: uppercase;
-        }
-
-        .date-value {
-            font-size: 13px;
-            font-weight: 800;
-            color: #1a6bb3;
-            margin-bottom: 2px;
-        }
-
-        .date-time {
-            font-size: 10px;
-            color: #666;
-        }
-
-        .pricing-breakdown {
-            background: #f8fafc;
-            padding: 15px;
-            border-radius: 8px;
-            margin: 15px 0;
-            border: 1px solid #e0e0e0;
-        }
-
-        .price-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 6px 0;
-            border-bottom: 1px solid #eee;
-            font-size: 12px;
-        }
-
-        .price-row:last-child {
-            border-bottom: none;
-        }
-
-        .total-row {
-            background: #1a6bb3;
-            color: white;
-            padding: 10px 12px;
-            border-radius: 6px;
-            margin-top: 8px;
-            font-weight: 700;
-            font-size: 13px;
-        }
-
-        .amenities-list {
-            list-style: none;
-            margin: 12px 0;
-        }
-
-        .amenities-list li {
-            padding: 5px 0;
-            font-size: 11px;
-            color: #555;
-            display: flex;
-            align-items: center;
-        }
-
-        .amenities-list li::before {
-            content: '✓';
-            color: #4CAF50;
-            font-weight: bold;
-            margin-right: 6px;
-        }
-
-        .no-breakfast-notice {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 8px 12px;
-            margin: 8px 0;
-            border-radius: 0 6px 6px 0;
-            font-size: 11px;
-            color: #856404;
-        }
-
-        .meal-info-notice {
-            background: #e7f3ff;
-            border-left: 4px solid #1a6bb3;
-            padding: 8px 12px;
-            margin: 8px 0;
-            border-radius: 0 6px 6px 0;
-            font-size: 11px;
-            color: #1a6bb3;
-            font-weight: 600;
-        }
-
-        .quotation-footer {
-            background: #1a6bb3;
-            padding: 15px 20px;
-            color: white;
-            text-align: center;
-        }
-
-        .contact-info {
-            font-size: 11px;
-            line-height: 1.4;
-            opacity: 0.9;
-        }
-
-        .policy-section {
-            margin: 15px 0;
-        }
-
-        .policy-title {
-            font-size: 12px;
-            font-weight: 700;
-            color: #1a6bb3;
-            margin-bottom: 6px;
-        }
-
-        .policy-content {
-            font-size: 11px;
-            color: #555;
-            line-height: 1.4;
-        }
-
-        .policy-notice {
-            background: #f8fafc;
-            border-left: 4px solid #1a6bb3;
-            padding: 10px 12px;
-            margin: 8px 0;
-            border-radius: 0 6px 6px 0;
-            font-size: 11px;
-            color: #1a6bb3;
-        }
-
-        .warning-notice {
-            background: #fff3cd;
-            border-left: 4px solid #ffc107;
-            padding: 10px 12px;
-            margin: 8px 0;
-            border-radius: 0 6px 6px 0;
-            font-size: 11px;
-            color: #856404;
-        }
-
-        /* Novos estilos para múltiplas datas */
-        .date-periods-container {
-            margin-bottom: 15px;
-        }
-
-        .date-period {
-            background: white;
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 8px;
-            border: 1px solid #e0e0e0;
-            display: flex;
-            gap: 8px;
-            align-items: center;
-        }
-
-        .date-period-input {
-            flex: 1;
-            padding: 6px 10px;
-            border: 1px solid #e0e0e0;
-            border-radius: 4px;
-            font-size: 12px;
-        }
-
-        .add-date-period-btn {
-            background: #1a6bb3;
-            color: white;
-            border: none;
-            padding: 6px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: 600;
-            transition: all 0.3s ease;
-            margin-bottom: 10px;
-        }
-
-        .add-date-period-btn:hover {
-            background: #155a9d;
-            transform: translateY(-1px);
-        }
-
-        /* Estilos para opção de mostrar detalhes das refeições */
-        .show-meal-details-option {
-            margin-top: 10px;
-            display: flex;
-            align-items: center;
-            gap: 8px;
-        }
-
-        .show-meal-details-checkbox {
-            width: 16px;
-            height: 16px;
-        }
-
-        /* Estilos para impressão 40x80 CORRIGIDOS */
+        /* Estilos para impressão 203 DPI x 528 pontos */
         @media print {
             body, html {
                 margin: 0 !important;
                 padding: 0 !important;
-                width: 40mm !important;
-                height: 80mm !important;
+                width: 528pt !important; /* 528 pontos = 70mm em 203 DPI */
+                min-height: auto !important;
                 background: white !important;
+                font-family: 'Courier New', monospace !important;
+                font-size: 9pt !important;
+                line-height: 1 !important;
             }
             
             body * {
@@ -1335,14 +790,14 @@
                 position: absolute !important;
                 left: 0 !important;
                 top: 0 !important;
-                width: 40mm !important;
-                min-height: 80mm !important;
-                max-height: 80mm !important;
-                padding: 0 !important;
+                width: 528pt !important;
+                min-height: auto !important;
+                max-height: none !important;
+                padding: 4pt !important;
                 margin: 0 !important;
                 font-family: 'Courier New', monospace !important;
-                font-size: 8px !important;
-                line-height: 1.2 !important;
+                font-size: 9pt !important;
+                line-height: 1 !important;
                 background: white !important;
                 color: black !important;
                 border: none !important;
@@ -1355,7 +810,7 @@
             }
             
             @page {
-                size: 40mm 80mm;
+                size: 528pt auto;
                 margin: 0 !important;
                 padding: 0 !important;
             }
@@ -1384,41 +839,6 @@
             .vale-btn {
                 width: 100%;
                 margin: 5px 0;
-            }
-
-            .radio-group {
-                grid-template-columns: 1fr;
-            }
-            
-            .dates-container {
-                flex-direction: column;
-            }
-            
-            .quotation-action-buttons {
-                grid-template-columns: 1fr;
-            }
-            
-            .room-item {
-                flex-direction: column;
-                gap: 6px;
-            }
-            
-            .room-input {
-                width: 100%;
-            }
-
-            .lang-btn {
-                padding: 6px 12px;
-                font-size: 10px;
-            }
-
-            .date-period {
-                flex-direction: column;
-                gap: 6px;
-            }
-            
-            .date-period-input {
-                width: 100%;
             }
         }
     </style>
@@ -1458,7 +878,6 @@
             <button class="tab active" onclick="openTab('frigobar')">Frigobar</button>
             <button class="tab" onclick="openTab('lavanderia')">Lavanderia</button>
             <button class="tab" onclick="openTab('vale')">Solicitar Vale</button>
-            <button class="tab" onclick="openTab('cotacao')">Cotação</button>
         </div>
 
         <!-- Conteúdo Frigobar -->
@@ -1719,134 +1138,6 @@
             </div>
         </div>
 
-        <!-- Conteúdo Cotação de Reservas -->
-        <div id="cotacao" class="tab-content">
-            <div class="quotation-container">
-                <h2>Cotador de Reservas</h2>
-                <p style="text-align: center; margin-bottom: 15px; color: #666;">Icaraí Praia Hotel</p>
-                
-                <div class="language-selector">
-                    <button class="lang-btn active" data-lang="pt">🇧🇷 Português</button>
-                    <button class="lang-btn" data-lang="en">🇺🇸 English</button>
-                    <button class="lang-btn" data-lang="fr">🇫🇷 Français</button>
-                    <button class="lang-btn" data-lang="es">🇪🇸 Español</button>
-                </div>
-                
-                <div class="calculator">
-                    <div class="calculator-title" id="calculatorTitle">Informações da Reserva</div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" id="guestNameLabel">Nome do Hóspede Principal</label>
-                        <input type="text" class="form-input" id="guestName" placeholder="Digite o nome completo">
-                    </div>
-                    
-                    <!-- Room Configuration Section -->
-                    <div class="room-configuration">
-                        <div class="room-config-title">
-                            <span id="roomConfigLabel">Configuração de Quartos</span>
-                            <button class="add-room-btn" onclick="addRoom()" id="addRoomBtn">+ Adicionar Quarto</button>
-                        </div>
-                        
-                        <div id="roomsContainer">
-                            <!-- Room items will be added here dynamically -->
-                            <div class="room-item">
-                                <input type="number" class="room-input" min="1" value="1" placeholder="Quantidade" onchange="updateRoomsSummary()">
-                                <select class="room-input" onchange="updateRoomsSummary()">
-                                    <option value="1">1 Hóspede</option>
-                                    <option value="2">2 Hóspedes</option>
-                                    <option value="3">3 Hóspedes</option>
-                                    <option value="4">4 Hóspedes</option>
-                                </select>
-                                <input type="number" class="room-input" min="0" step="0.01" placeholder="Diária (R$)" onchange="updateRoomsSummary()">
-                                <button class="remove-room-btn" onclick="removeRoom(this)" style="display: none;">×</button>
-                            </div>
-                        </div>
-                        
-                        <div class="rooms-summary" id="roomsSummary">
-                            Total: 1 quarto(s) • 1 hóspede(s) • R$ 0,00/dia
-                        </div>
-                    </div>
-                    
-                    <!-- Date Periods Section -->
-                    <div class="form-group">
-                        <div class="room-config-title">
-                            <span id="datePeriodsLabel">Períodos de Estadia</span>
-                            <button class="add-date-period-btn" onclick="addDatePeriod()" id="addDatePeriodBtn">+ Adicionar Período</button>
-                        </div>
-                        
-                        <div id="datePeriodsContainer">
-                            <!-- Date periods will be added here dynamically -->
-                            <div class="date-period">
-                                <input type="date" class="date-period-input" id="checkIn0" onchange="calculateQuotation()">
-                                <span>até</span>
-                                <input type="date" class="date-period-input" id="checkOut0" onchange="calculateQuotation()">
-                                <button class="remove-room-btn" onclick="removeDatePeriod(this)" style="display: none;">×</button>
-                            </div>
-                        </div>
-                        
-                        <div class="rooms-summary" id="datePeriodsSummary">
-                            Total: 0 noite(s)
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" id="mealTypeLabel">Tipo de Refeição</label>
-                        <div class="radio-group">
-                            <label class="radio-label" id="labelBreakfast">
-                                <input type="radio" name="mealType" class="radio-input" value="breakfast" checked>
-                                <span id="breakfastLabel">Com Café da Manhã</span>
-                            </label>
-                            <label class="radio-label" id="labelNoBreakfast">
-                                <input type="radio" name="mealType" class="radio-input" value="noBreakfast">
-                                <span id="noBreakfastLabel">Sem Café da Manhã</span>
-                            </label>
-                            <label class="radio-label" id="labelHalfBoard">
-                                <input type="radio" name="mealType" class="radio-input" value="halfBoard">
-                                <span id="halfBoardLabel">Meia Pensão (MAP)</span>
-                            </label>
-                            <label class="radio-label" id="labelFullBoard">
-                                <input type="radio" name="mealType" class="radio-input" value="fullBoard">
-                                <span id="fullBoardLabel">Pensão Completa (FAP)</span>
-                            </label>
-                        </div>
-                        
-                        <div class="meal-options" id="mealPriceSection" style="display: none;">
-                            <label class="form-label" id="mealPriceLabel">Valor por Refeição (por pessoa)</label>
-                            <input type="number" class="form-input" id="mealPrice" min="0" step="0.01" placeholder="R$ 0,00">
-                        </div>
-                        
-                        <!-- Opção para mostrar detalhes das refeições no voucher -->
-                        <div class="show-meal-details-option">
-                            <input type="checkbox" id="showMealDetails" class="show-meal-details-checkbox" checked onchange="calculateQuotation()">
-                            <label for="showMealDetails" id="showMealDetailsLabel">Mostrar detalhes das refeições no voucher</label>
-                        </div>
-                    </div>
-                    
-                    <div class="form-group">
-                        <label class="form-label" id="parkingLabel">Estacionamento</label>
-                        <select class="form-select" id="parking">
-                            <option value="no">Não</option>
-                            <option value="yes">Sim</option>
-                        </select>
-                    </div>
-                    
-                    <div class="quotation-action-buttons">
-                        <button class="quotation-action-btn copy-btn" onclick="copyQuotation()">
-                            📋 <span id="copyButtonText">Copiar Cotação</span>
-                        </button>
-                        <button class="quotation-action-btn quotation-whatsapp-btn" onclick="shareWhatsApp()">
-                            💬 <span id="whatsappButtonText">Enviar por WhatsApp</span>
-                        </button>
-                    </div>
-                </div>
-                
-                <!-- Preview -->
-                <div class="quotation-preview" id="quotationPreview">
-                    <!-- O conteúdo do voucher será gerado aqui dinamicamente -->
-                </div>
-            </div>
-        </div>
-
         <button class="install-button" id="install-button" style="display: none;">
             +
         </button>
@@ -1868,12 +1159,6 @@
             if (tabName === 'lavanderia' && !lavanderiaInitialized) {
                 initializeLavanderia();
                 lavanderiaInitialized = true;
-            }
-            
-            // Inicializar sistema de cotação quando acessado
-            if (tabName === 'cotacao' && !quotationInitialized) {
-                initializeQuotationSystem();
-                quotationInitialized = true;
             }
         }
 
@@ -2417,14 +1702,14 @@
             const comandaNumber = 'CMD' + Date.now().toString().slice(-6);
             
             // Criar janela de impressão
-            const printWindow = window.open('', '_blank', 'width=400,height=600');
+            const printWindow = window.open('', '_blank', 'width=528,height=400');
             
-            // HTML para impressão 40x80 - CORRIGIDO
+            // HTML para impressão 203 DPI x 528 pontos
             printWindow.document.write(`
                 <!DOCTYPE html>
                 <html>
                 <head>
-                    <title>Comanda de Lavanderia</title>
+                    <title>Comanda de Lavanderia - ICARAÍ PRAIA HOTEL</title>
                     <style>
                         @import url('https://fonts.googleapis.com/css2?family=Libre+Barcode+39&display=swap');
                         
@@ -2436,12 +1721,11 @@
                         
                         body {
                             font-family: 'Courier New', monospace;
-                            font-size: 8px;
-                            line-height: 1.2;
-                            width: 40mm;
-                            min-height: 80mm;
-                            max-height: 80mm;
-                            padding: 0;
+                            font-size: 9pt;
+                            line-height: 1;
+                            width: 528pt;
+                            min-height: auto;
+                            padding: 4pt;
                             margin: 0;
                             color: #000;
                             background: white;
@@ -2449,144 +1733,144 @@
                         }
                         
                         @page {
-                            size: 40mm 80mm;
+                            size: 528pt auto;
                             margin: 0;
                         }
                         
                         .thermal-content {
-                            width: 40mm;
-                            min-height: 80mm;
-                            padding: 1mm;
+                            width: 528pt;
+                            min-height: auto;
+                            padding: 4pt;
                             box-sizing: border-box;
                         }
                         
                         .header {
                             text-align: center;
-                            margin-bottom: 2px;
+                            margin-bottom: 4pt;
+                            border-bottom: 1pt dashed #000;
+                            padding-bottom: 4pt;
                         }
                         
                         .hotel-name {
                             font-weight: bold;
-                            font-size: 9px;
-                            margin-bottom: 1px;
+                            font-size: 10pt;
+                            margin-bottom: 2pt;
+                            text-transform: uppercase;
                         }
                         
                         .hotel-info {
-                            font-size: 6px;
-                            margin-bottom: 2px;
-                        }
-                        
-                        .divider {
-                            border-top: 1px dashed #000;
-                            margin: 2px 0;
-                            width: 100%;
+                            font-size: 7pt;
+                            margin-bottom: 2pt;
                         }
                         
                         .comanda-title {
                             font-weight: bold;
                             text-align: center;
-                            font-size: 9px;
-                            margin: 2px 0;
+                            font-size: 10pt;
+                            margin: 4pt 0;
+                            text-transform: uppercase;
                         }
                         
                         .info-row {
                             display: flex;
                             justify-content: space-between;
-                            margin: 2px 0;
-                            font-size: 7px;
+                            margin: 3pt 0;
+                            font-size: 8pt;
                         }
                         
                         .section-title {
                             font-weight: bold;
                             text-align: center;
                             background: #f0f0f0;
-                            padding: 1px;
-                            margin: 2px 0;
-                            font-size: 8px;
+                            padding: 2pt;
+                            margin: 3pt 0;
+                            font-size: 9pt;
+                            text-transform: uppercase;
                         }
                         
                         .item-row {
                             display: flex;
                             justify-content: space-between;
-                            margin: 1px 0;
-                            padding: 1px 0;
-                            border-bottom: 0.5px dashed #ddd;
+                            margin: 2pt 0;
+                            padding: 1pt 0;
+                            border-bottom: 0.5pt dashed #ddd;
+                            font-size: 8pt;
                         }
                         
                         .item-name {
                             flex: 2;
-                            font-size: 7px;
+                            font-size: 8pt;
                         }
                         
                         .item-qty {
                             flex: 0.5;
                             text-align: center;
-                            font-size: 7px;
+                            font-size: 8pt;
                         }
                         
                         .item-price {
                             flex: 1;
                             text-align: right;
-                            font-size: 7px;
+                            font-size: 8pt;
                         }
                         
                         .item-total {
                             flex: 1;
                             text-align: right;
                             font-weight: bold;
-                            font-size: 7px;
+                            font-size: 8pt;
                         }
                         
                         .total-section {
-                            margin-top: 3px;
-                            padding-top: 2px;
-                            border-top: 1px solid #000;
+                            margin-top: 6pt;
+                            padding-top: 4pt;
+                            border-top: 1pt solid #000;
                         }
                         
                         .total-row {
                             display: flex;
                             justify-content: space-between;
-                            margin: 1px 0;
-                            font-size: 8px;
+                            margin: 2pt 0;
+                            font-size: 9pt;
                         }
                         
                         .grand-total {
                             font-weight: bold;
-                            font-size: 9px;
-                            padding-top: 2px;
-                            border-top: 1px solid #000;
+                            font-size: 10pt;
+                            padding-top: 4pt;
+                            border-top: 1pt solid #000;
                         }
                         
                         .barcode {
                             font-family: 'Libre Barcode 39', monospace;
-                            font-size: 14px;
+                            font-size: 16pt;
                             text-align: center;
-                            margin: 3px 0;
-                            letter-spacing: 1px;
+                            margin: 6pt 0;
+                            letter-spacing: 1pt;
                         }
                         
                         .footer {
                             text-align: center;
-                            font-size: 6px;
+                            font-size: 7pt;
                             color: #666;
-                            margin-top: 3px;
+                            margin-top: 6pt;
                         }
                         
                         .warning {
-                            font-size: 6px;
-                            margin: 2px 0;
-                            padding: 2px;
-                            border-left: 2px solid #000;
+                            font-size: 7pt;
+                            margin: 4pt 0;
+                            padding: 3pt;
+                            border-left: 2pt solid #000;
                             background: #f8f8f8;
                         }
                         
                         .cut-line {
                             text-align: center;
-                            font-size: 6px;
+                            font-size: 7pt;
                             color: #999;
-                            margin-top: 4px;
-                            border-top: 0.5px dashed #999;
-                            padding-top: 1px;
+                            margin-top: 8pt;
+                            border-top: 0.5pt dashed #999;
+                            padding-top: 2pt;
                         }
                     </style>
                 </head>
@@ -2600,8 +1884,6 @@
                         </div>
                     </div>
                     
-                    <div class="divider"></div>
-                    
                     <div class="comanda-title">COMANDA DE LAVANDERIA</div>
                     
                     <div class="info-row">
@@ -2614,8 +1896,6 @@
                             <strong>Hora:</strong> ${new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}
                         </div>
                     </div>
-                    
-                    <div class="divider"></div>
                     
                     ${groupedItems['lavar'] && groupedItems['lavar'].length > 0 ? `
                     <div class="section-title">LAVAR</div>
@@ -2641,8 +1921,6 @@
                     `).join('')}
                     ` : ''}
                     
-                    <div class="divider"></div>
-                    
                     <div class="total-section">
                         <div class="total-row">
                             <div>SUBTOTAL:</div>
@@ -2658,10 +1936,8 @@
                         </div>
                     </div>
                     
-                    <div class="divider"></div>
-                    
                     <div class="barcode">*${comandaNumber}*</div>
-                    <div style="text-align: center; font-size: 6px;">${comandaNumber}</div>
+                    <div style="text-align: center; font-size: 8pt;">${comandaNumber}</div>
                     
                     <div class="footer">
                         Obrigado pela preferência!<br>
@@ -2976,796 +2252,6 @@
             checkDate();
         }
 
-        // ========== SISTEMA DE COTAÇÃO DE RESERVAS ==========
-        let quotationInitialized = false;
-        let currentLang = 'pt';
-
-        // Language data
-        const translations = {
-            pt: {
-                calculatorTitle: "Informações da Reserva",
-                guestNameLabel: "Nome do Hóspede Principal",
-                roomConfigLabel: "Configuração de Quartos",
-                addRoomBtn: "+ Adicionar Quarto",
-                datePeriodsLabel: "Períodos de Estadia",
-                checkInLabel: "Check-in",
-                checkOutLabel: "Check-out",
-                mealTypeLabel: "Tipo de Refeição",
-                breakfastLabel: "Com Café da Manhã",
-                noBreakfastLabel: "Sem Café da Manhã",
-                halfBoardLabel: "Meia Pensão (MAP)",
-                fullBoardLabel: "Pensão Completa (FAP)",
-                mealPriceLabel: "Valor por Refeição (por pessoa)",
-                showMealDetailsLabel: "Mostrar detalhes das refeições no voucher",
-                parkingLabel: "Estacionamento",
-                copyButtonText: "Copiar Cotação",
-                whatsappButtonText: "Enviar por WhatsApp"
-            },
-            en: {
-                calculatorTitle: "Reservation Information",
-                guestNameLabel: "Main Guest Name",
-                roomConfigLabel: "Room Configuration",
-                addRoomBtn: "+ Add Room",
-                datePeriodsLabel: "Stay Periods",
-                checkInLabel: "Check-in",
-                checkOutLabel: "Check-out",
-                mealTypeLabel: "Meal Type",
-                breakfastLabel: "With Breakfast",
-                noBreakfastLabel: "Without Breakfast",
-                halfBoardLabel: "Half Board (MAP)",
-                fullBoardLabel: "Full Board (FAP)",
-                mealPriceLabel: "Price per Meal (per person)",
-                showMealDetailsLabel: "Show meal details in voucher",
-                parkingLabel: "Parking",
-                copyButtonText: "Copy Quotation",
-                whatsappButtonText: "Send via WhatsApp"
-            },
-            fr: {
-                calculatorTitle: "Informations de Réservation",
-                guestNameLabel: "Nom du Client Principal",
-                roomConfigLabel: "Configuration des Chambres",
-                addRoomBtn: "+ Ajouter Chambre",
-                datePeriodsLabel: "Périodes de Séjour",
-                checkInLabel: "Arrivée",
-                checkOutLabel: "Départ",
-                mealTypeLabel: "Type de Repas",
-                breakfastLabel: "Avec Petit Déjeuner",
-                noBreakfastLabel: "Sans Petit Déjeuner",
-                halfBoardLabel: "Demi-Pension (MAP)",
-                fullBoardLabel: "Pension Complète (FAP)",
-                mealPriceLabel: "Prix par Repas (par personne)",
-                showMealDetailsLabel: "Afficher les détails des repas dans le bon",
-                parkingLabel: "Parking",
-                copyButtonText: "Copier le Devis",
-                whatsappButtonText: "Envoyer par WhatsApp"
-            },
-            es: {
-                calculatorTitle: "Información de la Reserva",
-                guestNameLabel: "Nombre del Huésped Principal",
-                roomConfigLabel: "Configuración de Habitaciones",
-                addRoomBtn: "+ Añadir Habitación",
-                datePeriodsLabel: "Períodos de Estancia",
-                checkInLabel: "Check-in",
-                checkOutLabel: "Check-out",
-                mealTypeLabel: "Tipo de Comida",
-                breakfastLabel: "Con Desayuno",
-                noBreakfastLabel: "Sin Desayuno",
-                halfBoardLabel: "Media Pensión (MAP)",
-                fullBoardLabel: "Pensión Completa (FAP)",
-                mealPriceLabel: "Precio por Comida (por persona)",
-                showMealDetailsLabel: "Mostrar detalles de las comidas en el voucher",
-                parkingLabel: "Estacionamiento",
-                copyButtonText: "Copiar Cotización",
-                whatsappButtonText: "Enviar por WhatsApp"
-            }
-        };
-
-        function initializeQuotationSystem() {
-            // Language selector functionality
-            document.querySelectorAll('.lang-btn').forEach(btn => {
-                btn.addEventListener('click', function() {
-                    // Update active button
-                    document.querySelectorAll('.lang-btn').forEach(b => b.classList.remove('active'));
-                    this.classList.add('active');
-                    
-                    // Update language
-                    currentLang = this.getAttribute('data-lang');
-                    updateLanguage();
-                    calculateQuotation();
-                });
-            });
-
-            // Update interface language
-            function updateLanguage() {
-                const langData = translations[currentLang];
-                
-                // Update form labels
-                document.getElementById('calculatorTitle').textContent = langData.calculatorTitle;
-                document.getElementById('guestNameLabel').textContent = langData.guestNameLabel;
-                document.getElementById('roomConfigLabel').textContent = langData.roomConfigLabel;
-                document.getElementById('addRoomBtn').textContent = langData.addRoomBtn;
-                document.getElementById('datePeriodsLabel').textContent = langData.datePeriodsLabel;
-                document.getElementById('mealTypeLabel').textContent = langData.mealTypeLabel;
-                document.getElementById('breakfastLabel').textContent = langData.breakfastLabel;
-                document.getElementById('noBreakfastLabel').textContent = langData.noBreakfastLabel;
-                document.getElementById('halfBoardLabel').textContent = langData.halfBoardLabel;
-                document.getElementById('fullBoardLabel').textContent = langData.fullBoardLabel;
-                document.getElementById('mealPriceLabel').textContent = langData.mealPriceLabel;
-                document.getElementById('showMealDetailsLabel').textContent = langData.showMealDetailsLabel;
-                document.getElementById('parkingLabel').textContent = langData.parkingLabel;
-                document.getElementById('copyButtonText').textContent = langData.copyButtonText;
-                document.getElementById('whatsappButtonText').textContent = langData.whatsappButtonText;
-                
-                // Update placeholders
-                document.getElementById('guestName').placeholder = currentLang === 'pt' ? 'Digite o nome completo' : 
-                                                                  currentLang === 'en' ? 'Enter full name' :
-                                                                  currentLang === 'fr' ? 'Entrez le nom complet' : 
-                                                                  'Ingrese el nombre completo';
-                
-                // Update room configuration options
-                updateRoomConfigurationLanguage();
-                updateRoomsSummary();
-            }
-
-            // Update room configuration language
-            function updateRoomConfigurationLanguage() {
-                const roomItems = document.querySelectorAll('.room-item');
-                roomItems.forEach(room => {
-                    const quantityInput = room.querySelector('input[type="number"]:first-of-type');
-                    const guestsSelect = room.querySelector('select');
-                    const rateInput = room.querySelector('input[type="number"]:last-of-type');
-                    
-                    // Update select options
-                    guestsSelect.innerHTML = '';
-                    for (let i = 1; i <= 4; i++) {
-                        const option = document.createElement('option');
-                        option.value = i;
-                        option.textContent = currentLang === 'pt' ? `${i} Hóspede${i > 1 ? 's' : ''}` :
-                                            currentLang === 'en' ? `${i} Guest${i > 1 ? 's' : ''}` :
-                                            currentLang === 'fr' ? `${i} Client${i > 1 ? 's' : ''}` :
-                                            `${i} Huésped${i > 1 ? 'es' : ''}`;
-                        guestsSelect.appendChild(option);
-                    }
-                    
-                    // Update placeholders
-                    quantityInput.placeholder = currentLang === 'pt' ? 'Quantidade' :
-                                              currentLang === 'en' ? 'Quantity' :
-                                              currentLang === 'fr' ? 'Quantité' :
-                                              'Cantidad';
-                    
-                    rateInput.placeholder = currentLang === 'pt' ? 'Diária (R$)' :
-                                         currentLang === 'en' ? 'Daily Rate (R$)' :
-                                         currentLang === 'fr' ? 'Tarif (R$)' :
-                                         'Tarifa (R$)';
-                });
-            }
-
-            // Meal type selection
-            document.querySelectorAll('input[name="mealType"]').forEach(radio => {
-                radio.addEventListener('change', function() {
-                    // Update radio label styles
-                    document.querySelectorAll('.radio-label').forEach(label => {
-                        label.classList.remove('selected');
-                    });
-                    document.getElementById('label' + this.value.charAt(0).toUpperCase() + this.value.slice(1)).classList.add('selected');
-                    
-                    // Show/hide meal price input
-                    const mealPriceSection = document.getElementById('mealPriceSection');
-                    if (this.value === 'halfBoard' || this.value === 'fullBoard') {
-                        mealPriceSection.style.display = 'block';
-                    } else {
-                        mealPriceSection.style.display = 'none';
-                    }
-                    
-                    calculateQuotation();
-                });
-            });
-            
-            // Add event listeners for real-time updates
-            document.querySelectorAll('#guestName, #mealPrice, #parking').forEach(input => {
-                input.addEventListener('input', calculateQuotation);
-                input.addEventListener('change', calculateQuotation);
-            });
-            
-            // Initialize first radio as selected
-            document.getElementById('labelBreakfast').classList.add('selected');
-            
-            // Initial calculation
-            updateRoomsSummary();
-            updateDatePeriodsSummary();
-            updateLanguage();
-            calculateQuotation();
-        }
-
-        // Add new room configuration
-        function addRoom() {
-            const roomsContainer = document.getElementById('roomsContainer');
-            const roomItem = document.createElement('div');
-            roomItem.className = 'room-item';
-            
-            roomItem.innerHTML = `
-                <input type="number" class="room-input" min="1" value="1" placeholder="${currentLang === 'pt' ? 'Quantidade' : 
-                                                                                      currentLang === 'en' ? 'Quantity' :
-                                                                                      currentLang === 'fr' ? 'Quantité' :
-                                                                                      'Cantidad'}" onchange="updateRoomsSummary()">
-                <select class="room-input" onchange="updateRoomsSummary()">
-                    ${Array.from({length: 4}, (_, i) => 
-                        `<option value="${i+1}">${currentLang === 'pt' ? `${i+1} Hóspede${i > 0 ? 's' : ''}` :
-                                              currentLang === 'en' ? `${i+1} Guest${i > 0 ? 's' : ''}` :
-                                              currentLang === 'fr' ? `${i+1} Client${i > 0 ? 's' : ''}` :
-                                              `${i+1} Huésped${i > 0 ? 'es' : ''}`}</option>`
-                    ).join('')}
-                </select>
-                <input type="number" class="room-input" min="0" step="0.01" placeholder="${currentLang === 'pt' ? 'Diária (R$)' :
-                                                                                        currentLang === 'en' ? 'Daily Rate (R$)' :
-                                                                                        currentLang === 'fr' ? 'Tarif (R$)' :
-                                                                                        'Tarifa (R$)'}" onchange="updateRoomsSummary()">
-                <button class="remove-room-btn" onclick="removeRoom(this)">×</button>
-            `;
-            
-            roomsContainer.appendChild(roomItem);
-            updateRoomsSummary();
-            
-            // Show remove buttons for all rooms if there's more than one
-            const removeButtons = document.querySelectorAll('.remove-room-btn');
-            if (removeButtons.length > 1) {
-                removeButtons.forEach(btn => btn.style.display = 'block');
-            }
-        }
-
-        // Remove room configuration
-        function removeRoom(button) {
-            const roomItem = button.closest('.room-item');
-            roomItem.remove();
-            updateRoomsSummary();
-            
-            // Hide remove buttons if there's only one room left
-            const removeButtons = document.querySelectorAll('.remove-room-btn');
-            if (removeButtons.length === 1) {
-                removeButtons[0].style.display = 'none';
-            }
-        }
-
-        // Update rooms summary
-        function updateRoomsSummary() {
-            const roomItems = document.querySelectorAll('.room-item');
-            let totalRooms = 0;
-            let totalGuests = 0;
-            let totalDailyRate = 0;
-            
-            roomItems.forEach(room => {
-                const quantity = parseInt(room.querySelector('input[type="number"]:first-of-type').value) || 0;
-                const guests = parseInt(room.querySelector('select').value) || 0;
-                const rate = parseFloat(room.querySelector('input[type="number"]:last-of-type').value) || 0;
-                
-                totalRooms += quantity;
-                totalGuests += quantity * guests;
-                totalDailyRate += quantity * rate;
-            });
-            
-            const formatCurrency = (value) => {
-                return 'R$ ' + value.toFixed(2).replace('.', ',').replace(/\d(?=(\d{3})+,)/g, '$&.');
-            };
-            
-            const summaryText = currentLang === 'pt' ? `Total: ${totalRooms} quarto(s) • ${totalGuests} hóspede(s) • ${formatCurrency(totalDailyRate)}/dia` :
-                              currentLang === 'en' ? `Total: ${totalRooms} room(s) • ${totalGuests} guest(s) • ${formatCurrency(totalDailyRate)}/day` :
-                              currentLang === 'fr' ? `Total: ${totalRooms} chambre(s) • ${totalGuests} client(s) • ${formatCurrency(totalDailyRate)}/jour` :
-                              `Total: ${totalRooms} habitación(es) • ${totalGuests} huésped(es) • ${formatCurrency(totalDailyRate)}/día`;
-            
-            document.getElementById('roomsSummary').textContent = summaryText;
-            calculateQuotation();
-        }
-
-        // Add new date period
-        function addDatePeriod() {
-            const datePeriodsContainer = document.getElementById('datePeriodsContainer');
-            const datePeriodIndex = datePeriodsContainer.children.length;
-            const datePeriod = document.createElement('div');
-            datePeriod.className = 'date-period';
-            
-            datePeriod.innerHTML = `
-                <input type="date" class="date-period-input" id="checkIn${datePeriodIndex}" onchange="calculateQuotation()">
-                <span>${currentLang === 'pt' ? 'até' : 
-                       currentLang === 'en' ? 'to' :
-                       currentLang === 'fr' ? 'à' : 
-                       'hasta'}</span>
-                <input type="date" class="date-period-input" id="checkOut${datePeriodIndex}" onchange="calculateQuotation()">
-                <button class="remove-room-btn" onclick="removeDatePeriod(this)">×</button>
-            `;
-            
-            datePeriodsContainer.appendChild(datePeriod);
-            updateDatePeriodsSummary();
-            
-            // Show remove buttons for all date periods if there's more than one
-            const removeButtons = document.querySelectorAll('.date-period .remove-room-btn');
-            if (removeButtons.length > 1) {
-                removeButtons.forEach(btn => btn.style.display = 'block');
-            }
-        }
-
-        // Remove date period
-        function removeDatePeriod(button) {
-            const datePeriod = button.closest('.date-period');
-            datePeriod.remove();
-            updateDatePeriodsSummary();
-            
-            // Hide remove buttons if there's only one date period left
-            const removeButtons = document.querySelectorAll('.date-period .remove-room-btn');
-            if (removeButtons.length === 1) {
-                removeButtons[0].style.display = 'none';
-            }
-        }
-
-        // Update date periods summary
-        function updateDatePeriodsSummary() {
-            const datePeriods = document.querySelectorAll('.date-period');
-            let totalNights = 0;
-            
-            datePeriods.forEach((period, index) => {
-                const checkIn = document.getElementById(`checkIn${index}`).value;
-                const checkOut = document.getElementById(`checkOut${index}`).value;
-                
-                if (checkIn && checkOut) {
-                    const checkInDate = new Date(checkIn);
-                    const checkOutDate = new Date(checkOut);
-                    const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
-                    const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
-                    totalNights += nights;
-                }
-            });
-            
-            const summaryText = currentLang === 'pt' ? `Total: ${totalNights} noite(s)` :
-                              currentLang === 'en' ? `Total: ${totalNights} night(s)` :
-                              currentLang === 'fr' ? `Total: ${totalNights} nuit(s)` :
-                              `Total: ${totalNights} noche(s)`;
-            
-            document.getElementById('datePeriodsSummary').textContent = summaryText;
-            calculateQuotation();
-        }
-
-        function calculateQuotation() {
-            // Get input values
-            const guestName = document.getElementById('guestName').value || '';
-            const mealType = document.querySelector('input[name="mealType"]:checked').value;
-            const mealPrice = parseFloat(document.getElementById('mealPrice').value) || 0;
-            const parking = document.getElementById('parking').value;
-            const showMealDetails = document.getElementById('showMealDetails').checked;
-            
-            // Calculate room configurations
-            const roomItems = document.querySelectorAll('.room-item');
-            let totalRooms = 0;
-            let totalGuests = 0;
-            let totalDailyRate = 0;
-            const roomDetails = [];
-            
-            roomItems.forEach((room, index) => {
-                const quantity = parseInt(room.querySelector('input[type="number"]:first-of-type').value) || 0;
-                const guests = parseInt(room.querySelector('select').value) || 0;
-                const rate = parseFloat(room.querySelector('input[type="number"]:last-of-type').value) || 0;
-                
-                totalRooms += quantity;
-                totalGuests += quantity * guests;
-                totalDailyRate += quantity * rate;
-                
-                if (quantity > 0) {
-                    roomDetails.push({
-                        quantity: quantity,
-                        guests: guests,
-                        rate: rate
-                    });
-                }
-            });
-            
-            // Calculate date periods
-            const datePeriods = document.querySelectorAll('.date-period');
-            let totalNights = 0;
-            const datePeriodDetails = [];
-            
-            datePeriods.forEach((period, index) => {
-                const checkIn = document.getElementById(`checkIn${index}`).value;
-                const checkOut = document.getElementById(`checkOut${index}`).value;
-                
-                if (checkIn && checkOut) {
-                    const checkInDate = new Date(checkIn);
-                    const checkOutDate = new Date(checkOut);
-                    const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
-                    const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
-                    totalNights += nights;
-                    
-                    datePeriodDetails.push({
-                        checkIn: checkIn,
-                        checkOut: checkOut,
-                        nights: nights
-                    });
-                }
-            });
-            
-            if (totalNights <= 0 || totalRooms === 0) {
-                // Show empty preview if dates are invalid or no rooms
-                document.getElementById('quotationPreview').innerHTML = `
-                    <div class="quotation-header">
-                        <div class="hotel-name">ICARAÍ PRAIA HOTEL</div>
-                        <div class="quotation-title">COTAÇÃO DE RESERVA</div>
-                    </div>
-                    <div class="quotation-body" style="text-align: center; padding: 40px;">
-                        <p style="color: #666; font-size: 16px;">
-                            ${currentLang === 'pt' ? 'Preencha as datas de check-in e check-out e configure os quartos para gerar a cotação' : 
-                              currentLang === 'en' ? 'Fill in the check-in and check-out dates and configure rooms to generate the quotation' :
-                              currentLang === 'fr' ? 'Remplissez les dates d\'arrivée et de départ et configurez les chambres pour générer le devis' : 
-                              'Complete las fechas de check-in y check-out y configure las habitaciones para generar la cotización'}
-                        </p>
-                    </div>
-                `;
-                return;
-            }
-            
-            // Calculate base amount
-            let baseAmount = totalDailyRate * totalNights;
-            
-            // Calculate meal costs
-            let mealDescription = '';
-            let mealCost = 0;
-            let mealsPerDay = 0;
-            
-            const mealTypes = {
-                'breakfast': translations[currentLang].breakfastLabel,
-                'noBreakfast': translations[currentLang].noBreakfastLabel,
-                'halfBoard': translations[currentLang].halfBoardLabel,
-                'fullBoard': translations[currentLang].fullBoardLabel
-            };
-            
-            switch(mealType) {
-                case 'breakfast':
-                    mealDescription = mealTypes.breakfast;
-                    break;
-                case 'noBreakfast':
-                    mealDescription = mealTypes.noBreakfast;
-                    break;
-                case 'halfBoard':
-                    mealDescription = mealTypes.halfBoard;
-                    mealsPerDay = 1;
-                    mealCost = mealPrice * totalGuests * mealsPerDay * totalNights;
-                    break;
-                case 'fullBoard':
-                    mealDescription = mealTypes.fullBoard;
-                    mealsPerDay = 2;
-                    mealCost = mealPrice * totalGuests * mealsPerDay * totalNights;
-                    break;
-            }
-            
-            // Calculate parking cost
-            let parkingCost = 0;
-            if (parking === 'yes') {
-                parkingCost = 45 * totalRooms * totalNights;
-            }
-            
-            // Calculate total before tax
-            const subtotal = baseAmount + mealCost + parkingCost;
-            
-            // Calculate ISS tax (2%)
-            const issTax = subtotal * 0.02;
-            
-            // Calculate final total
-            const total = subtotal + issTax;
-            
-            // Calculate average rate per night
-            const avgRatePerNight = total / totalNights;
-            
-            // Format currency
-            const formatCurrency = (value) => {
-                return 'R$ ' + value.toFixed(2).replace('.', ',').replace(/\d(?=(\d{3})+,)/g, '$&.');
-            };
-            
-            // Format dates for display
-            const formatDateForDisplay = (dateString) => {
-                if (!dateString) return '-';
-                const date = new Date(dateString);
-                return date.toLocaleDateString('pt-BR');
-            };
-            
-            // Generate room details HTML
-            let roomDetailsHTML = '';
-            roomDetails.forEach((room, index) => {
-                roomDetailsHTML += `
-                    <div class="detail-row">
-                        <span class="detail-label">${currentLang === 'pt' ? 'Grupo' : 
-                                                   currentLang === 'en' ? 'Group' :
-                                                   currentLang === 'fr' ? 'Groupe' : 
-                                                   'Grupo'} ${index + 1}:</span>
-                        <span class="detail-value">${room.quantity} ${currentLang === 'pt' ? 'apartamento(s)' : 
-                                                                     currentLang === 'en' ? 'apartment(s)' :
-                                                                     currentLang === 'fr' ? 'appartement(s)' : 
-                                                                     'apartamento(s)'} • ${room.guests} ${currentLang === 'pt' ? 'hóspede(s)' : 
-                                                                                                        currentLang === 'en' ? 'guest(s)' :
-                                                                                                        currentLang === 'fr' ? 'client(s)' : 
-                                                                                                        'huésped(es)'} • ${formatCurrency(room.rate)}/${currentLang === 'pt' ? 'dia' : 
-                                                                                                                                                     currentLang === 'en' ? 'day' :
-                                                                                                                                                     currentLang === 'fr' ? 'jour' : 
-                                                                                                                                                     'día'}</span>
-                    </div>
-                `;
-            });
-            
-            // Generate date periods HTML
-            let datePeriodsHTML = '';
-            datePeriodDetails.forEach((period, index) => {
-                datePeriodsHTML += `
-                    <div class="detail-row">
-                        <span class="detail-label">${currentLang === 'pt' ? 'Período' : 
-                                                   currentLang === 'en' ? 'Period' :
-                                                   currentLang === 'fr' ? 'Période' : 
-                                                   'Período'} ${index + 1}:</span>
-                        <span class="detail-value">${formatDateForDisplay(period.checkIn)} ${currentLang === 'pt' ? 'até' : 
-                                                                                           currentLang === 'en' ? 'to' :
-                                                                                           currentLang === 'fr' ? 'à' : 
-                                                                                           'hasta'} ${formatDateForDisplay(period.checkOut)} (${period.nights} ${currentLang === 'pt' ? 'noite(s)' : 
-                                                                                                                                                                currentLang === 'en' ? 'night(s)' :
-                                                                                                                                                                currentLang === 'fr' ? 'nuit(s)' : 
-                                                                                                                                                                'noche(s)'})</span>
-                    </div>
-                `;
-            });
-            
-            // Generate quotation HTML
-            const quotationHTML = `
-                <div class="quotation-header">
-                    <div class="hotel-name">ICARAÍ PRAIA HOTEL</div>
-                    <div class="quotation-title">COTAÇÃO DE RESERVA</div>
-                    <div class="quotation-badge">COTAÇÃO • VÁLIDA 24 HORAS</div>
-                </div>
-                
-                <div class="validity-notice">
-                    <span>⚠️</span>
-                    ${currentLang === 'pt' ? 'Esta cotação é válida por 24 horas. Tarifas e disponibilidade podem mudar após a expiração.' :
-                     currentLang === 'en' ? 'This quotation is valid for 24 hours. Rates and availability may change after expiration.' :
-                     currentLang === 'fr' ? 'Ce devis est valable 24 heures. Les tarifs et la disponibilité peuvent changer après expiration.' :
-                     'Esta cotización es válida por 24 horas. Las tarifas y disponibilidad pueden cambiar después de la expiración.'}
-                </div>
-                
-                <div class="quotation-body">
-                    <div class="section-title">${currentLang === 'pt' ? 'INFORMAÇÕES DA RESERVA' :
-                                                currentLang === 'en' ? 'RESERVATION INFORMATION' :
-                                                currentLang === 'fr' ? 'INFORMATIONS DE RÉSERVATION' :
-                                                'INFORMACIÓN DE LA RESERVA'}</div>
-                    <div class="details-grid">
-                        <div class="detail-row">
-                            <span class="detail-label">${currentLang === 'pt' ? 'Hóspede Principal:' :
-                                                       currentLang === 'en' ? 'Main Guest:' :
-                                                       currentLang === 'fr' ? 'Client Principal:' :
-                                                       'Huésped Principal:'}</span>
-                            <span class="detail-value">${guestName || (currentLang === 'pt' ? 'Não informado' : 
-                                                                      currentLang === 'en' ? 'Not informed' :
-                                                                      currentLang === 'fr' ? 'Non informé' : 
-                                                                      'No informado')}</span>
-                        </div>
-                        ${roomDetailsHTML}
-                        ${datePeriodsHTML}
-                        <div class="detail-row">
-                            <span class="detail-label">${currentLang === 'pt' ? 'Tipo de Refeição:' :
-                                                       currentLang === 'en' ? 'Meal Type:' :
-                                                       currentLang === 'fr' ? 'Type de Repas:' :
-                                                       'Tipo de Comida:'}</span>
-                            <span class="detail-value">${mealDescription}</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">${currentLang === 'pt' ? 'Estacionamento:' :
-                                                       currentLang === 'en' ? 'Parking:' :
-                                                       currentLang === 'fr' ? 'Stationnement:' :
-                                                       'Estacionamiento:'}</span>
-                            <span class="detail-value">${parking === 'yes' ? 
-                                (currentLang === 'pt' ? 'Sim' : 
-                                 currentLang === 'en' ? 'Yes' :
-                                 currentLang === 'fr' ? 'Oui' : 
-                                 'Sí') : 
-                                (currentLang === 'pt' ? 'Não' : 
-                                 currentLang === 'en' ? 'No' :
-                                 currentLang === 'fr' ? 'Non' : 
-                                 'No')}</span>
-                        </div>
-                        <div class="detail-row">
-                            <span class="detail-label">${currentLang === 'pt' ? 'Período:' :
-                                                       currentLang === 'en' ? 'Period:' :
-                                                       currentLang === 'fr' ? 'Période:' :
-                                                       'Período:'}</span>
-                            <span class="detail-value">${totalNights} ${currentLang === 'pt' ? 'Noite(s)' : 
-                                                                       currentLang === 'en' ? 'Night(s)' :
-                                                                       currentLang === 'fr' ? 'Nuit(s)' : 
-                                                                       'Noche(s)'}</span>
-                        </div>
-                    </div>
-                    
-                    <div class="section-title">${currentLang === 'pt' ? 'DETALHES FINANCEIROS' :
-                                                currentLang === 'en' ? 'FINANCIAL DETAILS' :
-                                                currentLang === 'fr' ? 'DÉTAILS FINANCIERS' :
-                                                'DETALLES FINANCIEROS'}</div>
-                    <div class="pricing-breakdown">
-                        ${roomDetails.map((room, index) => `
-                            <div class="price-row">
-                                <span>${currentLang === 'pt' ? 'Grupo' : 
-                                       currentLang === 'en' ? 'Group' :
-                                       currentLang === 'fr' ? 'Groupe' : 
-                                       'Grupo'} ${index + 1} (${room.quantity} ${currentLang === 'pt' ? 'apto(s)' : 
-                                                                               currentLang === 'en' ? 'room(s)' :
-                                                                               currentLang === 'fr' ? 'chambre(s)' : 
-                                                                               'habitación(es)'} × ${totalNights} ${currentLang === 'pt' ? 'noite(s)' : 
-                                                                                                                    currentLang === 'en' ? 'night(s)' :
-                                                                                                                    currentLang === 'fr' ? 'nuit(s)' : 
-                                                                                                                    'noche(s)'}):</span>
-                                <span>${formatCurrency(room.quantity * room.rate * totalNights)}</span>
-                            </div>
-                        `).join('')}
-                        ${mealCost > 0 && showMealDetails ? `
-                        <div class="price-row">
-                            <span>${currentLang === 'pt' ? 'Refeições incluídas:' :
-                                   currentLang === 'en' ? 'Meals included:' :
-                                   currentLang === 'fr' ? 'Repas inclus :' :
-                                   'Comidas incluidas:'}</span>
-                            <span>${formatCurrency(mealCost)}</span>
-                        </div>
-                        ` : ''}
-                        ${parkingCost > 0 ? `
-                        <div class="price-row">
-                            <span>${currentLang === 'pt' ? 'Estacionamento:' :
-                                   currentLang === 'en' ? 'Parking:' :
-                                   currentLang === 'fr' ? 'Stationnement :' :
-                                   'Estacionamiento:'}</span>
-                            <span>${formatCurrency(parkingCost)}</span>
-                        </div>
-                        ` : ''}
-                        <div class="price-row">
-                            <span>${currentLang === 'pt' ? 'Subtotal:' :
-                                   currentLang === 'en' ? 'Subtotal:' :
-                                   currentLang === 'fr' ? 'Sous-total :' :
-                                   'Subtotal:'}</span>
-                            <span>${formatCurrency(subtotal)}</span>
-                        </div>
-                        <div class="price-row">
-                            <span>${currentLang === 'pt' ? 'ISS (2%):' :
-                                   currentLang === 'en' ? 'ISS (2%):' :
-                                   currentLang === 'fr' ? 'ISS (2%) :' :
-                                   'ISS (2%):'}</span>
-                            <span>${formatCurrency(issTax)}</span>
-                        </div>
-                        <div class="price-row">
-                            <span>${currentLang === 'pt' ? 'Diária Média:' :
-                                   currentLang === 'en' ? 'Average Daily Rate:' :
-                                   currentLang === 'fr' ? 'Tarif Journalier Moyen :' :
-                                   'Tarifa Diaria Promedio:'}</span>
-                            <span>${formatCurrency(avgRatePerNight)}</span>
-                        </div>
-                        <div class="price-row total-row">
-                            <span>${currentLang === 'pt' ? 'TOTAL:' :
-                                   currentLang === 'en' ? 'TOTAL:' :
-                                   currentLang === 'fr' ? 'TOTAL :' :
-                                   'TOTAL:'}</span>
-                            <span>${formatCurrency(total)}</span>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            // Update preview
-            document.getElementById('quotationPreview').innerHTML = quotationHTML;
-        }
-        
-        function copyQuotation() {
-            const previewContent = document.getElementById('quotationPreview');
-            const range = document.createRange();
-            range.selectNode(previewContent);
-            window.getSelection().removeAllRanges();
-            window.getSelection().addRange(range);
-            
-            try {
-                const successful = document.execCommand('copy');
-                window.getSelection().removeAllRanges();
-                
-                if (successful) {
-                    alert(currentLang === 'pt' ? 'Cotação copiada para a área de transferência!' :
-                          currentLang === 'en' ? 'Quotation copied to clipboard!' :
-                          currentLang === 'fr' ? 'Devis copié dans le presse-papiers !' :
-                          '¡Cotización copiada al portapapeles!');
-                } else {
-                    alert(currentLang === 'pt' ? 'Erro ao copiar a cotação. Tente novamente.' :
-                          currentLang === 'en' ? 'Error copying quotation. Please try again.' :
-                          currentLang === 'fr' ? 'Erreur lors de la copie du devis. Veuillez réessayer.' :
-                          'Error al copiar la cotización. Por favor, inténtelo de nuevo.');
-                }
-            } catch (err) {
-                alert(currentLang === 'pt' ? 'Erro ao copiar a cotação: ' + err :
-                      currentLang === 'en' ? 'Error copying quotation: ' + err :
-                      currentLang === 'fr' ? 'Erreur lors de la copie du devis : ' + err :
-                      'Error al copiar la cotización: ' + err);
-            }
-        }
-        
-        function shareWhatsApp() {
-            const guestName = document.getElementById('guestName').value || '';
-            const mealType = document.querySelector('input[name="mealType"]:checked').value;
-            const mealPrice = document.getElementById('mealPrice').value || '0';
-            const parking = document.getElementById('parking').value;
-            
-            // Calculate room configurations
-            const roomItems = document.querySelectorAll('.room-item');
-            let totalRooms = 0;
-            let totalGuests = 0;
-            let totalDailyRate = 0;
-            const roomDetails = [];
-            
-            roomItems.forEach(room => {
-                const quantity = parseInt(room.querySelector('input[type="number"]:first-of-type').value) || 0;
-                const guests = parseInt(room.querySelector('select').value) || 0;
-                const rate = parseFloat(room.querySelector('input[type="number"]:last-of-type').value) || 0;
-                
-                totalRooms += quantity;
-                totalGuests += quantity * guests;
-                totalDailyRate += quantity * rate;
-                
-                if (quantity > 0) {
-                    roomDetails.push({
-                        quantity: quantity,
-                        guests: guests,
-                        rate: rate
-                    });
-                }
-            });
-            
-            // Calculate date periods
-            const datePeriods = document.querySelectorAll('.date-period');
-            let totalNights = 0;
-            
-            datePeriods.forEach((period, index) => {
-                const checkIn = document.getElementById(`checkIn${index}`).value;
-                const checkOut = document.getElementById(`checkOut${index}`).value;
-                
-                if (checkIn && checkOut) {
-                    const checkInDate = new Date(checkIn);
-                    const checkOutDate = new Date(checkOut);
-                    const timeDiff = checkOutDate.getTime() - checkInDate.getTime();
-                    const nights = Math.ceil(timeDiff / (1000 * 3600 * 24));
-                    totalNights += nights;
-                }
-            });
-            
-            // Calculate totals
-            const baseAmount = totalDailyRate * totalNights;
-            let mealCost = 0;
-            if (mealType === 'halfBoard') {
-                mealCost = (parseFloat(mealPrice) || 0) * totalGuests * 1 * totalNights;
-            } else if (mealType === 'fullBoard') {
-                mealCost = (parseFloat(mealPrice) || 0) * totalGuests * 2 * totalNights;
-            }
-            const parkingCost = (parking === 'yes') ? 45 * totalRooms * totalNights : 0;
-            const subtotal = baseAmount + mealCost + parkingCost;
-            const issTax = subtotal * 0.02;
-            const total = subtotal + issTax;
-            const avgRatePerNight = total / totalNights;
-            
-            // Format currency
-            const formatCurrency = (value) => {
-                return 'R$ ' + value.toFixed(2).replace('.', ',');
-            };
-            
-            // Create WhatsApp message
-            const message = `🏨 *ICARAÍ PRAIA HOTEL* - Cotação de Reserva\n\n` +
-                           `👤 *Hóspede:* ${guestName || 'Não informado'}\n` +
-                           `🏠 *Quartos:* ${totalRooms}\n` +
-                           `👥 *Hóspedes:* ${totalGuests}\n` +
-                           `🌙 *Noites:* ${totalNights}\n` +
-                           `🍽️ *Refeição:* ${translations[currentLang][mealType + 'Label']}\n` +
-                           `🚗 *Estacionamento:* ${parking === 'yes' ? 'Sim' : 'Não'}\n\n` +
-                           `💰 *Resumo Financeiro:*\n` +
-                           `• Diária média: ${formatCurrency(avgRatePerNight)}\n` +
-                           `• Subtotal: ${formatCurrency(subtotal)}\n` +
-                           `• ISS (2%): ${formatCurrency(issTax)}\n` +
-                           `• *TOTAL: ${formatCurrency(total)}*\n\n` +
-                           `📋 *Esta cotação é válida por 24 horas.*`;
-            
-            const encodedMessage = encodeURIComponent(message);
-            const whatsappUrl = `https://wa.me/?text=${encodedMessage}`;
-            
-            window.open(whatsappUrl, '_blank');
-        }
-
         // ========== PWA INSTALL BUTTON ==========
         let deferredPrompt;
         const installButton = document.getElementById('install-button');
@@ -3787,7 +2273,6 @@
         });
 
         // Inicializar sistemas que precisam ser inicializados após o DOM
-        initializeQuotationSystem();
         initializeFrigobar();
         initializeValeSystem();
     </script>
