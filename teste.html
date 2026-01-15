@@ -1238,12 +1238,31 @@
                 });
             });
 
-            // Gerar apartamentos
+            // Gerar apartamentos - AGORA INCLUINDO O QUARTO 201
             const apartmentList = document.getElementById('apartment-list');
             
             // Limpar lista existente para evitar duplicação
             apartmentList.innerHTML = '';
             
+            // Adicionar o andar 2 primeiro com o quarto 201
+            const floor2Div = document.createElement('div');
+            floor2Div.classList.add('floor');
+            const floor2Title = document.createElement('h4');
+            floor2Title.textContent = `Andar 2`;
+            floor2Div.appendChild(floor2Title);
+
+            // Apenas o quarto 201 no andar 2
+            const apartment201Div = document.createElement('div');
+            apartment201Div.classList.add('apartment');
+            apartment201Div.textContent = '201';
+            apartment201Div.addEventListener('click', () => {
+                document.getElementById('apartmentNumber').value = '201';
+                apartmentList.style.display = 'none';
+            });
+            floor2Div.appendChild(apartment201Div);
+            apartmentList.appendChild(floor2Div);
+            
+            // Demais andares (3 a 10)
             for (let floor = 3; floor <= 10; floor++) {
                 const floorDiv = document.createElement('div');
                 floorDiv.classList.add('floor');
@@ -1394,10 +1413,11 @@
         let lavanderiaHistory = [];
         let lavanderiaApartment = '';
 
-        // Lista de itens da lavanderia
+        // Lista de itens da lavanderia - AGORA COM BONE E LENÇO ADICIONADOS
         const lavanderiaItemsList = [
             { nome: "Bermuda", lavar: 21, passar: 13, icon: "Bermuda.ico" },
             { nome: "Blusa", lavar: 21, passar: 13, icon: "Blusa.ico" },
+            { nome: "Bone", lavar: 9, passar: 6, icon: "Bone.ico" }, // ADICIONADO - mesmo preço de cueca
             { nome: "Calça comprida", lavar: 27, passar: 16, icon: "Calça comprida.ico" },
             { nome: "Calcinha", lavar: 9, passar: 6, icon: "Calcinha.ico" },
             { nome: "Camiseta", lavar: 16, passar: 9, icon: "Camiseta.ico" },
@@ -1407,6 +1427,7 @@
             { nome: "Cueca", lavar: 9, passar: 6, icon: "Cueca.ico" },
             { nome: "Jaleco", lavar: 21, passar: 16, icon: "Jaleco.ico" },
             { nome: "Jaqueta", lavar: 48, passar: 27, icon: "Jaqueta.ico" },
+            { nome: "Lenço", lavar: 9, passar: 6, icon: "Lenço.ico" }, // ADICIONADO - mesmo preço de cueca
             { nome: "Luvas", lavar: 23, passar: null, icon: "Luvas.ico" },
             { nome: "Macacão", lavar: 51, passar: 32, icon: "Macacão.ico" },
             { nome: "Meias (par)", lavar: 11, passar: 6, icon: "Meias.ico" },
@@ -1433,6 +1454,25 @@
             const container = document.getElementById('lavanderiaApartmentList');
             container.innerHTML = '';
             
+            // Adicionar andar 2 com quarto 201
+            const floor2Title = document.createElement('div');
+            floor2Title.className = 'floor-title';
+            floor2Title.textContent = `2º Andar`;
+            container.appendChild(floor2Title);
+            
+            // Apenas o quarto 201 no andar 2
+            const apt201Button = document.createElement('button');
+            apt201Button.className = 'lavanderia-apartment';
+            apt201Button.textContent = '201';
+            apt201Button.onclick = () => {
+                lavanderiaApartment = '201';
+                document.getElementById('lavanderiaApartment').value = '201';
+                document.getElementById('lavanderiaApartmentList').style.display = 'none';
+                document.getElementById('lavanderiaContent').style.display = 'block';
+            };
+            container.appendChild(apt201Button);
+            
+            // Demais andares (3 a 10)
             for (let floor = 3; floor <= 10; floor++) {
                 // Adiciona título do andar
                 const floorTitle = document.createElement('div');
