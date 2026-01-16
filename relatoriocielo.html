@@ -1,0 +1,1936 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Processador de Vendas Cielo - 1 Página</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        /* ESTILOS GERAIS - MÁXIMA COMPACTIDADE COM LETRAS MAIORES */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Arial, sans-serif;
+        }
+        
+        body {
+            background: #f5f7fa;
+            color: #333;
+            line-height: 1.1;
+            padding: 4px;
+            font-size: 10px;
+            max-width: 100%;
+            overflow-x: hidden;
+        }
+        
+        .app-container {
+            max-width: 100%;
+            margin: 0 auto;
+        }
+        
+        /* CABEÇALHO COMPACTO */
+        .header {
+            text-align: center;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #ddd;
+        }
+        
+        .header h1 {
+            color: #1a237e;
+            font-size: 15px;
+            margin-bottom: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 5px;
+        }
+        
+        .header p {
+            color: #666;
+            font-size: 8px;
+            max-width: 500px;
+            margin: 0 auto;
+        }
+        
+        /* SEÇÃO UPLOAD - COMPACTA */
+        .upload-section {
+            background-color: white;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+            margin-bottom: 10px;
+        }
+        
+        .upload-section h2 {
+            color: #1a237e;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+        }
+        
+        .upload-area {
+            border: 2px dashed #3949ab;
+            border-radius: 3px;
+            padding: 12px 8px;
+            text-align: center;
+            background-color: #f8f9ff;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .upload-area i {
+            font-size: 24px;
+            color: #3949ab;
+            margin-bottom: 5px;
+        }
+        
+        .upload-area h3 {
+            color: #1a237e;
+            margin-bottom: 3px;
+            font-size: 12px;
+        }
+        
+        .upload-area p {
+            color: #666;
+            margin-bottom: 6px;
+            font-size: 8px;
+            line-height: 1.2;
+        }
+        
+        .upload-btn {
+            display: inline-block;
+            padding: 5px 10px;
+            background-color: #3949ab;
+            color: white;
+            border: none;
+            border-radius: 2px;
+            font-weight: 600;
+            font-size: 9px;
+            cursor: pointer;
+        }
+        
+        #fileInput {
+            display: none;
+        }
+        
+        .file-info {
+            margin-top: 8px;
+            padding: 6px;
+            background-color: #e8f5e9;
+            border-radius: 3px;
+            display: none;
+            border-left: 3px solid #4caf50;
+        }
+        
+        .file-info h4 {
+            color: #2e7d32;
+            margin-bottom: 5px;
+            font-size: 10px;
+        }
+        
+        .file-details {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: 6px;
+            margin-bottom: 6px;
+        }
+        
+        .file-detail strong {
+            display: block;
+            color: #555;
+            margin-bottom: 1px;
+            font-size: 8px;
+        }
+        
+        .file-detail span {
+            color: #333;
+            font-weight: 600;
+            font-size: 8px;
+        }
+        
+        /* PROCESSAMENTO - COMPACTO */
+        .processing-section {
+            background-color: white;
+            border-radius: 5px;
+            padding: 10px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+            margin-bottom: 10px;
+            display: none;
+        }
+        
+        .processing-section h2 {
+            color: #1a237e;
+            margin-bottom: 6px;
+            font-size: 12px;
+        }
+        
+        .controls {
+            display: flex;
+            gap: 5px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+            padding-bottom: 6px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .btn {
+            padding: 4px 8px;
+            border: none;
+            border-radius: 2px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+            font-size: 8px;
+            min-height: 22px;
+        }
+        
+        .btn-primary {
+            background-color: #3949ab;
+            color: white;
+        }
+        
+        .btn-secondary {
+            background-color: #6c757d;
+            color: white;
+        }
+        
+        .btn-success {
+            background-color: #2e7d32;
+            color: white;
+        }
+        
+        .btn-warning {
+            background-color: #ff9800;
+            color: white;
+        }
+        
+        .loading {
+            text-align: center;
+            padding: 12px 8px;
+            display: none;
+        }
+        
+        .loading-spinner {
+            border: 2px solid #f3f3f3;
+            border-top: 2px solid #3949ab;
+            border-radius: 50%;
+            width: 18px;
+            height: 18px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 5px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        /* RELATÓRIO - ULTRA COMPACTO (1 PÁGINA) */
+        .report-container {
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
+            overflow: hidden;
+            display: none;
+            page-break-inside: avoid;
+        }
+        
+        .report-header {
+            background-color: #1a237e;
+            color: white;
+            padding: 8px 12px;
+            border-bottom: 2px solid #3949ab;
+        }
+        
+        .report-header h1 {
+            font-size: 13px;
+            margin-bottom: 5px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .report-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+            gap: 6px;
+            margin-top: 6px;
+            background-color: rgba(255, 255, 255, 0.1);
+            padding: 6px;
+            border-radius: 3px;
+        }
+        
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .info-label {
+            font-size: 7px;
+            opacity: 0.9;
+            margin-bottom: 1px;
+        }
+        
+        .info-value {
+            font-weight: 600;
+            font-size: 9px;
+        }
+        
+        .report-controls {
+            padding: 6px 12px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 6px;
+        }
+        
+        .report-content {
+            padding: 0 12px;
+        }
+        
+        .section-title {
+            font-size: 11px;
+            color: #1a237e;
+            margin: 10px 0 6px;
+            padding-bottom: 4px;
+            border-bottom: 1px solid #e8eaf6;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        /* RESUMO EM GRID COMPACTO COM CARTÃO DE RECEBIDOS */
+        .summary-cards {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .summary-card {
+            background-color: white;
+            border-radius: 3px;
+            padding: 6px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            border-top: 2px solid #3949ab;
+            page-break-inside: avoid;
+        }
+        
+        .summary-card.recebido {
+            border-top: 2px solid #2e7d32;
+            background-color: #f1f8e9;
+        }
+        
+        .summary-card h3 {
+            font-size: 8px;
+            color: #555;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            gap: 3px;
+        }
+        
+        .summary-card.recebido h3 {
+            color: #2e7d32;
+        }
+        
+        .summary-value {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1a237e;
+            margin-bottom: 3px;
+            line-height: 1;
+        }
+        
+        .summary-card.recebido .summary-value {
+            color: #2e7d32;
+        }
+        
+        .summary-detail {
+            font-size: 7px;
+            color: #666;
+            line-height: 1;
+        }
+        
+        .summary-detail span {
+            font-weight: 600;
+        }
+        
+        /* FILTROS COMPACTOS */
+        .filters-section {
+            background-color: #e8f4fd;
+            border-radius: 3px;
+            padding: 6px;
+            margin-bottom: 10px;
+            border-left: 2px solid #2196f3;
+            page-break-inside: avoid;
+        }
+        
+        .filters-section h3 {
+            color: #0d47a1;
+            margin-bottom: 5px;
+            font-size: 9px;
+        }
+        
+        .filter-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+        
+        .filter-tag {
+            background-color: #bbdefb;
+            color: #0d47a1;
+            padding: 2px 6px;
+            border-radius: 8px;
+            font-size: 7px;
+            font-weight: 500;
+        }
+        
+        /* TABELA ULTRA COMPACTA COM LETRAS MAIORES E NEGRITO */
+        .transactions-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 10px;
+            font-size: 9px;
+            table-layout: fixed;
+        }
+        
+        .transactions-table thead {
+            background-color: #1a237e;
+            color: white;
+        }
+        
+        .transactions-table th {
+            padding: 6px 3px;
+            text-align: left;
+            font-weight: 700;
+            font-size: 9px;
+            word-wrap: break-word;
+            border-right: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        
+        .transactions-table th:last-child {
+            border-right: none;
+        }
+        
+        .transactions-table tbody tr {
+            border-bottom: 1px solid #e9ecef;
+            height: 22px;
+        }
+        
+        .transactions-table tbody tr:nth-child(even) {
+            background-color: #f8f9fa;
+        }
+        
+        .transactions-table tbody tr.recebido {
+            background-color: #f1f8e9;
+        }
+        
+        .transactions-table tbody tr.pendente {
+            background-color: #fff3e0;
+        }
+        
+        .transactions-table td {
+            padding: 4px 2px;
+            font-size: 9px;
+            font-weight: 600;
+            word-wrap: break-word;
+            vertical-align: middle;
+            height: 22px;
+            max-height: 22px;
+            overflow: hidden;
+        }
+        
+        /* LARGURAS FIXAS OTIMIZADAS PARA MÁXIMO ESPAÇO */
+        .col-date {
+            width: 50px;
+            min-width: 50px;
+            max-width: 50px;
+        }
+        
+        .col-pagto {
+            width: 60px;
+            min-width: 60px;
+            max-width: 60px;
+        }
+        
+        .col-estab {
+            width: 60px;
+            min-width: 60px;
+            max-width: 60px;
+        }
+        
+        .col-payment {
+            width: 60px;
+            min-width: 60px;
+            max-width: 60px;
+        }
+        
+        .col-brand {
+            width: 55px;
+            min-width: 55px;
+            max-width: 55px;
+        }
+        
+        .col-value {
+            width: 55px;
+            min-width: 55px;
+            max-width: 55px;
+        }
+        
+        .establishment-badge {
+            display: inline-block;
+            padding: 1px 3px;
+            background-color: #e3f2fd;
+            color: #1565c0;
+            border-radius: 2px;
+            font-weight: 700;
+            font-size: 8px;
+            white-space: nowrap;
+        }
+        
+        .payment-method, .card-brand {
+            display: flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .payment-method i, .card-brand i {
+            font-size: 9px;
+            min-width: 9px;
+        }
+        
+        .payment-method span, .card-brand span {
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            font-weight: 600;
+        }
+        
+        .card-brand.mastercard {
+            color: #eb001b;
+        }
+        
+        .value-positive {
+            color: #2e7d32;
+            font-weight: 700;
+        }
+        
+        .value-negative {
+            color: #c62828;
+            font-weight: 700;
+        }
+        
+        .status-recebido {
+            color: #2e7d32;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            font-size: 8px;
+        }
+        
+        .status-pendente {
+            color: #f57c00;
+            font-weight: 700;
+            display: flex;
+            align-items: center;
+            gap: 2px;
+            font-size: 8px;
+        }
+        
+        /* RESUMO POR ESTABELECIMENTO COMPACTO */
+        .establishment-summary {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 6px;
+            margin-bottom: 10px;
+        }
+        
+        .establishment-card {
+            background-color: white;
+            border-radius: 3px;
+            padding: 6px;
+            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.05);
+            border-top: 2px solid #3949ab;
+            page-break-inside: avoid;
+        }
+        
+        .establishment-card h3 {
+            font-size: 9px;
+            color: #555;
+            margin-bottom: 8px;
+        }
+        
+        .establishment-details {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+        }
+        
+        .establishment-detail h4 {
+            font-size: 7px;
+            color: #666;
+            margin-bottom: 2px;
+        }
+        
+        .establishment-detail .value {
+            font-size: 12px;
+            font-weight: 700;
+            color: #1a237e;
+        }
+        
+        /* RODAPÉ MINIMALISTA */
+        .report-footer {
+            margin-top: 10px;
+            padding: 6px 12px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #e9ecef;
+            text-align: center;
+            color: #6c757d;
+            font-size: 7px;
+            page-break-inside: avoid;
+        }
+        
+        /* ESTILOS PARA IMPRESSÃO - ULTRA COMPACTO COM LETRAS MAIORES */
+        @media print {
+            @page {
+                size: portrait;
+                margin: 0.2cm 0.3cm !important;
+            }
+            
+            body {
+                background-color: white;
+                padding: 0;
+                margin: 0;
+                font-size: 8px !important;
+                line-height: 1 !important;
+            }
+            
+            .app-container {
+                max-width: 100%;
+            }
+            
+            .upload-section, .processing-section, .report-controls {
+                display: none !important;
+            }
+            
+            .report-container {
+                display: block !important;
+                box-shadow: none;
+                border-radius: 0;
+                margin: 0;
+            }
+            
+            .report-header {
+                padding: 6px 10px;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+                margin-bottom: 3px;
+            }
+            
+            .report-header h1 {
+                font-size: 11px;
+                margin-bottom: 3px;
+            }
+            
+            .report-info {
+                padding: 4px;
+                gap: 4px;
+                margin-top: 4px;
+            }
+            
+            .report-content {
+                padding: 0 10px;
+            }
+            
+            .transactions-table {
+                font-size: 8px !important;
+                box-shadow: none;
+                border: 1px solid #ddd;
+                margin-bottom: 6px;
+            }
+            
+            .transactions-table th,
+            .transactions-table td {
+                padding: 3px 2px !important;
+                font-size: 8px !important;
+                font-weight: 700 !important;
+                line-height: 1 !important;
+                height: 18px !important;
+                max-height: 18px !important;
+            }
+            
+            .transactions-table th {
+                padding: 4px 2px !important;
+                font-size: 8px !important;
+            }
+            
+            .transactions-table thead {
+                background-color: #1a237e !important;
+                -webkit-print-color-adjust: exact;
+                color-adjust: exact;
+            }
+            
+            .summary-cards {
+                grid-template-columns: repeat(5, 1fr);
+                gap: 4px;
+                margin-bottom: 6px;
+            }
+            
+            .summary-card {
+                box-shadow: none;
+                border: 0.5px solid #ddd;
+                padding: 4px;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            .summary-value {
+                font-size: 10px;
+            }
+            
+            .filters-section, .establishment-summary, .section-title {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            .establishment-summary {
+                grid-template-columns: repeat(2, 1fr);
+                gap: 4px;
+            }
+            
+            .establishment-card {
+                box-shadow: none;
+                border: 0.5px solid #ddd;
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            .section-title {
+                font-size: 9px;
+                margin: 6px 0 4px;
+                page-break-inside: avoid;
+            }
+            
+            /* COMPACTAR AINDA MAIS AS COLUNAS PARA IMPRESSÃO */
+            .col-date {
+                width: 45px !important;
+                min-width: 45px !important;
+                max-width: 45px !important;
+            }
+            
+            .col-pagto {
+                width: 50px !important;
+                min-width: 50px !important;
+                max-width: 50px !important;
+            }
+            
+            .col-estab {
+                width: 45px !important;
+                min-width: 45px !important;
+                max-width: 45px !important;
+            }
+            
+            .col-payment {
+                width: 50px !important;
+                min-width: 50px !important;
+                max-width: 50px !important;
+            }
+            
+            .col-brand {
+                width: 40px !important;
+                min-width: 40px !important;
+                max-width: 40px !important;
+            }
+            
+            .col-value {
+                width: 45px !important;
+                min-width: 45px !important;
+                max-width: 45px !important;
+            }
+            
+            /* PREVENIR QUEBRAS INDESEJADAS */
+            .transactions-table td, .transactions-table th {
+                page-break-inside: avoid;
+                break-inside: avoid;
+            }
+            
+            .transactions-table tbody tr {
+                page-break-inside: avoid;
+                break-inside: avoid;
+                height: 18px !important;
+            }
+            
+            /* COMPACTAR ELEMENTOS DE DETALHE */
+            .establishment-badge {
+                padding: 1px 2px;
+                font-size: 7px;
+                font-weight: 700;
+            }
+            
+            .payment-method i, .card-brand i {
+                font-size: 7px;
+            }
+            
+            .payment-method span, .card-brand span {
+                font-size: 7px;
+                font-weight: 700;
+            }
+            
+            .report-footer {
+                padding: 4px 10px;
+                margin-top: 6px;
+                font-size: 7px;
+            }
+            
+            /* REMOVER ESPAÇAMENTOS DESNECESSÁRIOS */
+            .report-header, .report-content, .report-footer {
+                padding-left: 6px;
+                padding-right: 6px;
+            }
+            
+            /* GARANTIR QUE NÃO HAJA ESPAÇO EXTRA */
+            * {
+                max-height: none !important;
+            }
+            
+            /* OTIMIZAÇÃO EXTREMA: reduzir espaços internos */
+            .report-header h1, .section-title {
+                margin-bottom: 2px !important;
+            }
+            
+            .summary-cards, .establishment-summary {
+                margin-bottom: 4px !important;
+            }
+        }
+        
+        /* RESPONSIVIDADE */
+        @media (max-width: 1200px) {
+            .summary-cards {
+                grid-template-columns: repeat(3, 1fr);
+            }
+        }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 3px;
+            }
+            
+            .header h1 {
+                font-size: 13px;
+            }
+            
+            .upload-area {
+                padding: 10px 6px;
+            }
+            
+            .upload-area h3 {
+                font-size: 10px;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+            
+            .summary-cards {
+                grid-template-columns: 1fr;
+            }
+            
+            .report-header h1 {
+                font-size: 11px;
+            }
+            
+            .transactions-table {
+                display: block;
+                overflow-x: auto;
+                font-size: 8px;
+            }
+            
+            .col-date, .col-pagto, .col-estab, .col-payment, .col-brand, .col-value {
+                width: auto !important;
+            }
+        }
+        
+        /* NOTIFICAÇÕES COMPACTAS */
+        .notification {
+            position: fixed;
+            top: 6px;
+            right: 6px;
+            padding: 6px 10px;
+            border-radius: 3px;
+            color: white;
+            font-weight: 600;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+            z-index: 1000;
+            display: none;
+            animation: slideIn 0.3s ease;
+            font-size: 9px;
+            max-width: 200px;
+        }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        .notification.success {
+            background-color: #4caf50;
+            border-left: 2px solid #2e7d32;
+        }
+        
+        .notification.error {
+            background-color: #f44336;
+            border-left: 2px solid #c62828;
+        }
+        
+        .notification.info {
+            background-color: #2196f3;
+            border-left: 2px solid #0d47a1;
+        }
+        
+        .data-preview {
+            background-color: #f8f9fa;
+            border-radius: 3px;
+            padding: 6px;
+            margin-top: 6px;
+            font-size: 9px;
+        }
+        
+        /* GARANTIR QUE NÃO HAJA QUEBRAS ENTRE PÁGINAS */
+        .transactions-table tbody tr,
+        .summary-card,
+        .establishment-card,
+        .filters-section,
+        .section-title {
+            page-break-inside: avoid;
+            break-inside: avoid;
+        }
+        
+        /* OTIMIZAR PARA MUITAS LINHAS - ALTURA MÍNIMA */
+        .transactions-table tbody tr {
+            min-height: 22px;
+            max-height: 22px;
+        }
+        
+        /* AJUSTES FINAIS PARA ECONOMIA DE ESPAÇO */
+        .no-wrap {
+            white-space: nowrap;
+        }
+        
+        .text-ellipsis {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+        
+        /* BANNER DE RECEBIDOS */
+        .received-banner {
+            background: linear-gradient(135deg, #2e7d32 0%, #1b5e20 100%);
+            color: white;
+            padding: 8px 12px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            text-align: center;
+            display: none;
+        }
+        
+        .received-banner h3 {
+            font-size: 11px;
+            margin-bottom: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+        
+        .received-banner p {
+            font-size: 9px;
+            opacity: 0.9;
+        }
+        
+        /* MENSAGEM DE STATUS */
+        .status-message {
+            font-size: 8px;
+            padding: 1px 4px;
+            border-radius: 2px;
+            font-weight: 700;
+            display: inline-flex;
+            align-items: center;
+            gap: 2px;
+        }
+        
+        .status-recebido-bg {
+            background-color: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .status-pendente-bg {
+            background-color: #fff3e0;
+            color: #f57c00;
+        }
+    </style>
+</head>
+<body>
+    <div class="notification" id="notification"></div>
+    
+    <div class="app-container">
+        <!-- CABEÇALHO MINIMALISTA -->
+        <div class="header">
+            <h1><i class="fas fa-chart-line"></i> Processador Vendas Cielo</h1>
+            <p>Otimizado para 1 página • Letras maiores • Status de pagamento</p>
+        </div>
+        
+        <!-- UPLOAD COMPACTO -->
+        <div class="upload-section">
+            <h2><i class="fas fa-cloud-upload-alt"></i> Carregar Planilha</h2>
+            <div class="upload-area" id="uploadArea">
+                <i class="fas fa-file-excel"></i>
+                <h3>Clique para selecionar</h3>
+                <p>Formatos: .xlsx, .xls, .csv (Planilha Cielo)</p>
+                <div class="upload-btn" id="selectFileBtn">Selecionar Arquivo</div>
+            </div>
+            <input type="file" id="fileInput" accept=".xlsx, .xls, .csv">
+            
+            <div class="file-info" id="fileInfo">
+                <h4><i class="fas fa-file-excel"></i> Arquivo Carregado</h4>
+                <div class="file-details">
+                    <div class="file-detail">
+                        <strong>Nome:</strong>
+                        <span id="fileName" class="text-ellipsis"></span>
+                    </div>
+                    <div class="file-detail">
+                        <strong>Tamanho:</strong>
+                        <span id="fileSize"></span>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;">
+                    <button class="btn btn-success" id="processBtn">
+                        <i class="fas fa-cogs"></i> Processar
+                    </button>
+                    <button class="btn btn-warning" id="clearFileBtn">
+                        <i class="fas fa-times"></i> Remover
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- PROCESSAMENTO COMPACTO -->
+        <div class="processing-section" id="processingSection">
+            <h2><i class="fas fa-cogs"></i> Processar Dados</h2>
+            <div class="controls">
+                <button class="btn btn-primary" id="generateReportBtn">
+                    <i class="fas fa-file-alt"></i> Gerar Relatório
+                </button>
+                <button class="btn btn-secondary" id="newFileBtn">
+                    <i class="fas fa-plus"></i> Novo Arquivo
+                </button>
+            </div>
+            
+            <div class="loading" id="loadingIndicator">
+                <div class="loading-spinner"></div>
+                <p>Processando...</p>
+            </div>
+            
+            <div id="dataPreview" class="data-preview"></div>
+        </div>
+        
+        <!-- RELATÓRIO ULTRA COMPACTO (1 PÁGINA) -->
+        <div class="report-container" id="reportContainer">
+            <!-- CABEÇALHO DO RELATÓRIO -->
+            <div class="report-header">
+                <h1><i class="fas fa-file-invoice-dollar"></i> Relatório Vendas Cielo</h1>
+                <div class="report-info" id="reportInfo">
+                    <!-- Informações serão preenchidas via JavaScript -->
+                </div>
+            </div>
+            
+            <!-- CONTROLES DO RELATÓRIO (APENAS TELA) -->
+            <div class="report-controls">
+                <div>
+                    <button class="btn btn-primary" id="printReportBtn">
+                        <i class="fas fa-print"></i> Imprimir / PDF
+                    </button>
+                    <button class="btn btn-secondary" id="closeReportBtn">
+                        <i class="fas fa-times"></i> Fechar
+                    </button>
+                </div>
+                <div>
+                    <small>Otimizado para 1 página • Letras maiores • Negrito</small>
+                </div>
+            </div>
+            
+            <!-- CONTEÚDO DO RELATÓRIO OTIMIZADO -->
+            <div class="report-content">
+                <!-- FILTROS COMPACTOS -->
+                <div class="filters-section" id="filtersSection">
+                    <!-- Filtros serão preenchidos via JavaScript -->
+                </div>
+                
+                <!-- RESUMO GERAL COMPACTO -->
+                <h2 class="section-title"><i class="fas fa-chart-bar"></i> Resumo Geral</h2>
+                <div class="summary-cards" id="summaryCards">
+                    <!-- Cartões de resumo serão preenchidos via JavaScript -->
+                </div>
+                
+                <!-- BANNER DE RECEBIDOS (APENAS SE HOUVER PAGAMENTOS RECEBIDOS) -->
+                <div class="received-banner" id="receivedBanner">
+                    <h3><i class="fas fa-check-circle"></i> Pagamentos Recebidos</h3>
+                    <p>Total recebido: <strong id="totalRecebidoTexto">R$ 0,00</strong> • <span id="quantidadeRecebidos">0</span> transações</p>
+                </div>
+                
+                <!-- TABELA DE TRANSAÇÕES - PRIORIDADE MÁXIMA -->
+                <h2 class="section-title"><i class="fas fa-list-alt"></i> Transações Detalhadas</h2>
+                <table class="transactions-table" id="transactionsTable">
+                    <thead>
+                        <tr>
+                            <th class="col-date">Data Venda</th>
+                            <th class="col-pagto">Data Pagto / Status</th>
+                            <th class="col-estab">Estab.</th>
+                            <th class="col-payment">Pagamento</th>
+                            <th class="col-brand">Bandeira</th>
+                            <th class="col-value">Valor Bruto</th>
+                            <th class="col-value">Taxa</th>
+                            <th class="col-value">Valor Líquido</th>
+                        </tr>
+                    </thead>
+                    <tbody id="transactionsBody">
+                        <!-- Transações serão preenchidas via JavaScript -->
+                    </tbody>
+                </table>
+                
+                <!-- RESUMO POR ESTABELECIMENTO (SOMENTE SE POUCAS TRANSAÇÕES) -->
+                <div id="establishmentSection" style="display: none;">
+                    <h2 class="section-title"><i class="fas fa-store"></i> Resumo por Estabelecimento</h2>
+                    <div class="establishment-summary" id="establishmentSummary">
+                        <!-- Resumo por estabelecimento será preenchido via JavaScript -->
+                    </div>
+                </div>
+            </div>
+            
+            <!-- RODAPÉ MINIMALISTA -->
+            <div class="report-footer">
+                <p><strong>Gerado em <span id="reportDate"></span></strong> | Fonte: Cielo</p>
+                <p>Suporte: 4002 5472 | Ouvidoria: 0800 570 2288</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // ELEMENTOS DOM
+        const elements = {
+            fileInput: document.getElementById('fileInput'),
+            selectFileBtn: document.getElementById('selectFileBtn'),
+            uploadArea: document.getElementById('uploadArea'),
+            fileInfo: document.getElementById('fileInfo'),
+            fileName: document.getElementById('fileName'),
+            fileSize: document.getElementById('fileSize'),
+            processBtn: document.getElementById('processBtn'),
+            clearFileBtn: document.getElementById('clearFileBtn'),
+            processingSection: document.getElementById('processingSection'),
+            loadingIndicator: document.getElementById('loadingIndicator'),
+            reportContainer: document.getElementById('reportContainer'),
+            generateReportBtn: document.getElementById('generateReportBtn'),
+            printReportBtn: document.getElementById('printReportBtn'),
+            newFileBtn: document.getElementById('newFileBtn'),
+            closeReportBtn: document.getElementById('closeReportBtn'),
+            notification: document.getElementById('notification'),
+            establishmentSection: document.getElementById('establishmentSection'),
+            receivedBanner: document.getElementById('receivedBanner'),
+            totalRecebidoTexto: document.getElementById('totalRecebidoTexto'),
+            quantidadeRecebidos: document.getElementById('quantidadeRecebidos')
+        };
+        
+        // VARIÁVEIS GLOBAIS
+        let processedData = null;
+        let reportInfo = null;
+        let filters = null;
+        let totals = null;
+        
+        // INICIALIZAÇÃO
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('Aplicativo inicializado - Letras maiores e status de pagamento');
+            
+            // CONFIGURAR EVENTOS
+            setupEventListeners();
+            
+            // MOSTRAR NOTIFICAÇÃO INICIAL
+            showNotification('Carregue uma planilha Cielo. Relatório otimizado para 1 página.', 'info');
+        });
+        
+        // CONFIGURAR EVENT LISTENERS
+        function setupEventListeners() {
+            console.log('Configurando listeners...');
+            
+            // CORREÇÃO DO UPLOAD: Configurar todos os eventos de forma explícita
+            elements.selectFileBtn.addEventListener('click', function(e) {
+                console.log('Botão selecionar clicado');
+                e.preventDefault();
+                e.stopPropagation();
+                elements.fileInput.click();
+            });
+            
+            elements.uploadArea.addEventListener('click', function(e) {
+                console.log('Área de upload clicada');
+                e.preventDefault();
+                e.stopPropagation();
+                elements.fileInput.click();
+            });
+            
+            // CORREÇÃO CRÍTICA: Garantir que o evento change funciona
+            elements.fileInput.addEventListener('change', function(e) {
+                console.log('Input file change disparado');
+                handleFileSelect(e);
+            });
+            
+            // PROCESSAMENTO
+            elements.processBtn.addEventListener('click', processFile);
+            elements.clearFileBtn.addEventListener('click', clearFile);
+            elements.generateReportBtn.addEventListener('click', generateReport);
+            elements.printReportBtn.addEventListener('click', printReport);
+            elements.newFileBtn.addEventListener('click', resetApp);
+            elements.closeReportBtn.addEventListener('click', closeReport);
+            
+            console.log('Listeners configurados com sucesso');
+        }
+        
+        // HANDLE FILE SELECTION
+        function handleFileSelect(e) {
+            console.log('Função handleFileSelect chamada');
+            
+            // Verificar se há arquivo selecionado
+            if (!e.target.files || e.target.files.length === 0) {
+                console.log('Nenhum arquivo selecionado');
+                return;
+            }
+            
+            const file = e.target.files[0];
+            console.log('Arquivo selecionado:', file.name, 'Tipo:', file.type, 'Tamanho:', file.size);
+            
+            // Exibir informações do arquivo
+            elements.fileName.textContent = file.name.length > 30 ? file.name.substring(0, 27) + '...' : file.name;
+            elements.fileSize.textContent = formatFileSize(file.size);
+            elements.fileInfo.style.display = 'block';
+            
+            showNotification('Arquivo carregado. Clique em "Processar".', 'success');
+        }
+        
+        // FORMAT FILE SIZE
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(1)) + ' ' + sizes[i];
+        }
+        
+        // CLEAR FILE
+        function clearFile() {
+            console.log('Limpando arquivo...');
+            elements.fileInput.value = '';
+            elements.fileInfo.style.display = 'none';
+            showNotification('Arquivo removido.', 'info');
+        }
+        
+        // PROCESS FILE
+        function processFile() {
+            console.log('Iniciando processamento...');
+            
+            // Verificar se há arquivo selecionado
+            if (!elements.fileInput.files || elements.fileInput.files.length === 0) {
+                showNotification('Selecione um arquivo primeiro.', 'error');
+                return;
+            }
+            
+            const file = elements.fileInput.files[0];
+            console.log('Processando arquivo:', file.name);
+            
+            // Verificar se é um arquivo Excel válido
+            if (!file.name.match(/\.(xlsx|xls|csv)$/i)) {
+                showNotification('Formato inválido. Use .xlsx, .xls ou .csv.', 'error');
+                return;
+            }
+            
+            // Mostrar seção de processamento
+            elements.processingSection.style.display = 'block';
+            elements.loadingIndicator.style.display = 'block';
+            
+            // Usar FileReader para ler o arquivo
+            const reader = new FileReader();
+            
+            reader.onload = function(e) {
+                console.log('Arquivo lido com sucesso');
+                try {
+                    const data = e.target.result;
+                    
+                    // Processar com SheetJS
+                    const workbook = XLSX.read(data, { type: 'binary' });
+                    
+                    // Usar a primeira planilha
+                    const firstSheetName = workbook.SheetNames[0];
+                    const worksheet = workbook.Sheets[firstSheetName];
+                    
+                    // Converter para array de arrays (mantendo células vazias)
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1, defval: '' });
+                    
+                    // Processar os dados
+                    processCieloData(jsonData);
+                    
+                    // Esconder indicador de carregamento
+                    elements.loadingIndicator.style.display = 'none';
+                    
+                    showNotification(`Planilha processada! ${processedData.length} transações encontradas. Clique em "Gerar Relatório".`, 'success');
+                    
+                } catch (error) {
+                    console.error('Erro detalhado:', error);
+                    showNotification('Erro ao processar arquivo. Verifique o formato.', 'error');
+                    elements.loadingIndicator.style.display = 'none';
+                }
+            };
+            
+            reader.onerror = function() {
+                console.error('Erro ao ler arquivo');
+                showNotification('Erro ao ler arquivo. Tente novamente.', 'error');
+                elements.loadingIndicator.style.display = 'none';
+            };
+            
+            // Ler como binário para SheetJS
+            reader.readAsBinaryString(file);
+        }
+        
+        // PROCESS CIELO DATA
+        function processCieloData(data) {
+            console.log('Processando dados Cielo...');
+            
+            // Inicializar estruturas
+            reportInfo = {};
+            filters = {};
+            totals = {};
+            processedData = [];
+            
+            // Processar cada linha
+            for (let i = 0; i < data.length; i++) {
+                const row = data[i];
+                if (!row || row.length === 0) continue;
+                
+                // 1. INFORMAÇÕES DO USUÁRIO (linha 0, coluna 3)
+                if (i === 0 && row[3]) {
+                    const infoText = row[3].toString();
+                    
+                    // Extrair usuário
+                    const userMatch = infoText.match(/Usuário:\s*(.+?)(\n|$)/);
+                    if (userMatch) {
+                        reportInfo.usuario = userMatch[1].trim();
+                    }
+                    
+                    // Extrair estabelecimento
+                    const estabMatch = infoText.match(/Estabelecimento:\s*(\d+)/);
+                    if (estabMatch) {
+                        reportInfo.estabelecimento = estabMatch[1].trim();
+                    }
+                    
+                    // Extrair CNPJ
+                    const cnpjMatch = infoText.match(/CPF\/CNPJ:\s*(.+?)(\n|$)/);
+                    if (cnpjMatch) {
+                        reportInfo.cnpj = cnpjMatch[1].trim();
+                    }
+                }
+                
+                // 2. FILTROS (linha que contém "Filtros:")
+                if (row[0] && row[0].toString().includes('Filtros:')) {
+                    const filtersText = row[0].toString();
+                    
+                    // Extrair data (formato: Data da venda: 15/01/2026 à 15/01/2026)
+                    const dateMatch = filtersText.match(/Data da venda:\s*([\d\/]+)/);
+                    if (dateMatch) {
+                        filters.data = dateMatch[1].trim();
+                    }
+                    
+                    // Extrair estabelecimentos
+                    const estabMatch = filtersText.match(/Estabelecimento:\s*([\d,]+)/);
+                    if (estabMatch) {
+                        filters.estabelecimentos = estabMatch[1].trim();
+                    }
+                    
+                    // Extrair forma de pagamento
+                    const paymentMatch = filtersText.match(/Forma de pagamento:\s*([^,]+)/);
+                    if (paymentMatch) {
+                        filters.formaPagamento = paymentMatch[1].trim();
+                    }
+                    
+                    // Extrair bandeira
+                    const brandMatch = filtersText.match(/Bandeira:\s*([^,]+)/);
+                    if (brandMatch) {
+                        filters.bandeira = brandMatch[1].trim();
+                    }
+                    
+                    // Extrair status
+                    const statusMatch = filtersText.match(/Status da venda:\s*(.+?)(\s*$|,)/);
+                    if (statusMatch) {
+                        filters.status = statusMatch[1].trim();
+                    }
+                }
+                
+                // 3. TOTAIS (linha com "Totalizador")
+                if (row[0] && (row[0].toString() === 'Totalizador' || row[0].toString().includes('Totalizador'))) {
+                    // Procurar linha "Quantidade de vendas"
+                    for (let j = i + 1; j < Math.min(i + 10, data.length); j++) {
+                        const nextRow = data[j];
+                        if (nextRow && nextRow[0] && nextRow[0].toString().includes('Quantidade de vendas')) {
+                            // A linha seguinte tem os valores
+                            if (j + 1 < data.length) {
+                                const totalRow = data[j + 1];
+                                
+                                if (totalRow && totalRow.length >= 4) {
+                                    totals.quantidade = totalRow[0] || 0;
+                                    totals.valorBruto = totalRow[1] || 0;
+                                    totals.taxa = totalRow[2] || 0;
+                                    totals.valorLiquido = totalRow[3] || 0;
+                                }
+                            }
+                            break;
+                        }
+                    }
+                }
+                
+                // 4. TRANSAÇÕES - Procurar cabeçalho específico
+                if (row.length >= 8 && row[0] === 'Data da venda' && row[1] === 'Data prevista do pagamento') {
+                    // Processar linhas seguintes até encontrar linha vazia
+                    for (let j = i + 1; j < data.length; j++) {
+                        const transRow = data[j];
+                        
+                        // Parar se a linha estiver vazia ou não tiver pelo menos 8 colunas
+                        if (!transRow || transRow.length < 8 || !transRow[0]) {
+                            continue;
+                        }
+                        
+                        // Verificar se a primeira célula parece ser uma data
+                        const firstCell = transRow[0];
+                        if (!firstCell || typeof firstCell !== 'string') {
+                            continue;
+                        }
+                        
+                        // Verificar formato de data (DD/MM/YYYY)
+                        if (!firstCell.match(/\d{2}\/\d{2}\/\d{4}/)) {
+                            continue;
+                        }
+                        
+                        // Criar objeto de transação
+                        const transaction = {
+                            dataVenda: transRow[0] || '',
+                            dataPagamento: transRow[1] || '',
+                            estabelecimento: transRow[2] || '',
+                            cnpj: transRow[3] || '',
+                            formaPagamento: transRow[4] || '',
+                            parcelas: transRow[5] || '',
+                            bandeira: transRow[6] || '',
+                            valorBruto: transRow[7] || 0,
+                            taxa: transRow[8] || 0,
+                            valorLiquido: transRow[9] || 0
+                        };
+                        
+                        processedData.push(transaction);
+                    }
+                    
+                    console.log(`${processedData.length} transações extraídas`);
+                    break; // Parar após processar transações
+                }
+            }
+            
+            // Se não encontrou transações com método acima, tentar método alternativo
+            if (processedData.length === 0) {
+                console.log('Método principal não encontrou transações, tentando método alternativo...');
+                
+                // Procurar linhas que parecem ser transações (começam com data no formato brasileiro)
+                for (let i = 0; i < data.length; i++) {
+                    const row = data[i];
+                    if (!row || row.length < 8) continue;
+                    
+                    const firstCell = row[0];
+                    // Verificar se parece ser uma data no formato DD/MM/YYYY
+                    if (firstCell && typeof firstCell === 'string' && firstCell.match(/\d{2}\/\d{2}\/\d{4}/)) {
+                        // Verificar se a segunda célula também parece ser uma data
+                        const secondCell = row[1];
+                        if (secondCell && typeof secondCell === 'string' && secondCell.match(/\d{2}\/\d{2}\/\d{4}/)) {
+                            // É provavelmente uma transação
+                            const transaction = {
+                                dataVenda: row[0] || '',
+                                dataPagamento: row[1] || '',
+                                estabelecimento: row[2] || '',
+                                cnpj: row[3] || '',
+                                formaPagamento: row[4] || '',
+                                parcelas: row[5] || '',
+                                bandeira: row[6] || '',
+                                valorBruto: row[7] || 0,
+                                taxa: row[8] || 0,
+                                valorLiquido: row[9] || 0
+                            };
+                            
+                            processedData.push(transaction);
+                        }
+                    }
+                }
+                
+                console.log(`Método alternativo: ${processedData.length} transações extraídas`);
+            }
+            
+            // Exibir preview dos dados
+            displayDataPreview();
+        }
+        
+        // DISPLAY DATA PREVIEW
+        function displayDataPreview() {
+            const previewDiv = document.getElementById('dataPreview');
+            
+            if (!processedData || processedData.length === 0) {
+                previewDiv.innerHTML = '<p style="color: #c62828; font-weight: bold; font-size: 9px;">Nenhuma transação encontrada. Verifique se o arquivo está no formato correto.</p>';
+                return;
+            }
+            
+            previewDiv.innerHTML = `
+                <div>
+                    <h3 style="color: #1a237e; margin-bottom: 5px; font-size: 10px;">
+                        <i class="fas fa-check-circle" style="color: #4caf50;"></i> 
+                        Dados processados: ${processedData.length} transações
+                    </h3>
+                    <div style="background-color: #e8f5e9; padding: 6px; border-radius: 2px; margin-bottom: 6px;">
+                        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(100px, 1fr)); gap: 5px; margin-bottom: 5px; font-size: 8px;">
+                            <div><strong>Usuário:</strong> ${reportInfo.usuario || 'Não informado'}</div>
+                            <div><strong>CNPJ:</strong> ${reportInfo.cnpj || 'Não informado'}</div>
+                            <div><strong>Período:</strong> ${filters.data || 'Não informado'}</div>
+                        </div>
+                    </div>
+                    <p style="font-size: 8px;">Clique em "Gerar Relatório" para visualizar.</p>
+                </div>
+            `;
+        }
+        
+        // GERAR RELATÓRIO
+        function generateReport() {
+            if (!processedData || processedData.length === 0) {
+                showNotification('Nenhum dado disponível para gerar relatório.', 'error');
+                return;
+            }
+            
+            fillReportInfo();
+            fillFiltersSection();
+            fillSummaryCards();
+            fillTransactionsTable();
+            
+            // DECIDIR SE MOSTRA RESUMO POR ESTABELECIMENTO
+            // Se houver espaço (poucas transações), mostra o resumo por estabelecimento
+            if (processedData.length <= 10) {
+                fillEstablishmentSummary();
+                elements.establishmentSection.style.display = 'block';
+            } else {
+                elements.establishmentSection.style.display = 'none';
+            }
+            
+            // DATA DO RELATÓRIO
+            const now = new Date();
+            document.getElementById('reportDate').textContent = 
+                `${now.getDate().toString().padStart(2, '0')}/` +
+                `${(now.getMonth() + 1).toString().padStart(2, '0')}/` +
+                `${now.getFullYear()}`;
+            
+            elements.reportContainer.style.display = 'block';
+            elements.processingSection.style.display = 'none';
+            
+            // ROLAR PARA RELATÓRIO
+            elements.reportContainer.scrollIntoView({ behavior: 'smooth' });
+            
+            // ESTIMAR SE CABE EM 1 PÁGINA
+            estimatePageFit();
+            
+            showNotification('Relatório gerado! Use "Imprimir/PDF".', 'success');
+        }
+        
+        // ESTIMAR AJUSTE DE PÁGINA
+        function estimatePageFit() {
+            // Estimativa: ~45-50 linhas cabem em 1 página A4 com otimização
+            const estimatedLines = processedData.length;
+            const fitsOnePage = estimatedLines <= 45;
+            
+            if (!fitsOnePage) {
+                showNotification(`Atenção: ${estimatedLines} transações podem não caber em 1 página.`, 'info');
+            } else {
+                showNotification(`Relatório otimizado para 1 página (${estimatedLines} transações).`, 'info');
+            }
+        }
+        
+        // PREENCHER INFORMAÇÕES DO RELATÓRIO
+        function fillReportInfo() {
+            const reportInfoDiv = document.getElementById('reportInfo');
+            
+            reportInfoDiv.innerHTML = `
+                <div class="info-item">
+                    <span class="info-label">Usuário</span>
+                    <span class="info-value text-ellipsis">${reportInfo.usuario || 'Não informado'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">CNPJ</span>
+                    <span class="info-value text-ellipsis">${reportInfo.cnpj || 'Não informado'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Período</span>
+                    <span class="info-value">${filters.data || 'Não informado'}</span>
+                </div>
+                <div class="info-item">
+                    <span class="info-label">Transações</span>
+                    <span class="info-value">${processedData.length}</span>
+                </div>
+            `;
+        }
+        
+        // PREENCHER FILTROS
+        function fillFiltersSection() {
+            const filtersSection = document.getElementById('filtersSection');
+            
+            let filtersHtml = `
+                <h3><i class="fas fa-filter"></i> Filtros Aplicados</h3>
+                <div class="filter-tags">
+            `;
+            
+            if (filters.data) {
+                filtersHtml += `<span class="filter-tag">Data: ${filters.data}</span>`;
+            }
+            
+            if (filters.estabelecimentos) {
+                filtersHtml += `<span class="filter-tag">Estab: ${filters.estabelecimentos}</span>`;
+            }
+            
+            if (filters.formaPagamento) {
+                filtersHtml += `<span class="filter-tag">Pagto: ${filters.formaPagamento}</span>`;
+            }
+            
+            if (filters.bandeira) {
+                filtersHtml += `<span class="filter-tag">Bandeira: ${filters.bandeira}</span>`;
+            }
+            
+            filtersHtml += `</div>`;
+            filtersSection.innerHTML = filtersHtml;
+        }
+        
+        // PREENCHER CARTÕES DE RESUMO
+        function fillSummaryCards() {
+            let totalBruto = 0, totalTaxa = 0, totalLiquido = 0;
+            let totalRecebido = 0, quantidadeRecebida = 0;
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+            
+            processedData.forEach(item => {
+                const bruto = parseFloat(item.valorBruto.toString().replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0;
+                const taxa = parseFloat(item.taxa.toString().replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0;
+                const liquido = parseFloat(item.valorLiquido.toString().replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0;
+                
+                totalBruto += bruto;
+                totalTaxa += taxa;
+                totalLiquido += liquido;
+                
+                // Verificar se o pagamento foi recebido (data de pagamento <= hoje)
+                if (item.dataPagamento) {
+                    const dataPagamento = parseDate(item.dataPagamento);
+                    if (dataPagamento && dataPagamento <= hoje) {
+                        totalRecebido += liquido;
+                        quantidadeRecebida++;
+                    }
+                }
+            });
+            
+            const finalQuantidade = totals.quantidade || processedData.length;
+            const finalBruto = totals.valorBruto ? parseFloat(totals.valorBruto.toString().replace('R$', '').replace('.', '').replace(',', '.').trim()) : totalBruto;
+            const finalTaxa = totals.taxa ? parseFloat(totals.taxa.toString().replace('R$', '').replace('.', '').replace(',', '.').trim()) : totalTaxa;
+            const finalLiquido = totals.valorLiquido ? parseFloat(totals.valorLiquido.toString().replace('R$', '').replace('.', '').replace(',', '.').trim()) : totalLiquido;
+            
+            const formatCurrency = (value) => {
+                return new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(value);
+            };
+            
+            const summaryCardsDiv = document.getElementById('summaryCards');
+            summaryCardsDiv.innerHTML = `
+                <div class="summary-card">
+                    <h3><i class="fas fa-shopping-cart"></i> Qtd</h3>
+                    <div class="summary-value">${finalQuantidade}</div>
+                    <div class="summary-detail">Transações</div>
+                </div>
+                <div class="summary-card">
+                    <h3><i class="fas fa-money-bill-wave"></i> Bruto</h3>
+                    <div class="summary-value">${formatCurrency(finalBruto)}</div>
+                    <div class="summary-detail">Total vendas</div>
+                </div>
+                <div class="summary-card">
+                    <h3><i class="fas fa-percentage"></i> Taxas</h3>
+                    <div class="summary-value">${formatCurrency(finalTaxa)}</div>
+                    <div class="summary-detail">Total taxas</div>
+                </div>
+                <div class="summary-card">
+                    <h3><i class="fas fa-hand-holding-usd"></i> Líquido</h3>
+                    <div class="summary-value">${formatCurrency(finalLiquido)}</div>
+                    <div class="summary-detail">A receber</div>
+                </div>
+                <div class="summary-card recebido">
+                    <h3><i class="fas fa-check-circle"></i> Recebido</h3>
+                    <div class="summary-value">${formatCurrency(totalRecebido)}</div>
+                    <div class="summary-detail">${quantidadeRecebida} transações</div>
+                </div>
+            `;
+            
+            // Atualizar banner de recebidos
+            if (quantidadeRecebida > 0) {
+                elements.receivedBanner.style.display = 'block';
+                elements.totalRecebidoTexto.textContent = formatCurrency(totalRecebido);
+                elements.quantidadeRecebidos.textContent = quantidadeRecebida;
+            } else {
+                elements.receivedBanner.style.display = 'none';
+            }
+        }
+        
+        // FUNÇÃO PARA CONVERTER DATA
+        function parseDate(dateStr) {
+            if (!dateStr) return null;
+            
+            // Tentar converter data no formato DD/MM/YYYY
+            const parts = dateStr.toString().split('/');
+            if (parts.length === 3) {
+                const day = parseInt(parts[0], 10);
+                const month = parseInt(parts[1], 10) - 1;
+                const year = parseInt(parts[2], 10);
+                
+                // Verificar se é uma data válida
+                const date = new Date(year, month, day);
+                if (!isNaN(date.getTime())) {
+                    return date;
+                }
+            }
+            
+            // Tentar converter como objeto Date padrão
+            const date = new Date(dateStr);
+            if (!isNaN(date.getTime())) {
+                return date;
+            }
+            
+            return null;
+        }
+        
+        // PREENCHER RESUMO POR ESTABELECIMENTO
+        function fillEstablishmentSummary() {
+            const establishments = {};
+            
+            processedData.forEach(item => {
+                const estab = item.estabelecimento;
+                if (!estab) return;
+                
+                if (!establishments[estab]) {
+                    establishments[estab] = { quantidade: 0, valorBruto: 0, taxa: 0, valorLiquido: 0 };
+                }
+                
+                const bruto = parseFloat(item.valorBruto.toString().replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0;
+                const taxa = parseFloat(item.taxa.toString().replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0;
+                const liquido = parseFloat(item.valorLiquido.toString().replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0;
+                
+                establishments[estab].quantidade += 1;
+                establishments[estab].valorBruto += bruto;
+                establishments[estab].taxa += taxa;
+                establishments[estab].valorLiquido += liquido;
+            });
+            
+            const formatCurrency = (value) => {
+                return new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(value);
+            };
+            
+            let establishmentsHtml = '';
+            
+            for (const [estab, data] of Object.entries(establishments)) {
+                establishmentsHtml += `
+                    <div class="establishment-card">
+                        <h3><i class="fas fa-store-alt"></i> Estab. ${estab}</h3>
+                        <div class="establishment-details">
+                            <div class="establishment-detail">
+                                <h4>Transações</h4>
+                                <div class="value">${data.quantidade}</div>
+                            </div>
+                            <div class="establishment-detail">
+                                <h4>Bruto</h4>
+                                <div class="value">${formatCurrency(data.valorBruto)}</div>
+                            </div>
+                            <div class="establishment-detail">
+                                <h4>Taxas</h4>
+                                <div class="value" style="color: #c62828;">${formatCurrency(data.taxa)}</div>
+                            </div>
+                            <div class="establishment-detail">
+                                <h4>Líquido</h4>
+                                <div class="value" style="color: #2e7d32;">${formatCurrency(data.valorLiquido)}</div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+            
+            document.getElementById('establishmentSummary').innerHTML = establishmentsHtml;
+        }
+        
+        // PREENCHER TABELA DE TRANSAÇÕES
+        function fillTransactionsTable() {
+            const tbody = document.getElementById('transactionsBody');
+            tbody.innerHTML = '';
+            
+            const formatCurrency = (value) => {
+                const num = typeof value === 'string' ? 
+                    parseFloat(value.replace('R$', '').replace('.', '').replace(',', '.').trim()) || 0 : 
+                    parseFloat(value) || 0;
+                
+                return new Intl.NumberFormat('pt-BR', {
+                    style: 'currency',
+                    currency: 'BRL',
+                    minimumFractionDigits: 2,
+                    maximumFractionDigits: 2
+                }).format(num);
+            };
+            
+            const formatDate = (dateStr) => {
+                if (!dateStr) return '';
+                const date = parseDate(dateStr);
+                if (!date) return dateStr.toString().split(' ')[0];
+                return date.toLocaleDateString('pt-BR');
+            };
+            
+            const hoje = new Date();
+            hoje.setHours(0, 0, 0, 0);
+            
+            processedData.forEach(item => {
+                const row = document.createElement('tr');
+                
+                // Verificar se o pagamento foi recebido (data de pagamento <= hoje)
+                const dataPagamento = parseDate(item.dataPagamento);
+                const recebido = dataPagamento && dataPagamento <= hoje;
+                const pendente = dataPagamento && dataPagamento > hoje;
+                
+                // Adicionar classe para linha recebida ou pendente
+                if (recebido) {
+                    row.classList.add('recebido');
+                } else if (pendente) {
+                    row.classList.add('pendente');
+                }
+                
+                // Criar mensagem de status
+                let statusHtml = '';
+                if (recebido) {
+                    statusHtml = `
+                        <div class="status-recebido">
+                            <i class="fas fa-check-circle"></i>
+                            <span>Recebido</span>
+                        </div>
+                    `;
+                } else if (pendente) {
+                    statusHtml = `
+                        <div class="status-pendente">
+                            <i class="fas fa-clock"></i>
+                            <span>Pendente</span>
+                        </div>
+                    `;
+                }
+                
+                row.innerHTML = `
+                    <td class="no-wrap" style="font-weight: 700;">${formatDate(item.dataVenda)}</td>
+                    <td class="no-wrap">
+                        <div>${formatDate(item.dataPagamento)}</div>
+                        ${statusHtml}
+                    </td>
+                    <td><span class="establishment-badge text-ellipsis" style="font-weight: 700;">${item.estabelecimento || ''}</span></td>
+                    <td class="payment-method">
+                        <i class="fas fa-credit-card"></i>
+                        <span class="text-ellipsis" style="font-weight: 700;">${item.formaPagamento || ''}</span>
+                    </td>
+                    <td class="card-brand mastercard">
+                        <i class="fab fa-cc-mastercard"></i>
+                        <span class="text-ellipsis" style="font-weight: 700;">${item.bandeira || ''}</span>
+                    </td>
+                    <td class="value-positive no-wrap" style="font-weight: 700;">${formatCurrency(item.valorBruto)}</td>
+                    <td class="value-negative no-wrap" style="font-weight: 700;">${formatCurrency(item.taxa)}</td>
+                    <td class="value-positive no-wrap" style="font-weight: 700;">${formatCurrency(item.valorLiquido)}</td>
+                `;
+                
+                tbody.appendChild(row);
+            });
+        }
+        
+        // IMPRIMIR RELATÓRIO
+        function printReport() {
+            window.print();
+        }
+        
+        // REINICIAR APLICATIVO
+        function resetApp() {
+            elements.fileInput.value = '';
+            elements.fileInfo.style.display = 'none';
+            elements.processingSection.style.display = 'none';
+            elements.reportContainer.style.display = 'none';
+            
+            processedData = null;
+            reportInfo = null;
+            filters = null;
+            totals = null;
+            
+            document.getElementById('dataPreview').innerHTML = '';
+            elements.receivedBanner.style.display = 'none';
+            
+            document.querySelector('.upload-section').scrollIntoView({ behavior: 'smooth' });
+            
+            showNotification('Aplicativo reiniciado.', 'info');
+        }
+        
+        // FECHAR RELATÓRIO
+        function closeReport() {
+            elements.reportContainer.style.display = 'none';
+            elements.processingSection.style.display = 'block';
+            showNotification('Relatório fechado.', 'info');
+        }
+        
+        // MOSTRAR NOTIFICAÇÃO
+        function showNotification(message, type) {
+            elements.notification.textContent = message;
+            elements.notification.className = `notification ${type}`;
+            elements.notification.style.display = 'flex';
+            
+            let icon = 'fas fa-info-circle';
+            if (type === 'success') icon = 'fas fa-check-circle';
+            if (type === 'error') icon = 'fas fa-exclamation-circle';
+            
+            elements.notification.innerHTML = `<i class="${icon}"></i> ${message}`;
+            
+            setTimeout(() => {
+                elements.notification.style.display = 'none';
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
