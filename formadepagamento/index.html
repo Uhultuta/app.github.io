@@ -3,340 +3,1294 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard de Reservas</title>
+    <title>Gerador de Filipeta POS 57mm - Universal</title>
     <style>
-        body {
-            font-family: Arial, sans-serif;
+        * {
             margin: 0;
             padding: 0;
-            font-size: 2em;
+            box-sizing: border-box;
         }
-        .container {
-            max-width: 400px;
-            margin: auto;
+        
+        body {
+            font-family: 'Arial', sans-serif;
+            background: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
             padding: 20px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
+            max-width: 800px;
+            margin: 0 auto;
         }
+        
+        .container {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+        
+        .header {
+            text-align: center;
+            padding: 15px 0;
+            background: #2c3e50;
+            color: white;
+            border-radius: 8px;
+            margin-bottom: 15px;
+        }
+        
+        .tab-container {
+            display: flex;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #ddd;
+        }
+        
+        .tab {
+            padding: 10px 20px;
+            background: #f8f9fa;
+            border: none;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            color: #666;
+            transition: all 0.3s;
+            border-radius: 6px 6px 0 0;
+            margin-right: 5px;
+        }
+        
+        .tab.active {
+            background: #3498db;
+            color: white;
+        }
+        
+        .tab-content {
+            display: none;
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
         .form-group {
             margin-bottom: 15px;
         }
+        
         label {
             display: block;
-            margin-bottom: 5px;
+            margin-bottom: 6px;
+            font-weight: bold;
+            color: #2c3e50;
+            font-size: 14px;
         }
-        select, input {
+        
+        input, select, textarea {
             width: 100%;
-            padding: 8px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-        }
-        button {
             padding: 10px;
-            background-color: #28a745;
-            color: white;
-            border: none;
+            border: 2px solid #ddd;
             border-radius: 5px;
+            font-size: 14px;
+            transition: border 0.3s;
+        }
+        
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #3498db;
+        }
+        
+        textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+        
+        .upload-area {
+            border: 3px dashed #3498db;
+            border-radius: 8px;
+            padding: 30px 15px;
+            text-align: center;
+            background: #f8f9fa;
             cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 10px;
         }
-        button:hover {
-            background-color: #218838;
+        
+        .upload-area:hover {
+            background: #e8f4fc;
         }
+        
+        .upload-area i {
+            font-size: 36px;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+        
+        #pdfFile {
+            display: none;
+        }
+        
         .payment-icons {
             display: flex;
             flex-wrap: wrap;
             gap: 10px;
-            margin-top: 10px;
+            margin-top: 8px;
         }
+        
         .payment-icon {
+            width: 55px;
+            height: 55px;
+            border: 2px solid #ddd;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
             cursor: pointer;
-            width: 50px;
-            height: 50px;
-            border: 2px solid transparent;
-            border-radius: 5px;
-            transition: border 0.3s;
+            transition: all 0.3s;
+            background: white;
+            overflow: hidden;
+            padding: 5px;
         }
+        
+        .payment-icon img {
+            max-width: 100%;
+            max-height: 100%;
+            object-fit: contain;
+        }
+        
         .payment-icon.selected {
-            border: 2px solid #28a745;
+            border-color: #2ecc71;
+            box-shadow: 0 0 8px rgba(46, 204, 113, 0.3);
         }
-        input:required:invalid, select:required:invalid {
-            border-color: #ff0000;
+        
+        .button-group {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            flex-wrap: wrap;
         }
+        
+        button {
+            padding: 12px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s;
+            flex: 1;
+            min-width: 130px;
+        }
+        
+        .btn-primary {
+            background: #3498db;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background: #2980b9;
+        }
+        
+        .btn-success {
+            background: #2ecc71;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background: #27ae60;
+        }
+        
+        .btn-secondary {
+            background: #95a5a6;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background: #7f8c8d;
+        }
+        
+        .card-details {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 6px;
+            margin-top: 12px;
+            border-left: 3px solid #3498db;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* ESTILOS ESPECÍFICOS PARA FILIPETA 57mm - COM LETRAS 30% MAIORES */
+        .filipeta-preview {
+            width: 216px; /* 57mm ≈ 216px em 96dpi */
+            margin: 20px auto;
+            padding: 10px 8px;
+            background: white;
+            font-family: 'Courier New', monospace;
+            font-size: 13px; /* 30% maior que 10px */
+            line-height: 1.3; /* Aumentado de 1.1 para 1.3 */
+            border: 2px solid #000;
+            box-shadow: 0 0 15px rgba(0,0,0,0.2);
+            font-weight: bold;
+        }
+        
+        .filipeta-content {
+            font-family: 'Courier New', monospace;
+            font-size: 13px; /* Aumentado de 10px para 13px */
+            line-height: 1.3; /* Aumentado de 1.1 para 1.3 */
+            white-space: pre-wrap;
+            padding: 2px;
+            font-weight: bold;
+        }
+        
+        .filipeta-line {
+            display: block;
+            margin-bottom: 2px;
+            font-weight: bold;
+        }
+        
+        .filipeta-divider {
+            border-top: 1px solid #000;
+            margin: 2px 0;
+        }
+        
+        .filipeta-center {
+            text-align: center;
+            display: block;
+            font-weight: bold;
+        }
+        
+        /* ESTILOS PARA IMPRESSÃO - COM LETRAS 30% MAIORES E MAIS À DIREITA */
         @media print {
             @page {
-                size: A4;
-                margin: 10mm;
-            }
-            body {
-                font-size: 12px;
-            }
-            .container {
-                width: 100%;
-                border: none;
-                padding: 0;
-            }
-            button {
-                display: none;
-            }
-            pre {
-                white-space: pre-wrap;
-                font-family: Arial, sans-serif;
+                size: 57mm auto;
                 margin: 0;
                 padding: 0;
             }
+            
+            body, body * {
+                visibility: hidden;
+                margin: 0 !important;
+                padding: 0 !important;
+            }
+            
+            #filipetaPrint, #filipetaPrint * {
+                visibility: visible;
+                margin: 0 !important;
+                padding: 0 !important;
+                box-sizing: border-box !important;
+            }
+            
+            #filipetaPrint {
+                position: absolute !important;
+                top: 0 !important;
+                left: 8mm !important; /* AUMENTADO de 3mm para 8mm - EQUIVALENTE A 5 LETRAS */
+                width: 48mm !important; /* Reduzido de 52mm para 48mm para compensar */
+                max-width: 48mm !important;
+                height: auto !important;
+                margin: 0 !important;
+                padding: 2mm 0mm 2mm 1mm !important; /* Reduzido padding-left */
+                border: none !important;
+                box-shadow: none !important;
+                background: white !important;
+                font-family: 'Courier New', monospace !important;
+                font-size: 12px !important; /* Aumentado de 9px para 12px (33% maior) */
+                line-height: 1.2 !important; /* Aumentado de 1.0 para 1.2 */
+                font-weight: bold !important;
+                color: black !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+                overflow: hidden !important;
+                word-wrap: break-word !important;
+                word-break: break-word !important;
+                text-align: left !important;
+            }
+            
+            #filipetaPrint div {
+                font-size: 12px !important; /* Aumentado de 9px para 12px */
+                line-height: 1.2 !important; /* Aumentado de 1.0 para 1.2 */
+                margin-bottom: 1.5px !important; /* Aumentado de 1px para 1.5px */
+                padding: 0 !important;
+                width: 100% !important;
+                overflow: hidden !important;
+            }
+            
+            .no-print {
+                display: none !important;
+            }
+        }
+        
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 15px;
+            color: #3498db;
+            font-weight: bold;
+            font-size: 14px;
+        }
+        
+        .error {
+            color: #e74c3c;
+            background: #fdf2f0;
+            padding: 8px;
+            border-radius: 5px;
+            margin-top: 8px;
+            border-left: 3px solid #e74c3c;
+            display: none;
+            font-size: 13px;
+        }
+        
+        .status-badge {
+            display: inline-block;
+            padding: 3px 10px;
+            border-radius: 15px;
+            font-size: 10px;
+            font-weight: bold;
+            margin-left: 5px;
+        }
+        
+        .status-approved {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .file-name {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #666;
+        }
+        
+        .success-message {
+            color: #2ecc71;
+            background: #d4edda;
+            padding: 8px;
+            border-radius: 5px;
+            margin-top: 8px;
+            border-left: 3px solid #2ecc71;
+            display: none;
+            font-size: 13px;
+        }
+        
+        .bold-text {
+            font-weight: 900 !important;
+        }
+        
+        .parcelamento-group {
+            background: #f8f9fa;
+            padding: 12px;
+            border-radius: 6px;
+            margin-top: 5px;
+            border-left: 3px solid #e67e22;
+        }
+        
+        .extracted-info {
+            background: #e8f4fc;
+            padding: 10px;
+            border-radius: 5px;
+            margin-top: 10px;
+            border-left: 3px solid #3498db;
+            font-size: 12px;
+        }
+        
+        .extracted-info div {
+            margin: 5px 0;
+        }
+        
+        .compact-text {
+            font-size: 10px !important;
+            line-height: 1.1 !important;
+        }
+        
+        .data-preview {
+            max-height: 200px;
+            overflow-y: auto;
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 5px;
+            background: #f9f9f9;
+            font-family: monospace;
+            font-size: 10px;
+            margin-top: 10px;
         }
     </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <!-- Incluindo a biblioteca PDF.js para processar PDFs -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 <body>
-
-<div class="container">
-    <h2>Dashboard de Reservas</h2>
-    <div class="form-group">
-        <label for="reserva">Número da Reserva:</label>
-        <input type="text" id="reserva" required>
-    </div>
-    <div class="form-group">
-        <label for="valor">Valor:</label>
-        <input type="number" id="valor" required>
-    </div>
-    <div class="form-group">
-        <label>Forma de Pagamento:</label>
-        <div class="payment-icons">
-            <img src="Dinheiro.ico" alt="Dinheiro" class="payment-icon" onclick="selectPayment('dinheiro', this)">
-            <img src="Pix.ico" alt="Pix" class="payment-icon" onclick="selectPayment('pix', this)">
-            <img src="Transferencia.ico" alt="Transferência" class="payment-icon" onclick="selectPayment('transferencia', this)">
-            <img src="Amex.ico" alt="Amex" class="payment-icon" onclick="selectPayment('amex', this)">
-            <img src="Visa.ico" alt="Visa" class="payment-icon" onclick="selectPayment('visa', this)">
-            <img src="Master.ico" alt="Master" class="payment-icon" onclick="selectPayment('master', this)">
-            <img src="Elo_Cielo.ico" alt="Elo/Cielo" class="payment-icon" onclick="selectPayment('elo', this)">
+    <div class="container">
+        <div class="header">
+            <h1 style="font-size: 18px;"><i class="fas fa-receipt"></i> Gerador de Filipeta POS 57mm - Universal</h1>
+            <p style="font-size: 13px;">Processa qualquer PDF de extrato bancário para filipetas de 57mm</p>
         </div>
-        <input type="hidden" id="pagamento">
-    </div>
-    <div id="cardDetails" style="display:none;">
-        <div class="form-group">
-            <label for="tipoCartao">Tipo de Cartão:</label>
-            <select id="tipoCartao" onchange="checkCredit()">
-                <option value="">Selecione</option>
-                <option value="debito">Débito</option>
-                <option value="credito">Crédito</option>
-            </select>
+        
+        <div class="tab-container">
+            <button class="tab active" onclick="openTab('upload')">
+                <i class="fas fa-file-upload"></i> Upload de PDF
+            </button>
+            <button class="tab" onclick="openTab('manual')">
+                <i class="fas fa-keyboard"></i> Preenchimento Manual
+            </button>
         </div>
-        <div id="creditoDetails" style="display:none;">
+        
+        <div id="upload-tab" class="tab-content active">
             <div class="form-group">
-                <label for="ecommerce">É E-Commerce?</label>
-                <select id="ecommerce" onchange="checkParcelado()">
-                    <option value="">Selecione</option>
-                    <option value="sim">Sim</option>
-                    <option value="nao">Não</option>
-                </select>
-            </div>
-            <div id="parceladoDetails" style="display:none;">
-                <div class="form-group">
-                    <label for="parcelas">Parcelado em 2x?</label>
-                    <select id="parcelas">
-                        <option value="">Selecione</option>
-                        <option value="sim">Sim</option>
-                        <option value="nao">Não</option>
-                    </select>
+                <label for="pdfFile"><i class="fas fa-file-pdf"></i> Selecione o arquivo PDF:</label>
+                <div class="upload-area" onclick="document.getElementById('pdfFile').click()" id="uploadArea">
+                    <i class="fas fa-cloud-upload-alt"></i>
+                    <h3 style="font-size: 14px;">Clique para selecionar arquivo</h3>
+                    <p style="font-size: 12px;">Arraste ou clique para fazer upload de qualquer PDF de extrato</p>
+                    <input type="file" id="pdfFile" accept=".pdf">
+                </div>
+                <div id="fileName" class="file-name"></div>
+                <div class="loading" id="pdfLoading">
+                    <i class="fas fa-spinner fa-spin"></i> Processando PDF...
+                </div>
+                <div class="error" id="pdfError"></div>
+                <div class="success-message" id="pdfSuccess">
+                    <i class="fas fa-check-circle"></i> PDF processado com sucesso!
+                </div>
+                
+                <!-- Área para mostrar informações extraídas do PDF -->
+                <div id="extractedInfo" class="extracted-info hidden">
+                    <div><strong>Informações extraídas do PDF:</strong></div>
+                    <div id="infoEstabelecimento"></div>
+                    <div id="infoStatus"></div>
+                    <div id="infoData"></div>
+                    <div id="infoFormaPagamento"></div>
+                    <div id="infoBandeira"></div>
+                    <div id="infoValor"></div>
+                    <div id="infoNSU"></div>
+                    <div id="infoAutorizacao"></div>
+                    <div id="infoTID"></div>
+                    <div id="infoParcelamento"></div>
+                    <div id="infoCanal"></div>
+                    <div id="infoEcommerce"></div>
+                </div>
+                
+                <!-- Preview dos dados extraídos -->
+                <div id="dataPreview" class="data-preview hidden">
+                    <strong>Texto extraído do PDF:</strong>
+                    <div id="rawTextPreview"></div>
                 </div>
             </div>
+            
             <div class="form-group">
-                <label for="autorizacao">Número de Autorização do Cartão:</label>
-                <input type="text" id="autorizacao">
+                <label for="reservaUpload"><i class="fas fa-ticket-alt"></i> Número da Reserva:</label>
+                <input type="text" id="reservaUpload" placeholder="Digite o número da reserva" maxlength="20">
+            </div>
+            
+            <div class="form-group">
+                <label for="observacaoUpload"><i class="fas fa-sticky-note"></i> Observação:</label>
+                <textarea id="observacaoUpload" placeholder="Adicione uma observação (opcional)" maxlength="80"></textarea>
+            </div>
+            
+            <button class="btn-success" onclick="generateFromPDF()" id="generateFromPDFBtn" disabled>
+                <i class="fas fa-print"></i> Gerar e Visualizar Filipeta
+            </button>
+        </div>
+        
+        <div id="manual-tab" class="tab-content">
+            <div class="form-group">
+                <label for="reservaManual"><i class="fas fa-ticket-alt"></i> Número da Reserva:</label>
+                <input type="text" id="reservaManual" placeholder="Digite o número da reserva" required maxlength="20">
+            </div>
+            
+            <div class="form-group">
+                <label for="valor"><i class="fas fa-money-bill-wave"></i> Valor (R$):</label>
+                <input type="number" id="valor" placeholder="0,00" step="0.01" min="0" required>
+            </div>
+            
+            <div class="form-group">
+                <label><i class="fas fa-credit-card"></i> Forma de Pagamento:</label>
+                <div class="payment-icons">
+                    <div class="payment-icon" onclick="selectPayment('dinheiro', this)" title="Dinheiro">
+                        <div style="font-size: 12px; font-weight: bold; text-align: center;">R$</div>
+                    </div>
+                    <div class="payment-icon" onclick="selectPayment('pix', this)" title="Pix">
+                        <div style="font-size: 12px; font-weight: bold; text-align: center;">PIX</div>
+                    </div>
+                    <div class="payment-icon" onclick="selectPayment('transferencia', this)" title="Transferência">
+                        <div style="font-size: 12px; font-weight: bold; text-align: center;">TED</div>
+                    </div>
+                    <div class="payment-icon" onclick="selectPayment('visa', this)" title="Visa">
+                        <div style="font-size: 12px; font-weight: bold; text-align: center;">VISA</div>
+                    </div>
+                    <div class="payment-icon" onclick="selectPayment('mastercard', this)" title="Mastercard">
+                        <div style="font-size: 12px; font-weight: bold; text-align: center;">MC</div>
+                    </div>
+                    <div class="payment-icon" onclick="selectPayment('amex', this)" title="American Express">
+                        <div style="font-size: 12px; font-weight: bold; text-align: center;">AMEX</div>
+                    </div>
+                    <div class="payment-icon" onclick="selectPayment('elo', this)" title="Elo">
+                        <div style="font-size: 12px; font-weight: bold; text-align: center;">ELO</div>
+                    </div>
+                </div>
+                <input type="hidden" id="pagamento">
+            </div>
+            
+            <div class="card-details hidden" id="cardDetails">
+                <h4 style="font-size: 14px;"><i class="fas fa-id-card"></i> Detalhes do Cartão</h4>
+                <div class="form-group">
+                    <label for="tipoCartao">Tipo de Cartão:</label>
+                    <select id="tipoCartao" onchange="checkCredit()">
+                        <option value="">Selecione...</option>
+                        <option value="debito">Débito</option>
+                        <option value="credito">Crédito</option>
+                    </select>
+                </div>
+                
+                <div id="creditoDetails" class="hidden">
+                    <div class="form-group parcelamento-group">
+                        <label style="color: #e67e22;">Parcelamento:</label>
+                        <div style="display: flex; gap: 10px; margin-top: 8px;">
+                            <select id="parcelamentoManual" style="flex: 1;" onchange="toggleParcelamentoManual()">
+                                <option value="avista">À VISTA</option>
+                                <option value="parcelado">PARCELADO</option>
+                            </select>
+                            <select id="quantidadeParcelasManual" style="flex: 1; display: none;">
+                                <option value="1x">1x</option>
+                                <option value="2x">2x</option>
+                                <option value="3x">3x</option>
+                                <option value="4x">4x</option>
+                                <option value="5x">5x</option>
+                                <option value="6x">6x</option>
+                                <option value="7x">7x</option>
+                                <option value="8x">8x</option>
+                                <option value="9x">9x</option>
+                                <option value="10x">10x</option>
+                                <option value="11x">11x</option>
+                                <option value="12x">12x</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="autorizacao">Número de Autorização:</label>
+                        <input type="text" id="autorizacao" placeholder="Código de autorização" maxlength="20">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="nsu">NSU/DOC:</label>
+                        <input type="text" id="nsu" placeholder="Número do NSU/DOC" maxlength="20">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="tid">TID:</label>
+                        <input type="text" id="tid" placeholder="Transaction ID" maxlength="30">
+                    </div>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="dataTransacao"><i class="fas fa-calendar-alt"></i> Data da Transação:</label>
+                <input type="datetime-local" id="dataTransacao" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="observacaoManual"><i class="fas fa-sticky-note"></i> Observação:</label>
+                <textarea id="observacaoManual" placeholder="Adicione uma observação (opcional)" maxlength="80"></textarea>
+            </div>
+            
+            <div class="button-group">
+                <button class="btn-primary" onclick="gerarFilipetaManual()">
+                    <i class="fas fa-eye"></i> Gerar e Visualizar
+                </button>
+                <button class="btn-secondary no-print" onclick="limparFormulario()">
+                    <i class="fas fa-broom"></i> Limpar
+                </button>
             </div>
         </div>
+        
+        <!-- ÁREA DE PRÉ-VISUALIZAÇÃO DA FILIPETA -->
+        <div id="previewArea" class="hidden">
+            <div style="text-align: center; margin-bottom: 15px;">
+                <h3 style="color: #2c3e50;"><i class="fas fa-receipt"></i> Pré-visualização da Filipeta</h3>
+                <p style="font-size: 12px; color: #666;">Tamanho: 57mm (largura fixa) - Universal para qualquer PDF</p>
+            </div>
+            
+            <div class="filipeta-preview" id="filipetaPreview">
+                <!-- Conteúdo da filipeta será exibido aqui -->
+            </div>
+            
+            <div class="button-group" style="justify-content: center;">
+                <button class="btn-success" onclick="imprimirFilipeta()" style="min-width: 150px;">
+                    <i class="fas fa-print"></i> Imprimir Filipeta
+                </button>
+                <button class="btn-secondary" onclick="fecharPreview()" style="min-width: 150px;">
+                    <i class="fas fa-times"></i> Fechar Visualização
+                </button>
+            </div>
+        </div>
+        
+        <!-- DIV PARA IMPRESSÃO (OCULTA NA TELA, VISÍVEL APENAS NA IMPRESSÃO) -->
+        <div id="filipetaPrint" class="hidden"></div>
     </div>
-    <button onclick="enviarMensagem()">Enviar Mensagem</button>
-    <button onclick="imprimir()">Imprimir</button>
-    <button onclick="limparFormulario()">Limpar Formulário</button>
-</div>
 
-<script>
-    function selectPayment(paymentMethod, element) {
-        document.getElementById('pagamento').value = paymentMethod;
-
-        const icons = document.querySelectorAll('.payment-icon');
-        icons.forEach(icon => {
-            icon.classList.remove('selected');
+    <script>
+        // Variáveis globais
+        let pdfData = null;
+        let currentTab = 'upload';
+        let currentFileName = '';
+        let rawPDFText = '';
+        
+        // Inicialização
+        document.addEventListener('DOMContentLoaded', function() {
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('dataTransacao').value = now.toISOString().slice(0, 16);
+            
+            const pdfFileInput = document.getElementById('pdfFile');
+            pdfFileInput.addEventListener('change', handlePDFUpload);
+            
+            carregarDados();
         });
-
-        element.classList.add('selected');
-
-        checkCardType();
-    }
-
-    function checkCardType() {
-        const pagamento = document.getElementById('pagamento').value;
-        const cardDetails = document.getElementById('cardDetails');
-        cardDetails.style.display = (pagamento === 'amex' || pagamento === 'visa' || pagamento === 'master' || pagamento === 'elo') ? 'block' : 'none';
-    }
-
-    function checkCredit() {
-        const tipoCartao = document.getElementById('tipoCartao').value;
-        const creditoDetails = document.getElementById('creditoDetails');
-        creditoDetails.style.display = (tipoCartao === 'credito') ? 'block' : 'none';
-    }
-
-    function checkParcelado() {
-        const ecommerce = document.getElementById('ecommerce').value;
-        const parceladoDetails = document.getElementById('parceladoDetails');
-        parceladoDetails.style.display = (ecommerce === 'sim') ? 'block' : 'none';
-    }
-
-    function gerarMensagem() {
-        const reserva = document.getElementById('reserva').value;
-        const valor = document.getElementById('valor').value;
-        const pagamento = document.getElementById('pagamento').value;
-        const tipoCartao = document.getElementById('tipoCartao').value;
-        const autorizacao = document.getElementById('autorizacao').value;
-        const parcelas = document.getElementById('parcelas').value;
-        const ecommerce = document.getElementById('ecommerce').value;
-
-        let mensagem = `RSV: ${reserva}\n\n`;
-
-        if (ecommerce === 'sim') {
-            mensagem += `E-Commerce: Sim\n\n`;
+        
+        // Funções de abas
+        function openTab(tabName) {
+            document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
+            document.querySelectorAll('.tab-content').forEach(content => content.classList.remove('active'));
+            
+            document.querySelectorAll('.tab').forEach(tab => {
+                if (tab.textContent.includes(tabName === 'upload' ? 'Upload' : 'Manual')) {
+                    tab.classList.add('active');
+                }
+            });
+            
+            document.getElementById(tabName + '-tab').classList.add('active');
+            currentTab = tabName;
         }
-
-        let formaPagamento = pagamento;
-        if (tipoCartao === 'credito') {
-            formaPagamento = 'Crédito';
-        } else if (tipoCartao === 'debito') {
-            formaPagamento = 'Débito';
-        }
-
-        mensagem += `Forma de Pagamento: ${formaPagamento}\n\n`;
-        mensagem += `Bandeira do Cartão: ${getBandeiraCartao(pagamento)}\n\n`;
-        mensagem += `Número de parcelas: ${parcelas === 'sim' ? '2' : '1'}\n\n`;
-        mensagem += `Número de autorização: ${autorizacao}\n\n`;
-        mensagem += `Valor Total: R$ ${valor}\n\n`;
-        mensagem += `Data e Hora: ${new Date().toLocaleString()}`; // Adiciona a data e hora atual
-
-        return mensagem;
-    }
-
-    function getBandeiraCartao(pagamento) {
-        switch (pagamento) {
-            case 'amex':
-                return 'American Express';
-            case 'visa':
-                return 'Visa';
-            case 'master':
-                return 'MasterCard';
-            case 'elo':
-                return 'Elo';
-            case 'dinheiro':
-                return 'Dinheiro';
-            case 'pix':
-                return 'Pix';
-            case 'transferencia':
-                return 'Transferência';
-            default:
-                return 'Não especificado';
-        }
-    }
-
-    function validarCampos() {
-        const reserva = document.getElementById('reserva').value;
-        const valor = document.getElementById('valor').value;
-        const pagamento = document.getElementById('pagamento').value;
-
-        if (!reserva || !valor || !pagamento) {
-            alert("Por favor, preencha todos os campos obrigatórios.");
-            return false;
-        }
-
-        if (pagamento === 'amex' || pagamento === 'visa' || pagamento === 'master' || pagamento === 'elo') {
-            const tipoCartao = document.getElementById('tipoCartao').value;
-            const autorizacao = document.getElementById('autorizacao').value;
-
-            if (!tipoCartao || !autorizacao) {
-                alert("Por favor, preencha os detalhes do cartão.");
-                return false;
-            }
-        }
-
-        return true;
-    }
-
-    function enviarMensagem() {
-        if (!validarCampos()) return;
-
-        const mensagem = gerarMensagem();
-        const whatsappUrl = `https://api.whatsapp.com/send?text=${encodeURIComponent(mensagem)}`;
-        window.open(whatsappUrl, '_blank');
-    }
-
-    function imprimir() {
-        if (!validarCampos()) return;
-
-        const mensagem = gerarMensagem();
-        const printWindow = window.open('', '_blank');
-        printWindow.document.write('<pre>' + mensagem + '</pre>');
-        printWindow.document.close();
-        printWindow.print();
-    }
-
-    function limparFormulario() {
-        document.getElementById('reserva').value = '';
-        document.getElementById('valor').value = '';
-        document.getElementById('pagamento').value = '';
-        document.getElementById('tipoCartao').value = '';
-        document.getElementById('autorizacao').value = '';
-        document.getElementById('parcelas').value = '';
-        document.getElementById('ecommerce').value = '';
-
-        const icons = document.querySelectorAll('.payment-icon');
-        icons.forEach(icon => {
-            icon.classList.remove('selected');
-        });
-
-        document.getElementById('cardDetails').style.display = 'none';
-        document.getElementById('creditoDetails').style.display = 'none';
-        document.getElementById('parceladoDetails').style.display = 'none';
-    }
-
-    function salvarDados() {
-        const dados = {
-            reserva: document.getElementById('reserva').value,
-            valor: document.getElementById('valor').value,
-            pagamento: document.getElementById('pagamento').value,
-            tipoCartao: document.getElementById('tipoCartao').value,
-            autorizacao: document.getElementById('autorizacao').value,
-            parcelas: document.getElementById('parcelas').value,
-            ecommerce: document.getElementById('ecommerce').value
-        };
-
-        localStorage.setItem('dadosReserva', JSON.stringify(dados));
-    }
-
-    function carregarDados() {
-        const dados = JSON.parse(localStorage.getItem('dadosReserva'));
-
-        if (dados) {
-            document.getElementById('reserva').value = dados.reserva;
-            document.getElementById('valor').value = dados.valor;
-            document.getElementById('pagamento').value = dados.pagamento;
-            document.getElementById('tipoCartao').value = dados.tipoCartao;
-            document.getElementById('autorizacao').value = dados.autorizacao;
-            document.getElementById('parcelas').value = dados.parcelas;
-            document.getElementById('ecommerce').value = dados.ecommerce;
-
-            if (dados.pagamento) {
-                const icon = document.querySelector(`.payment-icon[alt="${dados.pagamento}"]`);
-                if (icon) {
-                    icon.classList.add('selected');
+        
+        // Sistema universal de extração de dados de PDFs
+        function extrairInformacoesGenericas(textoPDF) {
+            const info = {
+                estabelecimento: '',
+                status: '',
+                dataVenda: '',
+                formaPagamento: '',
+                bandeira: '',
+                tipoCaptura: '',
+                vendaDigitada: '',
+                numeroMaquina: '',
+                nsuDoc: '',
+                autorizacao: '',
+                numeroCartao: '',
+                tid: '',
+                numeroPedido: '',
+                valorBruto: '',
+                valorLiquido: '',
+                canalVenda: '',
+                ecommerce: 'NÃO',
+                parcelamento: '',
+                quantidadeParcelas: '1',
+                tipoCartao: '',
+                dataHora: ''
+            };
+            
+            // Normalizar texto
+            const textoNormalizado = textoPDF
+                .replace(/\s+/g, ' ')
+                .replace(/[^\w\sÀ-ÿ.,$:/\-@]/g, ' ')
+                .toLowerCase();
+            
+            // Extrair DATA
+            const dataRegex = /(\d{1,2}\/\d{1,2}\/\d{2,4})/g;
+            const datas = textoPDF.match(dataRegex);
+            if (datas && datas.length > 0) {
+                info.dataVenda = datas[0];
+                
+                const horaRegex = /(\d{1,2}:\d{2})/g;
+                const horas = textoPDF.match(horaRegex);
+                if (horas && horas.length > 0) {
+                    info.dataVenda += ` às ${horas[0]}`;
                 }
             }
-
-            checkCardType();
-            checkCredit();
-            checkParcelado();
+            
+            // Extrair VALOR
+            const valorRegex = /(?:r\$\s*)?(\d{1,3}(?:\.\d{3})*,\d{2})/gi;
+            const valores = textoPDF.match(valorRegex);
+            if (valores && valores.length > 0) {
+                let maiorValor = '';
+                let maiorNum = 0;
+                
+                valores.forEach(valor => {
+                    const num = parseFloat(valor.replace('R$', '').replace(/\./g, '').replace(',', '.'));
+                    if (num > maiorNum) {
+                        maiorNum = num;
+                        maiorValor = valor.replace('R$', '').trim();
+                    }
+                });
+                
+                info.valorBruto = maiorValor;
+            }
+            
+            // Extrair ESTABELECIMENTO
+            const estabelecimentoRegex = /estabelecimento[\s:]*(\d{8,15})/gi;
+            const estabelecimentoMatch = textoPDF.match(estabelecimentoRegex);
+            if (estabelecimentoMatch) {
+                const num = estabelecimentoMatch[0].match(/\d+/);
+                if (num) info.estabelecimento = num[0];
+            }
+            
+            // Extrair STATUS
+            const statusRegex = /status[\s:]*([^\n\r,;]+)/gi;
+            const statusMatch = textoPDF.match(statusRegex);
+            if (statusMatch) {
+                const statusText = statusMatch[0].replace(/status[\s:]*/gi, '').trim();
+                if (statusText) info.status = statusText.toUpperCase();
+            }
+            
+            // Extrair FORMA DE PAGAMENTO
+            const pagamentoRegex = /(?:forma[\s]*de[\s]*pagamento|meio[\s]*de[\s]*pagamento|pagamento)[\s:]*([^\n\r,;]+)/gi;
+            const pagamentoMatch = textoPDF.match(pagamentoRegex);
+            if (pagamentoMatch) {
+                info.formaPagamento = pagamentoMatch[0].replace(/forma[\s]*de[\s]*pagamento|meio[\s]*de[\s]*pagamento|pagamento[\s:]*/gi, '').trim();
+                
+                // Detectar parcelamento
+                if (info.formaPagamento.toLowerCase().match(/(\d+)[xX]/)) {
+                    const parcelas = info.formaPagamento.match(/(\d+)[xX]/)[1];
+                    info.quantidadeParcelas = parcelas;
+                    info.parcelamento = `PARC ${parcelas}X`;
+                } else if (info.formaPagamento.toLowerCase().includes('parcelado')) {
+                    info.parcelamento = 'PARCELADO';
+                } else {
+                    info.parcelamento = 'À VISTA';
+                }
+                
+                // Detectar tipo de cartão
+                if (info.formaPagamento.toLowerCase().includes('débito') || info.formaPagamento.toLowerCase().includes('debito')) {
+                    info.tipoCartao = 'DÉBITO';
+                } else if (info.formaPagamento.toLowerCase().includes('crédito') || info.formaPagamento.toLowerCase().includes('credito')) {
+                    info.tipoCartao = 'CRÉDITO';
+                }
+            }
+            
+            // Extrair BANDEIRA
+            const bandeiras = ['visa', 'mastercard', 'elo', 'american express', 'amex', 'hipercard', 'diners'];
+            for (const bandeira of bandeiras) {
+                if (textoNormalizado.includes(bandeira)) {
+                    info.bandeira = bandeira.toUpperCase();
+                    break;
+                }
+            }
+            
+            // Extrair NSU/DOC
+            const nsuRegex = /(?:nsu\/doc|nsu|doc)[\s:]*([^\n\r,;]+)/gi;
+            const nsuMatch = textoPDF.match(nsuRegex);
+            if (nsuMatch) {
+                const nsu = nsuMatch[0].replace(/(?:nsu\/doc|nsu|doc)[\s:]*/gi, '').trim();
+                if (nsu) info.nsuDoc = nsu;
+            }
+            
+            // Extrair AUTORIZAÇÃO
+            const authRegex = /(?:autoriza[cç][aã]o|código[\s]*autoriza[cç][aã]o|auth)[\s:]*([^\n\r,;]+)/gi;
+            const authMatch = textoPDF.match(authRegex);
+            if (authMatch) {
+                const auth = authMatch[0].replace(/(?:autoriza[cç][aã]o|código[\s]*autoriza[cç][aã]o|auth)[\s:]*/gi, '').trim();
+                if (auth) info.autorizacao = auth;
+            }
+            
+            // Extrair TID
+            const tidRegex = /(?:tid|transaction[\s]*id)[\s:]*([^\n\r,;]+)/gi;
+            const tidMatch = textoPDF.match(tidRegex);
+            if (tidMatch) {
+                const tid = tidMatch[0].replace(/(?:tid|transaction[\s]*id)[\s:]*/gi, '').trim();
+                if (tid) info.tid = tid;
+            }
+            
+            // Extrair NÚMERO DO CARTÃO
+            const cartaoRegex = /(?:\*\*\*\*[\s]*\*\*\*\*[\s]*\*\*\*\*[\s]*\d{4}|\d{4}[\s]*\d{4}[\s]*\d{4}[\s]*\d{4})/g;
+            const cartaoMatch = textoPDF.match(cartaoRegex);
+            if (cartaoMatch) {
+                info.numeroCartao = cartaoMatch[0];
+            }
+            
+            // Detectar E-COMMERCE
+            if (textoNormalizado.includes('e-commerce') || textoNormalizado.includes('ecommerce') || 
+                textoNormalizado.includes('comércio eletrônico')) {
+                info.ecommerce = 'SIM';
+                info.canalVenda = 'E-COMMERCE';
+            } else if (textoNormalizado.includes('ponto de venda') || textoNormalizado.includes('pdv')) {
+                info.canalVenda = 'PDV';
+            } else if (textoNormalizado.includes('mobile')) {
+                info.canalVenda = 'MOBILE';
+            }
+            
+            // Se não encontrou status, mas tem "aprovada" no texto
+            if (!info.status && textoNormalizado.includes('aprovada')) {
+                info.status = 'APROVADA';
+            }
+            
+            // Preencher valores padrão
+            if (!info.status) info.status = 'APROVADA';
+            if (!info.canalVenda) info.canalVenda = 'E-COMMERCE';
+            if (!info.tipoCartao) info.tipoCartao = 'CRÉDITO';
+            if (!info.parcelamento) info.parcelamento = 'À VISTA';
+            
+            return info;
         }
-    }
-
-    window.onload = carregarDados;
-</script>
-
+        
+        // Processamento de PDF real usando PDF.js
+        async function handlePDFUpload(event) {
+            const file = event.target.files[0];
+            const loadingDiv = document.getElementById('pdfLoading');
+            const errorDiv = document.getElementById('pdfError');
+            const successDiv = document.getElementById('pdfSuccess');
+            const generateBtn = document.getElementById('generateFromPDFBtn');
+            const fileNameDiv = document.getElementById('fileName');
+            const extractedInfoDiv = document.getElementById('extractedInfo');
+            const dataPreviewDiv = document.getElementById('dataPreview');
+            const rawTextPreview = document.getElementById('rawTextPreview');
+            
+            // Reset
+            errorDiv.style.display = 'none';
+            successDiv.style.display = 'none';
+            generateBtn.disabled = true;
+            extractedInfoDiv.classList.add('hidden');
+            dataPreviewDiv.classList.add('hidden');
+            
+            if (!file) {
+                fileNameDiv.textContent = '';
+                return;
+            }
+            
+            // Exibir nome do arquivo
+            currentFileName = file.name;
+            fileNameDiv.innerHTML = `<i class="fas fa-file"></i> Arquivo selecionado: ${currentFileName}`;
+            
+            if (file.type !== 'application/pdf') {
+                showError('Por favor, selecione um arquivo PDF válido.');
+                fileNameDiv.style.color = '#e74c3c';
+                return;
+            }
+            
+            if (file.size > 10 * 1024 * 1024) {
+                showError('O arquivo deve ser menor que 10MB.');
+                fileNameDiv.style.color = '#e74c3c';
+                return;
+            }
+            
+            loadingDiv.style.display = 'block';
+            fileNameDiv.style.color = '#666';
+            
+            try {
+                // Ler o arquivo como ArrayBuffer
+                const arrayBuffer = await file.arrayBuffer();
+                
+                // Carregar o PDF usando PDF.js
+                const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                
+                let fullText = '';
+                
+                // Extrair texto de todas as páginas
+                for (let i = 1; i <= pdf.numPages; i++) {
+                    const page = await pdf.getPage(i);
+                    const textContent = await page.getTextContent();
+                    const pageText = textContent.items.map(item => item.str).join(' ');
+                    fullText += pageText + '\n';
+                    
+                    // Limitar a processar apenas as primeiras 5 páginas para performance
+                    if (i >= 5) {
+                        fullText += '\n...[conteúdo truncado após 5 páginas]';
+                        break;
+                    }
+                }
+                
+                rawPDFText = fullText;
+                
+                // Mostrar preview
+                rawTextPreview.textContent = fullText.substring(0, 500) + (fullText.length > 500 ? '...' : '');
+                dataPreviewDiv.classList.remove('hidden');
+                
+                // Extrair informações
+                pdfData = extrairInformacoesGenericas(fullText);
+                
+                // Se não encontrou valor, tentar padrões alternativos
+                if (!pdfData.valorBruto) {
+                    // Padrão alternativo para valor: números com vírgula e ponto
+                    const valorAlternativo = fullText.match(/(\d{1,3}(?:\.\d{3})*,\d{2})/);
+                    if (valorAlternativo) {
+                        pdfData.valorBruto = valorAlternativo[0];
+                    }
+                }
+                
+                // Se não encontrou data, usar data atual
+                if (!pdfData.dataVenda) {
+                    const now = new Date();
+                    pdfData.dataVenda = now.toLocaleDateString('pt-BR') + ' às ' + now.toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
+                }
+                
+                loadingDiv.style.display = 'none';
+                successDiv.style.display = 'block';
+                generateBtn.disabled = false;
+                
+                // Mostrar informações extraídas
+                document.getElementById('infoEstabelecimento').innerHTML = `<strong>Estabelecimento:</strong> ${pdfData.estabelecimento || 'Não encontrado'}`;
+                document.getElementById('infoStatus').innerHTML = `<strong>Status:</strong> ${pdfData.status}`;
+                document.getElementById('infoData').innerHTML = `<strong>Data:</strong> ${pdfData.dataVenda || 'Não encontrada'}`;
+                document.getElementById('infoFormaPagamento').innerHTML = `<strong>Forma de Pagamento:</strong> ${pdfData.formaPagamento || 'Não encontrada'}`;
+                document.getElementById('infoBandeira').innerHTML = `<strong>Bandeira:</strong> ${pdfData.bandeira || 'Não encontrada'}`;
+                document.getElementById('infoValor').innerHTML = `<strong>Valor:</strong> ${pdfData.valorBruto ? 'R$ ' + pdfData.valorBruto : 'Não encontrado'}`;
+                document.getElementById('infoNSU').innerHTML = `<strong>NSU/DOC:</strong> ${pdfData.nsuDoc || 'Não encontrado'}`;
+                document.getElementById('infoAutorizacao').innerHTML = `<strong>Autorização:</strong> ${pdfData.autorizacao || 'Não encontrado'}`;
+                document.getElementById('infoTID').innerHTML = `<strong>TID:</strong> ${pdfData.tid ? pdfData.tid.substring(0, 20) + '...' : 'Não encontrado'}`;
+                document.getElementById('infoParcelamento').innerHTML = `<strong>Parcelamento:</strong> ${pdfData.parcelamento}`;
+                document.getElementById('infoCanal').innerHTML = `<strong>Canal:</strong> ${pdfData.canalVenda}`;
+                document.getElementById('infoEcommerce').innerHTML = `<strong>E-commerce:</strong> ${pdfData.ecommerce}`;
+                extractedInfoDiv.classList.remove('hidden');
+                
+                // Preencher automaticamente o número da reserva
+                if (!document.getElementById('reservaUpload').value) {
+                    const hoje = new Date();
+                    const reservaNum = Math.floor(Math.random() * 9000) + 1000;
+                    document.getElementById('reservaUpload').value = `RES${hoje.getDate()}${hoje.getMonth()+1}${reservaNum}`;
+                }
+                
+            } catch (error) {
+                console.error('Erro ao processar PDF:', error);
+                showError('Erro ao processar o PDF. Verifique se o arquivo é válido ou tente outro arquivo.');
+                loadingDiv.style.display = 'none';
+            }
+        }
+        
+        // Função para mostrar/ocultar parcelamento no formulário manual
+        function toggleParcelamentoManual() {
+            const parcelamento = document.getElementById('parcelamentoManual').value;
+            const parcelasSelect = document.getElementById('quantidadeParcelasManual');
+            parcelasSelect.style.display = parcelamento === 'parcelado' ? 'block' : 'none';
+        }
+        
+        // Gerar filipeta a partir do PDF - LAYOUT ULTRA COMPACTO COM LETRAS 30% MAIORES
+        function generateFromPDF() {
+            const reserva = document.getElementById('reservaUpload').value.trim();
+            const observacao = document.getElementById('observacaoUpload').value.trim();
+            
+            if (!reserva) {
+                alert('Por favor, informe o número da reserva.');
+                return;
+            }
+            
+            if (!pdfData) {
+                alert('Nenhum PDF processado. Por favor, faça o upload de um PDF válido.');
+                return;
+            }
+            
+            // Formatar data
+            let data = pdfData.dataVenda || new Date().toLocaleDateString('pt-BR');
+            let hora = '00:00';
+            
+            if (data.includes('às')) {
+                const parts = data.split(' às ');
+                data = parts[0];
+                hora = parts[1] || '00:00';
+            } else if (data.includes(' ')) {
+                const parts = data.split(' ');
+                data = parts[0];
+                hora = parts[1] || '00:00';
+            }
+            
+            // Formatar número do cartão
+            const ultimosDigitos = pdfData.numeroCartao ? 
+                pdfData.numeroCartao.replace(/\*/g, '').replace(/\s/g, '').slice(-4) : 
+                '****';
+            
+            // Formatar TID para caber
+            const tidFormatado = pdfData.tid ? 
+                (pdfData.tid.length > 12 ? pdfData.tid.substring(0, 10) + '...' : pdfData.tid) : 
+                '';
+            
+            // Formatar forma de pagamento
+            const formaPagamentoFormatada = pdfData.formaPagamento ? 
+                pdfData.formaPagamento.substring(0, 14) : '';
+            
+            // Gerar conteúdo da filipeta ULTRA COMPACTO COM LETRAS 30% MAIORES
+            const filipetaHTML = `
+<div style="text-align: center; font-weight: bold; font-size: 13px;"> E-COMMERCE</div>
+<div style="text-align: center; font-weight: bold; font-size: 11px;">====================</div>
+<div><strong>RESERVA:</strong> ${reserva}</div>
+<div><strong>STATUS:</strong> ${pdfData.status}</div>
+<div><strong>DATA:</strong> ${data} ${hora}</div>
+<div style="border-top: 1px solid #000; margin: 1px 0;"></div>
+<div><strong>PGTO:</strong> ${formaPagamentoFormatada}</div>
+<div><strong>BANDEIRA:</strong> ${pdfData.bandeira || 'N/A'}</div>
+<div><strong>TIPO:</strong> ${pdfData.tipoCartao}</div>
+<div><strong>PARC:</strong> ${pdfData.parcelamento}</div>
+<div><strong>E-COMM:</strong> ${pdfData.ecommerce}</div>
+<div style="border-top: 1px solid #000; margin: 1px 0;"></div>
+<div><strong>NSU:</strong> ${pdfData.nsuDoc || 'N/A'}</div>
+<div><strong>AUTOR:</strong> ${pdfData.autorizacao || 'N/A'}</div>
+${tidFormatado ? `<div><strong>TID:</strong> ${tidFormatado}</div>` : ''}
+<div style="border-top: 1px solid #000; margin: 1px 0;"></div>
+<div><strong>VALOR:</strong> R$ ${pdfData.valorBruto || '0,00'}</div>
+<div><strong>ESTAB:</strong> ${pdfData.estabelecimento || 'N/A'}</div>
+${ultimosDigitos !== '****' ? `<div><strong>CARTÃO:</strong> ****${ultimosDigitos}</div>` : ''}
+${pdfData.numeroMaquina ? `<div><strong>MAQ:</strong> ${pdfData.numeroMaquina}</div>` : ''}
+${observacao ? `<div style="border-top: 1px solid #000; margin: 1px 0;"></div><div><strong>OBS:</strong> ${observacao.substring(0, 20)}</div>` : ''}
+<div style="text-align: center; font-weight: bold; font-size: 11px;">====================</div>
+<div style="text-align: center; font-size: 9px;">${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</div>
+            `;
+            
+            // Exibir preview
+            document.getElementById('filipetaPreview').innerHTML = filipetaHTML;
+            document.getElementById('previewArea').classList.remove('hidden');
+            
+            // Preparar conteúdo para impressão
+            document.getElementById('filipetaPrint').innerHTML = filipetaHTML;
+            
+            // Scroll para visualização
+            document.getElementById('previewArea').scrollIntoView({behavior: 'smooth'});
+        }
+        
+        // Funções do formulário manual
+        function selectPayment(paymentMethod, element) {
+            document.getElementById('pagamento').value = paymentMethod;
+            document.querySelectorAll('.payment-icon').forEach(icon => icon.classList.remove('selected'));
+            element.classList.add('selected');
+            checkCardType();
+        }
+        
+        function checkCardType() {
+            const pagamento = document.getElementById('pagamento').value;
+            const cardDetails = document.getElementById('cardDetails');
+            cardDetails.classList.toggle('hidden', !['visa', 'mastercard', 'amex', 'elo'].includes(pagamento));
+        }
+        
+        function checkCredit() {
+            const tipoCartao = document.getElementById('tipoCartao').value;
+            const creditoDetails = document.getElementById('creditoDetails');
+            creditoDetails.classList.toggle('hidden', tipoCartao !== 'credito');
+        }
+        
+        // Gerar filipeta manual COM LETRAS 30% MAIORES
+        function gerarFilipetaManual() {
+            const reserva = document.getElementById('reservaManual').value.trim();
+            const valor = document.getElementById('valor').value;
+            const pagamento = document.getElementById('pagamento').value;
+            const dataTransacao = document.getElementById('dataTransacao').value;
+            const observacao = document.getElementById('observacaoManual').value.trim();
+            
+            if (!reserva || !valor || !pagamento || !dataTransacao) {
+                alert('Por favor, preencha todos os campos obrigatórios.');
+                return;
+            }
+            
+            const dataObj = new Date(dataTransacao);
+            const dataFormatada = dataObj.toLocaleDateString('pt-BR');
+            const horaFormatada = dataObj.toLocaleTimeString('pt-BR', {hour: '2-digit', minute: '2-digit'});
+            
+            let bandeira = getBandeiraCartao(pagamento);
+            
+            // Informações de parcelamento
+            let infoParcelamento = 'À VISTA';
+            if (['visa', 'mastercard', 'amex', 'elo'].includes(pagamento)) {
+                const tipoCartao = document.getElementById('tipoCartao').value;
+                if (tipoCartao === 'credito') {
+                    const parcelamento = document.getElementById('parcelamentoManual').value;
+                    const quantidadeParcelas = document.getElementById('quantidadeParcelasManual').value;
+                    
+                    if (parcelamento === 'avista') {
+                        infoParcelamento = 'À VISTA';
+                    } else if (parcelamento === 'parcelado' && quantidadeParcelas) {
+                        infoParcelamento = `${quantidadeParcelas}`;
+                    }
+                } else if (tipoCartao === 'debito') {
+                    infoParcelamento = 'DÉBITO';
+                }
+            }
+            
+            // Determinar se é e-commerce
+            const ecommerce = document.getElementById('pagamento').value === 'visa' || 
+                             document.getElementById('pagamento').value === 'mastercard' || 
+                             document.getElementById('pagamento').value === 'amex' || 
+                             document.getElementById('pagamento').value === 'elo' ? 'SIM' : 'NÃO';
+            
+            // Construir conteúdo da filipeta COM LETRAS 30% MAIORES
+            let filipetaHTML = `
+<div style="text-align: center; font-weight: bold; font-size: 13px;">FILIPETA POS</div>
+<div style="text-align: center; font-weight: bold; font-size: 11px;">====================</div>
+<div><strong>RESERVA:</strong> ${reserva}</div>
+<div><strong>DATA:</strong> ${dataFormatada}</div>
+<div><strong>HORA:</strong> ${horaFormatada}</div>
+<div style="border-top: 1px solid #000; margin: 1px 0;"></div>
+<div><strong>PGTO:</strong> ${pagamento.toUpperCase()}</div>
+<div><strong>BANDEIRA:</strong> ${bandeira}</div>
+<div><strong>PARC:</strong> ${infoParcelamento}</div>
+<div><strong>E-COMM:</strong> ${ecommerce}</div>`;
+            
+            if (['visa', 'mastercard', 'amex', 'elo'].includes(pagamento)) {
+                const tipoCartao = document.getElementById('tipoCartao').value;
+                filipetaHTML += `
+<div><strong>TIPO:</strong> ${tipoCartao ? tipoCartao.toUpperCase() : '-'}</div>`;
+                
+                if (tipoCartao === 'credito') {
+                    const autorizacao = document.getElementById('autorizacao').value;
+                    const nsu = document.getElementById('nsu').value;
+                    const tid = document.getElementById('tid').value;
+                    
+                    if (autorizacao) {
+                        filipetaHTML += `
+<div><strong>AUTOR:</strong> ${autorizacao.substring(0, 8)}</div>`;
+                    }
+                    
+                    if (nsu) {
+                        filipetaHTML += `
+<div><strong>NSU:</strong> ${nsu.substring(0, 8)}</div>`;
+                    }
+                    
+                    if (tid) {
+                        filipetaHTML += `
+<div><strong>TID:</strong> ${tid.substring(0, 10)}...</div>`;
+                    }
+                }
+            }
+            
+            // Adicionar valor e observação
+            filipetaHTML += `
+<div style="border-top: 1px solid #000; margin: 1px 0;"></div>
+<div><strong>VALOR:</strong> R$ ${parseFloat(valor).toFixed(2).replace('.', ',')}</div>`;
+            
+            if (observacao) {
+                filipetaHTML += `
+<div style="border-top: 1px solid #000; margin: 1px 0;"></div>
+<div><strong>OBS:</strong> ${observacao.substring(0, 20)}</div>`;
+            }
+            
+            filipetaHTML += `
+<div style="text-align: center; font-weight: bold; font-size: 11px;">====================</div>
+<div style="text-align: center; font-size: 9px;">${new Date().toLocaleDateString('pt-BR')} ${new Date().toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'})}</div>
+            `;
+            
+            // Exibir preview
+            document.getElementById('filipetaPreview').innerHTML = filipetaHTML;
+            document.getElementById('previewArea').classList.remove('hidden');
+            
+            // Preparar conteúdo para impressão
+            document.getElementById('filipetaPrint').innerHTML = filipetaHTML;
+            
+            // Scroll para visualização
+            document.getElementById('previewArea').scrollIntoView({behavior: 'smooth'});
+            salvarDados();
+        }
+        
+        function getBandeiraCartao(pagamento) {
+            const map = {
+                'visa': 'VISA', 'mastercard': 'MASTERCARD', 'amex': 'AMEX', 
+                'elo': 'ELO', 'dinheiro': 'DINHEIRO', 'pix': 'PIX', 
+                'transferencia': 'TRANSF'
+            };
+            return map[pagamento] || '-';
+        }
+        
+        // IMPRESSÃO
+        function imprimirFilipeta() {
+            document.getElementById('filipetaPrint').classList.remove('hidden');
+            setTimeout(() => {
+                window.print();
+                setTimeout(() => document.getElementById('filipetaPrint').classList.add('hidden'), 100);
+            }, 100);
+        }
+        
+        function fecharPreview() {
+            document.getElementById('previewArea').classList.add('hidden');
+        }
+        
+        function limparFormulario() {
+            // Limpar campos
+            ['reservaManual', 'valor', 'tipoCartao', 'autorizacao', 'nsu', 'tid', 'observacaoManual', 
+             'reservaUpload', 'observacaoUpload'].forEach(id => {
+                document.getElementById(id).value = '';
+            });
+            
+            document.getElementById('pdfFile').value = '';
+            document.getElementById('pagamento').value = '';
+            document.getElementById('parcelamentoManual').value = 'avista';
+            document.getElementById('quantidadeParcelasManual').value = '2x';
+            document.getElementById('quantidadeParcelasManual').style.display = 'none';
+            document.getElementById('fileName').textContent = '';
+            document.getElementById('generateFromPDFBtn').disabled = true;
+            document.getElementById('pdfError').style.display = 'none';
+            document.getElementById('pdfSuccess').style.display = 'none';
+            document.getElementById('extractedInfo').classList.add('hidden');
+            document.getElementById('dataPreview').classList.add('hidden');
+            
+            document.querySelectorAll('.payment-icon').forEach(icon => icon.classList.remove('selected'));
+            document.getElementById('cardDetails').classList.add('hidden');
+            document.getElementById('creditoDetails').classList.add('hidden');
+            document.getElementById('previewArea').classList.add('hidden');
+            
+            const now = new Date();
+            now.setMinutes(now.getMinutes() - now.getTimezoneOffset());
+            document.getElementById('dataTransacao').value = now.toISOString().slice(0, 16);
+            
+            localStorage.removeItem('dadosReserva');
+            pdfData = null;
+            currentFileName = '';
+            rawPDFText = '';
+        }
+        
+        function salvarDados() {
+            const dados = {
+                reserva: document.getElementById('reservaManual').value,
+                valor: document.getElementById('valor').value,
+                pagamento: document.getElementById('pagamento').value,
+                tipoCartao: document.getElementById('tipoCartao').value,
+                parcelamentoManual: document.getElementById('parcelamentoManual').value,
+                quantidadeParcelasManual: document.getElementById('quantidadeParcelasManual').value,
+                autorizacao: document.getElementById('autorizacao').value,
+                nsu: document.getElementById('nsu').value,
+                tid: document.getElementById('tid').value,
+                observacao: document.getElementById('observacaoManual').value,
+                dataTransacao: document.getElementById('dataTransacao').value
+            };
+            localStorage.setItem('dadosReserva', JSON.stringify(dados));
+        }
+        
+        function carregarDados() {
+            const dadosSalvos = localStorage.getItem('dadosReserva');
+            if (dadosSalvos) {
+                try {
+                    const dados = JSON.parse(dadosSalvos);
+                    
+                    document.getElementById('reservaManual').value = dados.reserva || '';
+                    document.getElementById('valor').value = dados.valor || '';
+                    document.getElementById('pagamento').value = dados.pagamento || '';
+                    document.getElementById('tipoCartao').value = dados.tipoCartao || '';
+                    document.getElementById('parcelamentoManual').value = dados.parcelamentoManual || 'avista';
+                    document.getElementById('quantidadeParcelasManual').value = dados.quantidadeParcelasManual || '2x';
+                    document.getElementById('autorizacao').value = dados.autorizacao || '';
+                    document.getElementById('nsu').value = dados.nsu || '';
+                    document.getElementById('tid').value = dados.tid || '';
+                    document.getElementById('observacaoManual').value = dados.observacao || '';
+                    document.getElementById('dataTransacao').value = dados.dataTransacao || '';
+                    
+                    if (dados.parcelamentoManual === 'parcelado') {
+                        document.getElementById('quantidadeParcelasManual').style.display = 'block';
+                    }
+                    
+                    if (dados.pagamento) {
+                        document.querySelectorAll('.payment-icon').forEach(icon => {
+                            const text = icon.querySelector('div').textContent.trim();
+                            const paymentMap = {
+                                'R$': 'dinheiro', 'PIX': 'pix', 'TED': 'transferencia',
+                                'VISA': 'visa', 'MC': 'mastercard', 'AMEX': 'amex', 'ELO': 'elo'
+                            };
+                            if (paymentMap[text] === dados.pagamento) {
+                                icon.classList.add('selected');
+                            }
+                        });
+                        checkCardType();
+                        checkCredit();
+                    }
+                } catch (e) {
+                    console.error('Erro ao carregar dados salvos:', e);
+                }
+            }
+        }
+        
+        function showError(message) {
+            const errorDiv = document.getElementById('pdfError');
+            errorDiv.innerHTML = `<i class="fas fa-exclamation-circle"></i> ${message}`;
+            errorDiv.style.display = 'block';
+        }
+    </script>
 </body>
 </html>
