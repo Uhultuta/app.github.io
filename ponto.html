@@ -250,7 +250,7 @@
         .entrada { top: 48mm; left: 19mm; }
         .intervalo { top: 48mm; left: 34mm; }
         .saida { top: 48mm; left: 54mm; }
-        .rep-semanal { top: 48mm; left: 66mm; }
+        .escala { top: 48mm; left: 66mm; }
 
         .selected-count {
             background: #e74c3c;
@@ -318,6 +318,31 @@
             transform: translateY(-2px);
         }
 
+        .scale-selector {
+            display: flex;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .scale-option {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .scale-option input[type="radio"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
+
+        .scale-option label {
+            display: inline;
+            margin: 0;
+            font-weight: normal;
+            cursor: pointer;
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -378,6 +403,20 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label>Escala Padrão para Novos Cartões:</label>
+                    <div class="scale-selector" id="scaleSelector">
+                        <div class="scale-option">
+                            <input type="radio" name="defaultScale" id="scale12_36" value="12/36" checked>
+                            <label for="scale12_36">12/36</label>
+                        </div>
+                        <div class="scale-option">
+                            <input type="radio" name="defaultScale" id="scale6_1" value="6/1">
+                            <label for="scale6_1">6/1</label>
+                        </div>
+                    </div>
+                </div>
+
                 <div class="action-buttons">
                     <button class="btn btn-primary" onclick="generateSelected()">
                         Imprimir Selecionados
@@ -407,49 +446,49 @@
     <script>
         // LISTA DE FUNCIONÁRIOS ATUALIZADA COM OS NOVOS DADOS
         let employees = [
-            { id: 1, name: "ARYANNE K. DA SILVA PEREIRA", role: "JOVEM APRENDIZ", admission: "28/03/2025", entrada: "12:00", intervalo: "16:00/16:15", saida: "18:00", ctps: "", registro: "" },
-            { id: 2, name: "CARINA ALVES CORDEIRO", role: "GARÇONETE", admission: "28/03/2025", entrada: "05:30", intervalo: "11:00/12:00", saida: "13:50", ctps: "", registro: "" },
-            { id: 3, name: "CELIA LUIZA DA SILVA", role: "ARRUMADEIRA", admission: "09/09/2014", entrada: "09:00", intervalo: "12:00/13:00", saida: "17:20", ctps: "", registro: "" },
-            { id: 4, name: "ULLEN GABRIEL LUZ SANTOS", role: "SUP. RESERVAS", admission: "20/05/2019", entrada: "09:00", intervalo: "12:00/13:00", saida: "17:20", ctps: "", registro: "" },
-            { id: 5, name: "INACIA NEMEZIO DE LIMA", role: "ARRUMADEIRA", admission: "21/12/2016", entrada: "09:00", intervalo: "13:00/14:00", saida: "21:00", ctps: "", registro: "" },
-            { id: 6, name: "ICARO TARANTO RODRIGUES", role: "RECEP C/ DIREÇÃO", admission: "25/02/2025", entrada: "19:00", intervalo: "01:00/02:00", saida: "07:00", ctps: "", registro: "" },
-            { id: 7, name: "EREVALDO DA SILVA LIRIO", role: "GARÇON", admission: "10/04/2019", entrada: "06:00", intervalo: "10:45/11:45", saida: "14:20", ctps: "", registro: "" },
-            { id: 8, name: "GREGORIO DE SOUSA MAGALHAES", role: "AJ. DE COZINHA", admission: "29/01/2025", entrada: "05:30", intervalo: "10:00/11:00", saida: "13:50", ctps: "", registro: "" },
-            { id: 9, name: "TATIANE SILVA MARINS", role: "ARRUMADEIRA", admission: "08/04/2024", entrada: "06:00", intervalo: "11:00/12:00", saida: "14:20", ctps: "", registro: "" },
-            { id: 10, name: "CREDIOMAR VERAS DE SOUSA", role: "GOVERNANTA", admission: "01/05/2013", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "" },
-            { id: 11, name: "VICTOR SILVA RAMOS", role: "AUX S. GERAIS", admission: "18/12/2024", entrada: "07:00", intervalo: "12:00/13:00", saida: "18:00", ctps: "", registro: "" },
-            { id: 12, name: "VANESSA DE BRITO ARAUJO", role: "RECEPCIONISTA", admission: "23/08/2010", entrada: "07:00", intervalo: "12:00/13:00", saida: "19:00", ctps: "", registro: "" },
-            { id: 13, name: "LAERCIO DIAS FELICIO", role: "MANOBRISTA", admission: "18/09/2012", entrada: "06:00", intervalo: "11:00/12:00", saida: "18:00", ctps: "", registro: "" },
-            { id: 14, name: "DANIEL ALVES VIANA", role: "RECEPCIONISTA", admission: "06/11/2025", entrada: "07:00", intervalo: "12:00/13:00", saida: "15:20", ctps: "", registro: "" },
-            { id: 15, name: "HELOISA CRISTINA DOS S. FIGUEIREDO", role: "ARRUMADEIRA", admission: "16/12/2015", entrada: "08:00", intervalo: "12:00/13:00", saida: "20:00", ctps: "", registro: "" },
-            { id: 16, name: "LUCIANA FELIX", role: "ASS. ADMINISTRATIVO", admission: "20/05/2003", entrada: "09:00", intervalo: "13:00/14:00", saida: "16:00", ctps: "", registro: "" },
-            { id: 17, name: "VANIA THEREZA B. BORGES", role: "ARRUMADEIRA", admission: "24/12/2020", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "" },
-            { id: 18, name: "LORRANE DOS SANTOS PEREIRA", role: "AUX S. GERAIS", admission: "28/04/2025", entrada: "15:00", intervalo: "19:00/20:00", saida: "23:00", ctps: "", registro: "" },
-            { id: 19, name: "WANDERLEY DA SILVA MACEDO", role: "GERENTE HOTEL", admission: "29/06/2010", entrada: "07:00", intervalo: "12:00/13:00", saida: "15:20", ctps: "", registro: "" },
-            { id: 20, name: "ROBSON LUIZ DE M. NORBERTO JR", role: "MANOBRISTA", admission: "21/09/2020", entrada: "06:00", intervalo: "11:00/12:00", saida: "18:00", ctps: "", registro: "" },
-            { id: 21, name: "THAIS HELENA T. DA SILVA", role: "COZINHEIRO", admission: "02/06/2023", entrada: "13:40", intervalo: "16:00/17:00", saida: "22:00", ctps: "", registro: "" },
-            { id: 22, name: "LUIZ CLAUDIO GLORIA", role: "AJUDANTE DE COZINHA", admission: "18/11/2009", entrada: "13:40", intervalo: "17:00/18:00", saida: "22:00", ctps: "", registro: "" },
-            { id: 23, name: "MARIA CRISTINA SILVA MOREIRA", role: "ARRUMADEIRA", admission: "03/11/2010", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "" },
-            { id: 24, name: "MARIA CLAUDIA V. DE B. SILVA", role: "RECEPCIONISTA", admission: "02/05/2017", entrada: "07:00", intervalo: "12:00/13:00", saida: "19:00", ctps: "", registro: "" },
-            { id: 25, name: "FABIOLA LUCIENE R. MARCELLO", role: "AUX S. GERAIS", admission: "13/06/2025", entrada: "08:00", intervalo: "12:00/13:00", saida: "20:00", ctps: "", registro: "" },
-            { id: 26, name: "ANDERSON LUIS DE MELO", role: "GARÇON", admission: "22/04/2021", entrada: "14:20", intervalo: "16:00/17:00", saida: "22:40", ctps: "", registro: "" },
-            { id: 27, name: "ANDRE DA CRUZ ANJOS", role: "SUB CHF DE COZINHA", admission: "04/04/2023", entrada: "05:30", intervalo: "09:30/10:30", saida: "13:50", ctps: "", registro: "" },
-            { id: 28, name: "SHAMYG K. DA S. MESSIAS", role: "AUX S. GERAIS", admission: "28/10/2025", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "" },
-            { id: 29, name: "SALOMAO LUIS DA SILVA", role: "GERENTE SENIOR", admission: "11/06/2002", entrada: "09:00", intervalo: "14:00/15:00", saida: "17:20", ctps: "", registro: "" },
-            { id: 30, name: "GUSTAVO COSTA DE LIMA", role: "CHF DE RECEP", admission: "13/12/2023", entrada: "18:00", intervalo: "1:00/02:00", saida: "06:00", ctps: "", registro: "" },
-            { id: 31, name: "LUIZ MIGUEL DA S. ARAUJO", role: "JOVEM APRENDIZ", admission: "28/08/2025", entrada: "18:00", intervalo: "", saida: "22:00", ctps: "", registro: "" },
-            { id: 32, name: "WAGNO DE PAULA FERREIRA", role: "ELETRICISTA", admission: "12/04/2010", entrada: "08:00", intervalo: "11:00/12:00", saida: "16:00", ctps: "", registro: "" },
-            { id: 34, name: "JOCELI DA SILVA FERREIRA", role: "AUX S. GERAIS", admission: "06/11/2025", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "" },
-            { id: 35, name: "JORGE LUIZ F. POLEGARIO", role: "GARÇON", admission: "01/06/2022", entrada: "14:20", intervalo: "16:00/17:00", saida: "22:40", ctps: "", registro: "" },
-            { id: 36, name: "ERICK PEREIRA DA COSTA", role: "RECEP C/ DIREÇÃO", admission: "29/03/2025", entrada: "07:00", intervalo: "13:00/14:00", saida: "19:00", ctps: "", registro: "" },
-            { id: 37, name: "LUCIANO FERREIRA DOS REIS", role: "RECEP C/ DIREÇÃO", admission: "18/03/2022", entrada: "19:00", intervalo: "00:00/01:00", saida: "07:00", ctps: "", registro: "" },
-            { id: 38, name: "CARLOS EDUARDO SILVA", role: "MANOBRISTA", admission: "29/01/2025", entrada: "14:00", intervalo: "16:00/17:00", saida: "22:00", ctps: "", registro: "" },
-            { id: 39, name: "EDILZA SOUZA NOGUEIRA", role: "ARRUMADEIRA", admission: "22/06/2024", entrada: "15:00", intervalo: "19:00/20:00", saida: "23:00", ctps: "", registro: "" },
-            { id: 40, name: "FABIO DA TRINDADE LIMA", role: "RECEP C/ DIREÇÃO", admission: "11/01/2024", entrada: "19:00", intervalo: "01:00/02:00", saida: "07:00", ctps: "", registro: "" },
-            { id: 41, name: "FABIANO CARDIM DE ARAÚJO", role: "MAITRE", admission: "04/09/2024", entrada: "13:40", intervalo: "17:00/18:00", saida: "22:00", ctps: "", registro: "" },
-            { id: 42, name: "MAYCON J. DOS S. DA SILVA", role: "OF.DE MANUTENÇÃO", admission: "06/09/2025", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "" },
-            { id: 44, name: "GENESIO COSTA SILVA", role: "COZINHEIRO", admission: "03/04/2023", entrada: "05:30", intervalo: "10:00/11:00", saida: "13:50", ctps: "", registro: "" },
-            { id: 45, name: "LUIZ OTAVIO B. S. CONCEICAO", role: "JOVEM APRENDIZ", admission: "28/08/2025", entrada: "11:00", intervalo: "16:00/16:15", saida: "17:00", ctps: "", registro: "" }
+            { id: 1, name: "ARYANNE K. DA SILVA PEREIRA", role: "JOVEM APRENDIZ", admission: "28/03/2025", entrada: "12:00", intervalo: "16:00/16:15", saida: "18:00", ctps: "", registro: "", escala: "12/36" },
+            { id: 2, name: "CARINA ALVES CORDEIRO", role: "GARÇONETE", admission: "28/03/2025", entrada: "05:30", intervalo: "11:00/12:00", saida: "13:50", ctps: "", registro: "", escala: "6/1" },
+            { id: 3, name: "CELIA LUIZA DA SILVA", role: "ARRUMADEIRA", admission: "09/09/2014", entrada: "09:00", intervalo: "12:00/13:00", saida: "17:20", ctps: "", registro: "", escala: "6/1" },
+            { id: 4, name: "ULLEN GABRIEL LUZ SANTOS", role: "SUP. RESERVAS", admission: "20/05/2019", entrada: "09:00", intervalo: "12:00/13:00", saida: "17:20", ctps: "", registro: "", escala: "6/1" },
+            { id: 5, name: "INACIA NEMEZIO DE LIMA", role: "ARRUMADEIRA", admission: "21/12/2016", entrada: "09:00", intervalo: "13:00/14:00", saida: "21:00", ctps: "", registro: "", escala: "6/1" },
+            { id: 6, name: "ICARO TARANTO RODRIGUES", role: "RECEP C/ DIREÇÃO", admission: "25/02/2025", entrada: "19:00", intervalo: "01:00/02:00", saida: "07:00", ctps: "", registro: "", escala: "12/36" },
+            { id: 7, name: "EREVALDO DA SILVA LIRIO", role: "GARÇON", admission: "10/04/2019", entrada: "06:00", intervalo: "10:45/11:45", saida: "14:20", ctps: "", registro: "", escala: "6/1" },
+            { id: 8, name: "GREGORIO DE SOUSA MAGALHAES", role: "AJ. DE COZINHA", admission: "29/01/2025", entrada: "05:30", intervalo: "10:00/11:00", saida: "13:50", ctps: "", registro: "", escala: "6/1" },
+            { id: 9, name: "TATIANE SILVA MARINS", role: "ARRUMADEIRA", admission: "08/04/2024", entrada: "06:00", intervalo: "11:00/12:00", saida: "14:20", ctps: "", registro: "", escala: "6/1" },
+            { id: 10, name: "CREDIOMAR VERAS DE SOUSA", role: "GOVERNANTA", admission: "01/05/2013", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "", escala: "6/1" },
+            { id: 11, name: "VICTOR SILVA RAMOS", role: "AUX S. GERAIS", admission: "18/12/2024", entrada: "07:00", intervalo: "12:00/13:00", saida: "18:00", ctps: "", registro: "", escala: "6/1" },
+            { id: 12, name: "VANESSA DE BRITO ARAUJO", role: "RECEPCIONISTA", admission: "23/08/2010", entrada: "07:00", intervalo: "12:00/13:00", saida: "19:00", ctps: "", registro: "", escala: "12/36" },
+            { id: 13, name: "LAERCIO DIAS FELICIO", role: "MANOBRISTA", admission: "18/09/2012", entrada: "06:00", intervalo: "11:00/12:00", saida: "18:00", ctps: "", registro: "", escala: "12/36" },
+            { id: 14, name: "DANIEL ALVES VIANA", role: "RECEPCIONISTA", admission: "06/11/2025", entrada: "07:00", intervalo: "12:00/13:00", saida: "15:20", ctps: "", registro: "", escala: "12/36" },
+            { id: 15, name: "HELOISA CRISTINA DOS S. FIGUEIREDO", role: "ARRUMADEIRA", admission: "16/12/2015", entrada: "08:00", intervalo: "12:00/13:00", saida: "20:00", ctps: "", registro: "", escala: "12/36" },
+            { id: 16, name: "LUCIANA FELIX", role: "ASS. ADMINISTRATIVO", admission: "20/05/2003", entrada: "09:00", intervalo: "13:00/14:00", saida: "16:00", ctps: "", registro: "", escala: "6/1" },
+            { id: 17, name: "VANIA THEREZA B. BORGES", role: "ARRUMADEIRA", admission: "24/12/2020", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "", escala: "6/1" },
+            { id: 18, name: "LORRANE DOS SANTOS PEREIRA", role: "AUX S. GERAIS", admission: "28/04/2025", entrada: "15:00", intervalo: "19:00/20:00", saida: "23:00", ctps: "", registro: "", escala: "6/1" },
+            { id: 19, name: "WANDERLEY DA SILVA MACEDO", role: "GERENTE HOTEL", admission: "29/06/2010", entrada: "07:00", intervalo: "12:00/13:00", saida: "15:20", ctps: "", registro: "", escala: "6/1" },
+            { id: 20, name: "ROBSON LUIZ DE M. NORBERTO JR", role: "MANOBRISTA", admission: "21/09/2020", entrada: "06:00", intervalo: "11:00/12:00", saida: "18:00", ctps: "", registro: "", escala: "12/36" },
+            { id: 21, name: "THAIS HELENA T. DA SILVA", role: "COZINHEIRO", admission: "02/06/2023", entrada: "13:40", intervalo: "16:00/17:00", saida: "22:00", ctps: "", registro: "", escala: "6/1" },
+            { id: 22, name: "LUIZ CLAUDIO GLORIA", role: "AJUDANTE DE COZINHA", admission: "18/11/2009", entrada: "13:40", intervalo: "17:00/18:00", saida: "22:00", ctps: "", registro: "", escala: "6/1" },
+            { id: 23, name: "MARIA CRISTINA SILVA MOREIRA", role: "ARRUMADEIRA", admission: "03/11/2010", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "", escala: "6/1" },
+            { id: 24, name: "MARIA CLAUDIA V. DE B. SILVA", role: "RECEPCIONISTA", admission: "02/05/2017", entrada: "07:00", intervalo: "12:00/13:00", saida: "19:00", ctps: "", registro: "", escala: "12/36" },
+            { id: 25, name: "FABIOLA LUCIENE R. MARCELLO", role: "AUX S. GERAIS", admission: "13/06/2025", entrada: "08:00", intervalo: "12:00/13:00", saida: "20:00", ctps: "", registro: "", escala: "12/36" },
+            { id: 26, name: "ANDERSON LUIS DE MELO", role: "GARÇON", admission: "22/04/2021", entrada: "14:20", intervalo: "16:00/17:00", saida: "22:40", ctps: "", registro: "", escala: "6/1" },
+            { id: 27, name: "ANDRE DA CRUZ ANJOS", role: "SUB CHF DE COZINHA", admission: "04/04/2023", entrada: "05:30", intervalo: "09:30/10:30", saida: "13:50", ctps: "", registro: "", escala: "6/1" },
+            { id: 28, name: "SHAMYG K. DA S. MESSIAS", role: "AUX S. GERAIS", admission: "28/10/2025", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "", escala: "6/1" },
+            { id: 29, name: "SALOMAO LUIS DA SILVA", role: "GERENTE SENIOR", admission: "11/06/2002", entrada: "09:00", intervalo: "14:00/15:00", saida: "17:20", ctps: "", registro: "", escala: "6/1" },
+            { id: 30, name: "GUSTAVO COSTA DE LIMA", role: "CHF DE RECEP", admission: "13/12/2023", entrada: "18:00", intervalo: "1:00/02:00", saida: "06:00", ctps: "", registro: "", escala: "12/36" },
+            { id: 31, name: "LUIZ MIGUEL DA S. ARAUJO", role: "JOVEM APRENDIZ", admission: "28/08/2025", entrada: "18:00", intervalo: "", saida: "22:00", ctps: "", registro: "", escala: "6/1" },
+            { id: 32, name: "WAGNO DE PAULA FERREIRA", role: "ELETRICISTA", admission: "12/04/2010", entrada: "08:00", intervalo: "11:00/12:00", saida: "16:00", ctps: "", registro: "", escala: "6/1" },
+            { id: 34, name: "JOCELI DA SILVA FERREIRA", role: "AUX S. GERAIS", admission: "06/11/2025", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "", escala: "6/1" },
+            { id: 35, name: "JORGE LUIZ F. POLEGARIO", role: "GARÇON", admission: "01/06/2022", entrada: "14:20", intervalo: "16:00/17:00", saida: "22:40", ctps: "", registro: "", escala: "6/1" },
+            { id: 36, name: "ERICK PEREIRA DA COSTA", role: "RECEP C/ DIREÇÃO", admission: "29/03/2025", entrada: "07:00", intervalo: "13:00/14:00", saida: "19:00", ctps: "", registro: "", escala: "12/36" },
+            { id: 37, name: "LUCIANO FERREIRA DOS REIS", role: "RECEP C/ DIREÇÃO", admission: "18/03/2022", entrada: "19:00", intervalo: "00:00/01:00", saida: "07:00", ctps: "", registro: "", escala: "12/36" },
+            { id: 38, name: "CARLOS EDUARDO SILVA", role: "MANOBRISTA", admission: "29/01/2025", entrada: "14:00", intervalo: "16:00/17:00", saida: "22:00", ctps: "", registro: "", escala: "6/1" },
+            { id: 39, name: "EDILZA SOUZA NOGUEIRA", role: "ARRUMADEIRA", admission: "22/06/2024", entrada: "15:00", intervalo: "19:00/20:00", saida: "23:00", ctps: "", registro: "", escala: "6/1" },
+            { id: 40, name: "FABIO DA TRINDADE LIMA", role: "RECEP C/ DIREÇÃO", admission: "11/01/2024", entrada: "19:00", intervalo: "01:00/02:00", saida: "07:00", ctps: "", registro: "", escala: "12/36" },
+            { id: 41, name: "FABIANO CARDIM DE ARAÚJO", role: "MAITRE", admission: "04/09/2024", entrada: "13:40", intervalo: "17:00/18:00", saida: "22:00", ctps: "", registro: "", escala: "6/1" },
+            { id: 42, name: "MAYCON J. DOS S. DA SILVA", role: "OF.DE MANUTENÇÃO", admission: "06/09/2025", entrada: "08:00", intervalo: "12:00/13:00", saida: "16:20", ctps: "", registro: "", escala: "6/1" },
+            { id: 44, name: "GENESIO COSTA SILVA", role: "COZINHEIRO", admission: "03/04/2023", entrada: "05:30", intervalo: "10:00/11:00", saida: "13:50", ctps: "", registro: "", escala: "6/1" },
+            { id: 45, name: "LUIZ OTAVIO B. S. CONCEICAO", role: "JOVEM APRENDIZ", admission: "28/08/2025", entrada: "11:00", intervalo: "16:00/16:15", saida: "17:00", ctps: "", registro: "", escala: "6/1" }
         ];
 
         let selectedEmployees = new Set();
@@ -463,6 +502,17 @@
             }
             document.getElementById('monthSelect').addEventListener('change', updatePreview);
             document.getElementById('yearInput').addEventListener('change', updatePreview);
+            
+            // Adicionar evento para os radios de escala
+            const scaleRadios = document.querySelectorAll('input[name="defaultScale"]');
+            scaleRadios.forEach(radio => {
+                radio.addEventListener('change', updatePreview);
+            });
+        }
+
+        function getDefaultScale() {
+            const selectedScale = document.querySelector('input[name="defaultScale"]:checked');
+            return selectedScale ? selectedScale.value : "12/36";
         }
 
         function updatePreview() {
@@ -491,7 +541,7 @@
                     <div class="employee-order">${employee.id}</div>
                     <div class="employee-info">
                         <div class="employee-name">${employee.name}</div>
-                        <div class="employee-role">${employee.role} • Adm: ${employee.admission}</div>
+                        <div class="employee-role">${employee.role} • Adm: ${employee.admission} • Escala: ${employee.escala}</div>
                     </div>
                 `;
                 
@@ -573,7 +623,7 @@
                     <div class="variable-field entrada horario-field"><strong>${employee.entrada}</strong></div>
                     <div class="variable-field intervalo horario-field"><strong>${employee.intervalo}</strong></div>
                     <div class="variable-field saida horario-field"><strong>${employee.saida}</strong></div>
-                    <div class="variable-field rep-semanal horario-field"><strong>12/36</strong></div>
+                    <div class="variable-field escala horario-field"><strong>${employee.escala}</strong></div>
                 </div>
             `;
         }
@@ -659,7 +709,7 @@
                         .entrada { top: 48mm !important; left: 19mm !important; }
                         .intervalo { top: 48mm !important; left: 34mm !important; }
                         .saida { top: 48mm !important; left: 54mm !important; }
-                        .rep-semanal { top: 48mm !important; left: 66mm !important; }
+                        .escala { top: 48mm !important; left: 66mm !important; }
                         
                         @page {
                             margin: 0 !important;
@@ -687,7 +737,7 @@
                         <div class="variable-field entrada horario-field"><strong>${employee.entrada}</strong></div>
                         <div class="variable-field intervalo horario-field"><strong>${employee.intervalo}</strong></div>
                         <div class="variable-field saida horario-field"><strong>${employee.saida}</strong></div>
-                        <div class="variable-field rep-semanal horario-field"><strong>12/36</strong></div>
+                        <div class="variable-field escala horario-field"><strong>${employee.escala}</strong></div>
                     </div>
                 `;
             });
@@ -718,6 +768,7 @@
                 'Entrada': emp.entrada,
                 'Intervalo': emp.intervalo,
                 'Saída': emp.saida,
+                'Escala': emp.escala,
                 'CTPS': emp.ctps,
                 'Registro': emp.registro
             }));
@@ -766,6 +817,7 @@
                     if (row['Entrada']) employee.entrada = row['Entrada'];
                     if (row['Intervalo']) employee.intervalo = row['Intervalo'];
                     if (row['Saída']) employee.saida = row['Saída'];
+                    if (row['Escala']) employee.escala = row['Escala'];
                     if (row['CTPS']) employee.ctps = row['CTPS'];
                     if (row['Registro']) employee.registro = row['Registro'];
                     updatedCount++;
