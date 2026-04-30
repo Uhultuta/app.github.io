@@ -200,7 +200,6 @@
             color: #2c3e50;
         }
 
-        /* Cartão com dimensões corretas: 86 x 190 mm */
         .card-preview {
             width: 86mm;
             height: 190mm;
@@ -221,19 +220,16 @@
             position: relative;
         }
 
-        /* Posicionamento absoluto para as informações variáveis */
         .variable-field {
             position: absolute;
             font-weight: bold;
             white-space: nowrap;
         }
 
-        /* Fonte 15% menor para os horários */
         .horario-field {
             font-size: 11.44px;
         }
 
-        /* POSIÇÕES ESPECÍFICAS AJUSTADAS - TODOS OS CAMPOS 6MM MAIS PARA ESQUERDA */
         .n-ordem { top: 6mm; left: 4mm; }
         .empregador { top: 6mm; left: 39mm; }
         .atividade-economica { top: 13mm; left: 4mm; }
@@ -245,8 +241,6 @@
         .funcao { top: 40mm; left: 48mm; width: 35mm; }
         .mes { top: 34mm; left: 4mm; }
         .ano { top: 34mm; left: 54mm; }
-        
-        /* Horário de trabalho com fonte 15% menor */
         .entrada { top: 48mm; left: 19mm; }
         .intervalo { top: 48mm; left: 34mm; }
         .saida { top: 48mm; left: 54mm; }
@@ -343,6 +337,45 @@
             cursor: pointer;
         }
 
+        .import-status {
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 6px;
+            font-size: 12px;
+            display: none;
+        }
+
+        .import-status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+            display: block;
+        }
+
+        .import-status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+            display: block;
+        }
+
+        .debug-panel {
+            margin-top: 15px;
+            padding: 10px;
+            background: #2c3e50;
+            color: #ecf0f1;
+            border-radius: 6px;
+            font-size: 11px;
+            font-family: monospace;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+
+        .debug-panel.show {
+            display: block;
+        }
+
         @media (max-width: 768px) {
             .main-content {
                 grid-template-columns: 1fr;
@@ -398,9 +431,7 @@
 
                 <div class="form-group">
                     <label>Funcionários <span id="selectedCount" class="selected-count">0</span>:</label>
-                    <div class="employee-list" id="employeeList">
-                        <!-- Lista será populada via JavaScript -->
-                    </div>
+                    <div class="employee-list" id="employeeList"></div>
                 </div>
 
                 <div class="form-group">
@@ -418,34 +449,30 @@
                 </div>
 
                 <div class="action-buttons">
-                    <button class="btn btn-primary" onclick="generateSelected()">
-                        Imprimir Selecionados
-                    </button>
-                    <button class="btn btn-success" onclick="generateAll()">
-                        Imprimir Todos
-                    </button>
-                    <button class="btn btn-warning" onclick="exportToExcel()">
-                        Exportar Excel
-                    </button>
-                    <label for="excelFile" class="file-label">
-                        Importar Excel
-                    </label>
+                    <button class="btn btn-primary" onclick="generateSelected()">Imprimir Selecionados</button>
+                    <button class="btn btn-success" onclick="generateAll()">Imprimir Todos</button>
+                    <button class="btn btn-warning" onclick="exportToExcel()">Exportar Excel</button>
+                    <label for="excelFile" class="file-label">Importar Excel</label>
                     <input type="file" id="excelFile" class="file-input" accept=".xlsx, .xls" onchange="importFromExcel(event)">
                 </div>
+                <div id="importStatus" class="import-status"></div>
+                <button class="bulk-btn" onclick="toggleDebug()" style="margin-top: 10px;">🐛 Debug</button>
+                <div id="debugPanel" class="debug-panel"></div>
             </div>
 
             <div class="preview-area">
                 <h3>Pré-visualização do Cartão</h3>
-                <div class="card-preview" id="cardPreview">
-                    <!-- Preview será gerado aqui -->
-                </div>
+                <div class="card-preview" id="cardPreview"></div>
             </div>
         </div>
     </div>
 
     <script>
-        // LISTA DE FUNCIONÁRIOS ATUALIZADA COM OS DADOS DO EXCEL
-        let employees = [
+        let employees = [];
+        let selectedEmployees = new Set();
+
+        // Dados iniciais
+        const initialEmployees = [
             { id: 1, name: "WANDERLEY DA S MACEDO", role: "GERENTE", admission: "28/03/2025", entrada: "07:00", intervalo: "12:00/13:00", saida: "19:00", ctps: "", registro: "", escala: "12x36" },
             { id: 2, name: "CARINA ALVES CORDEIRO", role: "GARÇONETE", admission: "28/03/2025", entrada: "05:30", intervalo: "11:00/12:00", saida: "13:50", ctps: "", registro: "", escala: "3F" },
             { id: 3, name: "CELIA LUIZA DA SILVA", role: "ARRUMADEIRA", admission: "09/09/2014", entrada: "09:00", intervalo: "12:00/13:00", saida: "17:20", ctps: "", registro: "", escala: "3F" },
@@ -494,10 +521,27 @@
             { id: 47, name: "CAIRO ESTRELLA DE OLIVEIRA", role: "RECEP C/ DIREÇÃO", admission: "01/04/2026", entrada: "19:00", intervalo: "00:00/01:00", saida: "19:00", ctps: "", registro: "", escala: "12/36" }
         ];
 
-        let selectedEmployees = new Set();
+        // Função para adicionar log ao debug
+        function addDebugLog(message, data = null) {
+            const debugPanel = document.getElementById('debugPanel');
+            const timestamp = new Date().toLocaleTimeString();
+            let logMessage = `[${timestamp}] ${message}`;
+            if (data) {
+                logMessage += `\n${JSON.stringify(data, null, 2)}`;
+            }
+            debugPanel.innerHTML += `<div style="border-bottom:1px solid #555; padding: 5px 0;">${logMessage.replace(/\n/g, '<br>')}</div>`;
+            debugPanel.scrollTop = debugPanel.scrollHeight;
+            console.log(message, data);
+        }
 
-        // Inicializar a aplicação
+        function toggleDebug() {
+            const panel = document.getElementById('debugPanel');
+            panel.classList.toggle('show');
+        }
+
+        // Inicializar
         function initializeApp() {
+            employees = JSON.parse(JSON.stringify(initialEmployees));
             renderEmployeeList();
             updateSelectedCount();
             if (employees.length > 0) {
@@ -506,11 +550,12 @@
             document.getElementById('monthSelect').addEventListener('change', updatePreview);
             document.getElementById('yearInput').addEventListener('change', updatePreview);
             
-            // Adicionar evento para os radios de escala
             const scaleRadios = document.querySelectorAll('input[name="defaultScale"]');
             scaleRadios.forEach(radio => {
                 radio.addEventListener('change', updatePreview);
             });
+            
+            addDebugLog('Sistema inicializado', { totalEmployees: employees.length });
         }
 
         function getDefaultScale() {
@@ -528,7 +573,6 @@
             }
         }
 
-        // Renderizar lista de funcionários
         function renderEmployeeList(filteredEmployees = employees) {
             const employeeList = document.getElementById('employeeList');
             employeeList.innerHTML = '';
@@ -552,7 +596,6 @@
             });
         }
 
-        // Alternar seleção de funcionário
         function toggleEmployee(employeeId) {
             if (selectedEmployees.has(employeeId)) {
                 selectedEmployees.delete(employeeId);
@@ -568,26 +611,22 @@
             }
         }
 
-        // Selecionar todos os funcionários
         function selectAll() {
             employees.forEach(employee => selectedEmployees.add(employee.id));
             updateSelectedCount();
             renderEmployeeList();
         }
 
-        // Desmarcar todos os funcionários
         function deselectAll() {
             selectedEmployees.clear();
             updateSelectedCount();
             renderEmployeeList();
         }
 
-        // Atualizar contador de selecionados
         function updateSelectedCount() {
             document.getElementById('selectedCount').textContent = selectedEmployees.size;
         }
 
-        // Filtrar funcionários
         function filterEmployees() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const filtered = employees.filter(employee => 
@@ -597,14 +636,12 @@
             renderEmployeeList(filtered);
         }
 
-        // Obter mês e ano atuais
         function getMonthYear() {
             const month = document.getElementById('monthSelect').value;
             const year = document.getElementById('yearInput').value;
             return { month, year };
         }
 
-        // Mostrar pré-visualização
         function showPreview(employee) {
             const { month, year } = getMonthYear();
             const preview = document.getElementById('cardPreview');
@@ -622,7 +659,6 @@
                     <div class="variable-field funcao"><strong>${employee.role}</strong></div>
                     <div class="variable-field mes"><strong>${month}</strong></div>
                     <div class="variable-field ano"><strong>${year}</strong></div>
-                    
                     <div class="variable-field entrada horario-field"><strong>${employee.entrada}</strong></div>
                     <div class="variable-field intervalo horario-field"><strong>${employee.intervalo}</strong></div>
                     <div class="variable-field saida horario-field"><strong>${employee.saida}</strong></div>
@@ -631,73 +667,33 @@
             `;
         }
 
-        // Gerar cartões para funcionários selecionados
         function generateSelected() {
             if (selectedEmployees.size === 0) {
                 alert('Por favor, selecione pelo menos um funcionário.');
                 return;
             }
-
             const selected = employees.filter(emp => selectedEmployees.has(emp.id));
             printCards(selected);
         }
 
-        // Gerar cartões para todos os funcionários
         function generateAll() {
             printCards(employees);
         }
 
-        // Função principal de impressão de cartões
         function printCards(employeesToPrint) {
             const { month, year } = getMonthYear();
             
-            let printContent = `
-                <!DOCTYPE html>
+            let printContent = `<!DOCTYPE html>
                 <html>
                 <head>
                     <title>Cartões de Ponto</title>
                     <meta charset="UTF-8">
                     <style>
-                        * {
-                            margin: 0 !important;
-                            padding: 0 !important;
-                            border: 0 !important;
-                            box-sizing: border-box;
-                        }
-                        
-                        html, body {
-                            margin: 0 !important;
-                            padding: 0 !important;
-                            width: 100% !important;
-                            height: 100% !important;
-                            font-family: 'Courier New', monospace !important;
-                            background: white !important;
-                        }
-                        
-                        .page {
-                            width: 86mm !important;
-                            height: 190mm !important;
-                            page-break-after: always !important;
-                            position: relative !important;
-                            background: white !important;
-                            font-size: 13.455px !important;
-                            line-height: 1.3 !important;
-                            overflow: hidden !important;
-                            margin: 0 !important;
-                            padding: 3mm !important;
-                        }
-                        
-                        .variable-field {
-                            position: absolute !important;
-                            font-weight: bold !important;
-                            white-space: nowrap !important;
-                        }
-                        
-                        .horario-field {
-                            font-size: 11.44px !important;
-                        }
-                        
-                        /* POSIÇÕES AJUSTADAS PARA IMPRESSÃO - TODOS OS CAMPOS 6MM MAIS PARA ESQUERDA */
+                        * { margin: 0 !important; padding: 0 !important; border: 0 !important; box-sizing: border-box; }
+                        html, body { margin: 0 !important; padding: 0 !important; width: 100% !important; height: 100% !important; font-family: 'Courier New', monospace !important; background: white !important; }
+                        .page { width: 86mm !important; height: 190mm !important; page-break-after: always !important; position: relative !important; background: white !important; font-size: 13.455px !important; line-height: 1.3 !important; overflow: hidden !important; margin: 0 !important; padding: 3mm !important; }
+                        .variable-field { position: absolute !important; font-weight: bold !important; white-space: nowrap !important; }
+                        .horario-field { font-size: 11.44px !important; }
                         .n-ordem { top: 6mm !important; left: 4mm !important; }
                         .empregador { top: 6mm !important; left: 39mm !important; }
                         .atividade-economica { top: 13mm !important; left: 4mm !important; }
@@ -713,42 +709,32 @@
                         .intervalo { top: 48mm !important; left: 34mm !important; }
                         .saida { top: 48mm !important; left: 54mm !important; }
                         .escala { top: 48mm !important; left: 66mm !important; }
-                        
-                        @page {
-                            margin: 0 !important;
-                            size: 86mm 190mm;
-                        }
+                        @page { margin: 0 !important; size: 86mm 190mm; }
                     </style>
                 </head>
-                <body style="margin: 0 !important; padding: 0 !important;">
-            `;
+                <body>`;
             
             employeesToPrint.forEach(employee => {
-                printContent += `
-                    <div class="page">
-                        <div class="variable-field n-ordem"><strong>${employee.id.toString().padStart(2, '0')}</strong></div>
-                        <div class="variable-field empregador"><strong>ICARAI P HOTEL</strong></div>
-                        <div class="variable-field atividade-economica"><strong>HOTEL</strong></div>
-                        <div class="variable-field cnpj"><strong>27.890.847/0001-45</strong></div>
-                        <div class="variable-field endereco"><strong>R BELISÁRIO AUGUSTO, Nº.21 – ICARAI</strong></div>
-                        <div class="variable-field funcionario"><strong>${employee.name}</strong></div>
-                        <div class="variable-field ctps"><strong>${employee.ctps}</strong></div>
-                        <div class="variable-field registro"><strong>${employee.registro}</strong></div>
-                        <div class="variable-field funcao"><strong>${employee.role}</strong></div>
-                        <div class="variable-field mes"><strong>${month}</strong></div>
-                        <div class="variable-field ano"><strong>${year}</strong></div>
-                        <div class="variable-field entrada horario-field"><strong>${employee.entrada}</strong></div>
-                        <div class="variable-field intervalo horario-field"><strong>${employee.intervalo}</strong></div>
-                        <div class="variable-field saida horario-field"><strong>${employee.saida}</strong></div>
-                        <div class="variable-field escala horario-field"><strong>${employee.escala}</strong></div>
-                    </div>
-                `;
+                printContent += `<div class="page">
+                    <div class="variable-field n-ordem"><strong>${employee.id.toString().padStart(2, '0')}</strong></div>
+                    <div class="variable-field empregador"><strong>ICARAI P HOTEL</strong></div>
+                    <div class="variable-field atividade-economica"><strong>HOTEL</strong></div>
+                    <div class="variable-field cnpj"><strong>27.890.847/0001-45</strong></div>
+                    <div class="variable-field endereco"><strong>R BELISÁRIO AUGUSTO, Nº.21 – ICARAI</strong></div>
+                    <div class="variable-field funcionario"><strong>${employee.name}</strong></div>
+                    <div class="variable-field ctps"><strong>${employee.ctps}</strong></div>
+                    <div class="variable-field registro"><strong>${employee.registro}</strong></div>
+                    <div class="variable-field funcao"><strong>${employee.role}</strong></div>
+                    <div class="variable-field mes"><strong>${month}</strong></div>
+                    <div class="variable-field ano"><strong>${year}</strong></div>
+                    <div class="variable-field entrada horario-field"><strong>${employee.entrada}</strong></div>
+                    <div class="variable-field intervalo horario-field"><strong>${employee.intervalo}</strong></div>
+                    <div class="variable-field saida horario-field"><strong>${employee.saida}</strong></div>
+                    <div class="variable-field escala horario-field"><strong>${employee.escala}</strong></div>
+                </div>`;
             });
             
-            printContent += `
-                </body>
-                </html>
-            `;
+            printContent += `</body></html>`;
 
             const printWindow = window.open('', '_blank');
             printWindow.document.open();
@@ -761,7 +747,6 @@
             }, 250);
         }
 
-        // Exportar dados para Excel
         function exportToExcel() {
             const data = employees.map(emp => ({
                 'Nº Ordem': emp.id,
@@ -780,61 +765,130 @@
             const wb = XLSX.utils.book_new();
             XLSX.utils.book_append_sheet(wb, ws, "Funcionários");
             XLSX.writeFile(wb, "cartoes_ponto_funcionarios.xlsx");
+            addDebugLog('Excel exportado', { totalRows: data.length });
         }
 
-        // Importar dados do Excel
+        // Função de importação CORRIGIDA
         function importFromExcel(event) {
             const file = event.target.files[0];
-            if (!file) return;
+            if (!file) {
+                addDebugLog('Nenhum arquivo selecionado');
+                return;
+            }
 
+            addDebugLog('Iniciando importação do arquivo', { fileName: file.name, fileSize: file.size });
+            
+            const statusDiv = document.getElementById('importStatus');
+            
             const reader = new FileReader();
             reader.onload = function(e) {
                 try {
                     const data = new Uint8Array(e.target.result);
-                    const workbook = XLSX.read(data, { type: 'array' });
-                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                    const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                    addDebugLog('Arquivo lido, processando...');
                     
-                    updateEmployeesFromExcel(jsonData);
+                    const workbook = XLSX.read(data, { type: 'array' });
+                    addDebugLog('Workbook lido', { sheetNames: workbook.SheetNames });
+                    
+                    const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                    const jsonData = XLSX.utils.sheet_to_json(worksheet, { defval: "" });
+                    
+                    addDebugLog('Dados convertidos para JSON', { 
+                        totalRows: jsonData.length,
+                        firstRow: jsonData[0],
+        columnNames: Object.keys(jsonData[0] || {})
+                    });
+                    
+                    let updatedCount = 0;
+                    let notFoundCount = 0;
+                    const notFoundIds = [];
+                    const updatedIds = [];
+                    
+                    jsonData.forEach((row, index) => {
+                        // Procura o número de ordem em várias colunas possíveis
+                        let ordemValue = row['Nº Ordem'] || row['N Ordem'] || row['Nº'] || row['Ordem'] || row['id'];
+                        
+                        // Se não encontrou, tenta pegar a primeira coluna (assumindo que é o ID)
+                        if (!ordemValue && Object.keys(row).length > 0) {
+                            const firstKey = Object.keys(row)[0];
+                            ordemValue = row[firstKey];
+                            addDebugLog(`Usando primeira coluna como ID: ${firstKey} = ${ordemValue}`);
+                        }
+                        
+                        const ordemNum = parseInt(ordemValue);
+                        
+                        if (!isNaN(ordemNum)) {
+                            const employeeIndex = employees.findIndex(emp => emp.id === ordemNum);
+                            
+                            if (employeeIndex !== -1) {
+                                // Atualiza os dados
+                                if (row['Nome'] !== undefined && row['Nome'] !== "") employees[employeeIndex].name = String(row['Nome']).trim();
+                                if (row['Função'] !== undefined && row['Função'] !== "") employees[employeeIndex].role = String(row['Função']).trim();
+                                if (row['Admissão'] !== undefined && row['Admissão'] !== "") employees[employeeIndex].admission = String(row['Admissão']).trim();
+                                if (row['Entrada'] !== undefined && row['Entrada'] !== "") employees[employeeIndex].entrada = String(row['Entrada']).trim();
+                                if (row['Intervalo'] !== undefined && row['Intervalo'] !== "") employees[employeeIndex].intervalo = String(row['Intervalo']).trim();
+                                if (row['Saída'] !== undefined && row['Saída'] !== "") employees[employeeIndex].saida = String(row['Saída']).trim();
+                                if (row['Escala'] !== undefined && row['Escala'] !== "") employees[employeeIndex].escala = String(row['Escala']).trim();
+                                if (row['CTPS'] !== undefined && row['CTPS'] !== "") employees[employeeIndex].ctps = String(row['CTPS']).trim();
+                                if (row['Registro'] !== undefined && row['Registro'] !== "") employees[employeeIndex].registro = String(row['Registro']).trim();
+                                
+                                updatedCount++;
+                                updatedIds.push(ordemNum);
+                            } else {
+                                notFoundCount++;
+                                notFoundIds.push(ordemNum);
+                            }
+                        } else {
+                            addDebugLog(`Linha ${index + 1} - ID inválido:`, ordemValue);
+                        }
+                    });
+                    
+                    addDebugLog('Importação concluída', {
+                        updatedCount,
+                        notFoundCount,
+                        updatedIds,
+                        notFoundIds
+                    });
+                    
+                    renderEmployeeList();
+                    updateSelectedCount();
+                    updatePreview();
+                    
+                    let message = `✅ ${updatedCount} funcionários atualizados com sucesso!`;
+                    if (notFoundCount > 0) {
+                        message += `\n⚠️ ${notFoundCount} não encontrados (IDs: ${notFoundIds.join(', ')})`;
+                    }
+                    
+                    statusDiv.className = 'import-status success';
+                    statusDiv.textContent = message;
+                    
+                    setTimeout(() => {
+                        statusDiv.className = 'import-status';
+                    }, 5000);
+                    
                     event.target.value = '';
+                    
                 } catch (error) {
-                    alert('Erro ao importar arquivo. Verifique se o formato está correto.');
-                    console.error(error);
+                    addDebugLog('ERRO na importação:', { message: error.message, stack: error.stack });
+                    statusDiv.className = 'import-status error';
+                    statusDiv.textContent = `❌ Erro: ${error.message}`;
+                    setTimeout(() => {
+                        statusDiv.className = 'import-status';
+                    }, 5000);
                 }
             };
+            
+            reader.onerror = function(error) {
+                addDebugLog('Erro ao ler arquivo:', error);
+                statusDiv.className = 'import-status error';
+                statusDiv.textContent = 'Erro ao ler o arquivo.';
+                setTimeout(() => {
+                    statusDiv.className = 'import-status';
+                }, 5000);
+            };
+            
             reader.readAsArrayBuffer(file);
         }
 
-        // Atualizar funcionários com dados do Excel
-        function updateEmployeesFromExcel(excelData) {
-            let updatedCount = 0;
-            
-            excelData.forEach(row => {
-                const nOrdem = row['Nº Ordem'] || row['N Ordem'];
-                const employee = employees.find(emp => emp.id === nOrdem);
-                
-                if (employee) {
-                    if (row['Nome']) employee.name = row['Nome'];
-                    if (row['Função']) employee.role = row['Função'];
-                    if (row['Admissão']) employee.admission = row['Admissão'];
-                    if (row['Entrada']) employee.entrada = row['Entrada'];
-                    if (row['Intervalo']) employee.intervalo = row['Intervalo'];
-                    if (row['Saída']) employee.saida = row['Saída'];
-                    if (row['Escala']) employee.escala = row['Escala'];
-                    if (row['CTPS']) employee.ctps = row['CTPS'];
-                    if (row['Registro']) employee.registro = row['Registro'];
-                    updatedCount++;
-                }
-            });
-            
-            renderEmployeeList();
-            updateSelectedCount();
-            updatePreview();
-            
-            alert(`${updatedCount} funcionários atualizados com sucesso!`);
-        }
-
-        // Inicializar quando a página carregar
         document.addEventListener('DOMContentLoaded', initializeApp);
     </script>
 </body>
