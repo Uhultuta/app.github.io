@@ -229,17 +229,6 @@
             border-top: 1px solid #dce9ef;
         }
 
-        .debug-panel {
-            background: #f0f4f9;
-            border-radius: 16px;
-            padding: 12px;
-            margin-top: 16px;
-            font-size: 11px;
-            font-family: monospace;
-            display: none;
-            border: 1px solid #cbd5e1;
-        }
-
         @media (max-width: 650px) {
             body { padding: 1rem; }
             .form-body { padding: 1.5rem; }
@@ -327,14 +316,14 @@
             </div>
 
             <div class="form-row">
-                <div class="form-group"><label>Logradouro *</label><input type="text" id="logradouro" required></div>
-                <div class="form-group"><label>Bairro</label><input type="text" id="bairro"></div>
+                <div class="form-group"><label>Logradouro *</label><input type="text" id="logradouro" placeholder="Rua, Av, Alameda..." required></div>
+                <div class="form-group"><label>Bairro</label><input type="text" id="bairro" placeholder="Centro, Jardins..."></div>
             </div>
 
             <div class="form-row">
-                <div class="form-group"><label>Localidade (Cidade)</label><input type="text" id="localidade"></div>
-                <div class="form-group"><label>CEP</label><input type="text" id="cep"></div>
-                <div class="form-group"><label>UF</label><input type="text" id="uf"></div>
+                <div class="form-group"><label>Localidade (Cidade)</label><input type="text" id="localidade" placeholder="São Paulo"></div>
+                <div class="form-group"><label>CEP</label><input type="text" id="cep" placeholder="00000-000"></div>
+                <div class="form-group"><label>UF</label><input type="text" id="uf" placeholder="SP"></div>
             </div>
 
             <div id="statusMsg" class="status-message"></div>
@@ -348,6 +337,7 @@
     </div>
     <footer>
         <i class="fas fa-database"></i> Dados protegidos conforme Lei Geral de Proteção de Dados (LGPD) - Finalidade exclusiva para reservas e contato turístico.
+        <br> Ao enviar, você concorda com o tratamento dos dados para finalidades de hospitalidade e FNRH.
     </footer>
 </div>
 
@@ -355,18 +345,18 @@
 
 <script>
     // ============================================================
-    // CREDENCIAIS FORNECIDAS
+    // CREDENCIAIS EMAILJS (ATUALIZADAS COM O NOVO TEMPLATE ID)
     // ============================================================
     const EMAILJS_SERVICE_ID = "service_z494cwe";
-    const EMAILJS_TEMPLATE_ID = "template_8s0mi58";
+    const EMAILJS_TEMPLATE_ID = "template_dtxhfsb";  // NOVO TEMPLATE ID
     const EMAILJS_PUBLIC_KEY = "rRvJZoganPcB0H4x3";
     
     let emailJSReady = false;
     let lastErrorDetail = "";
 
-    // Inicialização com validação robusta
+    // Inicialização do EmailJS
     (function initEmailJS() {
-        if (!EMAILJS_PUBLIC_KEY || EMAILJS_PUBLIC_KEY.length < 10) {
+        if (!EMAILJS_PUBLIC_KEY || EMAILJS_PUBLIC_KEY.length < 5) {
             console.error("Chave pública inválida");
             showMessage("❌ Configuração do EmailJS: chave pública inválida.", true);
             return;
@@ -374,15 +364,32 @@
         try {
             emailjs.init(EMAILJS_PUBLIC_KEY);
             emailJSReady = true;
-            console.log("✅ EmailJS inicializado com sucesso. Service:", EMAILJS_SERVICE_ID, "Template:", EMAILJS_TEMPLATE_ID);
-            showMessage("✅ Sistema de envio pronto. Preencha os dados e clique em SALVAR.", false, 4000);
+            console.log("✅ EmailJS inicializado. Service:", EMAILJS_SERVICE_ID, "Template:", EMAILJS_TEMPLATE_ID);
+            showSuccessTemporary("✅ Sistema de envio pronto! Preencha o formulário e clique em SALVAR.", 4000);
         } catch (err) {
-            console.error("Falha crítica EmailJS:", err);
+            console.error("Erro EmailJS:", err);
             emailJSReady = false;
             lastErrorDetail = err.message || "Erro de inicialização";
-            showMessage(`⚠️ Erro ao iniciar serviço de e-mail: ${lastErrorDetail}. Verifique sua chave pública.`, true);
+            showMessage(`⚠️ Erro ao iniciar: ${lastErrorDetail}`, true);
         }
     })();
+
+    function showSuccessTemporary(msg, duration = 4000) {
+        const statusDiv = document.getElementById("statusMsg");
+        statusDiv.style.display = "block";
+        statusDiv.textContent = msg;
+        statusDiv.classList.remove("status-error", "status-success");
+        statusDiv.classList.add("status-success");
+        setTimeout(() => {
+            if (statusDiv.style.display === "block") {
+                statusDiv.style.opacity = "0";
+                setTimeout(() => {
+                    statusDiv.style.display = "none";
+                    statusDiv.style.opacity = "1";
+                }, 400);
+            }
+        }, duration);
+    }
 
     function showMessage(msg, isError = false, autoHideMs = 5000) {
         const statusDiv = document.getElementById("statusMsg");
@@ -415,7 +422,6 @@
         if (!email.match(/^[^\s@]+@([^\s@.,]+\.)+[^\s@.,]{2,}$/)) { showMessage("❌ E-mail inválido.", true); return null; }
         if (!logradouro) { showMessage("❌ Logradouro (Endereço Fiscal) é obrigatório.", true); return null; }
 
-        // Formatar data de nascimento para exibição amigável
         let dataNascRaw = document.getElementById("dtNascimento").value;
         let dataNascFormatada = dataNascRaw ? new Date(dataNascRaw).toLocaleDateString('pt-BR') : "Não informada";
         
@@ -439,14 +445,13 @@
         };
     }
 
-    // Função de envio com tratamento detalhado de erro
     async function sendViaEmailJS(formData) {
         if (!emailJSReady) {
-            showMessage("⚠️ Serviço de e-mail não disponível. Recarregue a página ou contate suporte.", true);
+            showMessage("⚠️ Serviço de e-mail não disponível. Recarregue a página.", true);
             return false;
         }
 
-        // Parâmetros idênticos ao template EmailJS sugerido (todos os campos)
+        // Parâmetros que serão enviados ao template
         const templateParams = {
             nome_hospede: formData.nome_hospede,
             pais: formData.pais,
@@ -464,13 +469,17 @@
             uf: formData.uf,
             data_envio: formData.data_envio,
             mensagem_extra: formData.mensagem_extra,
-            // Campos extras para compatibilidade
-            to_name: "Equipe FNRH",
+            // Campos adicionais para compatibilidade
+            to_name: "Equipe FNRH Turismo",
             from_name: formData.nome_hospede,
             reply_to: formData.email_hospede
         };
 
-        console.log("Enviando para EmailJS:", { service: EMAILJS_SERVICE_ID, template: EMAILJS_TEMPLATE_ID, params: templateParams });
+        console.log("Enviando dados para EmailJS:", { 
+            service: EMAILJS_SERVICE_ID, 
+            template: EMAILJS_TEMPLATE_ID,
+            dados: templateParams 
+        });
 
         try {
             const response = await emailjs.send(
@@ -478,28 +487,29 @@
                 EMAILJS_TEMPLATE_ID,
                 templateParams
             );
-            console.log("Resposta completa do EmailJS:", response);
+            console.log("✅ Resposta do EmailJS:", response);
             if (response.status === 200) {
                 return true;
             } else {
-                console.error("Status inesperado:", response.status, response.text);
+                console.error("Status inesperado:", response.status);
                 lastErrorDetail = `Status ${response.status}: ${response.text || "Erro desconhecido"}`;
                 return false;
             }
         } catch (error) {
-            console.error("Exceção no EmailJS:", error);
-            // Captura mensagens comuns de erro
-            if (error.text) lastErrorDetail = error.text;
-            else if (error.message) lastErrorDetail = error.message;
-            else lastErrorDetail = "Falha na comunicação com o serviço de e-mail";
+            console.error("❌ Erro detalhado no envio:", error);
             
-            // Sugestões amigáveis
-            if (lastErrorDetail.includes("template") || lastErrorDetail.includes("not found")) {
-                lastErrorDetail += " — Verifique se o Template ID 'template_8s0mi58' existe na sua conta e está ativo.";
-            } else if (lastErrorDetail.includes("service")) {
-                lastErrorDetail += " — Confirme se o Service ID 'service_z494cwe' está correto e vinculado a um e-mail de destino.";
-            } else if (lastErrorDetail.includes("unauthorized") || lastErrorDetail.includes("key")) {
-                lastErrorDetail += " — Chave pública inválida ou sem permissão. Verifique no dashboard do EmailJS.";
+            // Analisar erro para dar mensagem amigável
+            if (error.text) {
+                lastErrorDetail = error.text;
+                if (error.text.includes("template")) {
+                    lastErrorDetail += " — O template 'template_dtxhfsb' não foi encontrado ou não está ativo.";
+                } else if (error.text.includes("service")) {
+                    lastErrorDetail += " — O Service ID 'service_z494cwe' pode estar incorreto ou sem e-mail configurado.";
+                }
+            } else if (error.message) {
+                lastErrorDetail = error.message;
+            } else {
+                lastErrorDetail = "Falha na comunicação com o servidor de e-mail";
             }
             return false;
         }
@@ -509,11 +519,9 @@
         const formData = getFormData();
         if (!formData) return false;
 
-        // Desabilitar botões temporariamente (evitar duplo envio)
         const submitBtn = document.getElementById("submitBtn");
         const sameAddrBtn = document.getElementById("sameAddressBtn");
         const originalSubmitText = submitBtn.innerHTML;
-        const originalSameText = sameAddrBtn.innerHTML;
         submitBtn.disabled = true;
         sameAddrBtn.disabled = true;
         submitBtn.innerHTML = '<i class="fas fa-spinner fa-pulse"></i> Enviando...';
@@ -521,22 +529,26 @@
         try {
             const success = await sendViaEmailJS(formData);
             if (success) {
-                showMessage("✅ Dados enviados com sucesso! O e-mail foi encaminhado para o setor de turismo FNRH.", false);
+                showMessage("✅ Cadastro enviado com sucesso! Você receberá um retorno em breve.", false);
                 if (!keepAddress) {
                     resetFormFields(false);
                 } else {
                     resetFormFields(true);
+                    showMessage("✅ Enviado! O endereço fiscal foi mantido para um novo cadastro.", false, 3000);
                 }
                 return true;
             } else {
-                showMessage(`❌ Falha ao enviar: ${lastErrorDetail}`, true);
+                let errorMsg = "❌ Falha ao enviar: ";
+                if (lastErrorDetail.includes("template")) errorMsg += "Verifique se o template 'template_dtxhfsb' existe no EmailJS.";
+                else if (lastErrorDetail.includes("service")) errorMsg += "Confirme o Service ID 'service_z494cwe' no dashboard do EmailJS.";
+                else errorMsg += lastErrorDetail;
+                showMessage(errorMsg, true);
                 return false;
             }
         } finally {
             submitBtn.disabled = false;
             sameAddrBtn.disabled = false;
             submitBtn.innerHTML = originalSubmitText;
-            sameAddrBtn.innerHTML = originalSameText;
         }
     }
 
@@ -556,7 +568,6 @@
             document.getElementById("cep").value = "";
             document.getElementById("uf").value = "";
         } else {
-            // Preserva endereço
             const savedLog = document.getElementById("logradouro").value;
             const savedBairro = document.getElementById("bairro").value;
             const savedLocal = document.getElementById("localidade").value;
@@ -599,59 +610,40 @@
         showMessage("Formulário limpo. Nenhum dado foi enviado.", false, 3000);
     });
 
-    // Exibir orientação para configurar template corretamente
+    // Instruções para o template do EmailJS aparecerem no console
     window.addEventListener("load", () => {
-        console.log("Formulário FNRH carregado. Credenciais EmailJS configuradas.");
-        // Se não houver inicialização, mostrar help
-        if (!emailJSReady) {
-            const helpDiv = document.createElement("div");
-            helpDiv.style.background = "#fff3cd";
-            helpDiv.style.padding = "12px";
-            helpDiv.style.borderRadius = "20px";
-            helpDiv.style.marginBottom = "16px";
-            helpDiv.style.fontSize = "13px";
-            helpDiv.innerHTML = `<i class="fas fa-exclamation-triangle"></i> <strong>Configuração do EmailJS:</strong> 
-            Verifique se o template <strong>template_8s0mi58</strong> existe e contém TODAS as variáveis: 
-            nome_hospede, pais, data_nascimento, tipo_hospede, email_hospede, contato, preferencias, autoriza_terceiros,
-            tipo_endereco, logradouro, bairro, localidade, cep, uf, data_envio, mensagem_extra.<br><br>
-            <strong>Service ID:</strong> service_z494cwe deve estar ativo com um e-mail de destino configurado.`;
-            document.querySelector(".form-body").prepend(helpDiv);
+        console.log("%c📧 FORMULÁRIO FNRH TURISMO - CONFIGURADO", "color: #0f6b62; font-size: 14px; font-weight: bold;");
+        console.log("Service ID:", EMAILJS_SERVICE_ID);
+        console.log("Template ID:", EMAILJS_TEMPLATE_ID);
+        console.log("Public Key:", EMAILJS_PUBLIC_KEY.substring(0, 8) + "...");
+        
+        if (emailJSReady) {
+            const infoBox = document.createElement("div");
+            infoBox.style.background = "#e0f2e9";
+            infoBox.style.padding = "10px 16px";
+            infoBox.style.borderRadius = "40px";
+            infoBox.style.marginBottom = "20px";
+            infoBox.style.fontSize = "12px";
+            infoBox.style.textAlign = "center";
+            infoBox.innerHTML = "📧 <strong>EmailJS conectado!</strong> Os dados serão enviados para o e-mail configurado no Service ID.";
+            document.querySelector(".form-body").insertBefore(infoBox, document.getElementById("guestForm"));
+            setTimeout(() => infoBox.remove(), 6000);
         } else {
-            // Pequeno aviso positivo
-            const toastInfo = document.createElement("div");
-            toastInfo.style.background = "#e0f2e9";
-            toastInfo.style.padding = "8px 16px";
-            toastInfo.style.borderRadius = "40px";
-            toastInfo.style.marginBottom = "15px";
-            toastInfo.style.fontSize = "12px";
-            toastInfo.style.textAlign = "center";
-            toastInfo.innerHTML = "📧 <strong>EmailJS conectado</strong> — Os dados serão enviados para o e-mail vinculado ao Service ID.";
-            document.querySelector(".form-body").insertBefore(toastInfo, document.getElementById("guestForm"));
-            setTimeout(() => toastInfo.remove(), 5000);
+            const warningDiv = document.createElement("div");
+            warningDiv.style.background = "#fff3cd";
+            warningDiv.style.padding = "12px";
+            warningDiv.style.borderRadius = "16px";
+            warningDiv.style.marginBottom = "16px";
+            warningDiv.style.fontSize = "13px";
+            warningDiv.style.borderLeft = "4px solid #ffc107";
+            warningDiv.innerHTML = `<strong><i class="fas fa-exclamation-triangle"></i> Configuração necessária no EmailJS:</strong><br>
+            1. Certifique-se que o template <strong>template_dtxhfsb</strong> existe e está ativo.<br>
+            2. O template deve conter as variáveis: nome_hospede, pais, data_nascimento, tipo_hospede, email_hospede, contato, preferencias, autoriza_terceiros, tipo_endereco, logradouro, bairro, localidade, cep, uf, data_envio, mensagem_extra.<br>
+            3. O Service ID <strong>service_z494cwe</strong> deve ter um e-mail de destino configurado.`;
+            document.querySelector(".form-body").prepend(warningDiv);
         }
     });
 </script>
 
-<!-- INSTRUÇÕES EMBUTIDAS PARA O TEMPLATE DO EMAILJS -->
-<div style="display: none;" id="templateGuide">
-    <!-- 
-    ========== COPIAR PARA O TEMPLATE DO EMAILJS ==========
-    Use o conteúdo abaixo no editor HTML do template_8s0mi58
-    
-    <h2>🏨 Novo Cadastro FNRH Turismo</h2>
-    <p><strong>Nome:</strong> {{nome_hospede}}</p>
-    <p><strong>País:</strong> {{pais}}</p>
-    <p><strong>Data Nascimento:</strong> {{data_nascimento}}</p>
-    <p><strong>Tipo Hóspede:</strong> {{tipo_hospede}}</p>
-    <p><strong>E-mail:</strong> {{email_hospede}}</p>
-    <p><strong>Contato:</strong> {{contato}}</p>
-    <p><strong>Preferências/Atenções:</strong> {{preferencias}}</p>
-    <p><strong>Autoriza Terceiros:</strong> {{autoriza_terceiros}}</p>
-    <p><strong>Endereço Fiscal:</strong> {{tipo_endereco}}<br>
-    {{logradouro}}, {{bairro}} - {{localidade}}/{{uf}} - CEP: {{cep}}</p>
-    <p><strong>Data Envio:</strong> {{data_envio}}</p>
-    <p><em>{{mensagem_extra}}</em></p>
-    -->
-</div>
 </body>
 </html>
