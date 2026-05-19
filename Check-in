@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+    <title>FNRH Turismo - Cadastro de Hóspede | LGPD</title>
+    <!-- Font Awesome 6 (livre para ícones) -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: linear-gradient(145deg, #e0eafc 0%, #cfdef3 100%);
+            font-family: 'Segoe UI', Roboto, 'Helvetica Neue', sans-serif;
+            padding: 2rem 1.5rem;
+            min-height: 100vh;
+        }
+
+        .form-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 2rem;
+            box-shadow: 0 25px 45px -12px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .form-header {
+            background: #0b3b3f;
+            background-image: linear-gradient(135deg, #0f4c4f, #0a2e30);
+            padding: 1.2rem 2rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
+
+        .form-header h1 {
+            font-weight: 600;
+            font-size: 1.6rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .form-header h1 i {
+            font-size: 1.8rem;
+        }
+
+        .lgpd-badge {
+            background: rgba(255,255,240,0.15);
+            backdrop-filter: blur(4px);
+            padding: 0.4rem 1rem;
+            border-radius: 60px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .form-body {
+            padding: 2rem 2rem 1.8rem;
+        }
+
+        .form-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 1.2rem;
+            margin-bottom: 1.8rem;
+        }
+
+        .form-group {
+            flex: 1 1 240px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .full-width {
+            flex: 1 1 100%;
+        }
+
+        label {
+            font-weight: 600;
+            color: #1e2f35;
+            font-size: 0.85rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        label i {
+            color: #2c7a6e;
+            width: 18px;
+        }
+
+        input, select, textarea {
+            padding: 12px 14px;
+            border: 1.5px solid #dce5ec;
+            border-radius: 18px;
+            font-size: 0.95rem;
+            transition: 0.2s;
+            background-color: #fefefe;
+            font-family: inherit;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #2c9c8a;
+            box-shadow: 0 0 0 3px rgba(44, 156, 138, 0.2);
+        }
+
+        .checkbox-group {
+            flex-direction: row;
+            align-items: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            background: #f8fafc;
+            padding: 12px 16px;
+            border-radius: 28px;
+            margin-top: 0.2rem;
+        }
+
+        .checkbox-group label {
+            font-weight: normal;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+            accent-color: #2c7a6e;
+        }
+
+        .section-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            margin: 1.5rem 0 0.8rem 0;
+            color: #0b3b3f;
+            border-left: 5px solid #2c9c8a;
+            padding-left: 15px;
+        }
+
+        hr {
+            margin: 0.5rem 0 1rem;
+            border: none;
+            border-top: 2px dotted #cbdde6;
+        }
+
+        .buttons-bar {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: flex-end;
+            gap: 1rem;
+            margin-top: 2rem;
+            border-top: 1px solid #e2edf2;
+            padding-top: 1.8rem;
+        }
+
+        .btn {
+            padding: 12px 28px;
+            border-radius: 40px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            font-family: inherit;
+        }
+
+        .btn-primary {
+            background: #0f6b62;
+            color: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .btn-primary:hover {
+            background: #0a4e47;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: #eef2f5;
+            color: #2c4b4f;
+            border: 1px solid #cbdae2;
+        }
+
+        .btn-secondary:hover {
+            background: #e2e9ef;
+        }
+
+        .btn-same-address {
+            background: #f2e7cf;
+            color: #7a5c2a;
+            border: 1px solid #e4cfad;
+        }
+
+        .btn-same-address:hover {
+            background: #ecdbaa;
+        }
+
+        .status-message {
+            margin-top: 1rem;
+            padding: 0.8rem;
+            border-radius: 60px;
+            text-align: center;
+            font-size: 0.9rem;
+            font-weight: 500;
+            background: #e9f7f2;
+            display: none;
+        }
+
+        .status-error {
+            background: #ffe6e5;
+            color: #b13e3e;
+        }
+
+        .status-success {
+            background: #e0f2e9;
+            color: #1a6e5c;
+        }
+
+        footer {
+            font-size: 0.7rem;
+            text-align: center;
+            padding: 1rem;
+            background: #f6fafd;
+            color: #4f6f78;
+            border-top: 1px solid #dce9ef;
+        }
+
+        @media (max-width: 650px) {
+            body {
+                padding: 1rem;
+            }
+            .form-body {
+                padding: 1.5rem;
+            }
+            .btn {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="form-container">
+    <div class="form-header">
+        <h1><i class="fas fa-hotel"></i> Cadastro FNRH · Hóspede</h1>
+        <div class="lgpd-badge">
+            <i class="fas fa-shield-alt"></i> LGPD · Turismo responsável
+            <i class="fas fa-leaf"></i>
+        </div>
+    </div>
+
+    <div class="form-body">
+        <form id="guestForm">
+            <!-- Perfil / Atenções / Preferências -->
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label><i class="fas fa-user-circle"></i> Nome completo *</label>
+                    <input type="text" id="nome" name="nome" placeholder="Ex: Ana Beatriz da Silva" required>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label><i class="fas fa-globe-americas"></i> País</label>
+                    <input type="text" id="pais" name="pais" value="Brasil" readonly style="background:#f3f6f9; font-weight:500;">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-calendar-alt"></i> Data Nascimento</label>
+                    <input type="date" id="dtNascimento" name="dtNascimento">
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-tag"></i> Tipo de Hóspede</label>
+                    <select id="tipoHospede" name="tipoHospede">
+                        <option value="Individual">Individual</option>
+                        <option value="Família">Família</option>
+                        <option value="Grupo">Grupo</option>
+                        <option value="Corporativo">Corporativo</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label><i class="fas fa-envelope"></i> E-mail *</label>
+                    <input type="email" id="email" name="email" placeholder="hospede@exemplo.com" required>
+                </div>
+                <div class="form-group">
+                    <label><i class="fas fa-phone-alt"></i> Contato / WhatsApp</label>
+                    <input type="tel" id="contato" name="contato" placeholder="(11) 91234-5678">
+                </div>
+            </div>
+
+            <!-- Atenções / Preferências / Relação hóspedes -->
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label><i class="fas fa-heart"></i> Preferências / Atenções / Relação com hóspedes</label>
+                    <textarea id="atencaoPreferencia" name="atencaoPreferencia" rows="2" placeholder="Ex: restrições alimentares, mobilidade reduzida, acompanhante especial, preferência de andar..."></textarea>
+                </div>
+            </div>
+
+            <!-- AUTORIZAÇÃO LGPD -->
+            <div class="form-row">
+                <div class="form-group full-width checkbox-group">
+                    <label>
+                        <i class="fas fa-share-alt"></i>
+                        <input type="checkbox" id="autorizaTerceiros" name="autorizaTerceiros" value="sim">
+                        Autorizo a divulgação dos meus dados a serviços terceiros (parceiros turísticos), conforme política de privacidade.
+                    </label>
+                </div>
+            </div>
+
+            <!-- Seção Endereço Fiscal -->
+            <div class="section-title"><i class="fas fa-file-invoice"></i> Endereço Fiscal</div>
+            <div class="form-row">
+                <div class="form-group full-width">
+                    <label><i class="fas fa-home"></i> Tipo de endereço</label>
+                    <select id="tipoEndereco" name="tipoEndereco">
+                        <option value="Endereço Próprio">Endereço Próprio</option>
+                        <option value="Alugado">Alugado</option>
+                        <option value="Compartilhado">Compartilhado</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Logradouro *</label>
+                    <input type="text" id="logradouro" name="logradouro" placeholder="Rua, Av, Alameda..." required>
+                </div>
+                <div class="form-group">
+                    <label>Bairro</label>
+                    <input type="text" id="bairro" name="bairro" placeholder="Centro, Jardins...">
+                </div>
+            </div>
+
+            <div class="form-row">
+                <div class="form-group">
+                    <label>Localidade (Cidade)</label>
+                    <input type="text" id="localidade" name="localidade" placeholder="São Paulo">
+                </div>
+                <div class="form-group">
+                    <label>CEP</label>
+                    <input type="text" id="cep" name="cep" placeholder="00000-000">
+                </div>
+                <div class="form-group">
+                    <label>UF</label>
+                    <input type="text" id="uf" name="uf" placeholder="SP">
+                </div>
+            </div>
+
+            <div id="statusMsg" class="status-message"></div>
+
+            <div class="buttons-bar">
+                <button type="button" class="btn btn-secondary" id="cancelBtn"><i class="fas fa-times"></i> Cancelar</button>
+                <button type="button" class="btn btn-same-address" id="sameAddressBtn"><i class="fas fa-copy"></i> Salvar e criar c/ mesmo endereço</button>
+                <button type="submit" class="btn btn-primary" id="submitBtn"><i class="fas fa-paper-plane"></i> SALVAR</button>
+            </div>
+        </form>
+    </div>
+    <footer>
+        <i class="fas fa-database"></i> Dados protegidos conforme Lei Geral de Proteção de Dados (LGPD) - Finalidade exclusiva para reservas e contato turístico.
+        <br> Ao enviar, você concorda com o tratamento dos dados para finalidades de hospitalidade e FNRH.
+    </footer>
+</div>
+
+<!-- EmailJS SDK -->
+<script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<script>
+    // =================================================================
+    // CONFIGURAÇÃO EMAILJS - VALORES FORNECIDOS PELO USUÁRIO
+    // =================================================================
+    const EMAILJS_SERVICE_ID = "service_z494cwe";
+    const EMAILJS_TEMPLATE_ID = "template_8s0mi58";
+    const EMAILJS_PUBLIC_KEY = "rRvJZoganPcB0H4x3";
+    
+    let emailJSInitialized = false;
+
+    // Inicialização do EmailJS
+    (function initEmailJS() {
+        if (EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== "rRvJZoganPcB0H4x3") {
+            try {
+                emailjs.init({
+                    publicKey: EMAILJS_PUBLIC_KEY,
+                });
+                emailJSInitialized = true;
+                console.log("✅ EmailJS inicializado com sucesso.");
+            } catch (err) {
+                console.error("❌ Erro ao inicializar EmailJS: ", err);
+                emailJSInitialized = false;
+            }
+        } else {
+            // Chave já está preenchida corretamente
+            try {
+                emailjs.init({
+                    publicKey: EMAILJS_PUBLIC_KEY,
+                });
+                emailJSInitialized = true;
+                console.log("✅ EmailJS inicializado com a chave fornecida.");
+            } catch (err) {
+                console.error("❌ Falha na inicialização: ", err);
+                emailJSInitialized = false;
+            }
+        }
+    })();
+
+    // Função para mostrar mensagens de status
+    function showMessage(msg, isError = false) {
+        const statusDiv = document.getElementById("statusMsg");
+        statusDiv.style.display = "block";
+        statusDiv.textContent = msg;
+        statusDiv.classList.remove("status-success", "status-error");
+        if (isError) {
+            statusDiv.classList.add("status-error");
+        } else {
+            statusDiv.classList.add("status-success");
+        }
+        statusDiv.scrollIntoView({ behavior: "smooth", block: "nearest" });
+        setTimeout(() => {
+            if (statusDiv.style.display === "block") {
+                statusDiv.style.opacity = "0";
+                setTimeout(() => {
+                    statusDiv.style.display = "none";
+                    statusDiv.style.opacity = "1";
+                }, 500);
+            }
+        }, 5000);
+    }
+
+    // Coletar dados do formulário e validar campos obrigatórios
+    function getFormData() {
+        const nome = document.getElementById("nome").value.trim();
+        const email = document.getElementById("email").value.trim();
+        const logradouro = document.getElementById("logradouro").value.trim();
+
+        if (!nome) {
+            showMessage("❌ O campo Nome é obrigatório.", true);
+            return null;
+        }
+        if (!email) {
+            showMessage("❌ O campo E-mail é obrigatório para envio.", true);
+            return null;
+        }
+        if (!logradouro) {
+            showMessage("❌ O Logradouro (Endereço Fiscal) é obrigatório.", true);
+            return null;
+        }
+        if (!email.includes("@") || !email.includes(".")) {
+            showMessage("❌ Informe um e-mail válido.", true);
+            return null;
+        }
+
+        const data = {
+            nome_hospede: nome,
+            pais: document.getElementById("pais").value,
+            data_nascimento: document.getElementById("dtNascimento").value || "Não informada",
+            tipo_hospede: document.getElementById("tipoHospede").value,
+            email_hospede: email,
+            contato: document.getElementById("contato").value || "Não informado",
+            preferencias: document.getElementById("atencaoPreferencia").value || "Nenhuma observação",
+            autoriza_terceiros: document.getElementById("autorizaTerceiros").checked ? "Sim, autoriza divulgação" : "Não autoriza",
+            tipo_endereco: document.getElementById("tipoEndereco").value,
+            logradouro: logradouro,
+            bairro: document.getElementById("bairro").value || "",
+            localidade: document.getElementById("localidade").value || "",
+            cep: document.getElementById("cep").value || "",
+            uf: document.getElementById("uf").value || "",
+            data_envio: new Date().toLocaleString('pt-BR'),
+            mensagem_extra: "Novo cadastro de hóspede via formulário LGPD Turismo FNRH."
+        };
+        return data;
+    }
+
+    // Envio via EmailJS
+    async function sendViaEmailJS(formData) {
+        if (!emailJSInitialized) {
+            console.error("EmailJS não inicializado.");
+            showMessage("⚠️ Serviço de e-mail não disponível. Contate o administrador.", true);
+            return false;
+        }
+
+        // Parâmetros exatamente como esperado pelo template do usuário
+        const templateParams = {
+            nome_hospede: formData.nome_hospede,
+            pais: formData.pais,
+            data_nascimento: formData.data_nascimento,
+            tipo_hospede: formData.tipo_hospede,
+            email_hospede: formData.email_hospede,
+            contato: formData.contato,
+            preferencias: formData.preferencias,
+            autoriza_terceiros: formData.autoriza_terceiros,
+            tipo_endereco: formData.tipo_endereco,
+            logradouro: formData.logradouro,
+            bairro: formData.bairro,
+            localidade: formData.localidade,
+            cep: formData.cep,
+            uf: formData.uf,
+            data_envio: formData.data_envio,
+            mensagem_extra: formData.mensagem_extra
+        };
+
+        try {
+            const response = await emailjs.send(
+                EMAILJS_SERVICE_ID,
+                EMAILJS_TEMPLATE_ID,
+                templateParams
+            );
+            console.log("EmailJS resposta:", response);
+            if (response.status === 200) {
+                return true;
+            } else {
+                console.error("Falha no envio: ", response);
+                return false;
+            }
+        } catch (error) {
+            console.error("Erro detalhado:", error);
+            let errorMsg = "Erro de envio. ";
+            if (error.text) errorMsg += error.text;
+            else if (error.message) errorMsg += error.message;
+            else errorMsg += "Verifique sua conexão ou os IDs do EmailJS.";
+            showMessage(errorMsg, true);
+            return false;
+        }
+    }
+
+    // Ação principal de salvar (envio)
+    async function handleSave(keepAddressAfterSubmit = false) {
+        const formData = getFormData();
+        if (!formData) return false;
+
+        // Enviar e-mail
+        const emailSuccess = await sendViaEmailJS(formData);
+        
+        if (emailSuccess) {
+            showMessage("✅ Dados enviados com sucesso! Em breve nosso setor de FNRH Turismo retornará contato.", false);
+            
+            if (!keepAddressAfterSubmit) {
+                // Modo SALVAR normal: limpa tudo (menos país fixo)
+                resetFormFields(false);
+            } else {
+                // Modo "Salvar e criar c/ mesmo endereço": mantém os campos de endereço fiscal
+                resetFormFields(true);
+            }
+            return true;
+        } else {
+            if (!emailJSInitialized) {
+                showMessage("⚠️ Serviço de e-mail não configurado corretamente. Verifique as credenciais.", true);
+            } else {
+                showMessage("❌ Falha ao enviar os dados. Verifique seu template ID e permissões no EmailJS.", true);
+            }
+            return false;
+        }
+    }
+
+    // Reset dos campos. keepAddress = true mantém endereço e tipo de endereço.
+    function resetFormFields(keepAddress = false) {
+        if (!keepAddress) {
+            // Reset total (exceto país que é readonly)
+            document.getElementById("nome").value = "";
+            document.getElementById("dtNascimento").value = "";
+            document.getElementById("tipoHospede").value = "Individual";
+            document.getElementById("email").value = "";
+            document.getElementById("contato").value = "";
+            document.getElementById("atencaoPreferencia").value = "";
+            document.getElementById("autorizaTerceiros").checked = false;
+            document.getElementById("tipoEndereco").value = "Endereço Próprio";
+            document.getElementById("logradouro").value = "";
+            document.getElementById("bairro").value = "";
+            document.getElementById("localidade").value = "";
+            document.getElementById("cep").value = "";
+            document.getElementById("uf").value = "";
+        } else {
+            // Preserva endereço fiscal atual
+            const currentLogradouro = document.getElementById("logradouro").value;
+            const currentBairro = document.getElementById("bairro").value;
+            const currentLocalidade = document.getElementById("localidade").value;
+            const currentCep = document.getElementById("cep").value;
+            const currentUf = document.getElementById("uf").value;
+            const currentTipoEndereco = document.getElementById("tipoEndereco").value;
+            
+            // Limpa campos pessoais
+            document.getElementById("nome").value = "";
+            document.getElementById("dtNascimento").value = "";
+            document.getElementById("tipoHospede").value = "Individual";
+            document.getElementById("email").value = "";
+            document.getElementById("contato").value = "";
+            document.getElementById("atencaoPreferencia").value = "";
+            document.getElementById("autorizaTerceiros").checked = false;
+            
+            // Restaura endereço mantido
+            document.getElementById("logradouro").value = currentLogradouro;
+            document.getElementById("bairro").value = currentBairro;
+            document.getElementById("localidade").value = currentLocalidade;
+            document.getElementById("cep").value = currentCep;
+            document.getElementById("uf").value = currentUf;
+            document.getElementById("tipoEndereco").value = currentTipoEndereco;
+        }
+        // opcional: focar no primeiro campo
+        document.getElementById("nome").focus();
+        const statusDiv = document.getElementById("statusMsg");
+        statusDiv.style.display = "none";
+    }
+
+    // Eventos
+    document.getElementById("guestForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        await handleSave(false);
+    });
+
+    document.getElementById("sameAddressBtn").addEventListener("click", async () => {
+        await handleSave(true);
+    });
+
+    document.getElementById("cancelBtn").addEventListener("click", () => {
+        resetFormFields(false);
+        showMessage("Formulário limpo. Nenhum dado foi enviado.", false);
+    });
+
+    // Verificação de carregamento e validação amigável da chave
+    window.addEventListener("load", () => {
+        console.log("Formulário FNRH carregado com EmailJS configurado.");
+        // Teste opcional de conectividade silenciosa (apenas log)
+        if (emailJSInitialized) {
+            console.log("EmailJS ativo e aguardando envio.");
+        } else {
+            console.warn("EmailJS não inicializado - verifique a Public Key.");
+            showMessage("⚠️ Atenção: Serviço de e-mail necessita de configuração. Verifique as credenciais.", true);
+        }
+    });
+</script>
+</body>
+</html>
