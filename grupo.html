@@ -144,7 +144,6 @@
             const row = jsonData[i];
             if (!row || row.length < 6) { i++; continue; }
             
-            // Verifica se é uma linha de reserva: coluna D tem número e coluna E tem data
             const numRaw = row[3];
             const checkinRaw = row[4];
             const isBooking = numRaw && (typeof numRaw === 'number' || /^\d+$/.test(String(numRaw).trim())) && 
@@ -153,7 +152,6 @@
             if (isBooking) {
                 const num = String(numRaw).trim();
                 const checkin = String(checkinRaw).trim();
-                // Check-out está na coluna J (índice 9)
                 let checkout = "";
                 if (row[9] && row[9].trim) {
                     checkout = String(row[9]).trim();
@@ -161,9 +159,7 @@
                     checkout = String(row[9]).trim();
                 }
                 
-                // Se checkout não for uma data válida, tenta buscar em outra posição
                 if (!checkout.match(/\d{2}\/\d{2}\/\d{4}/)) {
-                    // Algumas planilhas podem ter checkout em outra coluna
                     if (row[10] && String(row[10]).match(/\d{2}\/\d{2}\/\d{4}/)) {
                         checkout = String(row[10]).trim();
                     }
@@ -253,13 +249,10 @@
     function buildVoucherElement(bookings, totalGeral, empresaPrincipal) {
         const totalGeralStr = `R$ ${totalGeral.toFixed(2).replace('.',',')}`;
         
-        // Construir lista de reservas com datas (Check-in e Check-out)
         let reservasListHtml = '';
         bookings.forEach(b => {
             const guestsHtml = b.guests.map(g => `<span style="display: inline-block; background: #eef2ff; padding: 2px 6px; border-radius: 12px; margin: 1px 2px; font-size: 10px;">${escapeHtml(g)}</span>`).join('');
             const valorStr = b.total > 0 ? `R$ ${b.total.toFixed(2).replace('.',',')}` : "—";
-            
-            // Garantir que checkout seja exibido
             const checkinDisplay = b.checkin || "—";
             const checkoutDisplay = b.checkout || "—";
             
@@ -275,11 +268,13 @@
             `;
         });
         
+        // HTML com centralização garantida para e-mail
         const htmlContent = `<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"></head>
-<body style="margin:0; padding:20px; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #eef2f8; display: flex; justify-content: center;">
-<TABLE style='MAX-WIDTH: 680px; BORDER-TOP: #e2e8f0 1px solid; FONT-FAMILY: "Segoe UI", Helvetica, Arial, sans-serif; BORDER-RIGHT: #e2e8f0 1px solid; WIDTH: 561px; BACKGROUND: #ffffff; BORDER-BOTTOM: #e2e8f0 1px solid; BORDER-LEFT: #e2e8f0 1px solid; border-radius: 20px; box-shadow: rgba(0, 0, 0, 0.05) 0px 10px 25px' cellSpacing=0 cellPadding=0 align=center>
+<body style="margin:0; padding:20px; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #eef2f8; text-align: center;">
+<div style="display: flex; justify-content: center; align-items: center; min-height: auto;">
+<TABLE style='MAX-WIDTH: 680px; BORDER-TOP: #e2e8f0 1px solid; FONT-FAMILY: "Segoe UI", Helvetica, Arial, sans-serif; BORDER-RIGHT: #e2e8f0 1px solid; WIDTH: 561px; BACKGROUND: #ffffff; BORDER-BOTTOM: #e2e8f0 1px solid; BORDER-LEFT: #e2e8f0 1px solid; border-radius: 20px; box-shadow: rgba(0, 0, 0, 0.05) 0px 10px 25px; margin: 0 auto;' cellSpacing=0 cellPadding=0 align=center>
 <TBODY>
 <TR>
 <TD style="BACKGROUND: #1e2f5e; BORDER-BOTTOM: #f9b81b 3px solid; PADDING-BOTTOM: 10px; TEXT-ALIGN: center; PADDING-TOP: 10px; PADDING-LEFT: 12px; PADDING-RIGHT: 12px; border-top-left-radius: 20px; border-top-right-radius: 20px">
@@ -315,7 +310,6 @@
 </TABLE>
 </TD></TR></TBODY></TABLE>
 
-<!-- LISTA DE RESERVAS COM CHECK-IN E CHECK-OUT -->
 ${reservasListHtml}
 
 <TABLE style="MARGIN-BOTTOM: 8px" cellSpacing=0 cellPadding=0 width="100%">
@@ -386,6 +380,7 @@ ${reservasListHtml}
 </TBODY></TABLE>
 
 </TD></TR></TBODY></TABLE>
+</div>
 </body>
 </html>`;
         
@@ -401,29 +396,22 @@ ${reservasListHtml}
         }
         
         try {
-            // Selecionar o elemento do voucher (a tabela principal)
             const voucherTable = currentVoucherElement.querySelector('table') || currentVoucherElement;
-            
-            // Criar range para selecionar o elemento
             const range = document.createRange();
             range.selectNodeContents(voucherTable);
-            
             const selection = window.getSelection();
             selection?.removeAllRanges();
             selection?.addRange(range);
-            
-            // Executar cópia
             const success = document.execCommand('copy');
             selection?.removeAllRanges();
             
             if (success) {
-                showToast("✅ Voucher copiado! Cole no e-mail (Ctrl+V) - Formatação mantida", "#1e8a4d");
+                showToast("✅ Voucher copiado! Cole no e-mail (Ctrl+V) - Centralizado", "#1e8a4d");
                 highlightCopyButton();
             } else {
                 throw new Error('execCommand falhou');
             }
         } catch (err) {
-            // Fallback: copiar o HTML
             try {
                 const htmlContent = currentVoucherElement.outerHTML;
                 await navigator.clipboard.writeText(htmlContent);
