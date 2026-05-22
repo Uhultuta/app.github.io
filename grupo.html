@@ -3,44 +3,22 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Voucher Icaraí - Formato Completo</title>
+    <title>Voucher Icaraí - 561px com Check-in e Check-out</title>
     <script src="https://cdn.sheetjs.com/xlsx-0.20.2/package/dist/xlsx.full.min.js"></script>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            background: #eef2f8;
-            font-family: 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
-            padding: 30px 20px;
-        }
-        .app-container {
-            max-width: 1100px;
-            margin: 0 auto;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: #eef2f8; font-family: 'Segoe UI', Arial, sans-serif; padding: 30px 20px; }
+        .app-container { max-width: 900px; margin: 0 auto; }
         .upload-card {
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 8px 20px rgba(0,0,0,0.08);
-            padding: 20px 24px;
-            margin-bottom: 30px;
-            border: 1px solid #e2e8f0;
+            background: white; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            padding: 20px 24px; margin-bottom: 30px; border: 1px solid #e2e8f0;
         }
         h1 { font-size: 1.5rem; color: #1e2f5e; margin-bottom: 5px; }
         .sub { color: #4a5b7a; margin-bottom: 20px; font-size: 0.85rem; }
         .upload-dual { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; }
         .upload-area {
-            flex: 1;
-            background: #f8fafc;
-            border: 2px dashed #cbd5e1;
-            border-radius: 16px;
-            padding: 15px;
-            text-align: center;
-            cursor: pointer;
-            transition: 0.2s;
-            min-width: 200px;
+            flex: 1; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 16px;
+            padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; min-width: 200px;
         }
         .upload-area:hover { background: #f1f5f9; border-color: #f5a623; }
         .upload-area.has-file { border-color: #2e7d32; background: #e8f5e9; }
@@ -50,17 +28,9 @@
         .file-name { font-size: 10px; color: #555; word-break: break-all; margin-top: 4px; }
         input[type="file"] { display: none; }
         .btn-processar {
-            background: #1e2f5e;
-            color: white;
-            border: none;
-            padding: 10px 25px;
-            border-radius: 40px;
-            font-weight: 700;
-            font-size: 0.9rem;
-            cursor: pointer;
-            margin-top: 15px;
-            width: 100%;
-            transition: 0.2s;
+            background: #1e2f5e; color: white; border: none; padding: 10px 25px;
+            border-radius: 40px; font-weight: 700; font-size: 0.9rem; cursor: pointer;
+            margin-top: 15px; width: 100%; transition: 0.2s;
         }
         .btn-processar:hover { background: #f5a623; color: #1e2f5e; }
         .btn-processar:disabled { background: #94a3b8; cursor: not-allowed; }
@@ -68,64 +38,39 @@
         .success { color: #2e7d32; }
         .error { color: #c2410c; }
         .info { color: #1e5f8e; }
-
-        .voucher-actions {
-            display: flex;
-            justify-content: flex-end;
-            margin-bottom: 15px;
-            gap: 12px;
-        }
+        .voucher-actions { display: flex; justify-content: flex-end; margin-bottom: 15px; }
         .btn-copiar {
-            background: #25a35c;
-            color: white;
-            border: none;
-            padding: 8px 20px;
-            border-radius: 40px;
-            font-weight: 600;
-            font-size: 0.85rem;
-            cursor: pointer;
-            transition: 0.2s;
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
+            background: #25a35c; color: white; border: none; padding: 8px 20px;
+            border-radius: 40px; font-weight: 600; font-size: 0.85rem; cursor: pointer;
+            display: inline-flex; align-items: center; gap: 6px;
         }
-        .btn-copiar:hover { background: #1e8a4d; transform: scale(1.02); }
-        .btn-copiar.copiado { background: #0f5c34; }
+        .btn-copiar:hover { background: #1e8a4d; }
         .toast-msg {
-            position: fixed;
-            bottom: 30px;
-            right: 30px;
-            background: #1e2f5e;
-            color: white;
-            padding: 12px 24px;
-            border-radius: 40px;
-            font-size: 13px;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s;
-            pointer-events: none;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            position: fixed; bottom: 30px; right: 30px; background: #1e2f5e;
+            color: white; padding: 12px 24px; border-radius: 40px; font-size: 13px;
+            z-index: 1000; opacity: 0; transition: opacity 0.3s; pointer-events: none;
         }
         .toast-msg.show { opacity: 1; }
+        .voucher-container { display: flex; justify-content: center; }
     </style>
 </head>
 <body>
 <div class="app-container">
     <div class="upload-card">
-        <h1>🏨 Voucher Icaraí - Formato Completo</h1>
-        <div class="sub">Upload de 2 arquivos Excel → combina valores + hóspedes</div>
+        <h1>🏨 Voucher Icaraí - 561px</h1>
+        <div class="sub">Upload de 2 arquivos Excel → combina valores + hóspedes (Check-in e Check-out)</div>
         
         <div class="upload-dual">
             <div class="upload-area" id="dropArea1">
                 <div class="upload-title">📊 Arquivo 1 (VALORES)</div>
-                <div class="upload-hint">Clique ou arraste o arquivo</div>
+                <div class="upload-hint">Clique ou arraste</div>
                 <input type="file" id="fileInput1" accept=".xlsx, .xls">
                 <div id="status1" class="file-status"></div>
                 <div id="fileName1" class="file-name"></div>
             </div>
             <div class="upload-area" id="dropArea2">
                 <div class="upload-title">📁 Arquivo 2 (HÓSPEDES)</div>
-                <div class="upload-hint">Clique ou arraste o arquivo</div>
+                <div class="upload-hint">Clique ou arraste</div>
                 <input type="file" id="fileInput2" accept=".xlsx, .xls">
                 <div id="status2" class="file-status"></div>
                 <div id="fileName2" class="file-name"></div>
@@ -136,17 +81,15 @@
         <div id="statusMsg" class="status"></div>
     </div>
     
-    <div id="vouchersContainer" class="voucher-list"></div>
+    <div id="vouchersContainer" class="voucher-container"></div>
 </div>
 
-<div id="toastMsg" class="toast-msg">✅ Voucher copiado com formatação!</div>
+<div id="toastMsg" class="toast-msg">✅ Voucher copiado! Cole no e-mail</div>
 
 <script>
     let file1Data = null, file2Data = null;
-    let currentVoucherHTML = "";
-    let currentVoucherRenderizado = ""; // Para armazenar o HTML completo para email
+    let currentVoucherElement = null;
     
-    // Identificar tipo da planilha
     function identifySheetType(jsonData) {
         for (let i = 0; i < Math.min(15, jsonData.length); i++) {
             const row = jsonData[i];
@@ -155,26 +98,10 @@
             if (rowStr.includes("total previsto")) return "VALORES";
             if ((rowStr.includes("check-out") || rowStr.includes("checkout")) && (rowStr.includes("categor") || rowStr.includes("adult"))) return "HOSPEDES";
             if (row.includes("Nº") && row.includes("Total Previsto")) return "VALORES";
-            if (row.includes("Nº") && (row.includes("Check-out") || row.includes("Check-in"))) {
-                for (let j = i+1; j < Math.min(i+10, jsonData.length); j++) {
-                    const nextRow = jsonData[j];
-                    if (nextRow && nextRow.some(c => c && String(c).match(/R?\$\s*\d+[,.]\d+/i))) return "VALORES";
-                }
-                return "HOSPEDES";
-            }
         }
-        let hasMoney = false, hasNames = false;
-        for (let i = 0; i < Math.min(30, jsonData.length); i++) {
-            const row = jsonData[i];
-            if (!row) continue;
-            if (row.some(c => c && String(c).match(/R?\$\s*\d+[,.]\d+/i))) hasMoney = true;
-            if (row[4] && String(row[4]).length > 8 && !String(row[4]).match(/\d{2}\/\d{2}\/\d{4}/)) hasNames = true;
-        }
-        if (hasMoney && !hasNames) return "VALORES";
         return "HOSPEDES";
     }
     
-    // Extrair valores
     function extractValoresData(jsonData) {
         const map = new Map();
         let headerRow = null;
@@ -205,19 +132,19 @@
                 total = parseFloat(valStr) || 0;
             }
             const empresa = (idxEmpresa >= 0 && row[idxEmpresa]) ? String(row[idxEmpresa]).trim() : "UNIMED LESTE FLUMINENSE";
-            
             map.set(num, { total, empresa });
         }
         return map;
     }
     
-    // Extrair hóspedes
     function extractHospedesData(jsonData) {
         const map = new Map();
         let i = 0;
         while (i < jsonData.length) {
             const row = jsonData[i];
             if (!row || row.length < 6) { i++; continue; }
+            
+            // Verifica se é uma linha de reserva: coluna D tem número e coluna E tem data
             const numRaw = row[3];
             const checkinRaw = row[4];
             const isBooking = numRaw && (typeof numRaw === 'number' || /^\d+$/.test(String(numRaw).trim())) && 
@@ -226,7 +153,21 @@
             if (isBooking) {
                 const num = String(numRaw).trim();
                 const checkin = String(checkinRaw).trim();
-                const checkout = (row[9] && row[9].trim) ? String(row[9]).trim() : "";
+                // Check-out está na coluna J (índice 9)
+                let checkout = "";
+                if (row[9] && row[9].trim) {
+                    checkout = String(row[9]).trim();
+                } else if (row[9]) {
+                    checkout = String(row[9]).trim();
+                }
+                
+                // Se checkout não for uma data válida, tenta buscar em outra posição
+                if (!checkout.match(/\d{2}\/\d{2}\/\d{4}/)) {
+                    // Algumas planilhas podem ter checkout em outra coluna
+                    if (row[10] && String(row[10]).match(/\d{2}\/\d{2}\/\d{4}/)) {
+                        checkout = String(row[10]).trim();
+                    }
+                }
                 
                 const guests = [];
                 let j = i + 1;
@@ -299,7 +240,7 @@
                 msg.className = 'status success';
             } else {
                 btn.disabled = true;
-                msg.innerHTML = '⚠️ Dois arquivos do mesmo tipo. Precisa de um VALORES e um HÓSPEDES.';
+                msg.innerHTML = '⚠️ Dois arquivos do mesmo tipo.';
                 msg.className = 'status error';
             }
         } else {
@@ -309,172 +250,189 @@
         }
     }
     
-    function buildVoucherHTML(bookings, totalGeral, empresaPrincipal) {
-        let tabelaRows = '';
+    function buildVoucherElement(bookings, totalGeral, empresaPrincipal) {
+        const totalGeralStr = `R$ ${totalGeral.toFixed(2).replace('.',',')}`;
         
+        // Construir lista de reservas com datas (Check-in e Check-out)
+        let reservasListHtml = '';
         bookings.forEach(b => {
             const guestsHtml = b.guests.map(g => `<span style="display: inline-block; background: #eef2ff; padding: 2px 6px; border-radius: 12px; margin: 1px 2px; font-size: 10px;">${escapeHtml(g)}</span>`).join('');
             const valorStr = b.total > 0 ? `R$ ${b.total.toFixed(2).replace('.',',')}` : "—";
-            tabelaRows += `
-                <tr>
-                    <td style="border: 1px solid #d4d8dd; padding: 6px 8px; font-weight: 800; color: #1e2f5e;">${b.numero}</td>
-                    <td style="border: 1px solid #d4d8dd; padding: 6px 8px; font-family: monospace; font-size: 10px;">${b.checkin}</td>
-                    <td style="border: 1px solid #d4d8dd; padding: 6px 8px; font-family: monospace; font-size: 10px;">${b.checkout}</td>
-                    <td style="border: 1px solid #d4d8dd; padding: 6px 8px; line-height: 1.4;">${guestsHtml}</td>
-                    <td style="border: 1px solid #d4d8dd; padding: 6px 8px; font-weight: 700; color: #1e6f3f; text-align: right;">${valorStr}</td>
-                </tr>
+            
+            // Garantir que checkout seja exibido
+            const checkinDisplay = b.checkin || "—";
+            const checkoutDisplay = b.checkout || "—";
+            
+            reservasListHtml += `
+                <div style="border-bottom: 1px solid #e2e8f0; padding: 8px 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 5px;">
+                        <span style="font-weight: 800; color: #1e2f5e; font-size: 12px;">📌 Nº ${b.numero}</span>
+                        <span style="font-size: 10px; color: #2d5a2c; background: #e8f0e8; padding: 2px 8px; border-radius: 20px;">📅 Check-in: ${checkinDisplay} → Check-out: ${checkoutDisplay}</span>
+                        <span style="font-weight: 700; color: #1e6f3f; font-size: 11px;">💰 ${valorStr}</span>
+                    </div>
+                    <div style="margin-top: 6px;">${guestsHtml}</div>
+                </div>
             `;
         });
         
-        const totalGeralStr = `R$ ${totalGeral.toFixed(2).replace('.',',')}`;
-        
-        return `<!DOCTYPE html>
+        const htmlContent = `<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"></head>
-<body style="margin:0; padding:20px; font-family: 'Segoe UI', Arial, sans-serif; background: #eef2f8;">
+<body style="margin:0; padding:20px; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #eef2f8; display: flex; justify-content: center;">
+<TABLE style='MAX-WIDTH: 680px; BORDER-TOP: #e2e8f0 1px solid; FONT-FAMILY: "Segoe UI", Helvetica, Arial, sans-serif; BORDER-RIGHT: #e2e8f0 1px solid; WIDTH: 561px; BACKGROUND: #ffffff; BORDER-BOTTOM: #e2e8f0 1px solid; BORDER-LEFT: #e2e8f0 1px solid; border-radius: 20px; box-shadow: rgba(0, 0, 0, 0.05) 0px 10px 25px' cellSpacing=0 cellPadding=0 align=center>
+<TBODY>
+<TR>
+<TD style="BACKGROUND: #1e2f5e; BORDER-BOTTOM: #f9b81b 3px solid; PADDING-BOTTOM: 10px; TEXT-ALIGN: center; PADDING-TOP: 10px; PADDING-LEFT: 12px; PADDING-RIGHT: 12px; border-top-left-radius: 20px; border-top-right-radius: 20px">
+<H1 style="FONT-SIZE: 22px; FONT-WEIGHT: 800; COLOR: #ffffff; MARGIN: 0px; LETTER-SPACING: 1px">ICARAÍ PRAIA HOTEL</H1>
+<P style="FONT-SIZE: 16px; FONT-WEIGHT: 700; COLOR: #f9b81b; MARGIN: 4px 0px 0px">✅ RESERVA CONFIRMADA</P></TD></TR>
+<TR>
+<TD style="PADDING-BOTTOM: 10px; PADDING-TOP: 8px; PADDING-LEFT: 12px; PADDING-RIGHT: 12px">
+<TABLE style="MARGIN-BOTTOM: 6px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD>
+<P style="FONT-SIZE: 13px; FONT-WEIGHT: 700; COLOR: #1e2f5e; MARGIN: 0px 0px 3px">🎉 A sua Reserva foi confirmada!</P>
+<P style="FONT-SIZE: 11px; COLOR: #2c3e5c; MARGIN: 0px">Segue a confirmação da reserva de acordo com sua solicitação nas condições abaixo especificadas.</P>
+</TD></TR></TBODY></TABLE>
 
-<div style="background: white; border-radius: 16px; overflow-x: auto; border: 1px solid #d1d5db; font-family: 'Segoe UI', Arial, sans-serif; max-width: 100%;">
-    <div style="background: linear-gradient(135deg, #1a3a5f 0%, #0e2a4a 100%); padding: 12px 20px; text-align: center; border-bottom: 3px solid #f5a623;">
-        <div style="font-size: 14px; font-weight: 600; color: #f5d742;">${escapeHtml(empresaPrincipal)}</div>
-        <div style="font-size: 22px; font-weight: 800; color: white; margin: 4px 0;">ICARAÍ PRAIA HOTEL</div>
-        <div style="font-size: 12px; color: #f5a623; font-weight: 600;">✅ RESERVAS CONFIRMADAS</div>
-    </div>
-    <div style="padding: 16px 20px;">
-        <div style="background: #fff8e0; border-left: 4px solid #f5a623; padding: 8px 12px; margin-bottom: 16px; font-size: 11px;">
-            <strong>🚀 EVITE FILAS - FAÇA SEU PRÉ-CHECK-IN</strong><br>
-            Envie para cada hóspede: <strong>Nome completo · Telefone · E-mail</strong><br>
-            ✅ Todos receberão o link por e-mail e não enfrentarão filas.
-        </div>
-        
-        <table style="width:100%; border-collapse: collapse; font-size: 11px; margin-bottom: 20px;">
-            <thead>
-                <tr style="background: #f0f4fa;">
-                    <th style="border: 1px solid #d4d8dd; padding: 6px 8px;">Nº</th>
-                    <th style="border: 1px solid #d4d8dd; padding: 6px 8px;">Check-in</th>
-                    <th style="border: 1px solid #d4d8dd; padding: 6px 8px;">Check-out</th>
-                    <th style="border: 1px solid #d4d8dd; padding: 6px 8px;">Hóspedes</th>
-                    <th style="border: 1px solid #d4d8dd; padding: 6px 8px;">Total do Quarto</th>
-                </tr>
-            </thead>
-            <tbody>
-                ${tabelaRows}
-            </tbody>
-        </table>
-        
-        <div style="background: #e6f0ff; border-radius: 12px; padding: 10px 16px; text-align: right; font-weight: 800; font-size: 16px; margin: 15px 0;">💰 TOTAL GERAL ${totalGeralStr}</div>
-        
-        <div style="background: #f8f6ef; border-radius: 10px; padding: 8px; font-size: 10px; margin: 10px 0;">
-            ✓ Wi-Fi ✓ Smart TV ✓ Telefone ✓ Minibar ✓ Cofre ✓ Restaurante 🚗 Estacionamento R$45/dia
-        </div>
-        
-        <div style="font-size: 9px; color: #2c3e66; background: #fefcf5; padding: 10px 12px; border-radius: 12px; margin-top: 15px;">
-            <strong>📌 Políticas</strong> • Check-in 14h / Check-out 12h • Não aceitamos Pet 🚫<br>
-            • Estacionamento mediante disponibilidade • Acompanhado dos pais: documentação
-        </div>
-        
-        <div style="background: #fef2e0; border-radius: 10px; padding: 6px 10px; margin: 10px 0; font-size: 9px;">
-            💰 <strong>Garantia:</strong> Tarifas não reembolsáveis: cobrança integral. Cancelamento sem ônus até 72h antes.
-        </div>
-        
-        <div style="background: #eef3fc; border-radius: 10px; padding: 8px; margin: 10px 0; display: flex; flex-wrap: wrap; justify-content: space-between; font-size: 9px;">
-            <span><strong>🏦 Pix:</strong> reservas@icaraipraiahotel.com.br</span>
-            <span><strong>💳 Cartão:</strong> 1ª diária como garantia</span>
-            <span><strong>🏢 Empresa:</strong> Garantia no show</span>
-        </div>
-        
-        <div style="text-align: center; margin: 12px 0; font-size: 10px;">
-            Obrigado! <strong>Setor de Reservas</strong><br>
-            <span style="background: #25d366; display: inline-block; padding: 4px 12px; border-radius: 30px; color: white; margin-top: 5px;">📱 Fale conosco no WhatsApp</span>
-        </div>
-        
-        <div style="margin-top: 15px; text-align: center; font-size: 9px; color: #5e6f8d; border-top: 1px solid #e2e8f0; padding-top: 10px;">
-            ICARAÍ PRAIA HOTEL - RUA BELISARIO AUGUSTO 21, ICARAÍ - NITERÓI/RJ<br>
-            Apresentar documento oficial no check-in.
-        </div>
-    </div>
-</div>
+<TABLE style="MARGIN-BOTTOM: 12px; BACKGROUND: #fff6cc; BORDER-LEFT: #f9b81b 4px solid; border-radius: 12px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD style="PADDING-BOTTOM: 10px; PADDING-TOP: 10px; PADDING-LEFT: 12px; PADDING-RIGHT: 12px">
+<DIV style="FONT-SIZE: 12px; MARGIN-BOTTOM: 4px; FONT-WEIGHT: 800; COLOR: #1e2f5e">🚀 EVITE FILAS - FAÇA SEU PRÉ-CHECK-IN</DIV>
+<P style="FONT-SIZE: 11px; COLOR: #2c3e5c; MARGIN: 0px 0px 6px">Para agilizar sua chegada, <STRONG>envie os dados abaixo</STRONG> para que todos os hóspedes recebam o link de pré-check-in por e-mail:</P>
+<DIV style="FONT-SIZE: 11px; BORDER-TOP: #f9b81b 1px solid; BORDER-RIGHT: #f9b81b 1px solid; WIDTH: auto; BACKGROUND: #ffffff; BORDER-BOTTOM: #f9b81b 1px solid; COLOR: #1e2f5e; PADDING-BOTTOM: 6px; PADDING-TOP: 6px; PADDING-LEFT: 8px; BORDER-LEFT: #f9b81b 1px solid; DISPLAY: inline-block; PADDING-RIGHT: 8px; border-radius: 8px">📧 <STRONG>Nome completo · Telefone · E-mail de cada hóspede</STRONG></DIV>
+<P style="FONT-SIZE: 10px; COLOR: #1e466e; MARGIN: 8px 0px 0px">✅ Ao enviar, todos receberão o link diretamente no e-mail e <STRONG>não precisarão enfrentar filas</STRONG> no check-in.</P>
+</TD></TR></TBODY></TABLE>
 
+<TABLE style="MARGIN-BOTTOM: 6px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD><DIV style="FONT-SIZE: 13px; MARGIN-BOTTOM: 5px; BORDER-BOTTOM: #f9b81b 2px solid; FONT-WEIGHT: 700; COLOR: #1e2f5e; PADDING-BOTTOM: 3px; DISPLAY: inline-block">📋 Informações da Reserva</DIV></TD></TR></TBODY></TABLE>
+
+<TABLE style="MARGIN-BOTTOM: 8px; BORDER-TOP: #e2edf2 1px solid; BORDER-RIGHT: #e2edf2 1px solid; BACKGROUND: #f8fafc; BORDER-BOTTOM: #e2edf2 1px solid; BORDER-LEFT: #e2edf2 1px solid; border-radius: 12px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD style="PADDING: 10px;">
+<TABLE cellSpacing=0 cellPadding=0 width="100%">
+<TBODY>
+<TR><TD width="50%"><SPAN style="FONT-WEIGHT: 700; COLOR: #1e2f5e">Empresa:</SPAN> ${escapeHtml(empresaPrincipal)}</TD>
+<TD width="50%"><SPAN style="FONT-WEIGHT: 700; COLOR: #1e2f5e">Tarifa:</SPAN> Net</TD></TR>
+<TR><TD><SPAN style="FONT-WEIGHT: 700; COLOR: #1e2f5e">Agência:</SPAN> DIRETO</TD>
+<TD><SPAN style="FONT-WEIGHT: 700; COLOR: #1e2f5e">Pagamento:</SPAN> CARTÃO / BOLETO</TD></TR>
+</TABLE>
+</TD></TR></TBODY></TABLE>
+
+<!-- LISTA DE RESERVAS COM CHECK-IN E CHECK-OUT -->
+${reservasListHtml}
+
+<TABLE style="MARGIN-BOTTOM: 8px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD align=center>
+<TABLE cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR>
+<TD style="BACKGROUND: #eef3fc; PADDING: 5px; border-radius: 12px" width="32%" align=center>
+<DIV style="FONT-SIZE: 11px; FONT-WEIGHT: 700; COLOR: #1e2f5e">CHECK-IN</DIV>
+<DIV style="FONT-SIZE: 13px; FONT-WEIGHT: 800; COLOR: #1e466e; MARGIN: 3px 0px">A partir 14h</DIV></TD>
+<TD width="2%"></TD>
+<TD style="BACKGROUND: #eef3fc; PADDING: 5px; border-radius: 12px" width="32%" align=center>
+<DIV style="FONT-SIZE: 11px; FONT-WEIGHT: 700; COLOR: #1e2f5e">CHECK-OUT</DIV>
+<DIV style="FONT-SIZE: 13px; FONT-WEIGHT: 800; COLOR: #1e466e; MARGIN: 3px 0px">Até 12h</DIV></TD>
+<TD width="2%"></TD>
+<TD style="BACKGROUND: #eefcee; PADDING: 5px; border-radius: 12px" width="32%" align=center>
+<DIV style="FONT-SIZE: 11px; FONT-WEIGHT: 700; COLOR: #1e2f5e">🍳 CAFÉ DA MANHÃ</DIV>
+<DIV style="FONT-SIZE: 12px; FONT-WEIGHT: 600; COLOR: #1b5e20; MARGIN: 3px 0px">Incluso</DIV></TD>
+</TR></TBODY></TABLE>
+</TD></TR></TBODY></TABLE>
+
+<DIV style="background: #e6f0ff; border-radius: 12px; padding: 8px 12px; text-align: right; font-weight: 800; font-size: 14px; margin: 10px 0;">💰 TOTAL GERAL ${totalGeralStr}</DIV>
+
+<TABLE style="MARGIN-BOTTOM: 6px; BACKGROUND: #f9fbfd; BORDER-LEFT: #f9b81b 3px solid; border-radius: 10px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD style="PADDING: 5px 10px">
+<DIV style="FONT-SIZE: 10px; LINE-HEIGHT: 1.4">✓ Wi-Fi ✓ Smart TV/Ar ✓ Telefone ✓ Minibar ✓ Cofre ✓ Restaurante (6h-22h) &nbsp; 🚗 Estacionamento R$45/dia</DIV>
+</TD></TR></TBODY></TABLE>
+
+<TABLE style="MARGIN-BOTTOM: 4px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD><DIV style="FONT-SIZE: 12px; MARGIN-BOTTOM: 3px; BORDER-BOTTOM: #f9b81b 2px solid; FONT-WEIGHT: 700; COLOR: #1e2f5e; DISPLAY: inline-block">📌 Políticas do Hotel & Menores</DIV></TD></TR></TBODY></TABLE>
+
+<UL style="FONT-SIZE: 10px; COLOR: #2c3e5c; PADDING-LEFT: 18px; MARGIN: 0px; LINE-HEIGHT: 1.4">
+<LI>Check-in 14h / Check-out 12h | Não aceitamos Pet 🚫</LI>
+<LI><STRONG>Estacionamento mediante disponibilidade, solicitação prévia e confirmação</STRONG></LI>
+<LI>Acompanhado dos pais: documento comprovando filiação / Desacompanhado: autorização reconhecida em cartório</LI>
+</UL>
+
+<TABLE style="MARGIN-BOTTOM: 5px; BACKGROUND: #fef6e8; BORDER-LEFT: #f9b81b 3px solid; border-radius: 10px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD style="PADDING: 5px 10px">
+<P style="FONT-SIZE: 10px; MARGIN: 0px">💰 <STRONG>Garantia:</STRONG> 1ª diária. Cancelamento fora do prazo sem reembolso. Tarifas não reembolsáveis: cobrança integral.</P>
+</TD></TR></TBODY></TABLE>
+
+<TABLE style="MARGIN-BOTTOM: 5px; BACKGROUND: #eef3fc; border-radius: 10px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD style="PADDING: 8px 10px">
+<TABLE cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR>
+<TD vAlign=top width="33%"><DIV style="FONT-SIZE: 11px; FONT-WEIGHT: 700; COLOR: #1b3a62">🏦 Depósito/Pix</DIV>
+<P style="FONT-SIZE: 9px; MARGIN: 2px 0px">Bradesco Ag 0541<br>C/c 17561-7</P>
+<P style="FONT-SIZE: 9px"><STRONG>Pix:</STRONG> reservas@icaraipraiahotel.com.br</P></TD>
+<TD vAlign=top width="33%"><DIV style="FONT-SIZE: 11px; FONT-WEIGHT: 700; COLOR: #1b3a62">💳 Cartão</DIV>
+<P style="FONT-SIZE: 9px; MARGIN: 2px 0px">Debitamos 1ª diária</P>
+<A style="FONT-SIZE: 8px; BACKGROUND: #25d366; COLOR: white; PADDING: 3px 8px; border-radius: 25px; text-decoration: none; display: inline-block;">📲 Solicitar link</A></TD>
+<TD vAlign=top width="34%"><DIV style="FONT-SIZE: 11px; FONT-WEIGHT: 700; COLOR: #1b3a62">🏢 Empresa/Agência</DIV>
+<P style="FONT-SIZE: 9px">Garantia no show. No-show: cobrança de 1ª diária.</P>
+<P style="FONT-SIZE: 8px"><STRONG>Reservas sem garantia podem ser canceladas.</STRONG></P></TD>
+</TR></TBODY></TABLE>
+</TD></TR></TBODY></TABLE>
+
+<TABLE style="BACKGROUND: #eef2fa; MARGIN: 6px 0px 4px; border-radius: 14px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD style="PADDING: 8px; TEXT-ALIGN: center">
+<P style="FONT-SIZE: 11px">Obrigado! Atenciosamente,</P>
+<P style="FONT-SIZE: 11px; FONT-WEIGHT: 700">Setor de Reservas</P>
+<A style="FONT-SIZE: 10px; BACKGROUND: #25d366; MARGIN-TOP: 4px; FONT-WEIGHT: 600; COLOR: white; PADDING: 4px 12px; DISPLAY: inline-block; border-radius: 25px; text-decoration: none;" href="#">📱 Fale conosco no WhatsApp</A>
+</TD></TR></TBODY></TABLE>
+
+<TABLE width="100%">
+<TBODY><TR><TD style="FONT-SIZE: 8px; COLOR: #385d8a; TEXT-ALIGN: center; PADDING-TOP: 6px"><STRONG>ICARAÍ PRAIA HOTEL</STRONG><br>Rua Belisario Augusto 21, Icaraí - Niterói/RJ - 🌐 www.icaraipraiahotel.com.br</TD></TR>
+<TR><TD style="FONT-SIZE: 7px; BORDER-TOP: #e4edf5 1px solid; COLOR: #6f7c91; TEXT-ALIGN: center; PADDING-TOP: 5px">Apresentar documento oficial no check-in.</TD></TR>
+</TBODY></TABLE>
+
+</TD></TR></TBODY></TABLE>
 </body>
 </html>`;
+        
+        const div = document.createElement('div');
+        div.innerHTML = htmlContent;
+        return div;
     }
     
-    // Função para copiar com formatação usando Clipboard API com HTML
     async function copyVoucherWithFormatting() {
-        if (!currentVoucherHTML) {
-            showToast("❌ Nenhum voucher para copiar", "#c2410c");
+        if (!currentVoucherElement) {
+            showToast("❌ Gere o voucher primeiro!", "#c2410c");
             return;
         }
         
-        // Criar uma div temporária para extrair o conteúdo renderizado
-        const tempDiv = document.createElement('div');
-        tempDiv.innerHTML = currentVoucherHTML;
-        const voucherContent = tempDiv.querySelector('body > div') || tempDiv.firstChild;
-        
-        // HTML completo para email com estilos inline
-        const emailHTML = `<!DOCTYPE html>
-<html>
-<head><meta charset="UTF-8"></head>
-<body style="margin:0; padding:20px; font-family: 'Segoe UI', Arial, sans-serif; background: #eef2f8;">
-${voucherContent ? voucherContent.outerHTML : currentVoucherHTML}
-</body>
-</html>`;
-        
-        // Tentar método moderno com ClipboardItem
-        if (navigator.clipboard && navigator.clipboard.write) {
-            try {
-                const blob = new Blob([emailHTML], { type: 'text/html' });
-                const clipboardItem = new ClipboardItem({
-                    'text/html': blob,
-                    'text/plain': new Blob([stripHtml(currentVoucherHTML)], { type: 'text/plain' })
-                });
-                await navigator.clipboard.write([clipboardItem]);
-                showToast("✅ Voucher copiado com formatação! Cole no e-mail (Ctrl+V)", "#1e8a4d");
-                highlightCopyButton();
-                return;
-            } catch (err) {
-                console.log("ClipboardItem falhou, tentando fallback...", err);
-            }
-        }
-        
-        // Fallback: selecionar o elemento e copiar
-        const voucherDisplay = document.getElementById('voucherDisplay');
-        if (voucherDisplay) {
-            try {
-                // Selecionar o conteúdo
-                const range = document.createRange();
-                range.selectNodeContents(voucherDisplay);
-                const selection = window.getSelection();
-                selection?.removeAllRanges();
-                selection?.addRange(range);
-                
-                // Copiar
-                const success = document.execCommand('copy');
-                selection?.removeAllRanges();
-                
-                if (success) {
-                    showToast("✅ Voucher copiado! Use Ctrl+V para colar no e-mail", "#1e8a4d");
-                    highlightCopyButton();
-                    return;
-                }
-            } catch (err) {
-                console.log("Fallback execCommand falhou", err);
-            }
-        }
-        
-        // Último recurso: copiar o HTML como texto
         try {
-            await navigator.clipboard.writeText(emailHTML);
-            showToast("✅ Código HTML copiado! Cole no e-mail (modo HTML)", "#f5a623");
-            highlightCopyButton();
+            // Selecionar o elemento do voucher (a tabela principal)
+            const voucherTable = currentVoucherElement.querySelector('table') || currentVoucherElement;
+            
+            // Criar range para selecionar o elemento
+            const range = document.createRange();
+            range.selectNodeContents(voucherTable);
+            
+            const selection = window.getSelection();
+            selection?.removeAllRanges();
+            selection?.addRange(range);
+            
+            // Executar cópia
+            const success = document.execCommand('copy');
+            selection?.removeAllRanges();
+            
+            if (success) {
+                showToast("✅ Voucher copiado! Cole no e-mail (Ctrl+V) - Formatação mantida", "#1e8a4d");
+                highlightCopyButton();
+            } else {
+                throw new Error('execCommand falhou');
+            }
         } catch (err) {
-            showToast("❌ Selecione o voucher e pressione Ctrl+C", "#c2410c");
+            // Fallback: copiar o HTML
+            try {
+                const htmlContent = currentVoucherElement.outerHTML;
+                await navigator.clipboard.writeText(htmlContent);
+                showToast("✅ Voucher copiado (HTML). Cole no e-mail", "#f5a623");
+                highlightCopyButton();
+            } catch (err2) {
+                showToast("❌ Selecione o voucher manualmente e pressione Ctrl+C", "#c2410c");
+            }
         }
-    }
-    
-    function stripHtml(html) {
-        const temp = document.createElement('div');
-        temp.innerHTML = html;
-        return temp.textContent || temp.innerText || '';
     }
     
     function highlightCopyButton() {
@@ -482,10 +440,8 @@ ${voucherContent ? voucherContent.outerHTML : currentVoucherHTML}
         if (!btn) return;
         const originalText = btn.innerHTML;
         btn.innerHTML = '✅ Copiado!';
-        btn.classList.add('copiado');
         setTimeout(() => {
             btn.innerHTML = originalText;
-            btn.classList.remove('copiado');
         }, 2000);
     }
     
@@ -522,8 +478,8 @@ ${voucherContent ? voucherContent.outerHTML : currentVoucherHTML}
             
             bookings.push({
                 numero: num,
-                checkin: hosp.checkin,
-                checkout: hosp.checkout,
+                checkin: hosp.checkin || "—",
+                checkout: hosp.checkout || "—",
                 guests: hosp.guests,
                 total: valor.total || 0
             });
@@ -535,17 +491,22 @@ ${voucherContent ? voucherContent.outerHTML : currentVoucherHTML}
             return da.localeCompare(db);
         });
         
-        currentVoucherHTML = buildVoucherHTML(bookings, totalGeral, empresaPrincipal);
+        currentVoucherElement = buildVoucherElement(bookings, totalGeral, empresaPrincipal);
         
         const container = document.getElementById('vouchersContainer');
         container.innerHTML = `
-            <div class="voucher-actions">
-                <button class="btn-copiar" id="btnCopiarVoucher">📋 Copiar Voucher com Formatação</button>
+            <div style="width:100%; display: flex; flex-direction: column; align-items: center;">
+                <div class="voucher-actions" style="width:561px;">
+                    <button class="btn-copiar" id="btnCopiarVoucher">📋 Copiar Voucher com Formatação</button>
+                </div>
+                <div id="voucherDisplay"></div>
             </div>
-            <div id="voucherDisplay">${currentVoucherHTML}</div>
         `;
         
-        document.getElementById('btnCopiarVoucher').addEventListener('click', copyVoucherWithFormatting);
+        document.getElementById('voucherDisplay').appendChild(currentVoucherElement);
+        
+        const copyBtn = document.getElementById('btnCopiarVoucher');
+        if (copyBtn) copyBtn.addEventListener('click', copyVoucherWithFormatting);
         
         document.getElementById('statusMsg').innerHTML = `✅ Voucher gerado com ${bookings.length} reservas | Total: R$ ${totalGeral.toFixed(2).replace('.',',')}`;
         document.getElementById('statusMsg').className = 'status success';
@@ -561,46 +522,28 @@ ${voucherContent ? voucherContent.outerHTML : currentVoucherHTML}
         });
     }
     
-    // Configurar upload
     function setupFileInput(inputId, areaId, statusId, nameId, areaCode) {
         const input = document.getElementById(inputId);
         const area = document.getElementById(areaId);
         
-        area.addEventListener('click', (e) => {
-            if (e.target === area || area.contains(e.target)) {
-                input.click();
-            }
-        });
-        
+        area.addEventListener('click', () => input.click());
         input.addEventListener('change', (e) => {
             if (e.target.files && e.target.files.length) {
                 area.classList.add('has-file');
                 processFile(e.target.files[0], areaCode, statusId, nameId);
             }
         });
-        
-        area.addEventListener('dragover', (e) => {
-            e.preventDefault();
-            area.style.background = '#f1f5f9';
-        });
-        
-        area.addEventListener('dragleave', () => {
-            area.style.background = '#f8fafc';
-        });
-        
+        area.addEventListener('dragover', (e) => { e.preventDefault(); area.style.background = '#f1f5f9'; });
+        area.addEventListener('dragleave', () => { area.style.background = '#f8fafc'; });
         area.addEventListener('drop', (e) => {
             e.preventDefault();
-            e.stopPropagation();
             area.style.background = '#f8fafc';
             const file = e.dataTransfer.files[0];
             if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls'))) {
                 area.classList.add('has-file');
-                const dataTransfer = new DataTransfer();
-                dataTransfer.items.add(file);
-                input.files = dataTransfer.files;
                 processFile(file, areaCode, statusId, nameId);
             } else {
-                alert('Por favor, envie um arquivo .xlsx ou .xls');
+                alert('Envie arquivo .xlsx ou .xls');
             }
         });
     }
