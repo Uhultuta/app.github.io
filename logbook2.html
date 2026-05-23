@@ -132,6 +132,52 @@
             border-color: #2c6fad;
         }
 
+        /* Select de status */
+        td select {
+            appearance: none;
+            -webkit-appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%23666' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            padding-right: 26px;
+            cursor: pointer;
+        }
+
+        td select.status-ok        { border-color: #27ae60; color: #1a7a43; background-color: #f0faf4; font-weight: bold; }
+        td select.status-pendente  { border-color: #e74c3c; color: #a93226; background-color: #fdf3f2; font-weight: bold; }
+        td select.status-concluido { border-color: #2980b9; color: #1a5276; background-color: #eaf4fb; font-weight: bold; }
+        td select.status-andamento { border-color: #e67e22; color: #a04000; background-color: #fef9f0; font-weight: bold; }
+
+        /* Campo de observação expansível */
+        .obs-wrapper {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .obs-pendente {
+            display: none;
+            animation: fadeSlide 0.2s ease;
+        }
+
+        .obs-pendente.visivel {
+            display: block;
+        }
+
+        @keyframes fadeSlide {
+            from { opacity: 0; transform: translateY(-4px); }
+            to   { opacity: 1; transform: translateY(0); }
+        }
+
+        .obs-pendente textarea {
+            border-color: #e74c3c;
+            background: #fff8f8;
+        }
+
+        .obs-pendente textarea:focus {
+            border-color: #c0392b;
+        }
+
         /* Formulário inferior */
         .form-card {
             background: white;
@@ -379,12 +425,50 @@ function preencherTabela(tabelaId, itens) {
     itens.forEach((item, i) => {
         const tr = tbody.insertRow();
         tr.insertCell(0).innerHTML = item;
-        tr.insertCell(1).innerHTML = `<input type="text" placeholder="OK / Pendente / Concluído" id="st_${tabelaId}_${i}">`;
-        tr.insertCell(2).innerHTML = `<textarea placeholder="Observações, valores, detalhes..." id="ob_${tabelaId}_${i}"></textarea>`;
+
+        // Coluna de status: select colorido
+        tr.insertCell(1).innerHTML = `
+            <select id="st_${tabelaId}_${i}" class="status-ok" onchange="onStatusChange(this,'${tabelaId}',${i})">
+                <option value="ok">✅ OK</option>
+                <option value="pendente">⚠️ Pendente</option>
+                <option value="concluido">✔️ Concluído</option>
+                <option value="andamento">🔄 Em andamento</option>
+            </select>`;
+
+        // Coluna de observações: sempre visível para OK, expansível para pendente
+        tr.insertCell(2).innerHTML = `
+            <div class="obs-wrapper">
+                <textarea id="ob_ok_${tabelaId}_${i}" placeholder="Observações opcionais..."></textarea>
+                <div id="ob_pend_wrap_${tabelaId}_${i}" class="obs-pendente">
+                    <textarea id="ob_pend_${tabelaId}_${i}" placeholder="⚠️ Descreva a pendência, detalhes, valores..."></textarea>
+                </div>
+            </div>`;
     });
 }
 
+// ======= MUDANÇA DE STATUS =======
+function onStatusChange(sel, tabelaId, i) {
+    const val = sel.value;
+    // Atualiza cor do select
+    sel.className = '';
+    if (val === 'ok')        sel.classList.add('status-ok');
+    if (val === 'pendente')  sel.classList.add('status-pendente');
+    if (val === 'concluido') sel.classList.add('status-concluido');
+    if (val === 'andamento') sel.classList.add('status-andamento');
+
+    // Mostra campo extra apenas para pendente
+    const pendWrap = document.getElementById(`ob_pend_wrap_${tabelaId}_${i}`);
+    if (val === 'pendente') {
+        pendWrap.classList.add('visivel');
+        document.getElementById(`ob_pend_${tabelaId}_${i}`).focus();
+    } else {
+        pendWrap.classList.remove('visivel');
+    }
+}
+
 // ======= COLETAR DADOS E GERAR TEXTO =======
+const statusLabel = { ok: 'OK', pendente: 'Pendente', concluido: 'Concluído', andamento: 'Em andamento' };
+
 function coletar(tabelaId, nomeId, dataId, titulo) {
     const linhas = document.querySelectorAll(`#${tabelaId} tbody tr`);
     const nome  = document.getElementById(nomeId).value.trim() || 'Não informado';
@@ -407,12 +491,20 @@ function coletar(tabelaId, nomeId, dataId, titulo) {
 
     linhas.forEach((tr, i) => {
         const atividade = tr.cells[0].innerText.trim();
-        const status    = document.getElementById(`st_${tabelaId}_${i}`)?.value.trim() || '—';
-        const obs       = document.getElementById(`ob_${tabelaId}_${i}`)?.value.trim() || '—';
-        const cor       = status.toLowerCase().includes('pendente') ? '#c0392b' : '#27ae60';
+        const sel       = document.getElementById(`st_${tabelaId}_${i}`);
+        const val       = sel?.value || 'ok';
+        const label     = statusLabel[val] || val;
+        const isPend    = val === 'pendente';
 
-        texto += `${i+1}. *${atividade}*\n   Status: ${status}\n   Obs: ${obs}\n   ────────────\n\n`;
-        html  += `<tr><td>${i+1}. ${atividade}</td><td align="center" style="color:${cor};font-weight:bold">${status}</td><td>${obs.replace(/\n/g,'<br>')}</td></tr>`;
+        // Pega obs: se pendente usa o campo extra, senão o campo normal
+        const obs = isPend
+            ? (document.getElementById(`ob_pend_${tabelaId}_${i}`)?.value.trim() || '—')
+            : (document.getElementById(`ob_ok_${tabelaId}_${i}`)?.value.trim()   || '—');
+
+        const cor = isPend ? '#c0392b' : val === 'concluido' ? '#1a5276' : val === 'andamento' ? '#a04000' : '#1a7a43';
+
+        texto += `${i+1}. *${atividade}*\n   Status: ${label}\n   Obs: ${obs}\n   ────────────\n\n`;
+        html  += `<tr><td>${i+1}. ${atividade}</td><td align="center" style="color:${cor};font-weight:bold">${label}</td><td>${obs.replace(/\n/g,'<br>')}</td></tr>`;
     });
 
     texto += `━━━━━━━━━━━━━━━━━━━━\n🔒 Log Book – Sistema Automático`;
