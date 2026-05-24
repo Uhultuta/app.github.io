@@ -330,6 +330,7 @@
         .modal-img-wrap img { display: block; width: 100%; }
         .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
         .btn-download { background: #2c6fad; color: white; }
+        .btn-copiar   { background: #8e44ad; color: white; }
         .btn-fechar   { background: #888;    color: white; }
 
         @media (max-width: 600px) {
@@ -443,6 +444,7 @@
         </div>
         <div class="modal-actions">
             <button class="btn-download" id="btn-baixar">⬇️ Baixar e abrir WhatsApp</button>
+            <button class="btn-copiar"   id="btn-copiar">📋 Copiar imagem</button>
             <button class="btn-fechar"   id="btn-fechar">✕ Fechar</button>
         </div>
     </div>
@@ -798,7 +800,20 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 600);
     };
 
-    // Modal: fechar
+    // Modal: copiar imagem para clipboard
+    document.getElementById('btn-copiar').onclick = async () => {
+        try {
+            const blob = await fetch(imagemDataUrl).then(r => r.blob());
+            await navigator.clipboard.write([
+                new ClipboardItem({ 'image/png': blob })
+            ]);
+            toast('📋 Imagem copiada! Agora cole no WhatsApp com Ctrl+V.');
+        } catch (e) {
+            toast('❌ Seu navegador não suportou a cópia. Use o botão de baixar.', true);
+        }
+    };
+
+
     document.getElementById('btn-fechar').onclick = () => {
         document.getElementById('modal-backdrop').classList.remove('ativo');
     };
