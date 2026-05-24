@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Log Book - Hotel</title>
     <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
 
@@ -274,6 +275,63 @@
         @keyframes toastIn  { from { bottom: 0; opacity: 0; } to { bottom: 24px; opacity: 1; } }
         @keyframes toastOut { from { bottom: 24px; opacity: 1; } to { bottom: 0; opacity: 0; } }
 
+        /* Overlay de geração de imagem */
+        .overlay {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.55);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+            flex-direction: column;
+            gap: 14px;
+        }
+        .overlay.ativo { display: flex; }
+        .overlay p { color: white; font-size: 15px; font-weight: bold; }
+        .spinner {
+            width: 42px; height: 42px;
+            border: 4px solid rgba(255,255,255,0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* Modal de preview */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.7);
+            z-index: 3000;
+            align-items: center;
+            justify-content: center;
+        }
+        .modal-backdrop.ativo { display: flex; }
+        .modal {
+            background: white;
+            border-radius: 10px;
+            padding: 20px;
+            max-width: 92vw;
+            max-height: 90vh;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.4);
+        }
+        .modal h3 { font-size: 16px; color: #333; margin: 0; }
+        .modal-img-wrap {
+            overflow: auto;
+            max-height: 65vh;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+        .modal-img-wrap img { display: block; width: 100%; }
+        .modal-actions { display: flex; gap: 10px; flex-wrap: wrap; }
+        .btn-download { background: #2c6fad; color: white; }
+        .btn-fechar   { background: #888;    color: white; }
+
         @media (max-width: 600px) {
             .tab-btn { padding: 8px 14px; font-size: 13px; }
             button { padding: 9px 16px; font-size: 13px; }
@@ -369,6 +427,24 @@
         <button class="btn-whatsapp" id="waPassagem">📱 Enviar WhatsApp</button>
         <button class="btn-email" id="emailPassagem">✉️ Enviar E-mail</button>
         <button class="btn-ambos" id="ambosPassagem">🚀 WhatsApp + E-mail</button>
+    </div>
+</div>
+
+<div id="overlay" class="overlay">
+    <div class="spinner"></div>
+    <p>Gerando imagem do relatório...</p>
+</div>
+
+<div id="modal-backdrop" class="modal-backdrop">
+    <div class="modal">
+        <h3>📸 Imagem gerada — salve e envie pelo WhatsApp</h3>
+        <div class="modal-img-wrap">
+            <img id="modal-img" src="" alt="Relatório">
+        </div>
+        <div class="modal-actions">
+            <button class="btn-download" id="btn-baixar">⬇️ Baixar e abrir WhatsApp</button>
+            <button class="btn-fechar"   id="btn-fechar">✕ Fechar</button>
+        </div>
     </div>
 </div>
 
@@ -513,10 +589,111 @@ function coletar(tabelaId, nomeId, dataId, titulo) {
     return { texto, html, nome, data, hora };
 }
 
-// ======= WHATSAPP =======
-function enviarWA(texto) {
-    window.open(`https://wa.me/?text=${encodeURIComponent(texto)}`, '_blank');
-    toast('📱 WhatsApp aberto! Cole e envie para os destinatários.');
+// ======= GERAR IMAGEM DO RELATÓRIO =======
+const statusCor = { ok: '#1a7a43', pendente: '#c0392b', concluido: '#1a5276', andamento: '#a04000' };
+const statusBg  = { ok: '#f0faf4', pendente: '#fdf3f2', concluido: '#eaf4fb', andamento: '#fef9f0' };
+
+function construirHtmlRelatorio(tabelaId, titulo, nome, data, hora) {
+    const linhas = document.querySelectorAll(`#${tabelaId} tbody tr`);
+
+    let linhasHtml = '';
+    linhas.forEach((tr, i) => {
+        const atividade = tr.cells[0].innerText.trim();
+        const sel       = document.getElementById(`st_${tabelaId}_${i}`);
+        const val       = sel?.value || 'ok';
+        const label     = statusLabel[val] || val;
+        const isPend    = val === 'pendente';
+        const obs       = isPend
+            ? (document.getElementById(`ob_pend_${tabelaId}_${i}`)?.value.trim() || '')
+            : (document.getElementById(`ob_ok_${tabelaId}_${i}`)?.value.trim()   || '');
+        const cor  = statusCor[val]  || '#1a7a43';
+        const bg   = statusBg[val]   || '#f0faf4';
+        const bgTr = i % 2 === 0 ? '#ffffff' : '#f9f9f9';
+
+        linhasHtml += `
+        <tr style="background:${bgTr}">
+            <td style="padding:9px 12px;border-bottom:1px solid #e0e0e0;font-size:12px;color:#333;line-height:1.4;width:50%">${i+1}. ${atividade}</td>
+            <td style="padding:9px 12px;border-bottom:1px solid #e0e0e0;width:18%;text-align:center">
+                <span style="display:inline-block;padding:3px 10px;border-radius:12px;background:${bg};color:${cor};font-weight:bold;font-size:11px">${label}</span>
+            </td>
+            <td style="padding:9px 12px;border-bottom:1px solid #e0e0e0;font-size:12px;color:#555;width:32%">${obs || '<span style="color:#bbb">—</span>'}</td>
+        </tr>`;
+    });
+
+    return `
+    <div style="font-family:Arial,sans-serif;background:#f4f4f4;padding:24px;min-width:700px">
+        <div style="background:#34495e;border-radius:10px 10px 0 0;padding:20px 24px;color:white">
+            <div style="font-size:20px;font-weight:bold;margin-bottom:4px">🏨 ${titulo}</div>
+            <div style="font-size:12px;opacity:0.85">Sistema de Log Book — Hotel</div>
+        </div>
+        <div style="background:#2c3e50;padding:10px 24px;display:flex;gap:30px;color:white;font-size:12px;border-radius:0">
+            <span>👤 <b>${nome}</b></span>
+            <span>📅 <b>${data}</b></span>
+            <span>⏰ <b>${hora}</b></span>
+        </div>
+        <div style="background:white;border-radius:0 0 10px 10px;overflow:hidden;box-shadow:0 2px 8px rgba(0,0,0,0.1)">
+            <table style="width:100%;border-collapse:collapse">
+                <thead>
+                    <tr style="background:#ecf0f1">
+                        <th style="padding:10px 12px;text-align:left;font-size:12px;color:#555;font-weight:bold;border-bottom:2px solid #ddd">Atividade / Conferência</th>
+                        <th style="padding:10px 12px;text-align:center;font-size:12px;color:#555;font-weight:bold;border-bottom:2px solid #ddd">Status</th>
+                        <th style="padding:10px 12px;text-align:left;font-size:12px;color:#555;font-weight:bold;border-bottom:2px solid #ddd">Observações</th>
+                    </tr>
+                </thead>
+                <tbody>${linhasHtml}</tbody>
+            </table>
+        </div>
+        <div style="text-align:center;margin-top:12px;font-size:10px;color:#999">
+            Gerado automaticamente pelo Sistema de Log Book • ${hora}
+        </div>
+    </div>`;
+}
+
+let imagemDataUrl = '';
+let imagemNome    = '';
+
+async function gerarImagemWA(tabelaId, nomeId, dataId, titulo) {
+    const nome  = document.getElementById(nomeId).value.trim() || 'Não informado';
+    const dataV = document.getElementById(dataId).value;
+    const data  = dataV ? new Date(dataV + 'T12:00').toLocaleDateString('pt-BR') : 'Não informada';
+    const hora  = new Date().toLocaleTimeString('pt-BR');
+
+    // Mostrar overlay
+    document.getElementById('overlay').classList.add('ativo');
+
+    // Criar container off-screen
+    const container = document.createElement('div');
+    container.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:750px;z-index:-1;';
+    container.innerHTML = construirHtmlRelatorio(tabelaId, titulo, nome, data, hora);
+    document.body.appendChild(container);
+
+    try {
+        await new Promise(r => setTimeout(r, 100)); // aguarda render
+        const canvas = await html2canvas(container, {
+            scale: 2,
+            useCORS: true,
+            backgroundColor: '#f4f4f4',
+            width: 750,
+            windowWidth: 750
+        });
+        imagemDataUrl = canvas.toDataURL('image/png');
+        imagemNome    = `logbook_${titulo.replace(/\s+/g,'_')}_${data.replace(/\//g,'-')}.png`;
+
+        document.getElementById('modal-img').src = imagemDataUrl;
+        document.getElementById('overlay').classList.remove('ativo');
+        document.getElementById('modal-backdrop').classList.add('ativo');
+    } catch (e) {
+        document.getElementById('overlay').classList.remove('ativo');
+        toast('❌ Erro ao gerar imagem.', true);
+        console.error(e);
+    } finally {
+        document.body.removeChild(container);
+    }
+}
+
+// ======= WHATSAPP (agora gera imagem) =======
+function enviarWA(tabelaId, nomeId, dataId, titulo) {
+    gerarImagemWA(tabelaId, nomeId, dataId, titulo);
 }
 
 // ======= EMAIL =======
@@ -569,8 +746,7 @@ function bindBotoes(tipo) {
     const prefixo  = isA ? 'Auditoria' : 'Passagem';
 
     document.getElementById(`wa${prefixo}`).onclick = () => {
-        const { texto } = coletar(tabId, nomeId, dataId, titulo);
-        enviarWA(texto);
+        enviarWA(tabId, nomeId, dataId, titulo);
     };
 
     document.getElementById(`email${prefixo}`).onclick = async () => {
@@ -579,11 +755,12 @@ function bindBotoes(tipo) {
     };
 
     document.getElementById(`ambos${prefixo}`).onclick = async () => {
+        // Gera imagem para WA e envia e-mail em sequência
+        enviarWA(tabId, nomeId, dataId, titulo);
         const { texto, html, nome } = coletar(tabId, nomeId, dataId, titulo);
-        enviarWA(texto);
         setTimeout(async () => {
             await enviarEmail(document.getElementById(emailId).value, assunto, texto, html, nome);
-        }, 1000);
+        }, 800);
     };
 }
 
@@ -608,6 +785,30 @@ window.addEventListener('DOMContentLoaded', () => {
 
     bindBotoes('auditoria');
     bindBotoes('passagem');
+
+    // Modal: baixar imagem e abrir WhatsApp
+    document.getElementById('btn-baixar').onclick = () => {
+        const a = document.createElement('a');
+        a.href     = imagemDataUrl;
+        a.download = imagemNome;
+        a.click();
+        setTimeout(() => {
+            window.open('https://web.whatsapp.com', '_blank');
+            toast('📥 Imagem salva! Anexe no WhatsApp que acabou de abrir.');
+        }, 600);
+    };
+
+    // Modal: fechar
+    document.getElementById('btn-fechar').onclick = () => {
+        document.getElementById('modal-backdrop').classList.remove('ativo');
+    };
+
+    // Fechar clicando fora do modal
+    document.getElementById('modal-backdrop').onclick = (e) => {
+        if (e.target === document.getElementById('modal-backdrop')) {
+            document.getElementById('modal-backdrop').classList.remove('ativo');
+        }
+    };
 });
 </script>
 </body>
