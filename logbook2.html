@@ -31,7 +31,6 @@
             margin-bottom: 20px;
         }
 
-        /* Abas */
         .tabs {
             display: flex;
             border-bottom: 2px solid #ccc;
@@ -71,7 +70,6 @@
             padding-left: 10px;
         }
 
-        /* Tabela */
         .table-wrapper {
             overflow-x: auto;
             margin-bottom: 20px;
@@ -110,7 +108,6 @@
             line-height: 1.4;
         }
 
-        /* Inputs dentro da tabela */
         td input[type="text"], td select, td textarea {
             width: 100%;
             padding: 6px 8px;
@@ -133,7 +130,6 @@
             border-color: #2c6fad;
         }
 
-        /* Select de status */
         td select {
             appearance: none;
             -webkit-appearance: none;
@@ -149,7 +145,6 @@
         td select.status-concluido { border-color: #2980b9; color: #1a5276; background-color: #eaf4fb; font-weight: bold; }
         td select.status-andamento { border-color: #e67e22; color: #a04000; background-color: #fef9f0; font-weight: bold; }
 
-        /* Campo de observação expansível */
         .obs-wrapper {
             display: flex;
             flex-direction: column;
@@ -179,7 +174,6 @@
             border-color: #c0392b;
         }
 
-        /* Formulário inferior */
         .form-card {
             background: white;
             border: 1px solid #ddd;
@@ -219,12 +213,6 @@
             border-color: #2c6fad;
         }
 
-        .form-group small {
-            font-size: 11px;
-            color: #888;
-        }
-
-        /* Botões de ação */
         .action-buttons {
             display: flex;
             gap: 10px;
@@ -246,9 +234,7 @@
 
         .btn-whatsapp { background: #25D366; color: white; }
         .btn-email    { background: #2c6fad; color: white; }
-        .btn-ambos    { background: #e67e22; color: white; }
 
-        /* Toast */
         .toast {
             visibility: hidden;
             min-width: 280px;
@@ -275,7 +261,6 @@
         @keyframes toastIn  { from { bottom: 0; opacity: 0; } to { bottom: 24px; opacity: 1; } }
         @keyframes toastOut { from { bottom: 24px; opacity: 1; } to { bottom: 0; opacity: 0; } }
 
-        /* Overlay de geração de imagem */
         .overlay {
             display: none;
             position: fixed;
@@ -298,7 +283,6 @@
         }
         @keyframes spin { to { transform: rotate(360deg); } }
 
-        /* Modal de preview */
         .modal-backdrop {
             display: none;
             position: fixed;
@@ -375,18 +359,12 @@
                 <label>📅 Data:</label>
                 <input type="date" id="auditor-data">
             </div>
-            <div class="form-group">
-                <label>📧 E-mail(s) destino:</label>
-                <input type="text" id="auditor-email" placeholder="email@hotel.com, gerente@hotel.com">
-                <small>Separe múltiplos e-mails por vírgula</small>
-            </div>
         </div>
     </div>
 
     <div class="action-buttons">
-        <button class="btn-whatsapp" id="waAuditoria">📱 Enviar WhatsApp</button>
-        <button class="btn-email" id="emailAuditoria">✉️ Enviar E-mail</button>
-        <button class="btn-ambos" id="ambosAuditoria">🚀 WhatsApp + E-mail</button>
+        <button class="btn-whatsapp" id="waAuditoria">📱 WhatsApp + ✉️ E-mail</button>
+        <button class="btn-email" id="emailAuditoria">✉️ Apenas E-mail</button>
     </div>
 </div>
 
@@ -416,18 +394,12 @@
                 <label>📅 Data:</label>
                 <input type="date" id="passagem-data">
             </div>
-            <div class="form-group">
-                <label>📧 E-mail(s) destino:</label>
-                <input type="text" id="passagem-email" placeholder="email@hotel.com, supervisor@hotel.com">
-                <small>Separe múltiplos e-mails por vírgula</small>
-            </div>
         </div>
     </div>
 
     <div class="action-buttons">
-        <button class="btn-whatsapp" id="waPassagem">📱 Enviar WhatsApp</button>
-        <button class="btn-email" id="emailPassagem">✉️ Enviar E-mail</button>
-        <button class="btn-ambos" id="ambosPassagem">🚀 WhatsApp + E-mail</button>
+        <button class="btn-whatsapp" id="waPassagem">📱 WhatsApp + ✉️ E-mail</button>
+        <button class="btn-email" id="emailPassagem">✉️ Apenas E-mail</button>
     </div>
 </div>
 
@@ -504,7 +476,6 @@ function preencherTabela(tabelaId, itens) {
         const tr = tbody.insertRow();
         tr.insertCell(0).innerHTML = item;
 
-        // Coluna de status: select colorido
         tr.insertCell(1).innerHTML = `
             <select id="st_${tabelaId}_${i}" class="status-ok" onchange="onStatusChange(this,'${tabelaId}',${i})">
                 <option value="ok">✅ OK</option>
@@ -513,7 +484,6 @@ function preencherTabela(tabelaId, itens) {
                 <option value="andamento">🔄 Em andamento</option>
             </select>`;
 
-        // Coluna de observações: sempre visível para OK, expansível para pendente
         tr.insertCell(2).innerHTML = `
             <div class="obs-wrapper">
                 <textarea id="ob_ok_${tabelaId}_${i}" placeholder="Observações opcionais..."></textarea>
@@ -527,14 +497,12 @@ function preencherTabela(tabelaId, itens) {
 // ======= MUDANÇA DE STATUS =======
 function onStatusChange(sel, tabelaId, i) {
     const val = sel.value;
-    // Atualiza cor do select
     sel.className = '';
     if (val === 'ok')        sel.classList.add('status-ok');
     if (val === 'pendente')  sel.classList.add('status-pendente');
     if (val === 'concluido') sel.classList.add('status-concluido');
     if (val === 'andamento') sel.classList.add('status-andamento');
 
-    // Mostra campo extra apenas para pendente
     const pendWrap = document.getElementById(`ob_pend_wrap_${tabelaId}_${i}`);
     if (val === 'pendente') {
         pendWrap.classList.add('visivel');
@@ -574,7 +542,6 @@ function coletar(tabelaId, nomeId, dataId, titulo) {
         const label     = statusLabel[val] || val;
         const isPend    = val === 'pendente';
 
-        // Pega obs: se pendente usa o campo extra, senão o campo normal
         const obs = isPend
             ? (document.getElementById(`ob_pend_${tabelaId}_${i}`)?.value.trim() || '—')
             : (document.getElementById(`ob_ok_${tabelaId}_${i}`)?.value.trim()   || '—');
@@ -654,23 +621,24 @@ function construirHtmlRelatorio(tabelaId, titulo, nome, data, hora) {
 let imagemDataUrl = '';
 let imagemNome    = '';
 
-async function gerarImagemWA(tabelaId, nomeId, dataId, titulo) {
+// Armazena dados do e-mail para enviar após modal fechar (quando chamado via WA+Email)
+let pendingEmail = null;
+
+async function gerarImagemWA(tabelaId, nomeId, dataId, titulo, enviarEmailTambem) {
     const nome  = document.getElementById(nomeId).value.trim() || 'Não informado';
     const dataV = document.getElementById(dataId).value;
     const data  = dataV ? new Date(dataV + 'T12:00').toLocaleDateString('pt-BR') : 'Não informada';
     const hora  = new Date().toLocaleTimeString('pt-BR');
 
-    // Mostrar overlay
     document.getElementById('overlay').classList.add('ativo');
 
-    // Criar container off-screen
     const container = document.createElement('div');
     container.style.cssText = 'position:fixed;top:-9999px;left:-9999px;width:750px;z-index:-1;';
     container.innerHTML = construirHtmlRelatorio(tabelaId, titulo, nome, data, hora);
     document.body.appendChild(container);
 
     try {
-        await new Promise(r => setTimeout(r, 100)); // aguarda render
+        await new Promise(r => setTimeout(r, 100));
         const canvas = await html2canvas(container, {
             scale: 2,
             useCORS: true,
@@ -684,6 +652,13 @@ async function gerarImagemWA(tabelaId, nomeId, dataId, titulo) {
         document.getElementById('modal-img').src = imagemDataUrl;
         document.getElementById('overlay').classList.remove('ativo');
         document.getElementById('modal-backdrop').classList.add('ativo');
+
+        // Se deve enviar e-mail junto, dispara em paralelo
+        if (enviarEmailTambem) {
+            const { texto, html } = coletar(tabelaId, nomeId, dataId, titulo);
+            const assunto = titulo;
+            setTimeout(() => enviarEmail(assunto, texto, html, nome), 500);
+        }
     } catch (e) {
         document.getElementById('overlay').classList.remove('ativo');
         toast('❌ Erro ao gerar imagem.', true);
@@ -693,21 +668,11 @@ async function gerarImagemWA(tabelaId, nomeId, dataId, titulo) {
     }
 }
 
-// ======= WHATSAPP (agora gera imagem) =======
-function enviarWA(tabelaId, nomeId, dataId, titulo) {
-    gerarImagemWA(tabelaId, nomeId, dataId, titulo);
-}
-
 // ======= EMAIL =======
-async function enviarEmail(emailDest, assunto, texto, html, nome) {
-    if (!emailDest?.trim()) {
-        toast('❌ Informe pelo menos um e-mail de destino.', true);
-        return false;
-    }
+async function enviarEmail(assunto, texto, html, nome) {
     toast('📧 Enviando e-mail... aguarde.');
     try {
         const r = await emailjs.send(EMAILJS.SERVICE_ID, EMAILJS.TEMPLATE_ID, {
-            to_email:     emailDest.trim(),
             subject:      `📋 ${assunto} – ${new Date().toLocaleDateString('pt-BR')}`,
             message_text: texto,
             message_html: html,
@@ -716,7 +681,7 @@ async function enviarEmail(emailDest, assunto, texto, html, nome) {
             hotel_name:   'Sistema de Log Book'
         });
         if (r.status === 200) {
-            toast(`✅ E-mail enviado para: ${emailDest.trim()}`);
+            toast(`✅ E-mail enviado com sucesso!`);
             return true;
         }
         throw new Error('Resposta inesperada');
@@ -742,27 +707,19 @@ function bindBotoes(tipo) {
     const tabId    = isA ? 'tabela-auditoria' : 'tabela-passagem';
     const nomeId   = isA ? 'auditor-nome'     : 'passagem-nome';
     const dataId   = isA ? 'auditor-data'     : 'passagem-data';
-    const emailId  = isA ? 'auditor-email'    : 'passagem-email';
     const titulo   = isA ? 'AUDITORIA NOTURNA – LOG BOOK' : 'PASSAGEM DE TURNO – MANHÃ';
     const assunto  = isA ? 'Log Book – Auditoria Hotel'   : 'Log Book – Passagem de Turno';
     const prefixo  = isA ? 'Auditoria' : 'Passagem';
 
+    // Botão principal: WhatsApp + E-mail juntos
     document.getElementById(`wa${prefixo}`).onclick = () => {
-        enviarWA(tabId, nomeId, dataId, titulo);
+        gerarImagemWA(tabId, nomeId, dataId, titulo, true);
     };
 
+    // Botão secundário: apenas e-mail
     document.getElementById(`email${prefixo}`).onclick = async () => {
         const { texto, html, nome } = coletar(tabId, nomeId, dataId, titulo);
-        await enviarEmail(document.getElementById(emailId).value, assunto, texto, html, nome);
-    };
-
-    document.getElementById(`ambos${prefixo}`).onclick = async () => {
-        // Gera imagem para WA e envia e-mail em sequência
-        enviarWA(tabId, nomeId, dataId, titulo);
-        const { texto, html, nome } = coletar(tabId, nomeId, dataId, titulo);
-        setTimeout(async () => {
-            await enviarEmail(document.getElementById(emailId).value, assunto, texto, html, nome);
-        }, 800);
+        await enviarEmail(assunto, texto, html, nome);
     };
 }
 
@@ -788,7 +745,6 @@ window.addEventListener('DOMContentLoaded', () => {
     bindBotoes('auditoria');
     bindBotoes('passagem');
 
-    // Modal: baixar imagem e abrir WhatsApp
     document.getElementById('btn-baixar').onclick = () => {
         const a = document.createElement('a');
         a.href     = imagemDataUrl;
@@ -800,7 +756,6 @@ window.addEventListener('DOMContentLoaded', () => {
         }, 600);
     };
 
-    // Modal: copiar imagem para clipboard
     document.getElementById('btn-copiar').onclick = async () => {
         try {
             const blob = await fetch(imagemDataUrl).then(r => r.blob());
@@ -813,12 +768,10 @@ window.addEventListener('DOMContentLoaded', () => {
         }
     };
 
-
     document.getElementById('btn-fechar').onclick = () => {
         document.getElementById('modal-backdrop').classList.remove('ativo');
     };
 
-    // Fechar clicando fora do modal
     document.getElementById('modal-backdrop').onclick = (e) => {
         if (e.target === document.getElementById('modal-backdrop')) {
             document.getElementById('modal-backdrop').classList.remove('ativo');
