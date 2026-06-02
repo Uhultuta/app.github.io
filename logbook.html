@@ -234,7 +234,6 @@
 
         .btn-whatsapp { background: #25D366; color: white; }
         .btn-email    { background: #2c6fad; color: white; }
-        .btn-ambos    { background: #e67e22; color: white; }
 
         .toast {
             visibility: hidden;
@@ -364,9 +363,8 @@
     </div>
 
     <div class="action-buttons">
-        <button class="btn-whatsapp" id="waAuditoria">📱 Enviar WhatsApp</button>
-        <button class="btn-email" id="emailAuditoria">✉️ Enviar E-mail</button>
-        <button class="btn-ambos" id="ambosAuditoria">🚀 WhatsApp + E-mail</button>
+        <button class="btn-whatsapp" id="waAuditoria">📱 WhatsApp + ✉️ E-mail</button>
+        <button class="btn-email" id="emailAuditoria">✉️ Apenas E-mail</button>
     </div>
 </div>
 
@@ -400,9 +398,8 @@
     </div>
 
     <div class="action-buttons">
-        <button class="btn-whatsapp" id="waPassagem">📱 Enviar WhatsApp</button>
-        <button class="btn-email" id="emailPassagem">✉️ Enviar E-mail</button>
-        <button class="btn-ambos" id="ambosPassagem">🚀 WhatsApp + E-mail</button>
+        <button class="btn-whatsapp" id="waPassagem">📱 WhatsApp + ✉️ E-mail</button>
+        <button class="btn-email" id="emailPassagem">✉️ Apenas E-mail</button>
     </div>
 </div>
 
@@ -624,7 +621,10 @@ function construirHtmlRelatorio(tabelaId, titulo, nome, data, hora) {
 let imagemDataUrl = '';
 let imagemNome    = '';
 
-async function gerarImagemWA(tabelaId, nomeId, dataId, titulo) {
+// Armazena dados do e-mail para enviar após modal fechar (quando chamado via WA+Email)
+let pendingEmail = null;
+
+async function gerarImagemWA(tabelaId, nomeId, dataId, titulo, enviarEmailTambem) {
     const nome  = document.getElementById(nomeId).value.trim() || 'Não informado';
     const dataV = document.getElementById(dataId).value;
     const data  = dataV ? new Date(dataV + 'T12:00').toLocaleDateString('pt-BR') : 'Não informada';
@@ -652,6 +652,13 @@ async function gerarImagemWA(tabelaId, nomeId, dataId, titulo) {
         document.getElementById('modal-img').src = imagemDataUrl;
         document.getElementById('overlay').classList.remove('ativo');
         document.getElementById('modal-backdrop').classList.add('ativo');
+
+        // Se deve enviar e-mail junto, dispara em paralelo
+        if (enviarEmailTambem) {
+            const { texto, html } = coletar(tabelaId, nomeId, dataId, titulo);
+            const assunto = titulo;
+            setTimeout(() => enviarEmail(assunto, texto, html, nome), 500);
+        }
     } catch (e) {
         document.getElementById('overlay').classList.remove('ativo');
         toast('❌ Erro ao gerar imagem.', true);
@@ -659,11 +666,6 @@ async function gerarImagemWA(tabelaId, nomeId, dataId, titulo) {
     } finally {
         document.body.removeChild(container);
     }
-}
-
-// ======= WHATSAPP =======
-function enviarWA(tabelaId, nomeId, dataId, titulo) {
-    gerarImagemWA(tabelaId, nomeId, dataId, titulo);
 }
 
 // ======= EMAIL =======
@@ -709,21 +711,15 @@ function bindBotoes(tipo) {
     const assunto  = isA ? 'Log Book – Auditoria Hotel'   : 'Log Book – Passagem de Turno';
     const prefixo  = isA ? 'Auditoria' : 'Passagem';
 
+    // Botão principal: WhatsApp + E-mail juntos
     document.getElementById(`wa${prefixo}`).onclick = () => {
-        enviarWA(tabId, nomeId, dataId, titulo);
+        gerarImagemWA(tabId, nomeId, dataId, titulo, true);
     };
 
+    // Botão secundário: apenas e-mail
     document.getElementById(`email${prefixo}`).onclick = async () => {
         const { texto, html, nome } = coletar(tabId, nomeId, dataId, titulo);
         await enviarEmail(assunto, texto, html, nome);
-    };
-
-    document.getElementById(`ambos${prefixo}`).onclick = async () => {
-        enviarWA(tabId, nomeId, dataId, titulo);
-        const { texto, html, nome } = coletar(tabId, nomeId, dataId, titulo);
-        setTimeout(async () => {
-            await enviarEmail(assunto, texto, html, nome);
-        }, 800);
     };
 }
 
