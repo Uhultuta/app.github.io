@@ -53,61 +53,70 @@
         .toast-msg.show { opacity: 1; }
         .voucher-container { display: flex; justify-content: center; }
         
-        /* Estilos para a grid de hóspedes */
+        /* ===== GRID DE HÓSPEDES MAIS COMPACTA E NOMES DESTACADOS ===== */
         .guests-grid {
             display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 8px;
-            margin-top: 6px;
+            grid-template-columns: repeat(3, 1fr); /* 3 colunas para compactar mais */
+            gap: 4px;
+            margin-top: 4px;
         }
         .guest-card {
-            background: #f8f9fc;
-            border-radius: 10px;
-            padding: 6px 8px;
+            background: #ffffff;
+            border-radius: 6px;
+            padding: 3px 6px;
             display: flex;
             align-items: center;
-            gap: 8px;
-            border: 1px solid #e8edf2;
-            transition: all 0.2s;
+            gap: 5px;
+            border: 1px solid #e2e8f0;
+            transition: all 0.15s;
+            min-height: 26px;
+        }
+        .guest-card:hover {
+            border-color: #f5a623;
+            background: #fffdf5;
         }
         .guest-icon {
             background: #f5a62320;
-            width: 28px;
-            height: 28px;
+            width: 18px;
+            height: 18px;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 14px;
+            font-size: 10px;
             flex-shrink: 0;
+            color: #b87a10;
         }
         .guest-name {
-            font-size: 12px;
-            font-weight: 600;
-            color: #1e2f5e;
-            line-height: 1.3;
+            font-size: 12px;          /* nome maior */
+            font-weight: 800;         /* mais destacado */
+            color: #0f1f3d;           /* cor mais escura */
+            line-height: 1.2;
             word-break: break-word;
+            letter-spacing: 0.1px;
+            text-transform: uppercase; /* opcional: deixa mais imponente */
         }
         .guests-header {
             display: flex;
             align-items: center;
-            gap: 8px;
-            margin-bottom: 10px;
+            gap: 6px;
+            margin-bottom: 6px;
         }
         .guests-header span:first-child {
-            font-size: 12px;
+            font-size: 10px;
             font-weight: 800;
             color: #1e2f5e;
             background: #eef2f8;
-            padding: 3px 12px;
+            padding: 2px 10px;
             border-radius: 20px;
+            letter-spacing: 0.3px;
         }
         .guest-count-badge {
             background: #f5a623;
             color: #1e2f5e;
-            font-size: 10px;
+            font-size: 9px;
             font-weight: 700;
-            padding: 2px 8px;
+            padding: 1px 7px;
             border-radius: 20px;
         }
     </style>
@@ -306,7 +315,7 @@
     
     function buildGuestsGrid(guests) {
         if (!guests || guests.length === 0) {
-            return '<div style="font-size: 11px; color: #888; padding: 5px;">Nenhum hóspede listado</div>';
+            return '<div style="font-size: 10px; color: #888; padding: 3px;">Nenhum hóspede listado</div>';
         }
         
         let guestsHtml = '<div class="guests-grid">';
@@ -334,11 +343,11 @@
             const guestCount = b.guests.length;
             
             reservasListHtml += `
-                <div style="border-bottom: 1px solid #e2e8f0; padding: 14px 0;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 12px;">
-                        <span style="font-weight: 800; color: #1e2f5e; font-size: 14px;">📌 Nº ${b.numero}</span>
-                        <span style="font-size: 11px; color: #2d5a2c; background: #e8f0e8; padding: 3px 10px; border-radius: 20px; font-weight: 600;">📅 Check-in: ${checkinDisplay} → Check-out: ${checkoutDisplay}</span>
-                        <span style="font-weight: 800; color: #1e6f3f; font-size: 13px; background: #e6f4ea; padding: 4px 10px; border-radius: 20px;">💰 ${valorStr}</span>
+                <div style="border-bottom: 1px solid #e2e8f0; padding: 10px 0;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
+                        <span style="font-weight: 800; color: #1e2f5e; font-size: 13px;">📌 Nº ${b.numero}</span>
+                        <span style="font-size: 10px; color: #2d5a2c; background: #e8f0e8; padding: 2px 8px; border-radius: 20px; font-weight: 600;">📅 Check-in: ${checkinDisplay} → Check-out: ${checkoutDisplay}</span>
+                        <span style="font-weight: 800; color: #1e6f3f; font-size: 12px; background: #e6f4ea; padding: 3px 8px; border-radius: 20px;">💰 ${valorStr}</span>
                     </div>
                     <div class="guests-header">
                         <span>🏷️ HÓSPEDES</span>
