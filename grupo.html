@@ -38,13 +38,16 @@
         .success { color: #2e7d32; }
         .error { color: #c2410c; }
         .info { color: #1e5f8e; }
-        .voucher-actions { display: flex; justify-content: flex-end; margin-bottom: 15px; }
-        .btn-copiar {
-            background: #25a35c; color: white; border: none; padding: 8px 20px;
-            border-radius: 40px; font-weight: 600; font-size: 0.85rem; cursor: pointer;
-            display: inline-flex; align-items: center; gap: 6px;
+        .voucher-actions { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 15px; }
+        .btn-copiar, .btn-pdf {
+            border: none; padding: 8px 20px; border-radius: 40px; font-weight: 600;
+            font-size: 0.85rem; cursor: pointer; display: inline-flex;
+            align-items: center; gap: 6px;
         }
+        .btn-copiar { background: #25a35c; color: white; }
         .btn-copiar:hover { background: #1e8a4d; }
+        .btn-pdf { background: #c0392b; color: white; }
+        .btn-pdf:hover { background: #a93226; }
         .toast-msg {
             position: fixed; bottom: 30px; right: 30px; background: #1e2f5e;
             color: white; padding: 12px 24px; border-radius: 40px; font-size: 13px;
@@ -52,73 +55,25 @@
         }
         .toast-msg.show { opacity: 1; }
         .voucher-container { display: flex; justify-content: center; }
-        
-        /* ===== GRID DE HÓSPEDES MAIS COMPACTA E NOMES DESTACADOS ===== */
-        .guests-grid {
-            display: grid;
-            grid-template-columns: repeat(3, 1fr); /* 3 colunas para compactar mais */
-            gap: 4px;
-            margin-top: 4px;
+
+        /* ===== ESTILO PLANILHA ULTRA COMPACTA ===== */
+        .sheet { width: 100%; border-collapse: collapse; font-size: 10px; font-family: 'Consolas', 'Monaco', monospace; }
+        .sheet-header {
+            background: #1e2f5e; color: #ffffff; font-weight: 700; font-size: 9px;
+            text-transform: uppercase; letter-spacing: 0.3px; padding: 3px 5px;
+            text-align: left; border-bottom: 1px solid #1e2f5e;
         }
-        .guest-card {
-            background: #ffffff;
-            border-radius: 6px;
-            padding: 3px 6px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-            border: 1px solid #e2e8f0;
-            transition: all 0.15s;
-            min-height: 26px;
+        .sheet-row td { padding: 3px 5px; border-bottom: 1px solid #e8edf3; vertical-align: top; color: #1e2f5e; }
+        .sheet-row:nth-child(even) td { background: #f8fafc; }
+        .sheet-guests { color: #0f1f3d; font-size: 10px; line-height: 1.4; }
+        .sheet-guests .g { display: inline; font-weight: 600; color: #0f1f3d; }
+        .sheet-guests .sep { color: #c0c9d6; margin: 0 4px; font-weight: 400; }
+        .sheet-count {
+            display: inline-block; background: #f5a623; color: #1e2f5e; font-size: 8px;
+            font-weight: 700; padding: 0 4px; border-radius: 8px; margin-left: 4px;
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
-        .guest-card:hover {
-            border-color: #f5a623;
-            background: #fffdf5;
-        }
-        .guest-icon {
-            background: #f5a62320;
-            width: 18px;
-            height: 18px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 10px;
-            flex-shrink: 0;
-            color: #b87a10;
-        }
-        .guest-name {
-            font-size: 12px;          /* nome maior */
-            font-weight: 800;         /* mais destacado */
-            color: #0f1f3d;           /* cor mais escura */
-            line-height: 1.2;
-            word-break: break-word;
-            letter-spacing: 0.1px;
-            text-transform: uppercase; /* opcional: deixa mais imponente */
-        }
-        .guests-header {
-            display: flex;
-            align-items: center;
-            gap: 6px;
-            margin-bottom: 6px;
-        }
-        .guests-header span:first-child {
-            font-size: 10px;
-            font-weight: 800;
-            color: #1e2f5e;
-            background: #eef2f8;
-            padding: 2px 10px;
-            border-radius: 20px;
-            letter-spacing: 0.3px;
-        }
-        .guest-count-badge {
-            background: #f5a623;
-            color: #1e2f5e;
-            font-size: 9px;
-            font-weight: 700;
-            padding: 1px 7px;
-            border-radius: 20px;
-        }
+        .sheet-empresa { color: #6c757d; font-size: 8px; font-style: italic; margin-top: 1px; display: block; }
     </style>
 </head>
 <body>
@@ -175,8 +130,7 @@
         for (let i = 0; i < Math.min(20, jsonData.length); i++) {
             const row = jsonData[i];
             if (row && (row[0] === "Nº" || (row[0] && row[0].toString().trim() === "Nº"))) {
-                headerRow = row;
-                break;
+                headerRow = row; break;
             }
         }
         if (!headerRow) return map;
@@ -184,7 +138,6 @@
         const idxNum = headerRow.indexOf("Nº");
         const idxTotal = headerRow.indexOf("Total Previsto");
         const idxEmpresa = headerRow.indexOf("Empresa");
-        
         if (idxNum === -1) return map;
         
         for (let i = headerRow.indexOf("Nº") + 1; i < jsonData.length; i++) {
@@ -196,7 +149,8 @@
             let total = 0;
             if (idxTotal >= 0 && row[idxTotal]) {
                 const valStr = String(row[idxTotal]).replace(/[^0-9,.-]/g, '').replace(',', '.');
-                total = parseFloat(valStr) || 0;
+                const parsed = parseFloat(valStr);
+                total = isNaN(parsed) ? 0 : parsed;
             }
             const empresa = (idxEmpresa >= 0 && row[idxEmpresa]) ? String(row[idxEmpresa]).trim() : "UNIMED LESTE FLUMINENSE";
             map.set(num, { total, empresa });
@@ -220,11 +174,8 @@
                 const num = String(numRaw).trim();
                 const checkin = String(checkinRaw).trim();
                 let checkout = "";
-                if (row[9] && row[9].trim) {
-                    checkout = String(row[9]).trim();
-                } else if (row[9]) {
-                    checkout = String(row[9]).trim();
-                }
+                if (row[9] && row[9].trim) checkout = String(row[9]).trim();
+                else if (row[9]) checkout = String(row[9]).trim();
                 
                 if (!checkout.match(/\d{2}\/\d{2}\/\d{4}/)) {
                     if (row[10] && String(row[10]).match(/\d{2}\/\d{2}\/\d{4}/)) {
@@ -251,9 +202,7 @@
                 
                 map.set(num, { guests, checkin, checkout });
                 i = j;
-            } else {
-                i++;
-            }
+            } else { i++; }
         }
         return map;
     }
@@ -261,31 +210,42 @@
     function processFile(file, areaCode, statusId, nameId) {
         const reader = new FileReader();
         reader.onload = function(e) {
-            const data = new Uint8Array(e.target.result);
-            const workbook = XLSX.read(data, { type: 'array' });
-            const sheet = workbook.Sheets[workbook.SheetNames[0]];
-            const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
-            
-            const tipo = identifySheetType(jsonData);
-            let extractedData = null;
-            
-            if (tipo === "VALORES") {
-                extractedData = extractValoresData(jsonData);
-                document.getElementById(statusId).innerHTML = `✅ VALORES (${extractedData.size} reservas)`;
-            } else {
-                extractedData = extractHospedesData(jsonData);
-                document.getElementById(statusId).innerHTML = `✅ HÓSPEDES (${extractedData.size} reservas)`;
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+                
+                const tipo = identifySheetType(jsonData);
+                let extractedData = null;
+                
+                if (tipo === "VALORES") {
+                    extractedData = extractValoresData(jsonData);
+                    document.getElementById(statusId).innerHTML = `✅ VALORES (${extractedData.size} reservas)`;
+                } else {
+                    extractedData = extractHospedesData(jsonData);
+                    document.getElementById(statusId).innerHTML = `✅ HÓSPEDES (${extractedData.size} reservas)`;
+                }
+                
+                document.getElementById(nameId).innerHTML = `📄 ${file.name}`;
+                document.getElementById(statusId).style.color = "#2e7d32";
+                
+                if (areaCode === "area1") file1Data = { tipo, dados: extractedData };
+                else file2Data = { tipo, dados: extractedData };
+                
+                checkReadyToProcess();
+            } catch (error) {
+                console.error("Erro ao processar arquivo:", error);
+                document.getElementById(statusId).innerHTML = `❌ Erro ao ler arquivo`;
+                document.getElementById(statusId).style.color = "#c2410c";
+                if (areaCode === "area1") file1Data = null; else file2Data = null;
+                checkReadyToProcess();
             }
-            
-            document.getElementById(nameId).innerHTML = `📄 ${file.name}`;
-            document.getElementById(statusId).style.color = "#2e7d32";
-            
-            if (areaCode === "area1") {
-                file1Data = { tipo, dados: extractedData };
-            } else {
-                file2Data = { tipo, dados: extractedData };
-            }
-            
+        };
+        reader.onerror = function() {
+            document.getElementById(statusId).innerHTML = `❌ Erro de leitura`;
+            document.getElementById(statusId).style.color = "#c2410c";
+            if (areaCode === "area1") file1Data = null; else file2Data = null;
             checkReadyToProcess();
         };
         reader.readAsArrayBuffer(file);
@@ -313,52 +273,55 @@
         }
     }
     
-    function buildGuestsGrid(guests) {
-        if (!guests || guests.length === 0) {
-            return '<div style="font-size: 10px; color: #888; padding: 3px;">Nenhum hóspede listado</div>';
-        }
-        
-        let guestsHtml = '<div class="guests-grid">';
-        guests.forEach(guest => {
-            guestsHtml += `
-                <div class="guest-card">
-                    <div class="guest-icon">👤</div>
-                    <div class="guest-name">${escapeHtml(guest)}</div>
-                </div>
-            `;
-        });
-        guestsHtml += '</div>';
-        return guestsHtml;
+    function buildGuestsInline(guests) {
+        if (!guests || guests.length === 0) return '<span style="color:#999; font-size:9px;">—</span>';
+        return guests.map(g => `<span class="g">${escapeHtml(g)}</span>`).join('<span class="sep">•</span>');
     }
     
     function buildVoucherElement(bookings, totalGeral, empresaPrincipal) {
         const totalGeralStr = `R$ ${totalGeral.toFixed(2).replace('.',',')}`;
         
-        let reservasListHtml = '';
-        bookings.forEach(b => {
-            const guestsGridHtml = buildGuestsGrid(b.guests);
+        // ===== TABELA ESTILO PLANILHA ULTRA COMPACTA =====
+        let reservasListHtml = `
+<TABLE class="sheet" cellSpacing=0 cellPadding=0 width="100%" style="border-collapse:collapse; font-size:10px; font-family:Consolas,Monaco,monospace;">
+<THEAD>
+<TR>
+<TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:left; width:8%;">Nº</TH>
+<TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:center; width:12%;">Check-in</TH>
+<TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:center; width:12%;">Check-out</TH>
+<TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:right; width:13%;">Valor</TH>
+<TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:left; width:55%;">Hóspedes</TH>
+</TR>
+</THEAD>
+<TBODY>
+`;
+
+        bookings.forEach((b, idx) => {
+            const guestsInline = buildGuestsInline(b.guests);
             const valorStr = b.total > 0 ? `R$ ${b.total.toFixed(2).replace('.',',')}` : "—";
             const checkinDisplay = b.checkin || "—";
             const checkoutDisplay = b.checkout || "—";
+            const bg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+            const empresaTag = b.empresa ? `<span style="color:#6c757d; font-size:8px; font-style:italic; display:block; margin-top:1px;">${escapeHtml(b.empresa)}</span>` : '';
             const guestCount = b.guests.length;
             
             reservasListHtml += `
-                <div style="border-bottom: 1px solid #e2e8f0; padding: 10px 0;">
-                    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
-                        <span style="font-weight: 800; color: #1e2f5e; font-size: 13px;">📌 Nº ${b.numero}</span>
-                        <span style="font-size: 10px; color: #2d5a2c; background: #e8f0e8; padding: 2px 8px; border-radius: 20px; font-weight: 600;">📅 Check-in: ${checkinDisplay} → Check-out: ${checkoutDisplay}</span>
-                        <span style="font-weight: 800; color: #1e6f3f; font-size: 12px; background: #e6f4ea; padding: 3px 8px; border-radius: 20px;">💰 ${valorStr}</span>
-                    </div>
-                    <div class="guests-header">
-                        <span>🏷️ HÓSPEDES</span>
-                        <span class="guest-count-badge">${guestCount} ${guestCount === 1 ? 'hóspede' : 'hóspedes'}</span>
-                    </div>
-                    ${guestsGridHtml}
-                </div>
-            `;
+<TR style="background:${bg};">
+<TD style="padding:3px 5px; border-bottom:1px solid #e8edf3; font-weight:800; color:#1e2f5e; font-size:11px; white-space:nowrap; vertical-align:top;">${b.numero}</TD>
+<TD style="padding:3px 5px; border-bottom:1px solid #e8edf3; text-align:center; color:#2c3e5c; font-size:9px; white-space:nowrap; vertical-align:top;">${checkinDisplay}</TD>
+<TD style="padding:3px 5px; border-bottom:1px solid #e8edf3; text-align:center; color:#2c3e5c; font-size:9px; white-space:nowrap; vertical-align:top;">${checkoutDisplay}</TD>
+<TD style="padding:3px 5px; border-bottom:1px solid #e8edf3; text-align:right; font-weight:700; color:#1e6f3f; white-space:nowrap; vertical-align:top; font-size:10px;">${valorStr}${empresaTag}</TD>
+<TD style="padding:3px 5px; border-bottom:1px solid #e8edf3; color:#0f1f3d; font-size:10px; line-height:1.4; vertical-align:top;">
+${guestsInline}
+<span style="display:inline-block; background:#f5a623; color:#1e2f5e; font-size:8px; font-weight:700; padding:0 4px; border-radius:8px; margin-left:4px; font-family:'Segoe UI',Arial,sans-serif;">${guestCount}</span>
+</TD>
+</TR>
+`;
         });
+
+        reservasListHtml += `</TBODY></TABLE>`;
         
-        // HTML com centralização garantida para e-mail
+        // ===== HTML COMPLETO DO VOUCHER (EMAIL/PDF) =====
         const htmlContent = `<!DOCTYPE html>
 <html>
 <head><meta charset="UTF-8"></head>
@@ -484,7 +447,6 @@ ${reservasListHtml}
             showToast("❌ Gere o voucher primeiro!", "#c2410c");
             return;
         }
-        
         try {
             const voucherTable = currentVoucherElement.querySelector('table') || currentVoucherElement;
             const range = document.createRange();
@@ -494,23 +456,78 @@ ${reservasListHtml}
             selection?.addRange(range);
             const success = document.execCommand('copy');
             selection?.removeAllRanges();
-            
             if (success) {
-                showToast("✅ Voucher copiado! Cole no e-mail (Ctrl+V) - Centralizado", "#1e8a4d");
+                showToast("✅ Voucher copiado! Cole no e-mail (Ctrl+V)", "#1e8a4d");
                 highlightCopyButton();
-            } else {
-                throw new Error('execCommand falhou');
-            }
+            } else { throw new Error('execCommand falhou'); }
         } catch (err) {
             try {
                 const htmlContent = currentVoucherElement.outerHTML;
                 await navigator.clipboard.writeText(htmlContent);
-                showToast("✅ Voucher copiado (HTML). Cole no e-mail", "#f5a623");
+                showToast("✅ Voucher copiado (HTML)", "#f5a623");
                 highlightCopyButton();
             } catch (err2) {
-                showToast("❌ Selecione o voucher manualmente e pressione Ctrl+C", "#c2410c");
+                showToast("❌ Selecione manualmente e pressione Ctrl+C", "#c2410c");
             }
         }
+    }
+    
+    // ===== GERAR PDF =====
+    function generatePDF() {
+        if (!currentVoucherElement) {
+            showToast("❌ Gere o voucher primeiro!", "#c2410c");
+            return;
+        }
+        
+        const voucherHtml = currentVoucherElement.innerHTML;
+        
+        const printWindow = window.open('', '_blank', 'width=800,height=900');
+        if (!printWindow) {
+            showToast("❌ Permita pop-ups para gerar o PDF", "#c2410c");
+            return;
+        }
+        
+        printWindow.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Voucher Icaraí - Reserva Confirmada</title>
+<style>
+    @page { size: A4 portrait; margin: 10mm; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+        background: #ffffff;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    @media print {
+        body { padding: 0; background: #fff; }
+        .no-print { display: none !important; }
+    }
+    table { page-break-inside: avoid; }
+    tr { page-break-inside: avoid; }
+    thead { display: table-header-group; }
+</style>
+</head>
+<body>
+${voucherHtml}
+<script>
+    window.onload = function() {
+        setTimeout(function() {
+            window.print();
+        }, 400);
+    };
+<\/script>
+</body>
+</html>`);
+        printWindow.document.close();
+        
+        showToast("📄 Gerando PDF... escolha 'Salvar como PDF'", "#c0392b");
     }
     
     function highlightCopyButton() {
@@ -518,9 +535,7 @@ ${reservasListHtml}
         if (!btn) return;
         const originalText = btn.innerHTML;
         btn.innerHTML = '✅ Copiado!';
-        setTimeout(() => {
-            btn.innerHTML = originalText;
-        }, 2000);
+        setTimeout(() => { btn.innerHTML = originalText; }, 2000);
     }
     
     function showToast(message, bgColor = "#1e2f5e") {
@@ -528,9 +543,7 @@ ${reservasListHtml}
         toast.textContent = message;
         toast.style.backgroundColor = bgColor;
         toast.classList.add('show');
-        setTimeout(() => {
-            toast.classList.remove('show');
-        }, 3500);
+        setTimeout(() => { toast.classList.remove('show'); }, 3500);
     }
     
     function generateVoucher() {
@@ -559,7 +572,8 @@ ${reservasListHtml}
                 checkin: hosp.checkin || "—",
                 checkout: hosp.checkout || "—",
                 guests: hosp.guests,
-                total: valor.total || 0
+                total: valor.total || 0,
+                empresa: valor.empresa || null
             });
         }
         
@@ -575,7 +589,8 @@ ${reservasListHtml}
         container.innerHTML = `
             <div style="width:100%; display: flex; flex-direction: column; align-items: center;">
                 <div class="voucher-actions" style="width:561px;">
-                    <button class="btn-copiar" id="btnCopiarVoucher">📋 Copiar Voucher com Formatação</button>
+                    <button class="btn-copiar" id="btnCopiarVoucher">📋 Copiar Voucher</button>
+                    <button class="btn-pdf" id="btnGerarPDF">📄 Gerar PDF</button>
                 </div>
                 <div id="voucherDisplay"></div>
             </div>
@@ -583,8 +598,8 @@ ${reservasListHtml}
         
         document.getElementById('voucherDisplay').appendChild(currentVoucherElement);
         
-        const copyBtn = document.getElementById('btnCopiarVoucher');
-        if (copyBtn) copyBtn.addEventListener('click', copyVoucherWithFormatting);
+        document.getElementById('btnCopiarVoucher')?.addEventListener('click', copyVoucherWithFormatting);
+        document.getElementById('btnGerarPDF')?.addEventListener('click', generatePDF);
         
         document.getElementById('statusMsg').innerHTML = `✅ Voucher gerado com ${bookings.length} reservas | Total: R$ ${totalGeral.toFixed(2).replace('.',',')}`;
         document.getElementById('statusMsg').className = 'status success';
