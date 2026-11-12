@@ -38,7 +38,7 @@
         .success { color: #2e7d32; }
         .error { color: #c2410c; }
         .info { color: #1e5f8e; }
-        .voucher-actions { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 15px; }
+        .voucher-actions { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
         .btn-copiar, .btn-pdf {
             border: none; padding: 8px 20px; border-radius: 40px; font-weight: 600;
             font-size: 0.85rem; cursor: pointer; display: inline-flex;
@@ -55,6 +55,20 @@
         }
         .toast-msg.show { opacity: 1; }
         .voucher-container { display: flex; justify-content: center; }
+
+        /* ===== TOGGLE PREÇOS ===== */
+        .toggle-precos {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin: 5px 0 5px; padding: 10px 14px; background: #f8fafc;
+            border-radius: 12px; border: 1px solid #e2e8f0;
+        }
+        .toggle-precos label {
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
+            font-size: 0.85rem; color: #1e2f5e; font-weight: 600; user-select: none;
+        }
+        .toggle-precos input[type="checkbox"] {
+            width: 18px; height: 18px; cursor: pointer; accent-color: #1e2f5e;
+        }
 
         /* ===== ESTILO PLANILHA ULTRA COMPACTA ===== */
         .sheet { width: 100%; border-collapse: collapse; font-size: 10px; font-family: 'Consolas', 'Monaco', monospace; }
@@ -98,6 +112,14 @@
                 <div id="fileName2" class="file-name"></div>
             </div>
         </div>
+
+        <!-- TOGGLE MOSTRAR/OCULTAR PREÇOS (padrão: DESMARCADO) -->
+        <div class="toggle-precos">
+            <label for="togglePrecos">
+                <input type="checkbox" id="togglePrecos">
+                💰 Mostrar valores (preços) no voucher
+            </label>
+        </div>
         
         <button class="btn-processar" id="btnProcessar" disabled>🔗 Combinar e Gerar Voucher</button>
         <div id="statusMsg" class="status"></div>
@@ -111,6 +133,7 @@
 <script>
     let file1Data = null, file2Data = null;
     let currentVoucherElement = null;
+    let mostrarPrecos = false; // PADRÃO: preços ocultos
     
     function identifySheetType(jsonData) {
         for (let i = 0; i < Math.min(15, jsonData.length); i++) {
@@ -280,8 +303,14 @@
     
     function buildVoucherElement(bookings, totalGeral, empresaPrincipal) {
         const totalGeralStr = `R$ ${totalGeral.toFixed(2).replace('.',',')}`;
+        const exibirPrecos = mostrarPrecos;
         
         // ===== TABELA ESTILO PLANILHA ULTRA COMPACTA =====
+        const headerValor = exibirPrecos
+            ? `<TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:right; width:13%;">Valor</TH>`
+            : '';
+        const widthHospedes = exibirPrecos ? '55%' : '68%';
+
         let reservasListHtml = `
 <TABLE class="sheet" cellSpacing=0 cellPadding=0 width="100%" style="border-collapse:collapse; font-size:10px; font-family:Consolas,Monaco,monospace;">
 <THEAD>
@@ -289,8 +318,8 @@
 <TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:left; width:8%;">Nº</TH>
 <TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:center; width:12%;">Check-in</TH>
 <TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:center; width:12%;">Check-out</TH>
-<TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:right; width:13%;">Valor</TH>
-<TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:left; width:55%;">Hóspedes</TH>
+${headerValor}
+<TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:left; width:${widthHospedes};">Hóspedes</TH>
 </TR>
 </THEAD>
 <TBODY>
@@ -302,15 +331,21 @@
             const checkinDisplay = b.checkin || "—";
             const checkoutDisplay = b.checkout || "—";
             const bg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
-            const empresaTag = b.empresa ? `<span style="color:#6c757d; font-size:8px; font-style:italic; display:block; margin-top:1px;">${escapeHtml(b.empresa)}</span>` : '';
+            const empresaTag = (exibirPrecos && b.empresa) 
+                ? `<span style="color:#6c757d; font-size:8px; font-style:italic; display:block; margin-top:1px;">${escapeHtml(b.empresa)}</span>` 
+                : '';
             const guestCount = b.guests.length;
-            
+
+            const cellValor = exibirPrecos
+                ? `<TD style="padding:3px 5px; border-bottom:1px solid #e8edf3; text-align:right; font-weight:700; color:#1e6f3f; white-space:nowrap; vertical-align:top; font-size:10px;">${valorStr}${empresaTag}</TD>`
+                : '';
+
             reservasListHtml += `
 <TR style="background:${bg};">
 <TD style="padding:3px 5px; border-bottom:1px solid #e8edf3; font-weight:800; color:#1e2f5e; font-size:11px; white-space:nowrap; vertical-align:top;">${b.numero}</TD>
 <TD style="padding:3px 5px; border-bottom:1px solid #e8edf3; text-align:center; color:#2c3e5c; font-size:9px; white-space:nowrap; vertical-align:top;">${checkinDisplay}</TD>
 <TD style="padding:3px 5px; border-bottom:1px solid #e8edf3; text-align:center; color:#2c3e5c; font-size:9px; white-space:nowrap; vertical-align:top;">${checkoutDisplay}</TD>
-<TD style="padding:3px 5px; border-bottom:1px solid #e8edf3; text-align:right; font-weight:700; color:#1e6f3f; white-space:nowrap; vertical-align:top; font-size:10px;">${valorStr}${empresaTag}</TD>
+${cellValor}
 <TD style="padding:3px 5px; border-bottom:1px solid #e8edf3; color:#0f1f3d; font-size:10px; line-height:1.4; vertical-align:top;">
 ${guestsInline}
 <span style="display:inline-block; background:#f5a623; color:#1e2f5e; font-size:8px; font-weight:700; padding:0 4px; border-radius:8px; margin-left:4px; font-family:'Segoe UI',Arial,sans-serif;">${guestCount}</span>
@@ -320,6 +355,19 @@ ${guestsInline}
         });
 
         reservasListHtml += `</TBODY></TABLE>`;
+
+        // Bloco TOTAL GERAL condicional
+        const totalGeralHtml = exibirPrecos
+            ? `<DIV style="background: #e6f0ff; border-radius: 12px; padding: 8px 12px; text-align: right; font-weight: 800; font-size: 14px; margin: 10px 0;">💰 TOTAL GERAL ${totalGeralStr}</DIV>`
+            : '';
+
+        // Bloco de garantia condicional (menciona valores)
+        const garantiaHtml = exibirPrecos
+            ? `<TABLE style="MARGIN-BOTTOM: 5px; BACKGROUND: #fef6e8; BORDER-LEFT: #f9b81b 3px solid; border-radius: 10px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD style="PADDING: 5px 10px">
+<P style="FONT-SIZE: 10px; MARGIN: 0px">💰 <STRONG>Garantia:</STRONG> 1ª diária. Cancelamento fora do prazo sem reembolso. Tarifas não reembolsáveis: cobrança integral.</P>
+</TD></TR></TBODY></TABLE>`
+            : '';
         
         // ===== HTML COMPLETO DO VOUCHER (EMAIL/PDF) =====
         const htmlContent = `<!DOCTYPE html>
@@ -383,7 +431,7 @@ ${reservasListHtml}
 </TR></TBODY></TABLE>
 </TD></TR></TBODY></TABLE>
 
-<DIV style="background: #e6f0ff; border-radius: 12px; padding: 8px 12px; text-align: right; font-weight: 800; font-size: 14px; margin: 10px 0;">💰 TOTAL GERAL ${totalGeralStr}</DIV>
+${totalGeralHtml}
 
 <TABLE style="MARGIN-BOTTOM: 6px; BACKGROUND: #f9fbfd; BORDER-LEFT: #f9b81b 3px solid; border-radius: 10px" cellSpacing=0 cellPadding=0 width="100%">
 <TBODY><TR><TD style="PADDING: 5px 10px">
@@ -399,10 +447,7 @@ ${reservasListHtml}
 <LI>Acompanhado dos pais: documento comprovando filiação / Desacompanhado: autorização reconhecida em cartório</LI>
 </UL>
 
-<TABLE style="MARGIN-BOTTOM: 5px; BACKGROUND: #fef6e8; BORDER-LEFT: #f9b81b 3px solid; border-radius: 10px" cellSpacing=0 cellPadding=0 width="100%">
-<TBODY><TR><TD style="PADDING: 5px 10px">
-<P style="FONT-SIZE: 10px; MARGIN: 0px">💰 <STRONG>Garantia:</STRONG> 1ª diária. Cancelamento fora do prazo sem reembolso. Tarifas não reembolsáveis: cobrança integral.</P>
-</TD></TR></TBODY></TABLE>
+${garantiaHtml}
 
 <TABLE style="MARGIN-BOTTOM: 5px; BACKGROUND: #eef3fc; border-radius: 10px" cellSpacing=0 cellPadding=0 width="100%">
 <TBODY><TR><TD style="PADDING: 8px 10px">
@@ -601,7 +646,9 @@ ${voucherHtml}
         document.getElementById('btnCopiarVoucher')?.addEventListener('click', copyVoucherWithFormatting);
         document.getElementById('btnGerarPDF')?.addEventListener('click', generatePDF);
         
-        document.getElementById('statusMsg').innerHTML = `✅ Voucher gerado com ${bookings.length} reservas | Total: R$ ${totalGeral.toFixed(2).replace('.',',')}`;
+        document.getElementById('statusMsg').innerHTML = 
+            `✅ Voucher gerado com ${bookings.length} reservas` +
+            (mostrarPrecos ? ` | Total: R$ ${totalGeral.toFixed(2).replace('.',',')}` : ' | 💰 preços ocultos');
         document.getElementById('statusMsg').className = 'status success';
     }
     
@@ -644,6 +691,19 @@ ${voucherHtml}
     setupFileInput('fileInput1', 'dropArea1', 'status1', 'fileName1', 'area1');
     setupFileInput('fileInput2', 'dropArea2', 'status2', 'fileName2', 'area2');
     document.getElementById('btnProcessar').addEventListener('click', generateVoucher);
+    
+    // ===== TOGGLE MOSTRAR/OCULTAR PREÇOS =====
+    document.getElementById('togglePrecos').addEventListener('change', function(e) {
+        mostrarPrecos = e.target.checked;
+        // Se já existe voucher gerado, regenera automaticamente
+        if (currentVoucherElement && file1Data && file2Data) {
+            generateVoucher();
+            showToast(
+                mostrarPrecos ? "💰 Preços exibidos no voucher" : "🚫 Preços ocultados no voucher",
+                mostrarPrecos ? "#1e8a4d" : "#6c757d"
+            );
+        }
+    });
 </script>
 </body>
 </html>
