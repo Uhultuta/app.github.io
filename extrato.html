@@ -267,6 +267,16 @@
             color: #1f2937;
         }
         
+        .reservation-number {
+            font-family: 'Courier New', monospace;
+            font-weight: 600;
+            color: #4f46e5;
+            background: #e0e7ff;
+            padding: 4px 10px;
+            border-radius: 6px;
+            display: inline-block;
+        }
+        
         .balance {
             font-weight: 600;
             color: #059669;
@@ -575,6 +585,7 @@
             extractedData = [];
             debugMode = false;
             debugSection.style.display = 'none';
+            debugContent.innerHTML = '';
             
             // Processar cada arquivo
             for (let i = 0; i < uploadedFiles.length; i++) {
@@ -684,13 +695,32 @@
         // Extrair informações do texto do PDF - Método Principal
         function extractInfoFromText(text, filename) {
             let name = '';
+            let reservation = '';
             let balance = '';
             let balanceValue = 0;
             
             // Limpar e normalizar texto
             const cleanText = text.replace(/\s+/g, ' ').trim();
             
-            // ESTRATÉGIA 1: Procurar por "Hóspede" ou "Hospede"
+            // ESTRATÉGIA 1: Extrair número da reserva
+            const reservationPatterns = [
+                /Reserva\s*(?:N[º°o]?\.?|Número|Numero)?\s*:?\s*(\d{4,})/i,
+                /N[º°o]?\.?\s*(?:da\s+)?Reserva\s*:?\s*(\d{4,})/i,
+                /Reserva\s*:?\s*(\d{4,})/i,
+                /(?:N[º°o]?|Número|Numero)\s*:?\s*(\d{5,})/i,
+                /Reserva\s+(\d{4,})/i,
+                /(?:Localizador|Confirma[çc][ãa]o)\s*:?\s*([A-Z0-9]{6,})/i
+            ];
+            
+            for (const pattern of reservationPatterns) {
+                const match = cleanText.match(pattern);
+                if (match) {
+                    reservation = match[1].trim();
+                    break;
+                }
+            }
+            
+            // ESTRATÉGIA 2: Procurar por "Hóspede" ou "Hospede"
             const namePatterns = [
                 /H[óo]spede\s*:?\s*([A-ZÀ-Ú\s\.]+(?:DE|DA|DOS|DAS)?[A-ZÀ-Ú\s\.]+)/i,
                 /H[óo]spede\s+([A-ZÀ-Ú\s\.]+(?:DE|DA|DOS|DAS)?[A-ZÀ-Ú\s\.]+)/i,
@@ -716,7 +746,7 @@
                 }
             }
             
-            // ESTRATÉGIA 2: Procurar saldo
+            // ESTRATÉGIA 3: Procurar saldo
             const balancePatterns = [
                 /Saldo\s*R\$\s*([\d\.]+\,\d{2})/i,
                 /Saldo\s*:?\s*R\$\s*([\d\.]+\,\d{2})/i,
@@ -733,7 +763,7 @@
                 }
             }
             
-            // ESTRATÉGIA 3: Procurar na seção de resumo
+            // ESTRATÉGIA 4: Procurar na seção de resumo
             const summaryMatch = text.match(/Resumo\s+D[eé]bitos[\s\S]*?Hospedagem[\s\S]*?(\d[\d\.]*,\d{2})/i);
             if (summaryMatch && !balance) {
                 balance = summaryMatch[1];
@@ -746,6 +776,7 @@
             
             return {
                 name: name || `Cliente ${extractedData.length + 1}`,
+                reservation: reservation || 'Não identificada',
                 balance: balance || '0,00',
                 balanceValue: isNaN(balanceValue) ? 0 : balanceValue,
                 filename: filename
@@ -755,10 +786,21 @@
         // Método alternativo de extração
         function extractInfoAlternative(text, filename) {
             let name = '';
+            let reservation = '';
             let balance = '';
             
             // Dividir em linhas
             const lines = text.split('\n');
+            
+            // Procurar número da reserva em todas as linhas
+            for (let i = 0; i < lines.length; i++) {
+                const line = lines[i].trim();
+                const resMatch = line.match(/(?:Reserva|N[º°o]?\.?)\s*:?\s*(\d{4,})/i);
+                if (resMatch) {
+                    reservation = resMatch[1];
+                    break;
+                }
+            }
             
             // Procurar nome nas primeiras 30 linhas
             for (let i = 0; i < Math.min(30, lines.length); i++) {
@@ -797,6 +839,7 @@
             
             return {
                 name: name || `Cliente ${extractedData.length + 1}`,
+                reservation: reservation || 'Não identificada',
                 balance: balance || '0,00',
                 balanceValue: isNaN(balanceValue) ? 0 : balanceValue,
                 filename: filename
@@ -842,6 +885,7 @@
                         <tr>
                             <th>#</th>
                             <th>Nome do Titular</th>
+                            <th>Nº da Reserva</th>
                             <th>Saldo a Quitar</th>
                             <th>Arquivo</th>
                         </tr>
@@ -854,6 +898,7 @@
                     <tr>
                         <td>${index + 1}</td>
                         <td class="guest-name">${item.name}</td>
+                        <td><span class="reservation-number">${item.reservation}</span></td>
                         <td class="balance">R$ ${item.balance}</td>
                         <td>${item.filename}</td>
                     </tr>
@@ -876,10 +921,10 @@
         function exportToCSV() {
             if (extractedData.length === 0) return;
             
-            let csvContent = "Nº;Nome do Titular;Saldo a Quitar;Arquivo\n";
+            let csvContent = "Nº;Nome do Titular;Nº da Reserva;Saldo a Quitar;Arquivo\n";
             
             extractedData.forEach((item, index) => {
-                csvContent += `${index + 1};"${item.name}";"R$ ${item.balance}";"${item.filename}"\n`;
+                csvContent += `${index + 1};"${item.name}";"${item.reservation}";"R$ ${item.balance}";"${item.filename}"\n`;
             });
             
             // Calcular total
@@ -889,10 +934,10 @@
                 maximumFractionDigits: 2
             });
             
-            csvContent += `\nTotal Geral;"R$ ${totalFormatted}";"${extractedData.length} arquivo(s)"`;
+            csvContent += `\nTotal Geral;;;"R$ ${totalFormatted}";"${extractedData.length} arquivo(s)"`;
             
             // Criar blob e fazer download
-            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const blob = new Blob(["\ufeff" + csvContent], { type: 'text/csv;charset=utf-8;' });
             const link = document.createElement('a');
             const url = URL.createObjectURL(blob);
             
@@ -911,11 +956,17 @@
             extractedData = [];
             
             fileList.innerHTML = '';
-            resultsContainer.innerHTML = noFilesMessage.innerHTML;
-            noFilesMessage.style.display = 'block';
+            resultsContainer.innerHTML = `
+                <div class="no-files" id="noFilesMessage">
+                    <i class="fas fa-file-pdf" style="font-size: 48px; margin-bottom: 20px; color: #c7d2fe;"></i>
+                    <p>Nenhum arquivo processado ainda.</p>
+                    <p>Faça upload dos arquivos PDF e clique em "Processar Arquivos".</p>
+                </div>
+            `;
             totalAmount.style.display = 'none';
             exportBtn.disabled = true;
             debugSection.style.display = 'none';
+            debugContent.innerHTML = '';
             updateProcessButton();
             
             fileInput.value = '';
