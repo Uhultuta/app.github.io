@@ -146,7 +146,7 @@ summary{cursor:pointer}details.card>summary{padding:2px 0}
   <label class="chk"><input type="checkbox" id="sp"> Abrir nova refeição quando o bloco anterior já atingiu o limite</label>
   <label class="chk"><input type="checkbox" id="lz" checked> Lanche conta como refeição à parte, com o mesmo limite por hóspede (a empresa quita até o limite)</label>
   <label class="chk"><input type="checkbox" id="bz" checked> Buffet conta como refeição à parte, com o mesmo limite por hóspede (a empresa quita até o limite)</label>
-  <p class="mut">Os limites são por hóspede. A quantidade de hóspedes pode ser ajustada em cada extrato depois da auditoria.</p>
+  <p class="mut">Bebidas alcoólicas são sempre quitadas pelo hóspede. Os limites são por hóspede. A quantidade de hóspedes pode ser ajustada em cada extrato depois da auditoria.</p>
 </div>
 <div class="card">
   <div class="drop" tabindex="0" role="button" data-file="f"><b>Selecionar os PDFs dos extratos</b> (vários de uma vez, ou arraste aqui)<small id="fn">Nenhum arquivo</small></div>
@@ -231,8 +231,8 @@ function parseItems(lines){
   for(const ln of lines){
     const d=ln.match(/^(\d{2}\/\d{2}\/\d{4})\s+(.*)$/);if(!d)continue;
     const m=d[2].match(ITEM);if(!m)continue;const desc=m[1].trim();
-    if(IGN.some(k=>norm(desc).includes(k)))continue;
-    it.push({date:d[1],desc,qty:parseInt(m[3]),total:cnum(m[5])});
+    const ign=IGN.some(k=>norm(desc).includes(k));
+    it.push({date:d[1],desc,qty:parseInt(m[3]),total:cnum(m[5]),ign});
   }
   return it;
 }
@@ -241,6 +241,8 @@ function parseItems(lines){
 const mk=l=>new RegExp(l.map(k=>'\\b'+k.replace(/ /g,'\\s+')+(k.length<=4?'s?\\b':'')).join('|'));
 const R_GRAMAS=/\(\s*\d+(?:[.,]\d+)?\s*g\s*\)/;
 const R_SNACK=mk(['kit kat','bala','mentos','trident','salgadinho','chiclete','bombom','amendoim','biscoito','barra']);
+const R_ALCOOL=mk(['cerveja','antarctica','skol','stella','heineken','caipirinha','caipivodka','cachaca','vodka','gin','cuba libre','negroni','martini','campari','conhaque','whisky','johnny','chivas','vinho','espumante','chandon','dedicato','miolo','gato preto','concha y toro','santa helena','drink']);
+const R_ATON=/tonica|\btonic\b/;
 const R_AGUA=mk(['agua']);
 const R_BUFFET=mk(['buffet','brunch','cafe da manha']);
 const R_BEBIDA=mk(['refrigerante','coca','sprit','sprite','guarana','fanta','pepsi','soda','cerveja','antarctica','skol','stella','heineken','suco','jarra','vitamina','leite','cafe','cha','chocolate simples','chocolate quente','caipirinha','caipivodka','cachaca','vodka','gin','cuba libre','negroni','martini','campari','conhaque','whisky','johnny','chivas','vinho','espumante','chandon','dedicato','miolo','gato preto','concha y toro','santa helena','shot','drink']);
@@ -249,6 +251,9 @@ const R_BUFFETSEP=mk(['buffet']);
 const R_COMIDA=mk(['salada','caesar','sopa','canja','baby beef','file','escalopinho','strogonoff','gnocchi','nhoque','fetuccine','espaguete','macarrao','brasileirinho','paillard','contrafile','moqueca','churrasco','bife','parmegiana','lombinho','linguica','calabresa','iscas','mini','burguer','burger','hamburguer','choripan','delicia','pizza','filezinho','gourjao','porcao','tapioca','omelete','misto','queijo quente','lanche','sanduiche','pudim','torta','banana split','sorvete','granola','arroz','farofa','legumes','brocolis','pure','fritas','chips','feijao','ovos','molho','batata','frango','peixe','carne','frutas','tutu','prato']);
 function classify(desc){
   const d=norm(desc);
+  if(R_ATON.test(d)&&!/\bgin\b/.test(d))return'bebida';
+  if(R_ALCOOL.test(d)&&!/sem alcool|zero|0,0%/.test(d))return'alcool';
+  if(R_ATON.test(d))return'bebida';
   if(R_GRAMAS.test(d)||R_SNACK.test(d))return'snack';
   if(R_AGUA.test(d))return'agua';
   if(R_BUFFET.test(d))return'comida';
@@ -262,31 +267,49 @@ const cfg=()=>({g:Math.max(1,parseInt($('g').value)||1),lf:+$('lf').value||0,la:
 function auditEnt(e,c){
   const n=e.n||c.g,LF=c.lf*n,LA=c.la*n,LR=c.lr*n;
   const by=new Map();e.items.forEach(i=>{if(!by.has(i.date))by.set(i.date,[]);by.get(i.date).push(i)});
-  const days=[],occ=[],outros=[];let ef=0,ea=0,em=0;
+  const days=[],occ=[],outros=[];let ef=0,ea=0,em=0,eb=0;
   for(const[date,list]of by){
-    let f=0,a=0,cur=null;const blocks=[];
+    if(!list.some(i=>!i.ign))continue;
+    let f=0,a=0,al=0,cur=null,pend=[];const blocks=[],alI=[];
+    /* classifica tudo; álcool é cobrado do hóspede e não interfere na vizinhança; lavanderia/diária não são auditadas, mas ocupam posição e separam os itens vizinhos */
+    const seq=[];
     for(const it of list){
-      const k=classify(it.desc);
+      const k=it.ign?'ign':classify(it.desc);
+      if(k==='alcool'){al+=it.total;alI.push(it);continue}
+      seq.push({it,k});
+    }
+    /* bebida só faz parte da refeição se o vizinho imediato (antes ou depois) for prato */
+    seq.forEach((x,i)=>{
+      if(x.k!=='bebida')return;
+      x.gp=!!(seq[i-1]&&seq[i-1].k==='comida');
+      x.gn=!!(seq[i+1]&&seq[i+1].k==='comida');
+    });
+    for(const{it,k,gp,gn}of seq){
+      if(k==='ign'){cur=null;pend.forEach(x=>f+=x.total);pend=[];continue}
       if(k==='comida'){
-        const dn=norm(it.desc),ln=(c.bz&&R_BUFFETSEP.test(dn))?'Buffet':(c.lz&&R_LANCHE.test(dn))?'Lanche':'';
+        const dn=norm(it.desc),ln=(c.bz&&R_BUFFETSEP.test(dn))?'Buffet':(c.lz&&R_LANCHE.test(dn)&&!/\bchurrasco\b/.test(dn))?'Lanche':'';
         if(cur&&((c.sp&&cur.total>=LR)||cur.ln!==ln))cur=null;
         if(!cur){cur={items:[],total:0,ln};blocks.push(cur)}
+        pend.forEach(x=>{cur.items.push(x);cur.total+=x.total});pend=[];
         cur.items.push(it);cur.total+=it.total;
-      }else if(k==='bebida'&&cur){cur.items.push(it);cur.total+=it.total}
+      }else if(k==='bebida'&&gp&&cur){cur.items.push(it);cur.total+=it.total}
+      else if(k==='bebida'&&gn){pend.push(it)}
       else{
-        cur=null;
+        cur=null;pend.forEach(x=>f+=x.total);pend=[];
         if(k==='agua')a+=it.total;else if(k==='snack'||k==='bebida')f+=it.total;else outros.push(it);
       }
     }
+    pend.forEach(x=>f+=x.total);
     const xf=Math.max(0,f-LF),xa=Math.max(0,a-LA);
     blocks.forEach(b=>b.ex=Math.max(0,b.total-LR));
     const xm=blocks.reduce((t,b)=>t+b.ex,0);
+    if(al>0)occ.push({date,t:'Bebida alcoólica',d:'quitada integralmente pelo hóspede. Itens: '+alI.map(x=>esc(x.desc)+' '+brl(x.total)).join(', ')+'.',k:'b',cons:al,lim:0,c:al});
     if(xf>0)occ.push({date,t:'Frigobar',d:`consumo ${brl(f)}, limite ${brl(LF)}.`,k:'f',cons:f,lim:LF,c:xf});
     if(xa>0)occ.push({date,t:'Água',d:`consumo ${brl(a)}, limite ${brl(LA)}.`,k:'a',cons:a,lim:LA,c:xa});
     blocks.forEach((b,i)=>b.ex>0&&occ.push({date,t:(b.ln||'Refeição')+' (bloco '+(i+1)+')',d:`consumo ${brl(b.total)}, limite ${brl(LR)}. Itens: ${b.items.map(x=>esc(x.desc)+' '+brl(x.total)).join(', ')}.`,k:'r',cons:b.total,lim:LR,c:b.ex}));
-    days.push({date,f,a,xf,xa,blocks,xm});ef+=xf;ea+=xa;em+=xm;
+    days.push({date,f,a,al,xf,xa,blocks,xm});ef+=xf;ea+=xa;em+=xm;eb+=al;
   }
-  return{n,LF,LA,LR,days,occ,ef,ea,em,tot:ef+ea+em,outros};
+  return{n,LF,LA,LR,days,occ,ef,ea,em,eb,tot:ef+ea+em+eb,outros};
 }
 
 /* ===== Fluxo: vários PDFs ===== */
@@ -314,11 +337,11 @@ function render(){
   const ok=ents.filter(e=>e.r),T=ok.reduce((s,e)=>s+e.r.tot,0),S=ents.reduce((s,e)=>s+e.val,0),nC=ok.filter(e=>e.r.tot>0).length;
   const rows=ents.map((e,i)=>({e,i})).filter(x=>!only||(x.e.r&&x.e.r.tot>0));
   let h=`<div class="card"><div>${ents.length} extrato(s) · ${nC} com valor a cobrar · saldo total ${brl(S)}</div><div class="tot">Total a cobrar (excessos): ${brl(T)}</div><label class="chk"><input type="checkbox" id="oc" ${only?'checked':''}> Mostrar só extratos com cobrança</label></div>`;
-  h+=`<div class="sc card"><table><thead><tr><th>Hóspede</th><th>Reserva</th><th>UH</th><th class="r">Saldo</th><th>Hósp.</th><th class="r">Frigobar</th><th class="r">Água</th><th class="r">Refeições</th><th class="r cg">A cobrar</th></tr></thead><tbody>`;
+  h+=`<div class="sc card"><table><thead><tr><th>Hóspede</th><th>Reserva</th><th>UH</th><th class="r">Saldo</th><th>Hósp.</th><th class="r">Frigobar</th><th class="r">Água</th><th class="r">Refeições</th><th class="r">Álcool</th><th class="r cg">A cobrar</th></tr></thead><tbody>`;
   rows.forEach(({e,i})=>{
-    if(e.err){h+=`<tr><td colspan="9" class="cg">${esc(e.file)}: ${esc(e.err)}</td></tr>`;return}
+    if(e.err){h+=`<tr><td colspan="10" class="cg">${esc(e.file)}: ${esc(e.err)}</td></tr>`;return}
     const r=e.r;
-    h+=`<tr><td>${esc(e.name)}</td><td>${esc(e.res||'-')}</td><td>${esc(e.uh||'-')}</td><td class="r">${e.bal?brl(e.val):'-'}</td><td><input class="num" type="number" min="1" data-g="${i}" value="${r.n}" aria-label="Hóspedes de ${esc(e.name)}"></td><td class="r">${r.ef?brl(r.ef):'-'}</td><td class="r">${r.ea?brl(r.ea):'-'}</td><td class="r">${r.em?brl(r.em):'-'}</td><td class="r cg">${r.tot?brl(r.tot):'-'}</td></tr>`;
+    h+=`<tr><td>${esc(e.name)}</td><td>${esc(e.res||'-')}</td><td>${esc(e.uh||'-')}</td><td class="r">${e.bal?brl(e.val):'-'}</td><td><input class="num" type="number" min="1" data-g="${i}" value="${r.n}" aria-label="Hóspedes de ${esc(e.name)}"></td><td class="r">${r.ef?brl(r.ef):'-'}</td><td class="r">${r.ea?brl(r.ea):'-'}</td><td class="r">${r.em?brl(r.em):'-'}</td><td class="r">${r.eb?brl(r.eb):'-'}</td><td class="r cg">${r.tot?brl(r.tot):'-'}</td></tr>`;
   });
   h+='</tbody></table></div>';
   rows.forEach(({e,i})=>{if(!e.err)h+=detail(e,i)});
@@ -328,8 +351,8 @@ function detail(e,i){
   const r=e.r;
   let h=`<details class="card" data-i="${i}" ${e.open?'open':''}><summary><b>${esc(e.name)}</b> · UH ${esc(e.uh||'-')} · ${r.n} hóspede(s) · <span class="${r.tot>0?'cg':''}">${r.tot>0?'cobrar '+brl(r.tot):'sem cobrança'}</span></summary>`;
   h+=r.occ.length?r.occ.map(o=>`<div class="al ${o.k==='r'?'wn':'bad'}" style="margin-top:8px"><b>${o.t} ${o.date}:</b> ${o.d} Cobrar <b>${brl(o.c)}</b></div>`).join(''):'<div class="al ok" style="margin-top:8px">Nenhum limite ultrapassado.</div>';
-  h+=`<div class="sc"><table style="margin-top:10px"><thead><tr><th>Data</th><th class="r">Frigobar</th><th class="r">Água</th><th>Refeições</th></tr></thead><tbody>`+
-   r.days.map(d=>`<tr><td>${d.date}</td><td class="r ${d.xf?'cg':''}">${brl(d.f)}</td><td class="r ${d.xa?'cg':''}">${brl(d.a)}</td><td>${d.blocks.map(b=>`<span class="${b.ex?'cg':''}">${brl(b.total)}</span>`).join(' · ')||'-'}</td></tr>`).join('')+'</tbody></table></div>';
+  h+=`<div class="sc"><table style="margin-top:10px"><thead><tr><th>Data</th><th class="r">Frigobar</th><th class="r">Água</th><th>Refeições</th><th class="r">Álcool</th></tr></thead><tbody>`+
+   r.days.map(d=>`<tr><td>${d.date}</td><td class="r ${d.xf?'cg':''}">${brl(d.f)}</td><td class="r ${d.xa?'cg':''}">${brl(d.a)}</td><td>${d.blocks.map(b=>`<span class="${b.ex?'cg':''}">${brl(b.total)}</span>`).join(' · ')||'-'}</td><td class="r ${d.al?'cg':''}">${d.al?brl(d.al):'-'}</td></tr>`).join('')+'</tbody></table></div>';
   if(r.outros.length)h+=`<p class="mut">Itens não classificados (fora dos limites): ${r.outros.map(x=>esc(x.desc)+' '+x.date).join('; ')}</p>`;
   return h+'</details>';
 }
@@ -341,9 +364,9 @@ $('out').addEventListener('toggle',e=>{const i=e.target.dataset&&e.target.datase
 
 $('c1').onclick=()=>{
   const ok=ents.filter(e=>e.r);
-  download('resumo_auditoria.csv',[csvLine(['Hóspede','Reserva','UH','Hóspedes','Saldo','Excesso frigobar','Excesso água','Excesso refeições','Total a cobrar','Arquivo']),
-   ...ok.map(e=>csvLine([e.name,e.res,e.uh,e.r.n,e.bal?e.val.toFixed(2).replace('.',','):'',e.r.ef.toFixed(2).replace('.',','),e.r.ea.toFixed(2).replace('.',','),e.r.em.toFixed(2).replace('.',','),e.r.tot.toFixed(2).replace('.',','),e.file])),
-   csvLine(['Total','','','','','','','',ok.reduce((s,e)=>s+e.r.tot,0).toFixed(2).replace('.',','),''])].join('\n'));
+  download('resumo_auditoria.csv',[csvLine(['Hóspede','Reserva','UH','Hóspedes','Saldo','Excesso frigobar','Excesso água','Excesso refeições','Bebidas alcoólicas','Total a cobrar','Arquivo']),
+   ...ok.map(e=>csvLine([e.name,e.res,e.uh,e.r.n,e.bal?e.val.toFixed(2).replace('.',','):'',e.r.ef.toFixed(2).replace('.',','),e.r.ea.toFixed(2).replace('.',','),e.r.em.toFixed(2).replace('.',','),e.r.eb.toFixed(2).replace('.',','),e.r.tot.toFixed(2).replace('.',','),e.file])),
+   csvLine(['Total','','','','','','','','',ok.reduce((s,e)=>s+e.r.tot,0).toFixed(2).replace('.',','),''])].join('\n'));
 };
 $('c2').onclick=()=>{
   const L=[csvLine(['Hóspede','UH','Data','Tipo','Consumo','Limite','Cobrar','Arquivo'])];
@@ -364,7 +387,7 @@ table{width:100%;border-collapse:collapse;margin:8px 0}th,td{border:1px solid #b
 @media print{.np{display:none}body{margin:10mm}}</style></head><body>
 <button class="np" onclick="window.print()">Imprimir / salvar em PDF</button>
 <h1>Relatório de quitação de extratos</h1>
-<div class="m">Gerado em ${new Date().toLocaleString('pt-BR')} · Limites por hóspede: frigobar ${brl(c.lf)}/dia, água ${brl(c.la)}/dia, refeição ${brl(c.lr)} (almoço ou jantar). O hóspede paga somente o que excedeu os limites; o restante do saldo é quitado pela empresa.</div>
+<div class="m">Gerado em ${new Date().toLocaleString('pt-BR')} · Limites por hóspede: frigobar ${brl(c.lf)}/dia, água ${brl(c.la)}/dia, refeição ${brl(c.lr)} (almoço ou jantar). O hóspede paga o que excedeu os limites e todas as bebidas alcoólicas; o restante do saldo é quitado pela empresa.</div>
 <div class="box"><div>Saldo total dos extratos<b>${brl(T.s)}</b></div><div>Quitado pela empresa<b>${brl(T.e)}</b></div><div>Quitado pelos hóspedes<b>${brl(T.g)}</b></div></div>
 ${T.ns?`<div class="m">Atenção: ${T.ns} extrato(s) sem saldo identificado, fora dos totais de saldo e empresa.</div>`:''}
 <table><thead><tr><th>Hóspede</th><th>UH</th><th>Reserva</th><th class="r">Saldo</th><th class="r">Empresa quita</th><th class="r">Hóspede quita</th></tr></thead><tbody>`+
@@ -374,7 +397,7 @@ ${T.ns?`<div class="m">Atenção: ${T.ns} extrato(s) sem saldo identificado, for
     h+=`<div class="pg"><h2>${esc(e.name)} · UH ${esc(e.uh||'-')} · Reserva ${esc(e.res||'-')} · ${e.r.n} hóspede(s)</h2>
 <div class="box"><div>Saldo do extrato<b>${e.bal?brl(e.val):'não identificado'}</b></div><div>Empresa quita<b>${empresa(e)}</b></div><div>Hóspede quita (excessos)<b>${brl(e.r.tot)}</b></div></div>
 <table><thead><tr><th>Data</th><th>Tipo</th><th class="r">Consumo</th><th class="r">Limite</th><th class="r">Hóspede paga</th></tr></thead><tbody>`+
-    e.r.occ.map(o=>`<tr><td>${o.date}</td><td>${o.t}${o.k==='r'?`<div class="m">${o.d.split('Itens: ')[1]||''}</div>`:''}</td><td class="r">${brl(o.cons)}</td><td class="r">${brl(o.lim)}</td><td class="r">${brl(o.c)}</td></tr>`).join('')+
+    e.r.occ.map(o=>`<tr><td>${o.date}</td><td>${o.t}${o.k==='r'?`<div class="m">${o.d.split('Itens: ')[1]||''}</div>`:''}</td><td class="r">${brl(o.cons)}</td><td class="r">${o.k==='b'?'—':brl(o.lim)}</td><td class="r">${brl(o.c)}</td></tr>`).join('')+
     `<tr><th colspan="4">Total a pagar pelo hóspede</th><th class="r">${brl(e.r.tot)}</th></tr></tbody></table></div>`;
   });
   return h+'</body></html>';
