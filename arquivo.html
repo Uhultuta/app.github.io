@@ -144,12 +144,16 @@ summary{cursor:pointer}details.card>summary{padding:2px 0}
     <label>Refeição (R$)<input type="number" id="lr" min="0" step="0.01" value="100"></label>
   </div>
   <label class="chk"><input type="checkbox" id="sp"> Abrir nova refeição quando o bloco anterior já atingiu o limite</label>
+  <label class="chk"><input type="checkbox" id="lz" checked> Lanche conta como refeição à parte, com o mesmo limite por hóspede (a empresa quita até o limite)</label>
+  <label class="chk"><input type="checkbox" id="bz" checked> Buffet conta como refeição à parte, com o mesmo limite por hóspede (a empresa quita até o limite)</label>
   <p class="mut">Os limites são por hóspede. A quantidade de hóspedes pode ser ajustada em cada extrato depois da auditoria.</p>
 </div>
 <div class="card">
   <div class="drop" tabindex="0" role="button" data-file="f"><b>Selecionar os PDFs dos extratos</b> (vários de uma vez, ou arraste aqui)<small id="fn">Nenhum arquivo</small></div>
   <input type="file" id="f" accept=".pdf" multiple hidden>
   <div class="acts"><button class="btn" id="go" disabled>Auditar extratos</button><button class="btn sec" id="c1" disabled>Exportar resumo (CSV)</button><button class="btn sec" id="c2" disabled>Exportar ocorrências (CSV)</button><button class="btn sec" id="cl">Limpar tudo</button></div>
+  <div class="acts"><button class="btn" id="c3" disabled>Imprimir relatório (PDF)</button><button class="btn sec" id="c4" disabled>Baixar relatório (HTML)</button></div>
+  <p class="mut" id="rmsg"></p>
   <div class="prog" hidden id="pg"><i></i></div>
 </div>
 <div id="out"></div>
@@ -185,7 +189,11 @@ const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;',
 const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
 const cnum=s=>parseFloat(String(s).replace(/[^\d,.-]/g,'').replace(/\.(?=\d{3}\b)/g,'').replace(',','.'))||0;
 const csvLine=a=>a.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';');
-function download(name,text){const a=document.createElement('a');a.href=URL.createObjectURL(new Blob(['\ufeff'+text],{type:'text/csv;charset=utf-8'}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000)}
+async function download(name,text){
+  const data=/\.csv$/.test(name)?'\ufeff'+text:text;
+  try{const d=window.claude&&await window.claude.use('downloads');if(d){await d.save({filename:name,data});return}}catch(e){if(e&&e.code==='declined')return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:/\.html$/.test(name)?'text/html':'text/csv;charset=utf-8'}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
 
 document.querySelectorAll('.drop').forEach(d=>{
   const inp=$(d.dataset.file);
@@ -236,6 +244,8 @@ const R_SNACK=mk(['kit kat','bala','mentos','trident','salgadinho','chiclete','b
 const R_AGUA=mk(['agua']);
 const R_BUFFET=mk(['buffet','brunch','cafe da manha']);
 const R_BEBIDA=mk(['refrigerante','coca','sprit','sprite','guarana','fanta','pepsi','soda','cerveja','antarctica','skol','stella','heineken','suco','jarra','vitamina','leite','cafe','cha','chocolate simples','chocolate quente','caipirinha','caipivodka','cachaca','vodka','gin','cuba libre','negroni','martini','campari','conhaque','whisky','johnny','chivas','vinho','espumante','chandon','dedicato','miolo','gato preto','concha y toro','santa helena','shot','drink']);
+const R_LANCHE=mk(['lanche','tapioca','omelete','misto','queijo quente','brunch']);
+const R_BUFFETSEP=mk(['buffet']);
 const R_COMIDA=mk(['salada','caesar','sopa','canja','baby beef','file','escalopinho','strogonoff','gnocchi','nhoque','fetuccine','espaguete','macarrao','brasileirinho','paillard','contrafile','moqueca','churrasco','bife','parmegiana','lombinho','linguica','calabresa','iscas','mini','burguer','burger','hamburguer','choripan','delicia','pizza','filezinho','gourjao','porcao','tapioca','omelete','misto','queijo quente','lanche','sanduiche','pudim','torta','banana split','sorvete','granola','arroz','farofa','legumes','brocolis','pure','fritas','chips','feijao','ovos','molho','batata','frango','peixe','carne','frutas','tutu','prato']);
 function classify(desc){
   const d=norm(desc);
@@ -248,7 +258,7 @@ function classify(desc){
 }
 
 /* ===== Auditoria ===== */
-const cfg=()=>({g:Math.max(1,parseInt($('g').value)||1),lf:+$('lf').value||0,la:+$('la').value||0,lr:+$('lr').value||0,sp:$('sp').checked});
+const cfg=()=>({g:Math.max(1,parseInt($('g').value)||1),lf:+$('lf').value||0,la:+$('la').value||0,lr:+$('lr').value||0,sp:$('sp').checked,lz:$('lz').checked,bz:$('bz').checked});
 function auditEnt(e,c){
   const n=e.n||c.g,LF=c.lf*n,LA=c.la*n,LR=c.lr*n;
   const by=new Map();e.items.forEach(i=>{if(!by.has(i.date))by.set(i.date,[]);by.get(i.date).push(i)});
@@ -258,8 +268,9 @@ function auditEnt(e,c){
     for(const it of list){
       const k=classify(it.desc);
       if(k==='comida'){
-        if(cur&&c.sp&&cur.total>=LR)cur=null;
-        if(!cur){cur={items:[],total:0};blocks.push(cur)}
+        const dn=norm(it.desc),ln=(c.bz&&R_BUFFETSEP.test(dn))?'Buffet':(c.lz&&R_LANCHE.test(dn))?'Lanche':'';
+        if(cur&&((c.sp&&cur.total>=LR)||cur.ln!==ln))cur=null;
+        if(!cur){cur={items:[],total:0,ln};blocks.push(cur)}
         cur.items.push(it);cur.total+=it.total;
       }else if(k==='bebida'&&cur){cur.items.push(it);cur.total+=it.total}
       else{
@@ -272,7 +283,7 @@ function auditEnt(e,c){
     const xm=blocks.reduce((t,b)=>t+b.ex,0);
     if(xf>0)occ.push({date,t:'Frigobar',d:`consumo ${brl(f)}, limite ${brl(LF)}.`,k:'f',cons:f,lim:LF,c:xf});
     if(xa>0)occ.push({date,t:'Água',d:`consumo ${brl(a)}, limite ${brl(LA)}.`,k:'a',cons:a,lim:LA,c:xa});
-    blocks.forEach((b,i)=>b.ex>0&&occ.push({date,t:'Refeição (bloco '+(i+1)+')',d:`consumo ${brl(b.total)}, limite ${brl(LR)}. Itens: ${b.items.map(x=>esc(x.desc)+' '+brl(x.total)).join(', ')}.`,k:'r',cons:b.total,lim:LR,c:b.ex}));
+    blocks.forEach((b,i)=>b.ex>0&&occ.push({date,t:(b.ln||'Refeição')+' (bloco '+(i+1)+')',d:`consumo ${brl(b.total)}, limite ${brl(LR)}. Itens: ${b.items.map(x=>esc(x.desc)+' '+brl(x.total)).join(', ')}.`,k:'r',cons:b.total,lim:LR,c:b.ex}));
     days.push({date,f,a,xf,xa,blocks,xm});ef+=xf;ea+=xa;em+=xm;
   }
   return{n,LF,LA,LR,days,occ,ef,ea,em,tot:ef+ea+em,outros};
@@ -294,9 +305,9 @@ $('go').onclick=async()=>{
   }
   b.textContent='Auditar extratos';b.disabled=false;pg.hidden=true;run();
 };
-function run(){const c=cfg();ents.forEach(e=>{if(!e.err)e.r=auditEnt(e,c)});render();$('c1').disabled=$('c2').disabled=!ents.length}
-['g','lf','la','lr','sp'].forEach(id=>$(id).oninput=()=>ents.length&&run());
-$('cl').onclick=()=>{files=[];ents=[];$('fn').textContent='Nenhum arquivo';$('go').disabled=true;$('out').innerHTML='';$('c1').disabled=$('c2').disabled=true};
+function run(){const c=cfg();ents.forEach(e=>{if(!e.err)e.r=auditEnt(e,c)});render();$('c1').disabled=$('c2').disabled=$('c3').disabled=$('c4').disabled=!ents.length}
+['g','lf','la','lr','sp','lz','bz'].forEach(id=>$(id).oninput=()=>ents.length&&run());
+$('cl').onclick=()=>{files=[];ents=[];$('fn').textContent='Nenhum arquivo';$('go').disabled=true;$('out').innerHTML='';$('c1').disabled=$('c2').disabled=$('c3').disabled=$('c4').disabled=true;$('rmsg').textContent=''};
 
 function render(){
   const only=$('oc')?$('oc').checked:false;
@@ -339,6 +350,44 @@ $('c2').onclick=()=>{
   ents.filter(e=>e.r).forEach(e=>e.r.occ.forEach(o=>L.push(csvLine([e.name,e.uh,o.date,o.t,o.cons.toFixed(2).replace('.',','),o.lim.toFixed(2).replace('.',','),o.c.toFixed(2).replace('.',','),e.file]))));
   download('ocorrencias.csv',L.join('\n'));
 };
+
+/* ===== Relatório: o que a empresa quita x o que o hóspede quita ===== */
+function repHtml(){
+  const ok=ents.filter(e=>e.r),c=cfg();
+  const T=ok.reduce((o,e)=>{o.g+=e.r.tot;if(e.bal){o.s+=e.val;o.e+=e.val-e.r.tot}else o.ns++;return o},{g:0,s:0,e:0,ns:0});
+  const empresa=e=>e.bal?brl(e.val-e.r.tot):'a conferir';
+  let h=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Relatório de quitação</title><style>
+body{font:13px/1.45 "Segoe UI",Arial,sans-serif;color:#111;margin:24px}h1{font-size:20px;margin:0 0 4px}h2{font-size:15px;margin:0 0 6px}
+table{width:100%;border-collapse:collapse;margin:8px 0}th,td{border:1px solid #bbb;padding:5px 7px;text-align:left}th{background:#e8eef1}.r{text-align:right}
+.box{display:flex;gap:12px;margin:8px 0}.box div{flex:1;border:1px solid #bbb;border-radius:6px;padding:8px}.box b{display:block;font-size:17px}
+.pg{page-break-inside:avoid;margin-top:22px;border-top:2px solid #0b6b6f;padding-top:10px}.m{color:#555;font-size:12px}.np{margin-bottom:14px}
+@media print{.np{display:none}body{margin:10mm}}</style></head><body>
+<button class="np" onclick="window.print()">Imprimir / salvar em PDF</button>
+<h1>Relatório de quitação de extratos</h1>
+<div class="m">Gerado em ${new Date().toLocaleString('pt-BR')} · Limites por hóspede: frigobar ${brl(c.lf)}/dia, água ${brl(c.la)}/dia, refeição ${brl(c.lr)} (almoço ou jantar). O hóspede paga somente o que excedeu os limites; o restante do saldo é quitado pela empresa.</div>
+<div class="box"><div>Saldo total dos extratos<b>${brl(T.s)}</b></div><div>Quitado pela empresa<b>${brl(T.e)}</b></div><div>Quitado pelos hóspedes<b>${brl(T.g)}</b></div></div>
+${T.ns?`<div class="m">Atenção: ${T.ns} extrato(s) sem saldo identificado, fora dos totais de saldo e empresa.</div>`:''}
+<table><thead><tr><th>Hóspede</th><th>UH</th><th>Reserva</th><th class="r">Saldo</th><th class="r">Empresa quita</th><th class="r">Hóspede quita</th></tr></thead><tbody>`+
+  ok.map(e=>`<tr><td>${esc(e.name)}</td><td>${esc(e.uh||'-')}</td><td>${esc(e.res||'-')}</td><td class="r">${e.bal?brl(e.val):'-'}</td><td class="r">${empresa(e)}</td><td class="r">${brl(e.r.tot)}</td></tr>`).join('')+
+  `<tr><th colspan="3">Total</th><th class="r">${brl(T.s)}</th><th class="r">${brl(T.e)}</th><th class="r">${brl(T.g)}</th></tr></tbody></table>`;
+  ok.filter(e=>e.r.tot>0).forEach(e=>{
+    h+=`<div class="pg"><h2>${esc(e.name)} · UH ${esc(e.uh||'-')} · Reserva ${esc(e.res||'-')} · ${e.r.n} hóspede(s)</h2>
+<div class="box"><div>Saldo do extrato<b>${e.bal?brl(e.val):'não identificado'}</b></div><div>Empresa quita<b>${empresa(e)}</b></div><div>Hóspede quita (excessos)<b>${brl(e.r.tot)}</b></div></div>
+<table><thead><tr><th>Data</th><th>Tipo</th><th class="r">Consumo</th><th class="r">Limite</th><th class="r">Hóspede paga</th></tr></thead><tbody>`+
+    e.r.occ.map(o=>`<tr><td>${o.date}</td><td>${o.t}${o.k==='r'?`<div class="m">${o.d.split('Itens: ')[1]||''}</div>`:''}</td><td class="r">${brl(o.cons)}</td><td class="r">${brl(o.lim)}</td><td class="r">${brl(o.c)}</td></tr>`).join('')+
+    `<tr><th colspan="4">Total a pagar pelo hóspede</th><th class="r">${brl(e.r.tot)}</th></tr></tbody></table></div>`;
+  });
+  return h+'</body></html>';
+}
+$('c3').onclick=()=>{
+  $('rmsg').textContent='Abrindo a impressão. Se a janela não abrir, use "Baixar relatório (HTML)", abra o arquivo e imprima ou salve em PDF.';
+  try{
+    const fr=document.createElement('iframe');fr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+    fr.onload=()=>{try{fr.contentWindow.focus();fr.contentWindow.print()}catch(e){}setTimeout(()=>fr.remove(),120000)};
+    fr.srcdoc=repHtml();document.body.appendChild(fr);
+  }catch(e){}
+};
+$('c4').onclick=()=>download('relatorio_quitacao.html',repHtml());
 
 /* ===== Voucher de grupo (lógica do app /grupo) ===== */
 let file1Data = null, file2Data = null;
