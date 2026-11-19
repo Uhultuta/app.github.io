@@ -146,7 +146,7 @@ summary{cursor:pointer}details.card>summary{padding:2px 0}
   <label class="chk"><input type="checkbox" id="sp"> Abrir nova refeição quando o bloco anterior já atingiu o limite</label>
   <label class="chk"><input type="checkbox" id="lz" checked> Lanche conta como refeição à parte, com o mesmo limite por hóspede (a empresa quita até o limite)</label>
   <label class="chk"><input type="checkbox" id="bz" checked> Buffet conta como refeição à parte, com o mesmo limite por hóspede (a empresa quita até o limite)</label>
-  <p class="mut">Bebidas alcoólicas são sempre quitadas pelo hóspede. Os limites são por hóspede. A quantidade de hóspedes pode ser ajustada em cada extrato depois da auditoria.</p>
+  <p class="mut">O saldo a pagar das bebidas alcoólicas é sempre do hóspede. Os limites são por hóspede. A quantidade de hóspedes pode ser ajustada em cada extrato depois da auditoria.</p>
 </div>
 <div class="card">
   <div class="drop" tabindex="0" role="button" data-file="f"><b>Selecionar os PDFs dos extratos</b> (vários de uma vez, ou arraste aqui)<small id="fn">Nenhum arquivo</small></div>
@@ -303,7 +303,7 @@ function auditEnt(e,c){
     const xf=Math.max(0,f-LF),xa=Math.max(0,a-LA);
     blocks.forEach(b=>b.ex=Math.max(0,b.total-LR));
     const xm=blocks.reduce((t,b)=>t+b.ex,0);
-    if(al>0)occ.push({date,t:'Bebida alcoólica',d:'quitada integralmente pelo hóspede. Itens: '+alI.map(x=>esc(x.desc)+' '+brl(x.total)).join(', ')+'.',k:'b',cons:al,lim:0,c:al});
+    if(al>0)occ.push({date,t:'Bebida alcoólica',d:'saldo a pagar integral do hóspede. Itens: '+alI.map(x=>esc(x.desc)+' '+brl(x.total)).join(', ')+'.',k:'b',cons:al,lim:0,c:al});
     if(xf>0)occ.push({date,t:'Frigobar',d:`consumo ${brl(f)}, limite ${brl(LF)}.`,k:'f',cons:f,lim:LF,c:xf});
     if(xa>0)occ.push({date,t:'Água',d:`consumo ${brl(a)}, limite ${brl(LA)}.`,k:'a',cons:a,lim:LA,c:xa});
     blocks.forEach((b,i)=>b.ex>0&&occ.push({date,t:(b.ln||'Refeição')+' (bloco '+(i+1)+')',d:`consumo ${brl(b.total)}, limite ${brl(LR)}. Itens: ${b.items.map(x=>esc(x.desc)+' '+brl(x.total)).join(', ')}.`,k:'r',cons:b.total,lim:LR,c:b.ex}));
@@ -387,8 +387,8 @@ table{width:100%;border-collapse:collapse;margin:8px 0}th,td{border:1px solid #b
 @media print{.np{display:none}body{margin:10mm}}</style></head><body>
 <button class="np" onclick="window.print()">Imprimir / salvar em PDF</button>
 <h1>Relatório de quitação de extratos</h1>
-<div class="m">Gerado em ${new Date().toLocaleString('pt-BR')} · Limites por hóspede: frigobar ${brl(c.lf)}/dia, água ${brl(c.la)}/dia, refeição ${brl(c.lr)} (almoço ou jantar). O hóspede paga o que excedeu os limites e todas as bebidas alcoólicas; o restante do saldo é quitado pela empresa.</div>
-<div class="box"><div>Saldo total dos extratos<b>${brl(T.s)}</b></div><div>Quitado pela empresa<b>${brl(T.e)}</b></div><div>Quitado pelos hóspedes<b>${brl(T.g)}</b></div></div>
+<div class="m">Gerado em ${new Date().toLocaleString('pt-BR')} · Limites por hóspede: frigobar ${brl(c.lf)}/dia, água ${brl(c.la)}/dia, refeição ${brl(c.lr)} (almoço ou jantar). O hóspede paga o que excedeu os limites e todas as bebidas alcoólicas; o restante do saldo fica a pagar pela empresa.</div>
+<div class="box"><div>Saldo total dos extratos<b>${brl(T.s)}</b></div><div>Saldo a pagar pela empresa<b>${brl(T.e)}</b></div><div>Saldo a pagar pelos hóspedes<b>${brl(T.g)}</b></div></div>
 ${T.ns?`<div class="m">Atenção: ${T.ns} extrato(s) sem saldo identificado, fora dos totais de saldo e empresa.</div>`:''}
 <table><thead><tr><th>Hóspede</th><th>UH</th><th>Reserva</th><th class="r">Saldo</th><th class="r">Empresa quita</th><th class="r">Hóspede quita</th></tr></thead><tbody>`+
   ok.map(e=>`<tr><td>${esc(e.name)}</td><td>${esc(e.uh||'-')}</td><td>${esc(e.res||'-')}</td><td class="r">${e.bal?brl(e.val):'-'}</td><td class="r">${empresa(e)}</td><td class="r">${brl(e.r.tot)}</td></tr>`).join('')+
