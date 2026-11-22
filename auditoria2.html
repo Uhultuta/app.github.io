@@ -368,10 +368,12 @@ $('c2').onclick=()=>{
 /* ===== Relatório: o que a empresa quita x o que o hóspede quita ===== */
 function repHtml(){
   const ok=ents.filter(e=>e.r),c=cfg();
-  /* Hóspede (g) = só excessos + álcool (r.tot). Estorno de diárias (est) NUNCA entra em g nem em e (empresa).
-     Conferência: saldo (s) = empresa (e) + hóspedes (g) + estorno de diárias (est). */
-  const T=ok.reduce((o,e)=>{o.g+=e.r.tot;if(e.bal){o.s+=e.val;o.est+=e.r.est;o.e+=e.val-e.r.tot-e.r.est}else o.ns++;return o},{g:0,s:0,e:0,ns:0,est:0});
-  const empresa=e=>e.bal?brl(e.val-e.r.tot-e.r.est):'a conferir';
+  /* Hóspede = excessos + álcool (r.tot) MENOS a diferença das diárias divergentes (r.est).
+     Empresa = saldo − (excessos + álcool). Estorno = r.est.
+     Conferência: saldo = empresa + hóspede + estorno. */
+  const hosp=e=>e.r.tot-e.r.est;
+  const T=ok.reduce((o,e)=>{o.g+=hosp(e);o.est+=e.r.est;if(e.bal){o.s+=e.val;o.e+=e.val-e.r.tot}else o.ns++;return o},{g:0,s:0,e:0,ns:0,est:0});
+  const empresa=e=>e.bal?brl(e.val-e.r.tot):'a conferir';
   let h=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Relatório de quitação</title><style>
 body{font:13px/1.45 "Segoe UI",Arial,sans-serif;color:#111;margin:24px}h1{font-size:20px;margin:0 0 4px}h2{font-size:15px;margin:0 0 6px}
 table{width:100%;border-collapse:collapse;margin:8px 0}th,td{border:1px solid #bbb;padding:5px 7px;text-align:left}th{background:#e8eef1}.r{text-align:right}
@@ -380,21 +382,21 @@ table{width:100%;border-collapse:collapse;margin:8px 0}th,td{border:1px solid #b
 @media print{.np{display:none}body{margin:10mm}}</style></head><body>
 <button class="np" onclick="window.print()">Imprimir / salvar em PDF</button>
 <h1>Relatório de quitação de extratos</h1>
-<div class="m">Gerado em ${new Date().toLocaleString('pt-BR')} · Limites por hóspede: frigobar ${brl(c.lf)}/dia${c.aw?' (inclui água)':`, água ${brl(c.la)}/dia`}, refeição ${brl(c.lr)}${c.q?' ('+c.q+' por dia)':''}. Cumulativo: ${[c.cf&&'frigobar',c.ca&&!c.aw&&'água',c.cr&&'refeições',c.cd&&'diárias'].filter(Boolean).join(', ')||'nenhum'}. O hóspede paga o que excedeu os limites e todas as bebidas alcoólicas; o restante do saldo fica a pagar pela empresa. ${c.idv?'A diferença das diárias divergentes é cobrada da empresa (permanece no saldo).':'A diferença das diárias divergentes fica fora do cálculo (estorno posterior pelo departamento responsável).'}</div>
+<div class="m">Gerado em ${new Date().toLocaleString('pt-BR')} · Limites por hóspede: frigobar ${brl(c.lf)}/dia${c.aw?' (inclui água)':`, água ${brl(c.la)}/dia`}, refeição ${brl(c.lr)}${c.q?' ('+c.q+' por dia)':''}. Cumulativo: ${[c.cf&&'frigobar',c.ca&&!c.aw&&'água',c.cr&&'refeições',c.cd&&'diárias'].filter(Boolean).join(', ')||'nenhum'}. O hóspede paga o que excedeu os limites e todas as bebidas alcoólicas; o restante do saldo fica a pagar pela empresa. ${c.idv?'A diferença das diárias divergentes é cobrada da empresa (permanece no saldo).':'A diferença das diárias divergentes fica fora do cálculo (estorno posterior pelo departamento responsável). O valor do hóspede é: excessos e álcool − diferença das diárias; o da empresa é: saldo − excessos e álcool.'}</div>
 <div class="box"><div>Saldo total dos extratos<b>${brl(T.s)}</b></div><div>Saldo a pagar pela empresa<b>${brl(T.e)}</b></div><div>Saldo a pagar pelos hóspedes<b>${brl(T.g)}</b></div>${c.idv?'':`<div>Diárias divergentes (a estornar)<b>${brl(T.est)}</b></div>`}</div>
 ${c.idv?'':`<div class="m">Conferência: saldo ${brl(T.s)} = empresa ${brl(T.e)} + hóspedes ${brl(T.g)} + diárias divergentes fora do cálculo ${brl(T.est)}.</div>`}
 ${T.ns?`<div class="m">Atenção: ${T.ns} extrato(s) sem saldo identificado, fora dos totais de saldo e empresa.</div>`:''}
 <table><thead><tr><th>Hóspede</th><th>UH</th><th>Reserva</th><th class="r">Saldo</th><th class="r">Empresa quita</th><th class="r">Hóspede quita</th>${c.idv?'':'<th class="r">Estorno de diárias</th>'}</tr></thead><tbody>`+
-  ok.map(e=>`<tr><td>${esc(e.name)}</td><td>${esc(e.uh||'-')}</td><td>${esc(e.res||'-')}</td><td class="r">${e.bal?brl(e.val):'-'}</td><td class="r">${empresa(e)}</td><td class="r">${brl(e.r.tot)}</td>${c.idv?'':`<td class="r">${e.r.est?brl(e.r.est):'-'}</td>`}</tr>`).join('')+
+  ok.map(e=>`<tr><td>${esc(e.name)}</td><td>${esc(e.uh||'-')}</td><td>${esc(e.res||'-')}</td><td class="r">${e.bal?brl(e.val):'-'}</td><td class="r">${empresa(e)}</td><td class="r">${brl(hosp(e))}</td>${c.idv?'':`<td class="r">${e.r.est?brl(e.r.est):'-'}</td>`}</tr>`).join('')+
   `<tr><th colspan="3">Total</th><th class="r">${brl(T.s)}</th><th class="r">${brl(T.e)}</th><th class="r">${brl(T.g)}</th>${c.idv?'':`<th class="r">${brl(T.est)}</th>`}</tr></tbody></table>`;
   const dvs=ok.filter(e=>e.r.dv.length);
   if(dvs.length)h+=`<div class="pg"><h2>Diárias com valor divergente</h2><table><thead><tr><th>Hóspede</th><th>UH</th><th>Data</th><th>Detalhe</th></tr></thead><tbody>`+dvs.map(e=>e.r.dv.map(d=>`<tr><td>${esc(e.name)}</td><td>${esc(e.uh||'-')}</td><td>${d.date}</td><td>${d.d}</td></tr>`).join('')).join('')+`</tbody></table></div>`;
   ok.filter(e=>e.r.tot>0).forEach(e=>{
     h+=`<div class="pg"><h2>${esc(e.name)} · UH ${esc(e.uh||'-')} · Reserva ${esc(e.res||'-')} · ${e.r.n} hóspede(s)</h2>
-<div class="box"><div>Saldo do extrato<b>${e.bal?brl(e.val):'não identificado'}</b></div><div>Empresa quita<b>${empresa(e)}</b></div><div>Hóspede quita (excessos)<b>${brl(e.r.tot)}</b></div></div>
+<div class="box"><div>Saldo do extrato<b>${e.bal?brl(e.val):'não identificado'}</b></div><div>Empresa quita<b>${empresa(e)}</b></div><div>Hóspede quita${e.r.est?' (excessos − diárias divergentes)':' (excessos)'}<b>${brl(hosp(e))}</b></div></div>
 <table><thead><tr><th>Data</th><th>Tipo</th><th class="r">Consumo</th><th class="r">Limite</th><th class="r">Hóspede paga</th></tr></thead><tbody>`+
     e.r.occ.map(o=>`<tr><td>${o.date}</td><td>${o.t}${o.k==='r'?`<div class="m">${o.d.split('Itens: ')[1]||''}</div>`:''}</td><td class="r">${brl(o.cons)}</td><td class="r">${o.k==='b'?'—':brl(o.lim)}</td><td class="r">${brl(o.c)}</td></tr>`).join('')+
-    `<tr><th colspan="4">Total a pagar pelo hóspede</th><th class="r">${brl(e.r.tot)}</th></tr></tbody></table></div>`;
+    (e.r.est?`<tr><td colspan="4">Excessos e álcool</td><td class="r">${brl(e.r.tot)}</td></tr><tr><td colspan="4">(−) Diárias divergentes (a estornar)</td><td class="r">${brl(-e.r.est)}</td></tr>`:'')+`<tr><th colspan="4">Total a pagar pelo hóspede</th><th class="r">${brl(hosp(e))}</th></tr></tbody></table></div>`;
   });
   return h+'</body></html>';
 }
