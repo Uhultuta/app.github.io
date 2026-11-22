@@ -267,6 +267,8 @@ const R_BUFFETSEP=mk(['buffet']);
 const R_COMIDA=mk(['salada','caesar','sopa','canja','baby beef','file','escalopinho','strogonoff','gnocchi','nhoque','fetuccine','espaguete','macarrao','brasileirinho','paillard','contrafile','moqueca','churrasco','bife','parmegiana','lombinho','linguica','calabresa','iscas','mini','burguer','burger','hamburguer','choripan','delicia','pizza','filezinho','gourjao','porcao','tapioca','omelete','misto','queijo quente','lanche','sanduiche','pudim','torta','banana split','sorvete','granola','arroz','farofa','legumes','brocolis','pure','fritas','chips','feijao','ovos','molho','batata','frango','peixe','carne','frutas','tutu','prato']);
 function classify(desc){
   const d=norm(desc);
+  /* pudim e qualquer suco: sempre refeição (o frigobar não tem sucos), mesmo com gramas/ml no nome ou sem prato vizinho */
+  if(/\bpudim\b/.test(d)||/\bsucos?\b/.test(d))return'comida';
   if(R_ATON.test(d)&&!/\bgin\b/.test(d))return'bebida';
   if(R_ALCOOL.test(d)&&!/sem alcool|zero|0,0%/.test(d))return'alcool';
   if(R_ATON.test(d))return'bebida';
