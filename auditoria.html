@@ -1,664 +1,1081 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Auditoria Hotel - Logbook</title>
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 900px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
-            color: #333;
-            line-height: 1.6;
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Painel do Hotel</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+:root{--bg:#eef2f4;--sf:#fff;--ink:#14232b;--mut:#5b6b73;--ln:#d3dce1;--ac:#0b6b6f;--acx:#fff;--bad:#b3261e;--badbg:#fbe4e2;--wn:#7a5200;--wnbg:#fff0cc;--ok:#1b6b3a;--okbg:#dff3e6;--hd:#e3eaee;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a1f;--sf:#17262d;--ink:#e6eef1;--mut:#9db0b8;--ln:#2c3f48;--ac:#46c2c6;--acx:#06292b;--bad:#ff9c93;--badbg:#3b1d1b;--wn:#ffd37a;--wnbg:#3a2e10;--ok:#7fd7a2;--okbg:#14301f;--hd:#1f323b}}
+:root[data-theme="dark"]{--bg:#0f1a1f;--sf:#17262d;--ink:#e6eef1;--mut:#9db0b8;--ln:#2c3f48;--ac:#46c2c6;--acx:#06292b;--bad:#ff9c93;--badbg:#3b1d1b;--wn:#ffd37a;--wnbg:#3a2e10;--ok:#7fd7a2;--okbg:#14301f;--hd:#1f323b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem;margin:8px 0 14px}
+nav{display:flex;gap:4px;border-bottom:2px solid var(--ln);margin-bottom:18px;overflow-x:auto}
+nav button{background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;padding:10px 16px;font:inherit;font-weight:600;color:var(--mut);cursor:pointer;white-space:nowrap}
+nav button[aria-selected="true"]{color:var(--ac);border-color:var(--ac)}
+nav button:focus-visible,.btn:focus-visible,.drop:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:8px;padding:16px;margin-bottom:14px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:end}
+.row label{display:flex;flex-direction:column;font-size:13px;color:var(--mut);gap:4px}
+input[type=number]{width:110px;padding:8px;border:1px solid var(--ln);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+input[type=number]:disabled{opacity:.45}
+.drop{border:2px dashed var(--ac);border-radius:8px;padding:22px;text-align:center;cursor:pointer;flex:1;min-width:220px;background:var(--sf)}
+.drop.over{background:var(--hd)}
+.drop small{display:block;color:var(--mut);margin-top:4px;word-break:break-all}
+.btn{background:var(--ac);color:var(--acx);border:0;border-radius:6px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer}
+.btn.sec{background:var(--hd);color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.tot{font-size:1.25rem;font-weight:700;color:var(--bad)}
+.al{padding:10px 14px;border-radius:6px;margin-bottom:8px;border-left:5px solid}
+.al.bad{background:var(--badbg);color:var(--bad);border-color:var(--bad)}
+.al.wn{background:var(--wnbg);color:var(--wn);border-color:var(--wn)}
+.al.ok{background:var(--okbg);color:var(--ok);border-color:var(--ok)}
+.sc{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{border:1px solid var(--ln);padding:7px 9px;text-align:left}
+th{background:var(--hd)}
+.r{text-align:right}.cg{color:var(--bad);font-weight:700}
+.mut{color:var(--mut);font-size:13px}
+h2{font-size:1.05rem;margin:18px 0 8px}
+.card h2:first-child{margin-top:0}
+details summary{cursor:pointer;color:var(--mut)}
+.chk{display:flex;gap:8px;align-items:center;margin:10px 0}
+.grp{display:flex;gap:6px 22px;flex-wrap:wrap}
+
+        #vou .upload-card {
+            background: white; border-radius: 20px; box-shadow: 0 8px 20px rgba(0,0,0,0.08);
+            padding: 20px 24px; margin-bottom: 30px; border: 1px solid #e2e8f0;
         }
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 30px;
-            padding-bottom: 15px;
-            border-bottom: 2px solid #3498db;
+        .sub { color: #4a5b7a; margin-bottom: 20px; font-size: 0.85rem; }
+        .upload-dual { display: flex; flex-wrap: wrap; gap: 20px; margin-bottom: 20px; }
+        .upload-area {
+            flex: 1; background: #f8fafc; border: 2px dashed #cbd5e1; border-radius: 16px;
+            padding: 15px; text-align: center; cursor: pointer; transition: 0.2s; min-width: 200px;
         }
-        .form-group {
-            margin-bottom: 20px;
-            background-color: white;
-            padding: 15px;
-            border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        .upload-area:hover { background: #f1f5f9; border-color: #f5a623; }
+        .upload-area.has-file { border-color: #2e7d32; background: #e8f5e9; }
+        .upload-title { font-weight: 700; margin-bottom: 5px; color: #1e2f5e; }
+        .upload-hint { font-size: 11px; color: #6c757d; margin-top: 5px; }
+        .file-status { font-size: 11px; margin-top: 6px; color: #2e7d32; }
+        .file-name { font-size: 10px; color: #555; word-break: break-all; margin-top: 4px; }
+        input[type="file"] { display: none; }
+        .btn-processar {
+            background: #1e2f5e; color: white; border: none; padding: 10px 25px;
+            border-radius: 40px; font-weight: 700; font-size: 0.9rem; cursor: pointer;
+            margin-top: 15px; width: 100%; transition: 0.2s;
         }
-        label {
-            display: block;
-            margin-bottom: 8px;
-            font-weight: bold;
-            color: #2c3e50;
+        .btn-processar:hover { background: #f5a623; color: #1e2f5e; }
+        .btn-processar:disabled { background: #94a3b8; cursor: not-allowed; }
+        #vou .status { margin-top: 12px; font-size: 0.8rem; text-align: center; }
+        .success { color: #2e7d32; }
+        .error { color: #c2410c; }
+        .info { color: #1e5f8e; }
+        .voucher-actions { display: flex; justify-content: flex-end; gap: 8px; margin-bottom: 15px; flex-wrap: wrap; }
+        .btn-copiar, .btn-pdf {
+            border: none; padding: 8px 20px; border-radius: 40px; font-weight: 600;
+            font-size: 0.85rem; cursor: pointer; display: inline-flex;
+            align-items: center; gap: 6px;
         }
-        input, textarea, select {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 16px;
-            transition: border 0.3s;
+        .btn-copiar { background: #25a35c; color: white; }
+        .btn-copiar:hover { background: #1e8a4d; }
+        .btn-pdf { background: #c0392b; color: white; }
+        .btn-pdf:hover { background: #a93226; }
+        .toast-msg {
+            position: fixed; bottom: 30px; right: 30px; background: #1e2f5e;
+            color: white; padding: 12px 24px; border-radius: 40px; font-size: 13px;
+            z-index: 1000; opacity: 0; transition: opacity 0.3s; pointer-events: none;
         }
-        input:focus, textarea:focus, select:focus {
-            border-color: #3498db;
-            outline: none;
-            box-shadow: 0 0 5px rgba(52, 152, 219, 0.5);
+        .toast-msg.show { opacity: 1; }
+        .voucher-container { display: flex; justify-content: center; }
+
+        /* ===== TOGGLE PREÇOS ===== */
+        .toggle-precos {
+            display: flex; align-items: center; justify-content: center; gap: 10px;
+            margin: 5px 0 5px; padding: 10px 14px; background: #f8fafc;
+            border-radius: 12px; border: 1px solid #e2e8f0;
         }
-        textarea {
-            height: 100px;
-            resize: vertical;
+        .toggle-precos label {
+            display: flex; align-items: center; gap: 8px; cursor: pointer;
+            font-size: 0.85rem; color: #1e2f5e; font-weight: 600; user-select: none;
         }
-        button {
-            background-color: #3498db;
-            color: white;
-            padding: 12px 20px;
-            border: none;
-            border-radius: 4px;
-            cursor: pointer;
-            font-size: 16px;
-            margin: 15px 0;
-            transition: background-color 0.3s;
-            display: block;
-            width: 100%;
-            font-weight: bold;
+        .toggle-precos input[type="checkbox"] {
+            width: 18px; height: 18px; cursor: pointer; accent-color: #1e2f5e;
         }
-        button:hover {
-            background-color: #2980b9;
+
+        /* ===== ESTILO PLANILHA ULTRA COMPACTA ===== */
+        .sheet { width: 100%; border-collapse: collapse; font-size: 10px; font-family: 'Consolas', 'Monaco', monospace; }
+        .sheet-header {
+            background: #1e2f5e; color: #ffffff; font-weight: 700; font-size: 9px;
+            text-transform: uppercase; letter-spacing: 0.3px; padding: 3px 5px;
+            text-align: left; border-bottom: 1px solid #1e2f5e;
         }
-        #result {
-            margin-top: 30px;
-            border: 1px solid #ddd;
-            padding: 20px;
-            border-radius: 8px;
-            background-color: white;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        .sheet-row td { padding: 3px 5px; border-bottom: 1px solid #e8edf3; vertical-align: top; color: #1e2f5e; }
+        .sheet-row:nth-child(even) td { background: #f8fafc; }
+        .sheet-guests { color: #0f1f3d; font-size: 10px; line-height: 1.4; }
+        .sheet-guests .g { display: inline; font-weight: 600; color: #0f1f3d; }
+        .sheet-guests .sep { color: #c0c9d6; margin: 0 4px; font-weight: 400; }
+        .sheet-count {
+            display: inline-block; background: #f5a623; color: #1e2f5e; font-size: 8px;
+            font-weight: 700; padding: 0 4px; border-radius: 8px; margin-left: 4px;
+            font-family: 'Segoe UI', Arial, sans-serif;
         }
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 20px;
-            font-size: 14px;
-        }
-        th, td {
-            border: 1px solid #ddd;
-            padding: 10px;
-            text-align: left;
-            vertical-align: top;
-        }
-        th {
-            background-color: #3498db;
-            color: white;
-            font-weight: bold;
-        }
-        tr:nth-child(even) {
-            background-color: #f9f9f9;
-        }
-        .status-ok {
-            color: #27ae60;
-            font-weight: bold;
-        }
-        .status-pendente {
-            color: #e74c3c;
-            font-weight: bold;
-        }
-        .whatsapp-btn {
-            background-color: #25D366;
-            margin-top: 20px;
-        }
-        .whatsapp-btn:hover {
-            background-color: #1DA851;
-        }
-        .download-btn {
-            background-color: #3498db;
-            margin-top: 10px;
-        }
-        .motivo-pendencia {
-            display: none;
-            margin-top: 10px;
-            padding: 10px;
-            background-color: #f8f9fa;
-            border-radius: 4px;
-            border-left: 4px solid #f39c12;
-        }
-        .required-field::after {
-            content: " *";
-            color: #e74c3c;
-        }
-        #image-container {
-            margin-top: 20px;
-            text-align: center;
-        }
-        #generated-image {
-            max-width: 100%;
-            border: 1px solid #ddd;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
-        }
-        .loading {
-            display: inline-block;
-            width: 20px;
-            height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
-            border-radius: 50%;
-            border-top-color: #fff;
-            animation: spin 1s ease-in-out infinite;
-            margin-right: 10px;
-        }
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-        @media (max-width: 600px) {
-            body {
-                padding: 10px;
-            }
-            .form-group {
-                padding: 10px;
-            }
-            th, td {
-                padding: 8px 5px;
-                font-size: 12px;
-            }
-        }
-    </style>
+        .sheet-empresa { color: #6c757d; font-size: 8px; font-style: italic; margin-top: 1px; display: block; }
+    
+#vouchersContainer{overflow-x:auto}
+.ext-warn{color:var(--wn)}
+
+summary{cursor:pointer}details.card>summary{padding:2px 0}
+.num{width:64px!important}
+.prog{height:6px;background:var(--hd);border-radius:3px;overflow:hidden;margin-top:8px}.prog i{display:block;height:100%;background:var(--ac);width:0}
+</style>
 </head>
 <body>
-    <h1>AUDITORIA HOTEL - LOGBOOK</h1>
-    
-    <div id="form-container">
-        <div class="form-group">
-            <label for="date" class="required-field">Data:</label>
-            <input type="date" id="date" required>
-        </div>
-        
-        <div class="form-group">
-            <label for="caixa">Caixa (Valor):</label>
-            <input type="text" id="caixa" placeholder="R$ 1.000,00">
-        </div>
-        
-        <div class="form-group">
-            <label for="cadastro_frnh">Cadastro FRNH:</label>
-            <select id="cadastro_frnh" onchange="toggleMotivo('cadastro_frnh_motivo', this.value)">
-                <option value="ok">OK</option>
-                <option value="pendente">Pendente</option>
-            </select>
-            <div id="cadastro_frnh_motivo" class="motivo-pendencia">
-                <label for="cadastro_frnh_motivo_text">Motivo:</label>
-                <textarea id="cadastro_frnh_motivo_text"></textarea>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="emails">E-Mails:</label>
-            <select id="emails" onchange="toggleMotivo('emails_motivo', this.value)">
-                <option value="respondidos">Respondidos</option>
-                <option value="pendentes">Pendentes</option>
-            </select>
-            <div id="emails_motivo" class="motivo-pendencia">
-                <label for="emails_motivo_text">Detalhes:</label>
-                <textarea id="emails_motivo_text" placeholder="Quais e-mails estão pendentes?"></textarea>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="checkouts">Check-outs efetuados:</label>
-            <select id="checkouts" onchange="toggleMotivo('checkouts_motivo', this.value)">
-                <option value="ok">OK</option>
-                <option value="pendente">Pendente</option>
-            </select>
-            <div id="checkouts_motivo" class="motivo-pendencia">
-                <label for="checkouts_motivo_text">Motivo:</label>
-                <textarea id="checkouts_motivo_text"></textarea>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="saldo_elevado">Saldo Elevado:</label>
-            <select id="saldo_elevado" onchange="toggleMotivo('saldo_elevado_motivo', this.value)">
-                <option value="ok">OK</option>
-                <option value="pendentes">Pendentes</option>
-            </select>
-            <div id="saldo_elevado_motivo" class="motivo-pendencia">
-                <label for="saldo_elevado_motivo_text">Detalhes:</label>
-                <textarea id="saldo_elevado_motivo_text" placeholder="Quais saldos estão pendentes?"></textarea>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="lancamentos">Lançamentos:</label>
-            <select id="lancamentos" onchange="toggleMotivo('lancamentos_motivo', this.value)">
-                <option value="ok">OK</option>
-                <option value="pendente">Pendente</option>
-            </select>
-            <div id="lancamentos_motivo" class="motivo-pendencia">
-                <label for="lancamentos_motivo_text">Motivo:</label>
-                <textarea id="lancamentos_motivo_text"></textarea>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="contas_pendentes">Contas Pendentes:</label>
-            <select id="contas_pendentes" onchange="toggleMotivo('contas_pendentes_motivo', this.value)">
-                <option value="ok">OK</option>
-                <option value="pendente">Pendente</option>
-            </select>
-            <div id="contas_pendentes_motivo" class="motivo-pendencia">
-                <label for="contas_pendentes_motivo_text">Motivo:</label>
-                <textarea id="contas_pendentes_motivo_text"></textarea>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="objetos_emprestimo">Objetos de Empréstimo:</label>
-            <select id="objetos_emprestimo" onchange="toggleMotivo('objetos_emprestimo_motivo', this.value)">
-                <option value="ok">OK</option>
-                <option value="pendentes">Pendentes</option>
-            </select>
-            <div id="objetos_emprestimo_motivo" class="motivo-pendencia">
-                <label for="objetos_emprestimo_motivo_text">Detalhes:</label>
-                <textarea id="objetos_emprestimo_motivo_text" placeholder="Quais objetos estão pendentes?"></textarea>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="situacao_hotel">Situação do Hotel Atual:</label>
-            <textarea id="situacao_hotel" placeholder="Check-ins/check-outs, estacionamento, no-shows..."></textarea>
-        </div>
-        
-        <div class="form-group">
-            <label for="situacao_proximo_dia">Situação Prevista para Próximo Dia:</label>
-            <textarea id="situacao_proximo_dia" placeholder="Check-ins/check-outs/estacionamento/Reservas a confirmar..."></textarea>
-        </div>
-        
-        <div class="form-group">
-            <label for="estornos">Estornos:</label>
-            <select id="estornos" onchange="toggleMotivo('estornos_motivo', this.value)">
-                <option value="sem estornos">Sem estornos</option>
-                <option value="com estornos">Com estornos</option>
-            </select>
-            <div id="estornos_motivo" class="motivo-pendencia">
-                <label for="estornos_motivo_text">Detalhes:</label>
-                <textarea id="estornos_motivo_text" placeholder="Descreva os estornos realizados"></textarea>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="relatorio_seguranca">Relatório de Segurança:</label>
-            <select id="relatorio_seguranca" onchange="toggleMotivo('relatorio_seguranca_motivo', this.value)">
-                <option value="ok">OK</option>
-                <option value="pendente">Pendente</option>
-            </select>
-            <div id="relatorio_seguranca_motivo" class="motivo-pendencia">
-                <label for="relatorio_seguranca_motivo_text">Motivo:</label>
-                <textarea id="relatorio_seguranca_motivo_text"></textarea>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="logbook">Logbook (Ocorrências):</label>
-            <select id="logbook" onchange="toggleMotivo('logbook_motivo', this.value)">
-                <option value="ok">OK</option>
-                <option value="ocorrencias">Ocorrências</option>
-            </select>
-            <div id="logbook_motivo" class="motivo-pendencia">
-                <label for="logbook_motivo_text">Detalhes:</label>
-                <textarea id="logbook_motivo_text" placeholder="Descreva as ocorrências"></textarea>
-            </div>
-        </div>
-        
-        <div class="form-group">
-            <label for="colaboradores" class="required-field">Nome dos Colaboradores:</label>
-            <input type="text" id="colaboradores" placeholder="Digite os nomes dos colaboradores" required>
-        </div>
-        
-        <button id="generate-btn">Gerar Relatório de Auditoria</button>
+<div class="wrap">
+<h1>Painel do Hotel: auditoria de extratos</h1>
+<div class="card">
+  <h2>Limites por hóspede</h2>
+  <div class="row">
+    <label>Hóspedes (padrão)<input type="number" id="g" min="1" placeholder="1"></label>
+    <label>Frigobar/dia (R$)<input type="number" id="lf" min="0" step="0.01" placeholder="0,00"></label>
+    <label>Água/dia (R$)<input type="number" id="la" min="0" step="0.01" placeholder="0,00"></label>
+    <label>Valor da refeição (R$)<input type="number" id="lr" min="0" step="0.01" placeholder="0,00"></label>
+    <label>Refeições/dia por hóspede<input type="number" id="lq" min="0" step="1" placeholder="sem limite"></label>
+  </div>
+  <label class="chk"><input type="checkbox" id="aw"> Água faz parte do frigobar (soma no consumo e respeita o limite do frigobar; o limite de água é ignorado)</label>
+  <h2>Valor da diária por ocupação (R$)</h2>
+  <div class="row">
+    <label>Single<input type="number" id="ds" min="0" step="0.01" placeholder="0,00"></label>
+    <label>Duplo<input type="number" id="dd" min="0" step="0.01" placeholder="0,00"></label>
+    <label>Triplo<input type="number" id="dt" min="0" step="0.01" placeholder="0,00"></label>
+    <label>Quádruplo<input type="number" id="dq" min="0" step="0.01" placeholder="0,00"></label>
+  </div>
+  <p class="mut">A ocupação é definida pela quantidade de hóspedes de cada extrato. Diárias com valor diferente do informado são sinalizadas (não entram no valor a cobrar). Deixe em branco para não auditar diárias.</p>
+  <h2>Valores cumulativos</h2>
+  <div class="grp">
+    <label class="chk"><input type="checkbox" id="cf"> Frigobar</label>
+    <label class="chk"><input type="checkbox" id="ca"> Água</label>
+    <label class="chk"><input type="checkbox" id="cr"> Refeições</label>
+    <label class="chk"><input type="checkbox" id="cd"> Diárias</label>
+  </div>
+  <p class="mut">Cumulativo: o consumo total da estadia é comparado com a soma dos limites de todos os dias (limite diário × nº de dias), em vez de dia a dia. Desmarcado = cada dia/refeição é conferido separadamente.</p>
+  <h2>Opções de refeição</h2>
+  <label class="chk"><input type="checkbox" id="sp"> Abrir nova refeição quando o bloco anterior já atingiu o limite</label>
+  <label class="chk"><input type="checkbox" id="lz" checked> Lanche conta como refeição à parte, com o mesmo limite por hóspede (a empresa quita até o limite)</label>
+  <label class="chk"><input type="checkbox" id="bz" checked> Buffet conta como refeição à parte, com o mesmo limite por hóspede (a empresa quita até o limite)</label>
+  <p class="mut">O saldo a pagar das bebidas alcoólicas é sempre do hóspede. Os limites são por hóspede. Refeições além da quantidade por dia são cobradas integralmente do hóspede (no modo não cumulativo). A quantidade de hóspedes pode ser ajustada em cada extrato depois da auditoria.</p>
+</div>
+<div class="card">
+  <div class="drop" tabindex="0" role="button" data-file="f"><b>Selecionar os PDFs dos extratos</b> (vários de uma vez, ou arraste aqui)<small id="fn">Nenhum arquivo</small></div>
+  <input type="file" id="f" accept=".pdf" multiple hidden>
+  <div class="acts"><button class="btn" id="go" disabled>Auditar extratos</button><button class="btn sec" id="c1" disabled>Exportar resumo (CSV)</button><button class="btn sec" id="c2" disabled>Exportar ocorrências (CSV)</button><button class="btn sec" id="cl">Limpar tudo</button></div>
+  <div class="acts"><button class="btn" id="c3" disabled>Imprimir relatório (PDF)</button><button class="btn sec" id="c4" disabled>Baixar relatório (HTML)</button></div>
+  <p class="mut" id="rmsg"></p>
+  <div class="prog" hidden id="pg"><i></i></div>
+</div>
+<div id="out"></div>
+<details id="vou" class="card"><summary><b>Voucher de grupo</b> (Excel: valores + hóspedes)</summary>
+  <div class="upload-card">
+    <div class="sub">Envie os 2 arquivos Excel: valores e hóspedes. O app reconhece qual é qual e gera o voucher com check-in e check-out.</div>
+    <div class="upload-dual">
+      <div class="upload-area" id="dropArea1">
+        <div class="upload-title">📊 Arquivo 1 (valores ou hóspedes)</div>
+        <div class="upload-hint">Clique ou arraste</div>
+        <input type="file" id="fileInput1" accept=".xlsx, .xls">
+        <div id="status1" class="file-status"></div><div id="fileName1" class="file-name"></div>
+      </div>
+      <div class="upload-area" id="dropArea2">
+        <div class="upload-title">📁 Arquivo 2 (valores ou hóspedes)</div>
+        <div class="upload-hint">Clique ou arraste</div>
+        <input type="file" id="fileInput2" accept=".xlsx, .xls">
+        <div id="status2" class="file-status"></div><div id="fileName2" class="file-name"></div>
+      </div>
     </div>
+    <div class="toggle-precos"><label for="togglePrecos"><input type="checkbox" id="togglePrecos"> 💰 Mostrar valores (preços) no voucher</label></div>
+    <button class="btn-processar" id="btnProcessar" disabled>🔗 Combinar e gerar voucher</button>
+    <div id="statusMsg" class="status"></div>
+  </div>
+  <div id="vouchersContainer" class="voucher-container"></div>
+</details>
+</div>
+<div id="toastMsg" class="toast-msg"></div>
+<script>
+const $=id=>document.getElementById(id);
+const brl=n=>(n<0?'-':'')+'R$ '+Math.abs(n).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const cnum=s=>parseFloat(String(s).replace(/[^\d,.-]/g,'').replace(/\.(?=\d{3}\b)/g,'').replace(',','.'))||0;
+const csvLine=a=>a.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';');
+async function download(name,text){
+  const data=/\.csv$/.test(name)?'\ufeff'+text:text;
+  try{const d=window.claude&&await window.claude.use('downloads');if(d){await d.save({filename:name,data});return}}catch(e){if(e&&e.code==='declined')return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:/\.html$/.test(name)?'text/html':'text/csv;charset=utf-8'}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+
+document.querySelectorAll('.drop').forEach(d=>{
+  const inp=$(d.dataset.file);
+  d.onclick=()=>inp.click();
+  d.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();inp.click()}};
+  d.ondragover=e=>{e.preventDefault();d.classList.add('over')};
+  d.ondragleave=()=>d.classList.remove('over');
+  d.ondrop=e=>{e.preventDefault();d.classList.remove('over');inp.files=e.dataTransfer.files;inp.dispatchEvent(new Event('change'))};
+});
+
+/* ===== Leitura do PDF ===== */
+async function pdfLines(file){
+  if(typeof pdfjsLib==='undefined')throw new Error('Não foi possível carregar o leitor de PDF. Verifique a conexão com a internet e recarregue a página.');
+  try{if(!pdfjsLib.GlobalWorkerOptions.workerSrc)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js'}catch(e){}
+  let pdf;
+  try{pdf=await pdfjsLib.getDocument(new Uint8Array(await file.arrayBuffer())).promise}
+  catch(e){throw new Error(e&&e.name==='PasswordException'?'PDF protegido por senha.':'Não foi possível abrir este PDF ('+((e&&e.message)||'arquivo inválido')+').')}
+  const out=[];
+  for(let p=1;p<=pdf.numPages;p++){
+    const tc=await(await pdf.getPage(p)).getTextContent();
+    /* agrupa por proximidade vertical (tolerância), e não por "baldes" fixos, que cortavam linhas ao meio */
+    const its=tc.items.filter(it=>it.str.trim()).sort((a,b)=>b.transform[5]-a.transform[5]),rows=[];
+    for(const it of its){const y=it.transform[5],r=rows[rows.length-1];if(r&&r.y-y<=4)r.items.push(it);else rows.push({y,items:[it]})}
+    rows.forEach(r=>out.push(r.items.sort((a,b)=>a.transform[4]-b.transform[4]).map(i=>i.str).join(' ').replace(/\s+/g,' ').trim()));
+  }
+  return out;
+}
+function infoExtrato(lines,fname){
+  const flat=lines.join(' ').replace(/\s+/g,' ');let name='',res='',uh='',bal='',val=0,cr=false,m;
+  m=flat.match(/H[óo]spede\s*:?\s*(.+?)\s+(?:Reserva|Check|UH|Pens[ãa]o|N[º°])/i);if(m)name=m[1].trim().toUpperCase();
+  if(name.length<5)name=fname.replace(/\.pdf$/i,'').replace(/[_-]+/g,' ').trim();
+  for(const p of [/Reserva\s*N?[º°o]?\.?\s*:?\s*(\d{3,})/i,/(?:Localizador|Confirma[çc][ãa]o)\s*:?\s*([A-Z0-9]{6,})/i]){m=flat.match(p);if(m){res=m[1];break}}
+  m=flat.match(/\bUH\s*:?\s*([A-Z0-9]+)/i);if(m)uh=m[1];
+  for(const p of [/Saldo\s*:?\s*R\$\s*([\d.]+,\d{2})\s*([DC])?/i,/Total\s*a\s*Pagar\s*:?\s*R\$\s*([\d.]+,\d{2})()/i]){m=flat.match(p);if(m){bal=m[1];cr=(m[2]||'').toUpperCase()==='C';break}}
+  if(bal){val=cnum(bal);if(cr)val=-val}
+  return{name,res,uh,bal,val,file:fname};
+}
+const IGN=['diaria','lavanderia','hospedagem'];
+const ITEM=/^(.+?)\s+(?:R\$\s*)?([\d.]+,\d{2})\s+(\d+(?:,\d+)?)\s+(?:R\$\s*)?([\d.]+,\d{2})\s+(?:R\$\s*)?([\d.]+,\d{2})\s*[DC]?\s*$/;
+const DATA=/^(\d{2}\/\d{2}\/\d{4})\s+(.*)$/;
+function parseItems(lines){
+  const it=[],skipped=[];
+  for(let i=0;i<lines.length;i++){
+    let d=lines[i].match(DATA);if(!d)continue;
+    let m=d[2].match(ITEM);
+    /* linha quebrada em duas (descrição longa ou valores em outra linha): tenta juntar com as seguintes */
+    for(let j=1;!m&&j<=2&&i+j<lines.length&&!DATA.test(lines[i+j]);j++){
+      const mm=(d[2]+' '+lines.slice(i+1,i+1+j).join(' ')).replace(/\s+/g,' ').match(ITEM);
+      if(mm){m=mm;i+=j}
+    }
+    if(!m){skipped.push(lines[i]);continue}
+    const desc=m[1].trim();
+    const ign=IGN.some(k=>norm(desc).includes(k));
+    it.push({date:d[1],desc,qty:parseInt(m[3]),total:cnum(m[5]),ign});
+  }
+  it.skipped=skipped;
+  return it;
+}
+
+/* ===== Classificação (baseada no cardápio do hotel) ===== */
+const mk=l=>new RegExp(l.map(k=>'\\b'+k.replace(/ /g,'\\s+')+(k.length<=4?'s?\\b':'')).join('|'));
+const R_GRAMAS=/\(\s*\d+(?:[.,]\d+)?\s*g\s*\)/;
+const R_SNACK=mk(['kit kat','bala','mentos','trident','salgadinho','chiclete','bombom','amendoim','biscoito','barra']);
+const R_ALCOOL=mk(['cerveja','antarctica','skol','stella','heineken','caipirinha','caipivodka','cachaca','vodka','gin','cuba libre','negroni','martini','campari','conhaque','whisky','johnny','chivas','vinho','espumante','chandon','dedicato','miolo','gato preto','concha y toro','santa helena','drink']);
+const R_ATON=/tonica|\btonic\b/;
+const R_AGUA=mk(['agua']);
+const R_BUFFET=mk(['buffet','brunch','cafe da manha']);
+const R_BEBIDA=mk(['refrigerante','coca','sprit','sprite','guarana','fanta','pepsi','soda','cerveja','antarctica','skol','stella','heineken','suco','jarra','vitamina','leite','cafe','cha','chocolate simples','chocolate quente','caipirinha','caipivodka','cachaca','vodka','gin','cuba libre','negroni','martini','campari','conhaque','whisky','johnny','chivas','vinho','espumante','chandon','dedicato','miolo','gato preto','concha y toro','santa helena','shot','drink']);
+const R_LANCHE=mk(['lanche','tapioca','omelete','misto','queijo quente','brunch']);
+const R_BUFFETSEP=mk(['buffet']);
+const R_COMIDA=mk(['salada','caesar','sopa','canja','baby beef','file','escalopinho','strogonoff','gnocchi','nhoque','fetuccine','espaguete','macarrao','brasileirinho','paillard','contrafile','moqueca','churrasco','bife','parmegiana','lombinho','linguica','calabresa','iscas','mini','burguer','burger','hamburguer','choripan','delicia','pizza','filezinho','gourjao','porcao','tapioca','omelete','misto','queijo quente','lanche','sanduiche','pudim','torta','banana split','sorvete','granola','arroz','farofa','legumes','brocolis','pure','fritas','chips','feijao','ovos','molho','batata','frango','peixe','carne','frutas','tutu','prato']);
+function classify(desc){
+  const d=norm(desc);
+  /* pudim e qualquer suco: sempre refeição (o frigobar não tem sucos), mesmo com gramas/ml no nome ou sem prato vizinho */
+  if(/\bpudim\b/.test(d)||/\bsucos?\b/.test(d))return'comida';
+  if(R_ATON.test(d)&&!/\bgin\b/.test(d))return'bebida';
+  if(R_ALCOOL.test(d)&&!/sem alcool|zero|0,0%/.test(d))return'alcool';
+  if(R_ATON.test(d))return'bebida';
+  if(R_GRAMAS.test(d)||R_SNACK.test(d))return'snack';
+  if(R_AGUA.test(d))return'agua';
+  if(R_BUFFET.test(d))return'comida';
+  if(R_BEBIDA.test(d))return'bebida';
+  if(R_COMIDA.test(d))return'comida';
+  return'outro';
+}
+
+/* ===== Auditoria ===== */
+const sg=x=>(x>0?'+':'')+brl(x)+(x>0?' (acima do esperado)':' (abaixo do esperado)');
+const cfg=()=>({g:Math.max(1,parseInt($('g').value)||1),lf:+$('lf').value||0,la:+$('la').value||0,lr:+$('lr').value||0,q:parseInt($('lq').value)||0,aw:$('aw').checked,
+  cf:$('cf').checked,ca:$('ca').checked,cr:$('cr').checked,cd:$('cd').checked,
+  rt:['ds','dd','dt','dq'].map(i=>+$(i).value||0),
+  sp:$('sp').checked,lz:$('lz').checked,bz:$('bz').checked});
+function auditEnt(e,c){
+  const n=e.n||c.g,LF=c.lf*n,LA=c.la*n,LR=c.lr*n;
+  const by=new Map();e.items.forEach(i=>{if(!by.has(i.date))by.set(i.date,[]);by.get(i.date).push(i)});
+  const isD=i=>i.ign&&/diaria|hospedagem/.test(norm(i.desc));
+  /* nº de dias da estadia (base dos limites cumulativos): datas com diária ou consumo */
+  const nDays=[...by.values()].filter(l=>l.some(i=>!i.ign||isD(i))).length;
+  const days=[],occ=[],outros=[],dv=[];let ef=0,ea=0,em=0,eb=0,sf=0,sa=0,mc=0,nob=0,nln=0;
+  for(const[date,list]of by){
+    if(!list.some(i=>!i.ign))continue;
+    let f=0,a=0,al=0,cur=null,pend=[];const blocks=[],alI=[];
+    /* classifica tudo; álcool é cobrado do hóspede e não interfere na vizinhança; lavanderia/diária não são auditadas, mas ocupam posição e separam os itens vizinhos */
+    const seq=[];
+    for(const it of list){
+      const k=it.ign?'ign':classify(it.desc);
+      if(k==='alcool'){al+=it.total;alI.push(it);continue}
+      seq.push({it,k});
+    }
+    /* bebida só faz parte da refeição se o vizinho imediato (antes ou depois) for prato */
+    seq.forEach((x,i)=>{
+      if(x.k!=='bebida')return;
+      x.gp=!!(seq[i-1]&&seq[i-1].k==='comida');
+      x.gn=!!(seq[i+1]&&seq[i+1].k==='comida');
+    });
+    for(const{it,k,gp,gn}of seq){
+      if(k==='ign'){cur=null;pend.forEach(x=>f+=x.total);pend=[];continue}
+      if(k==='comida'){
+        const dn=norm(it.desc),ln=(c.bz&&R_BUFFETSEP.test(dn))?'Buffet':(c.lz&&R_LANCHE.test(dn)&&!/\bchurrasco\b/.test(dn))?'Lanche':'';
+        if(cur&&((c.sp&&cur.total>=LR)||cur.ln!==ln))cur=null;
+        if(!cur){cur={items:[],total:0,ln};blocks.push(cur)}
+        pend.forEach(x=>{cur.items.push(x);cur.total+=x.total});pend=[];
+        cur.items.push(it);cur.total+=it.total;
+      }else if(k==='bebida'&&gp&&cur){cur.items.push(it);cur.total+=it.total}
+      else if(k==='bebida'&&gn){pend.push(it)}
+      else{
+        cur=null;pend.forEach(x=>f+=x.total);pend=[];
+        if(k==='agua'){if(c.aw)f+=it.total;else a+=it.total}
+        else if(k==='snack'||k==='bebida')f+=it.total;else outros.push(it);
+      }
+    }
+    pend.forEach(x=>f+=x.total);
+    const ob=blocks.filter(b=>!b.ln);
+    nob+=ob.length;nln+=blocks.length-ob.length;sf+=f;sa+=a;blocks.forEach(b=>mc+=b.total);
+    /* modo não cumulativo: confere dia a dia; cumulativo: zera aqui e confere no período */
+    const xf=c.cf?0:Math.max(0,f-LF),xa=(c.ca&&!c.aw)?0:Math.max(0,a-LA);
+    blocks.forEach(b=>{b.ex=0;b.extra=false});
+    if(!c.cr){
+      const ord=[...ob].sort((x,y)=>y.total-x.total);
+      blocks.forEach(b=>{b.extra=!b.ln&&c.q>0&&ord.indexOf(b)>=c.q;b.ex=b.extra?b.total:Math.max(0,b.total-LR)});
+    }
+    const xm=blocks.reduce((t,b)=>t+b.ex,0);
+    if(al>0)occ.push({date,t:'Bebida alcoólica',d:'saldo a pagar integral do hóspede. Itens: '+alI.map(x=>esc(x.desc)+' '+brl(x.total)).join(', ')+'.',k:'b',cons:al,lim:0,c:al});
+    if(xf>0)occ.push({date,t:'Frigobar'+(c.aw?' (com água)':''),d:`consumo ${brl(f)}, limite ${brl(LF)}.`,k:'f',cons:f,lim:LF,c:xf});
+    if(xa>0)occ.push({date,t:'Água',d:`consumo ${brl(a)}, limite ${brl(LA)}.`,k:'a',cons:a,lim:LA,c:xa});
+    blocks.forEach((b,i)=>b.ex>0&&occ.push({date,t:(b.ln||'Refeição')+(b.extra?' além da quantidade':'')+' (bloco '+(i+1)+')',d:(b.extra?`refeição acima da quantidade permitida (${c.q}/dia), cobrada integralmente`:`consumo ${brl(b.total)}, limite ${brl(LR)}`)+`. Itens: ${b.items.map(x=>esc(x.desc)+' '+brl(x.total)).join(', ')}.`,k:'r',cons:b.total,lim:b.extra?0:LR,c:b.ex}));
+    days.push({date,f,a,al,xf,xa,blocks,xm});ef+=xf;ea+=xa;em+=xm;eb+=al;
+  }
+  /* cumulativo: consumo total da estadia x soma dos limites dos dias */
+  const cum=(on,t,lbl,lim,k,det)=>{
+    if(!on)return 0;
+    const x=Math.max(0,t-lim);
+    if(x>0)occ.push({date:'Período',t:lbl+' (cumulativo)',d:`consumo ${brl(t)}, limite acumulado ${brl(lim)} (${det}).`,k,cons:t,lim,c:x});
+    return x;
+  };
+  if(c.cf)ef=cum(1,sf,'Frigobar'+(c.aw?' (com água)':''),LF*nDays,'f',nDays+' dia(s) × '+brl(LF));
+  if(c.ca&&!c.aw)ea=cum(1,sa,'Água',LA*nDays,'a',nDays+' dia(s) × '+brl(LA));
+  if(c.cr)em=cum(1,mc,'Refeições',LR*((c.q>0?c.q*nDays:nob)+nln),'r',(c.q>0?nDays+' dia(s) × '+c.q+' refeição(ões)':nob+' refeição(ões)')+(nln?' + '+nln+' lanche/buffet':'')+' × '+brl(LR));
+  /* auditoria das diárias pela ocupação (nº de hóspedes) */
+  const rate=n<=4?c.rt[n-1]:0,dI=e.items.filter(isD).filter(i=>/diaria|hospedagem/.test(norm(i.desc)));
+  if(rate>0&&dI.length){
+    if(c.cd){
+      const tot=dI.reduce((s,i)=>s+i.total,0),nn=dI.reduce((s,i)=>s+(i.qty||1),0),exp=rate*nn;
+      if(Math.abs(tot-exp)>.005)dv.push({date:'Período',diff:tot-exp,d:`soma das diárias ${brl(tot)}, esperado ${brl(exp)} (${nn} diária(s) × ${brl(rate)}). Diferença: ${sg(tot-exp)}`});
+    }else dI.forEach(i=>{const v=i.total/(i.qty||1);if(Math.abs(v-rate)>.005)dv.push({date:i.date,diff:v-rate,d:`lançado ${brl(v)}, esperado ${brl(rate)} (${esc(i.desc)}). Diferença: ${sg(v-rate)}`})});
+  }
+  const noRate=dI.length>0&&rate===0&&c.rt.some(x=>x>0);
+  return{n,LF,LA,LR,days,occ,ef,ea,em,eb,dv,rate,noRate,tot:ef+ea+em+eb,outros};
+}
+
+/* ===== Fluxo: vários PDFs ===== */
+let files=[],ents=[];
+$('f').onchange=e=>{
+  [...e.target.files].forEach(f=>{if(/\.pdf$/i.test(f.name)&&!files.some(x=>x.name===f.name&&x.size===f.size))files.push(f)});
+  e.target.value='';$('fn').textContent=files.length?files.length+' PDF(s) selecionado(s)':'Nenhum arquivo';$('go').disabled=!files.length;
+};
+$('go').onclick=async()=>{
+  const b=$('go'),pg=$('pg');b.disabled=true;ents=[];pg.hidden=false;
+  for(let i=0;i<files.length;i++){
+    b.textContent=`Processando ${i+1} de ${files.length}…`;pg.firstChild.style.width=((i+1)/files.length*100)+'%';
+    try{
+      const L=await pdfLines(files[i]),items=parseItems(L);
+      if(!items.length)throw new Error(L.length?'Nenhum item de consumo foi reconhecido neste PDF (o formato pode ser diferente do extrato esperado).':'Este PDF não tem texto selecionável (provavelmente é imagem digitalizada), por isso não pôde ser lido.');
+      ents.push({...infoExtrato(L,files[i].name),items,skipped:items.skipped,n:null,open:false});
+    }
+    catch(err){ents.push({file:files[i].name,name:files[i].name,err:err.message,items:[],val:0,n:null})}
+    await new Promise(r=>setTimeout(r));
+  }
+  b.textContent='Auditar extratos';b.disabled=false;pg.hidden=true;run();
+};
+function run(){const c=cfg();ents.forEach(e=>{if(!e.err)e.r=auditEnt(e,c)});render();$('c1').disabled=$('c2').disabled=$('c3').disabled=$('c4').disabled=!ents.length}
+['g','lf','la','lr','lq','ds','dd','dt','dq','aw','cf','ca','cr','cd','sp','lz','bz'].forEach(id=>$(id).oninput=()=>ents.length&&run());
+/* água no frigobar: o limite próprio de água e o cumulativo de água deixam de valer */
+$('aw').addEventListener('change',()=>{$('la').disabled=$('ca').disabled=$('aw').checked});
+$('cl').onclick=()=>{files=[];ents=[];$('fn').textContent='Nenhum arquivo';$('go').disabled=true;$('out').innerHTML='';$('c1').disabled=$('c2').disabled=$('c3').disabled=$('c4').disabled=true;$('rmsg').textContent=''};
+
+function render(){
+  const only=$('oc')?$('oc').checked:false,c0=cfg();
+  const ok=ents.filter(e=>e.r),T=ok.reduce((s,e)=>s+e.r.tot,0),S=ents.reduce((s,e)=>s+e.val,0),nC=ok.filter(e=>e.r.tot>0).length;
+  const rows=ents.map((e,i)=>({e,i})).filter(x=>!only||(x.e.r&&(x.e.r.tot>0||x.e.r.dv.length)));
+  let h=(c0.lf||c0.la||c0.lr?'':'<div class="al wn">Nenhum limite de frigobar, água ou refeição foi informado: todo o consumo será cobrado do hóspede. Preencha os limites acima.</div>')+
+  `<div class="card"><div>${ents.length} extrato(s) · ${nC} com valor a cobrar · saldo total ${brl(S)}</div><div class="tot">Total a cobrar (excessos): ${brl(T)}</div><label class="chk"><input type="checkbox" id="oc" ${only?'checked':''}> Mostrar só extratos com cobrança ou diária divergente</label></div>`;
+  h+=`<div class="sc card"><table><thead><tr><th>Hóspede</th><th>Reserva</th><th>UH</th><th class="r">Saldo</th><th>Hósp.</th><th class="r">Frigobar</th><th class="r">Água</th><th class="r">Refeições</th><th class="r">Álcool</th><th>Diárias</th><th class="r cg">A cobrar</th></tr></thead><tbody>`;
+  rows.forEach(({e,i})=>{
+    if(e.err){h+=`<tr><td colspan="11" class="cg">${esc(e.file)}: ${esc(e.err)}</td></tr>`;return}
+    const r=e.r;
+    if(e.skipped&&e.skipped.length)h+=`<tr><td colspan="11" class="cg">⚠ ${esc(e.name)}: ${e.skipped.length} linha(s) do extrato não puderam ser lidas e ficaram fora da auditoria: ${e.skipped.slice(0,3).map(esc).join(' | ')}${e.skipped.length>3?' …':''}</td></tr>`;
+    h+=`<tr><td>${esc(e.name)}</td><td>${esc(e.res||'-')}</td><td>${esc(e.uh||'-')}</td><td class="r">${e.bal?brl(e.val):'-'}</td><td><input class="num" type="number" min="1" data-g="${i}" value="${r.n}" aria-label="Hóspedes de ${esc(e.name)}"></td><td class="r">${r.ef?brl(r.ef):'-'}</td><td class="r">${r.ea?brl(r.ea):'-'}</td><td class="r">${r.em?brl(r.em):'-'}</td><td class="r">${r.eb?brl(r.eb):'-'}</td><td>${r.dv.length?`<span class="cg">⚠ ${r.dv.length} divergente(s)<br>${(x=>(x>0?'+':'')+brl(x))(r.dv.reduce((t,d)=>t+d.diff,0))}</span>`:r.rate>0?'ok':'-'}</td><td class="r cg">${r.tot?brl(r.tot):'-'}</td></tr>`;
+  });
+  h+='</tbody></table></div>';
+  rows.forEach(({e,i})=>{if(!e.err)h+=detail(e,i)});
+  $('out').innerHTML=h;
+}
+function detail(e,i){
+  const r=e.r;
+  let h=`<details class="card" data-i="${i}" ${e.open?'open':''}><summary><b>${esc(e.name)}</b> · UH ${esc(e.uh||'-')} · ${r.n} hóspede(s) · <span class="${r.tot>0?'cg':''}">${r.tot>0?'cobrar '+brl(r.tot):'sem cobrança'}</span>${r.dv.length?' · <span class="cg">diária divergente</span>':''}</summary>`;
+  h+=r.occ.length?r.occ.map(o=>`<div class="al ${o.k==='r'?'wn':'bad'}" style="margin-top:8px"><b>${o.t} ${o.date}:</b> ${o.d} Cobrar <b>${brl(o.c)}</b></div>`).join(''):'<div class="al ok" style="margin-top:8px">Nenhum limite ultrapassado.</div>';
+  h+=r.dv.map(d=>`<div class="al wn"><b>Diária divergente ${d.date}:</b> ${d.d}.</div>`).join('');
+  if(r.noRate)h+=`<p class="mut">Valor de diária para ${r.n} hóspede(s) não informado: diárias deste extrato não foram auditadas.</p>`;
+  h+=`<div class="sc"><table style="margin-top:10px"><thead><tr><th>Data</th><th class="r">Frigobar${$('aw').checked?' + água':''}</th><th class="r">Água</th><th>Refeições</th><th class="r">Álcool</th></tr></thead><tbody>`+
+   r.days.map(d=>`<tr><td>${d.date}</td><td class="r ${d.xf?'cg':''}">${brl(d.f)}</td><td class="r ${d.xa?'cg':''}">${brl(d.a)}</td><td>${d.blocks.map(b=>`<span class="${b.ex?'cg':''}">${brl(b.total)}</span>`).join(' · ')||'-'}</td><td class="r ${d.al?'cg':''}">${d.al?brl(d.al):'-'}</td></tr>`).join('')+'</tbody></table></div>';
+  if(r.outros.length)h+=`<p class="mut">Itens não classificados (fora dos limites): ${r.outros.map(x=>esc(x.desc)+' '+x.date).join('; ')}</p>`;
+  return h+'</details>';
+}
+$('out').addEventListener('change',e=>{
+  if(e.target.id==='oc')return render();
+  if(e.target.dataset.g!==undefined){const x=ents[+e.target.dataset.g];x.n=parseInt(e.target.value)>0?parseInt(e.target.value):null;x.r=auditEnt(x,cfg());render()}
+});
+$('out').addEventListener('toggle',e=>{const i=e.target.dataset&&e.target.dataset.i;if(i!==undefined)ents[+i].open=e.target.open},true);
+
+$('c1').onclick=()=>{
+  const ok=ents.filter(e=>e.r);
+  download('resumo_auditoria.csv',[csvLine(['Hóspede','Reserva','UH','Hóspedes','Saldo','Excesso frigobar','Excesso água','Excesso refeições','Bebidas alcoólicas','Total a cobrar','Diárias divergentes','Arquivo']),
+   ...ok.map(e=>csvLine([e.name,e.res,e.uh,e.r.n,e.bal?e.val.toFixed(2).replace('.',','):'',e.r.ef.toFixed(2).replace('.',','),e.r.ea.toFixed(2).replace('.',','),e.r.em.toFixed(2).replace('.',','),e.r.eb.toFixed(2).replace('.',','),e.r.tot.toFixed(2).replace('.',','),e.r.dv.length,e.file])),
+   csvLine(['Total','','','','','','','','',ok.reduce((s,e)=>s+e.r.tot,0).toFixed(2).replace('.',','),'',''])].join('\n'));
+};
+$('c2').onclick=()=>{
+  const L=[csvLine(['Hóspede','UH','Data','Tipo','Consumo','Limite','Cobrar','Arquivo'])];
+  ents.filter(e=>e.r).forEach(e=>{
+    e.r.occ.forEach(o=>L.push(csvLine([e.name,e.uh,o.date,o.t,o.cons.toFixed(2).replace('.',','),o.lim.toFixed(2).replace('.',','),o.c.toFixed(2).replace('.',','),e.file])));
+    e.r.dv.forEach(d=>L.push(csvLine([e.name,e.uh,d.date,'Diária divergente (sem cobrança): '+d.d.replace(/&amp;/g,'&'),'','','',e.file])));
+  });
+  download('ocorrencias.csv',L.join('\n'));
+};
+
+/* ===== Relatório: o que a empresa quita x o que o hóspede quita ===== */
+function repHtml(){
+  const ok=ents.filter(e=>e.r),c=cfg();
+  const T=ok.reduce((o,e)=>{o.g+=e.r.tot;if(e.bal){o.s+=e.val;o.e+=e.val-e.r.tot}else o.ns++;return o},{g:0,s:0,e:0,ns:0});
+  const empresa=e=>e.bal?brl(e.val-e.r.tot):'a conferir';
+  let h=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Relatório de quitação</title><style>
+body{font:13px/1.45 "Segoe UI",Arial,sans-serif;color:#111;margin:24px}h1{font-size:20px;margin:0 0 4px}h2{font-size:15px;margin:0 0 6px}
+table{width:100%;border-collapse:collapse;margin:8px 0}th,td{border:1px solid #bbb;padding:5px 7px;text-align:left}th{background:#e8eef1}.r{text-align:right}
+.box{display:flex;gap:12px;margin:8px 0}.box div{flex:1;border:1px solid #bbb;border-radius:6px;padding:8px}.box b{display:block;font-size:17px}
+.pg{page-break-inside:avoid;margin-top:22px;border-top:2px solid #0b6b6f;padding-top:10px}.m{color:#555;font-size:12px}.np{margin-bottom:14px}
+@media print{.np{display:none}body{margin:10mm}}</style></head><body>
+<button class="np" onclick="window.print()">Imprimir / salvar em PDF</button>
+<h1>Relatório de quitação de extratos</h1>
+<div class="m">Gerado em ${new Date().toLocaleString('pt-BR')} · Limites por hóspede: frigobar ${brl(c.lf)}/dia${c.aw?' (inclui água)':`, água ${brl(c.la)}/dia`}, refeição ${brl(c.lr)}${c.q?' ('+c.q+' por dia)':''}. Cumulativo: ${[c.cf&&'frigobar',c.ca&&!c.aw&&'água',c.cr&&'refeições',c.cd&&'diárias'].filter(Boolean).join(', ')||'nenhum'}. O hóspede paga o que excedeu os limites e todas as bebidas alcoólicas; o restante do saldo fica a pagar pela empresa.</div>
+<div class="box"><div>Saldo total dos extratos<b>${brl(T.s)}</b></div><div>Saldo a pagar pela empresa<b>${brl(T.e)}</b></div><div>Saldo a pagar pelos hóspedes<b>${brl(T.g)}</b></div></div>
+${T.ns?`<div class="m">Atenção: ${T.ns} extrato(s) sem saldo identificado, fora dos totais de saldo e empresa.</div>`:''}
+<table><thead><tr><th>Hóspede</th><th>UH</th><th>Reserva</th><th class="r">Saldo</th><th class="r">Empresa quita</th><th class="r">Hóspede quita</th></tr></thead><tbody>`+
+  ok.map(e=>`<tr><td>${esc(e.name)}</td><td>${esc(e.uh||'-')}</td><td>${esc(e.res||'-')}</td><td class="r">${e.bal?brl(e.val):'-'}</td><td class="r">${empresa(e)}</td><td class="r">${brl(e.r.tot)}</td></tr>`).join('')+
+  `<tr><th colspan="3">Total</th><th class="r">${brl(T.s)}</th><th class="r">${brl(T.e)}</th><th class="r">${brl(T.g)}</th></tr></tbody></table>`;
+  const dvs=ok.filter(e=>e.r.dv.length);
+  if(dvs.length)h+=`<div class="pg"><h2>Diárias com valor divergente</h2><table><thead><tr><th>Hóspede</th><th>UH</th><th>Data</th><th>Detalhe</th></tr></thead><tbody>`+dvs.map(e=>e.r.dv.map(d=>`<tr><td>${esc(e.name)}</td><td>${esc(e.uh||'-')}</td><td>${d.date}</td><td>${d.d}</td></tr>`).join('')).join('')+`</tbody></table></div>`;
+  ok.filter(e=>e.r.tot>0).forEach(e=>{
+    h+=`<div class="pg"><h2>${esc(e.name)} · UH ${esc(e.uh||'-')} · Reserva ${esc(e.res||'-')} · ${e.r.n} hóspede(s)</h2>
+<div class="box"><div>Saldo do extrato<b>${e.bal?brl(e.val):'não identificado'}</b></div><div>Empresa quita<b>${empresa(e)}</b></div><div>Hóspede quita (excessos)<b>${brl(e.r.tot)}</b></div></div>
+<table><thead><tr><th>Data</th><th>Tipo</th><th class="r">Consumo</th><th class="r">Limite</th><th class="r">Hóspede paga</th></tr></thead><tbody>`+
+    e.r.occ.map(o=>`<tr><td>${o.date}</td><td>${o.t}${o.k==='r'?`<div class="m">${o.d.split('Itens: ')[1]||''}</div>`:''}</td><td class="r">${brl(o.cons)}</td><td class="r">${o.k==='b'?'—':brl(o.lim)}</td><td class="r">${brl(o.c)}</td></tr>`).join('')+
+    `<tr><th colspan="4">Total a pagar pelo hóspede</th><th class="r">${brl(e.r.tot)}</th></tr></tbody></table></div>`;
+  });
+  return h+'</body></html>';
+}
+$('c3').onclick=()=>{
+  $('rmsg').textContent='Abrindo a impressão. Se a janela não abrir, use "Baixar relatório (HTML)", abra o arquivo e imprima ou salve em PDF.';
+  try{
+    const fr=document.createElement('iframe');fr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+    fr.onload=()=>{try{fr.contentWindow.focus();fr.contentWindow.print()}catch(e){}setTimeout(()=>fr.remove(),120000)};
+    fr.srcdoc=repHtml();document.body.appendChild(fr);
+  }catch(e){}
+};
+$('c4').onclick=()=>download('relatorio_quitacao.html',repHtml());
+
+/* ===== Voucher de grupo (lógica do app /grupo) ===== */
+let file1Data = null, file2Data = null;
+    let currentVoucherElement = null;
+    let mostrarPrecos = false; // PADRÃO: preços ocultos
     
-    <div id="result" style="display: none;">
-        <h2>Relatório de Auditoria</h2>
-        <div id="table-container"></div>
-        <div id="image-container"></div>
-        <button id="whatsapp-btn" class="whatsapp-btn">
-            <span id="whatsapp-text">Compartilhar via WhatsApp</span>
-        </button>
-        <button id="download-btn" class="download-btn">Baixar Imagem</button>
-        <button id="print-btn" style="background-color: #7f8c8d; margin-top: 10px;">Imprimir Relatório</button>
-    </div>
-
-    <!-- Adicione a biblioteca html2canvas -->
-    <script src="https://html2canvas.hertzen.com/dist/html2canvas.min.js"></script>
-    <script>
-        // Set default date to today
-        document.addEventListener('DOMContentLoaded', function() {
-            const today = new Date();
-            const formattedDate = today.toISOString().substr(0, 10);
-            document.getElementById('date').value = formattedDate;
-        });
-
-        // Função para mostrar/ocultar campo de motivo
-        function toggleMotivo(elementId, status) {
-            const motivoElement = document.getElementById(elementId);
-            if (status === 'pendente' || status === 'pendentes' || status === 'ocorrencias' || status === 'com estornos') {
-                motivoElement.style.display = 'block';
-            } else {
-                motivoElement.style.display = 'none';
-                document.getElementById(elementId + '_text').value = '';
+    function identifySheetType(jsonData) {
+        for (let i = 0; i < Math.min(15, jsonData.length); i++) {
+            const row = jsonData[i];
+            if (!row) continue;
+            const rowStr = row.join(" ").toLowerCase();
+            if (rowStr.includes("total previsto")) return "VALORES";
+            if ((rowStr.includes("check-out") || rowStr.includes("checkout")) && (rowStr.includes("categor") || rowStr.includes("adult"))) return "HOSPEDES";
+            if (row.includes("Nº") && row.includes("Total Previsto")) return "VALORES";
+        }
+        return "HOSPEDES";
+    }
+    
+    function extractValoresData(jsonData) {
+        const map = new Map();
+        let headerRow = null;
+        for (let i = 0; i < Math.min(20, jsonData.length); i++) {
+            const row = jsonData[i];
+            if (row && (row[0] === "Nº" || (row[0] && row[0].toString().trim() === "Nº"))) {
+                headerRow = row; break;
             }
         }
-
-        document.getElementById('generate-btn').addEventListener('click', function() {
-            // Validate required fields
-            const date = document.getElementById('date').value;
-            const colaboradores = document.getElementById('colaboradores').value;
+        if (!headerRow) return map;
+        
+        const idxNum = headerRow.indexOf("Nº");
+        const idxTotal = headerRow.indexOf("Total Previsto");
+        const idxEmpresa = headerRow.indexOf("Empresa");
+        if (idxNum === -1) return map;
+        
+        for (let i = headerRow.indexOf("Nº") + 1; i < jsonData.length; i++) {
+            const row = jsonData[i];
+            if (!row || row.length < 2) continue;
+            const num = row[idxNum] ? String(row[idxNum]).trim() : "";
+            if (!num || !/^\d+$/.test(num)) continue;
             
-            if (!date || !colaboradores) {
-                alert('Por favor, preencha todos os campos obrigatórios (Data e Nome dos Colaboradores).');
-                return;
+            let total = 0;
+            if (idxTotal >= 0 && row[idxTotal]) {
+                const valStr = String(row[idxTotal]).replace(/[^0-9,.-]/g, '').replace(',', '.');
+                const parsed = parseFloat(valStr);
+                total = isNaN(parsed) ? 0 : parsed;
             }
+            const empresa = (idxEmpresa >= 0 && row[idxEmpresa]) ? String(row[idxEmpresa]).trim() : "UNIMED LESTE FLUMINENSE";
+            map.set(num, { total, empresa });
+        }
+        return map;
+    }
+    
+    function extractHospedesData(jsonData) {
+        const map = new Map();
+        let i = 0;
+        while (i < jsonData.length) {
+            const row = jsonData[i];
+            if (!row || row.length < 6) { i++; continue; }
             
-            // Get form values
-            const formattedDate = formatDate(date);
+            const numRaw = row[3];
+            const checkinRaw = row[4];
+            const isBooking = numRaw && (typeof numRaw === 'number' || /^\d+$/.test(String(numRaw).trim())) && 
+                              checkinRaw && String(checkinRaw).match(/\d{2}\/\d{2}\/\d{4}/);
             
-            // Função para formatar status e motivo
-            function getStatusInfo(selectId, motivoId) {
-                const status = document.getElementById(selectId).value;
-                const motivo = document.getElementById(motivoId).value;
+            if (isBooking) {
+                const num = String(numRaw).trim();
+                const checkin = String(checkinRaw).trim();
+                let checkout = "";
+                if (row[9] && row[9].trim) checkout = String(row[9]).trim();
+                else if (row[9]) checkout = String(row[9]).trim();
                 
-                return {
-                    status: status,
-                    motivo: motivo
-                };
-            }
-
-            const data = {
-                caixa: document.getElementById('caixa').value || 'R$ 1.000,00',
-                cadastro_frnh: getStatusInfo('cadastro_frnh', 'cadastro_frnh_motivo_text'),
-                emails: getStatusInfo('emails', 'emails_motivo_text'),
-                checkouts: getStatusInfo('checkouts', 'checkouts_motivo_text'),
-                saldo_elevado: getStatusInfo('saldo_elevado', 'saldo_elevado_motivo_text'),
-                lancamentos: getStatusInfo('lancamentos', 'lancamentos_motivo_text'),
-                contas_pendentes: getStatusInfo('contas_pendentes', 'contas_pendentes_motivo_text'),
-                objetos_emprestimo: getStatusInfo('objetos_emprestimo', 'objetos_emprestimo_motivo_text'),
-                situacao_hotel: document.getElementById('situacao_hotel').value || 'Nenhuma informação fornecida',
-                situacao_proximo_dia: document.getElementById('situacao_proximo_dia').value || 'Nenhuma informação fornecida',
-                estornos: getStatusInfo('estornos', 'estornos_motivo_text'),
-                relatorio_seguranca: getStatusInfo('relatorio_seguranca', 'relatorio_seguranca_motivo_text'),
-                logbook: getStatusInfo('logbook', 'logbook_motivo_text'),
-                colaboradores: colaboradores,
-                date: formattedDate
-            };
-            
-            // Generate table
-            const tableHtml = generateTable(data);
-            document.getElementById('table-container').innerHTML = tableHtml;
-            document.getElementById('result').style.display = 'block';
-
-            // Convert table to image
-            convertTableToImage();
-            
-            // Scroll to result
-            document.getElementById('result').scrollIntoView({ behavior: 'smooth' });
-        });
-
-        function formatDate(dateString) {
-            if (!dateString) return 'Data não informada';
-            
-            const date = new Date(dateString);
-            const day = String(date.getDate()).padStart(2, '0');
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const year = date.getFullYear();
-            
-            return `${day}/${month}/${year}`;
-        }
-        
-        function generateTable(data) {
-            // Função auxiliar para determinar classe de status
-            function getStatusClass(status) {
-                if (status.includes('pendente') || status.includes('pendentes') || 
-                    status.includes('ocorrencias') || status.includes('com estornos')) {
-                    return 'status-pendente';
+                if (!checkout.match(/\d{2}\/\d{2}\/\d{4}/)) {
+                    if (row[10] && String(row[10]).match(/\d{2}\/\d{2}\/\d{4}/)) {
+                        checkout = String(row[10]).trim();
+                    }
                 }
-                return 'status-ok';
-            }
-
-            // Função auxiliar para formatar o texto do status
-            function formatStatusText(status) {
-                const statusMap = {
-                    'ok': 'Concluído',
-                    'pendente': 'Pendente',
-                    'pendentes': 'Pendentes',
-                    'respondidos': 'Respondidos',
-                    'sem estornos': 'Sem estornos',
-                    'com estornos': 'Com estornos',
-                    'ocorrencias': 'Ocorrências registradas'
-                };
                 
-                return statusMap[status] || status;
-            }
-
-            return `
-                <table>
-                    <thead>
-                        <tr>
-                            <th>Conferências</th>
-                            <th>Atividade</th>
-                            <th>Status</th>
-                            <th>${data.date}</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td>Caixa</td>
-                            <td>Conferir o caixa</td>
-                            <td class="status-ok">Concluído</td>
-                            <td>${data.caixa}</td>
-                        </tr>
-                        <tr>
-                            <td>Cadastro FRNH</td>
-                            <td>Verificar se as fichas foram cadastradas (nomes cpf, telefone e-mail e endereço completo)</td>
-                            <td class="${getStatusClass(data.cadastro_frnh.status)}">${formatStatusText(data.cadastro_frnh.status)}</td>
-                            <td>${data.cadastro_frnh.motivo || '-'}</td>
-                        </tr>
-                        <tr>
-                            <td>E-Mails</td>
-                            <td>Após as 17 horas, aos finais de semanas e feriados, a leitura e respostas das solicitações via email de reservas são de responsabilidade da recepção, devendo responder em tempo hábil as solicitações recebidas. Em caso de duvidas solicitar auxílio ao turno seguinte ou a central de reservas.</td>
-                            <td class="${getStatusClass(data.emails.status)}">${formatStatusText(data.emails.status)}</td>
-                            <td>${data.emails.motivo || '-'}</td>
-                        </tr>
-                        <tr>
-                            <td>Check-outs efetuados</td>
-                            <td>Conferência das notas emitidas.</td>
-                            <td class="${getStatusClass(data.checkouts.status)}">${formatStatusText(data.checkouts.status)}</td>
-                            <td>${data.checkouts.motivo || '-'}</td>
-                        </tr>
-                        <tr>
-                            <td>Saldo Elevado</td>
-                            <td>Verificar todos os recebimentos, faturamento e documentos.</td>
-                            <td class="${getStatusClass(data.saldo_elevado.status)}">${formatStatusText(data.saldo_elevado.status)}</td>
-                            <td>${data.saldo_elevado.motivo || '-'}</td>
-                        </tr>
-                        <tr>
-                            <td>Lançamentos</td>
-                            <td>Conferência dos saldos: Particular R$ 500,00 e faturamento até 7 dias, exceto para empresas com acordos diferentes para faturamento.</td>
-                            <td class="${getStatusClass(data.lancamentos.status)}">${formatStatusText(data.lancamentos.status)}</td>
-                            <td>${data.lancamentos.motivo || '-'}</td>
-                        </tr>
-                        <tr>
-                            <td>Contas Pendentes</td>
-                            <td>Conferir, todos os lançamentos do dia, (A&B, lavanderia, diária, iss, fechamento de contas, forma de pagamento), split de A&B exceendente, mantendo uma cópia da comanda. Caso seja encontrado algum erro corrigir antes da auditoria.</td>
-                            <td class="${getStatusClass(data.contas_pendentes.status)}">${formatStatusText(data.contas_pendentes.status)}</td>
-                            <td>${data.contas_pendentes.motivo || '-'}</td>
-                        </tr>
-                        <tr>
-                            <td>Objeto de empréstimo</td>
-                            <td>Verificação das soluções para as contas em pendência</td>
-                            <td class="${getStatusClass(data.objetos_emprestimo.status)}">${formatStatusText(data.objetos_emprestimo.status)}</td>
-                            <td>${data.objetos_emprestimo.motivo || '-'}</td>
-                        </tr>
-                        <tr>
-                            <td>Situação do Hotel atual</td>
-                            <td>Check-ins/check-outs, estacionamento, no-shows</td>
-                            <td class="status-ok">Concluído</td>
-                            <td>${data.situacao_hotel}</td>
-                        </tr>
-                        <tr>
-                            <td>Situação Prevista para próximo dia</td>
-                            <td>Check-ins/check-outs/estacionamento/Reservas a confirmar</td>
-                            <td class="status-ok">Concluído</td>
-                            <td>${data.situacao_proximo_dia}</td>
-                        </tr>
-                        <tr>
-                            <td>Estornos</td>
-                            <td>Informar se houve estorno e motivo</td>
-                            <td class="${getStatusClass(data.estornos.status)}">${formatStatusText(data.estornos.status)}</td>
-                            <td>${data.estornos.motivo || '-'}</td>
-                        </tr>
-                        <tr>
-                            <td>Relatório de Segurança</td>
-                            <td>SALVAR NA PASTA (DRIVE) 1ª PREVISÃO DE CHEGADAS- SALVAR LISTAGEM SIMPLES COM OBSERVAÇÕES. 2ª GERENCIAL/RELATORIOS/GOV +MANUT - SALVAR SAIDAS +PAX IN HOUSE. 8ª HÓSPEDES IN HOUSE - IMPRIMIR LISTAGEM SIMPLES COM OBS</td>
-                            <td class="${getStatusClass(data.relatorio_seguranca.status)}">${formatStatusText(data.relatorio_seguranca.status)}</td>
-                            <td>${data.relatorio_seguranca.motivo || '-'}</td>
-                        </tr>
-                        <tr>
-                            <td>LOGBOOK</td>
-                            <td>Registros sobres a ocorrência de problemas e pendências acontecidas durante o turno.</td>
-                            <td class="${getStatusClass(data.logbook.status)}">${formatStatusText(data.logbook.status)}</td>
-                            <td>${data.logbook.motivo || '-'}</td>
-                        </tr>
-                        <tr>
-                            <td colspan="2"><strong>Nome do Colaborador:</strong> ${data.colaboradores}</td>
-                            <td><strong>Data</strong></td>
-                            <td><strong>${data.date}</strong></td>
-                        </tr>
-                    </tbody>
-                </table>
-            `;
+                const guests = [];
+                let j = i + 1;
+                while (j < jsonData.length) {
+                    const nextRow = jsonData[j];
+                    if (!nextRow || nextRow.length < 5) { j++; continue; }
+                    const nextNum = nextRow[3];
+                    const isNextBooking = nextNum && (typeof nextNum === 'number' || /^\d+$/.test(String(nextNum).trim()));
+                    if (isNextBooking) break;
+                    
+                    const guestName = nextRow[4] ? String(nextRow[4]).trim() : "";
+                    if (guestName && guestName.length > 1 && !guestName.match(/^Check-in$|^Check-out$|^Categoría$|^Adult\.$|^Crian\.$|^Hóspede$|^País$|^BR$/i)) {
+                        guests.push(guestName);
+                    }
+                    j++;
+                }
+                if (guests.length === 0) guests.push("Hóspede não informado");
+                
+                map.set(num, { guests, checkin, checkout });
+                i = j;
+            } else { i++; }
         }
+        return map;
+    }
+    
+    function processFile(file, areaCode, statusId, nameId) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+            try {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+                const sheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: "" });
+                
+                const tipo = identifySheetType(jsonData);
+                let extractedData = null;
+                
+                if (tipo === "VALORES") {
+                    extractedData = extractValoresData(jsonData);
+                    document.getElementById(statusId).innerHTML = `✅ VALORES (${extractedData.size} reservas)`;
+                } else {
+                    extractedData = extractHospedesData(jsonData);
+                    document.getElementById(statusId).innerHTML = `✅ HÓSPEDES (${extractedData.size} reservas)`;
+                }
+                
+                document.getElementById(nameId).innerHTML = `📄 ${file.name}`;
+                document.getElementById(statusId).style.color = "#2e7d32";
+                
+                if (areaCode === "area1") file1Data = { tipo, dados: extractedData };
+                else file2Data = { tipo, dados: extractedData };
+                
+                checkReadyToProcess();
+            } catch (error) {
+                console.error("Erro ao processar arquivo:", error);
+                document.getElementById(statusId).innerHTML = `❌ Erro ao ler arquivo`;
+                document.getElementById(statusId).style.color = "#c2410c";
+                if (areaCode === "area1") file1Data = null; else file2Data = null;
+                checkReadyToProcess();
+            }
+        };
+        reader.onerror = function() {
+            document.getElementById(statusId).innerHTML = `❌ Erro de leitura`;
+            document.getElementById(statusId).style.color = "#c2410c";
+            if (areaCode === "area1") file1Data = null; else file2Data = null;
+            checkReadyToProcess();
+        };
+        reader.readAsArrayBuffer(file);
+    }
+    
+    function checkReadyToProcess() {
+        const btn = document.getElementById('btnProcessar');
+        const msg = document.getElementById('statusMsg');
+        
+        if (file1Data && file2Data) {
+            if ((file1Data.tipo === "VALORES" && file2Data.tipo === "HOSPEDES") ||
+                (file1Data.tipo === "HOSPEDES" && file2Data.tipo === "VALORES")) {
+                btn.disabled = false;
+                msg.innerHTML = '✅ Arquivos OK! Clique para gerar o voucher.';
+                msg.className = 'status success';
+            } else {
+                btn.disabled = true;
+                msg.innerHTML = '⚠️ Dois arquivos do mesmo tipo.';
+                msg.className = 'status error';
+            }
+        } else {
+            btn.disabled = true;
+            msg.innerHTML = '📌 Aguardando o segundo arquivo...';
+            msg.className = 'status info';
+        }
+    }
+    
+    function buildGuestsInline(guests) {
+        if (!guests || guests.length === 0) return '<span style="color:#999; font-size:9px;">—</span>';
+        return guests.map(g => `<span class="g">${escapeHtml(g)}</span>`).join('<span class="sep">•</span>');
+    }
+    
+    function buildVoucherElement(bookings, totalGeral, empresaPrincipal) {
+        const totalGeralStr = `R$ ${totalGeral.toFixed(2).replace('.',',')}`;
+        const exibirPrecos = mostrarPrecos;
+        
+        // ===== TABELA ESTILO PLANILHA ULTRA COMPACTA =====
+        const headerValor = exibirPrecos
+            ? `<TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:right; width:13%;">Valor</TH>`
+            : '';
+        const widthHospedes = exibirPrecos ? '55%' : '68%';
 
-        // Função para converter a tabela em imagem
-        function convertTableToImage() {
-            const tableContainer = document.getElementById('table-container');
-            const whatsappBtn = document.getElementById('whatsapp-btn');
-            const whatsappText = document.getElementById('whatsapp-text');
+        let reservasListHtml = `
+<TABLE class="sheet" cellSpacing=0 cellPadding=0 width="100%" style="border-collapse:collapse; font-size:10px; font-family:Consolas,Monaco,monospace;">
+<THEAD>
+<TR>
+<TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:left; width:8%;">Nº</TH>
+<TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:center; width:12%;">Check-in</TH>
+<TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:center; width:12%;">Check-out</TH>
+${headerValor}
+<TH style="background:#1e2f5e; color:#fff; font-weight:700; font-size:9px; text-transform:uppercase; letter-spacing:0.3px; padding:3px 5px; text-align:left; width:${widthHospedes};">Hóspedes</TH>
+</TR>
+</THEAD>
+<TBODY>
+`;
+
+        bookings.forEach((b, idx) => {
+            const guestsInline = buildGuestsInline(b.guests);
+            const valorStr = b.total > 0 ? `R$ ${b.total.toFixed(2).replace('.',',')}` : "—";
+            const checkinDisplay = b.checkin || "—";
+            const checkoutDisplay = b.checkout || "—";
+            const bg = idx % 2 === 0 ? '#ffffff' : '#f8fafc';
+            const empresaTag = (exibirPrecos && b.empresa) 
+                ? `<span style="color:#6c757d; font-size:8px; font-style:italic; display:block; margin-top:1px;">${escapeHtml(b.empresa)}</span>` 
+                : '';
+            const guestCount = b.guests.length;
+
+            const cellValor = exibirPrecos
+                ? `<TD style="padding:3px 5px; border-bottom:1px solid #e8edf3; text-align:right; font-weight:700; color:#1e6f3f; white-space:nowrap; vertical-align:top; font-size:10px;">${valorStr}${empresaTag}</TD>`
+                : '';
+
+            reservasListHtml += `
+<TR style="background:${bg};">
+<TD style="padding:3px 5px; border-bottom:1px solid #e8edf3; font-weight:800; color:#1e2f5e; font-size:11px; white-space:nowrap; vertical-align:top;">${b.numero}</TD>
+<TD style="padding:3px 5px; border-bottom:1px solid #e8edf3; text-align:center; color:#2c3e5c; font-size:9px; white-space:nowrap; vertical-align:top;">${checkinDisplay}</TD>
+<TD style="padding:3px 5px; border-bottom:1px solid #e8edf3; text-align:center; color:#2c3e5c; font-size:9px; white-space:nowrap; vertical-align:top;">${checkoutDisplay}</TD>
+${cellValor}
+<TD style="padding:3px 5px; border-bottom:1px solid #e8edf3; color:#0f1f3d; font-size:10px; line-height:1.4; vertical-align:top;">
+${guestsInline}
+<span style="display:inline-block; background:#f5a623; color:#1e2f5e; font-size:8px; font-weight:700; padding:0 4px; border-radius:8px; margin-left:4px; font-family:'Segoe UI',Arial,sans-serif;">${guestCount}</span>
+</TD>
+</TR>
+`;
+        });
+
+        reservasListHtml += `</TBODY></TABLE>`;
+
+        // Bloco TOTAL GERAL condicional
+        const totalGeralHtml = exibirPrecos
+            ? `<DIV style="background: #e6f0ff; border-radius: 12px; padding: 8px 12px; text-align: right; font-weight: 800; font-size: 14px; margin: 10px 0;">💰 TOTAL GERAL ${totalGeralStr}</DIV>`
+            : '';
+
+        // Bloco de garantia condicional (menciona valores)
+        const garantiaHtml = exibirPrecos
+            ? `<TABLE style="MARGIN-BOTTOM: 5px; BACKGROUND: #fef6e8; BORDER-LEFT: #f9b81b 3px solid; border-radius: 10px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD style="PADDING: 5px 10px">
+<P style="FONT-SIZE: 10px; MARGIN: 0px">💰 <STRONG>Garantia:</STRONG> 1ª diária. Cancelamento fora do prazo sem reembolso. Tarifas não reembolsáveis: cobrança integral.</P>
+</TD></TR></TBODY></TABLE>`
+            : '';
+        
+        // ===== HTML COMPLETO DO VOUCHER (EMAIL/PDF) =====
+        const htmlContent = `<!DOCTYPE html>
+<html>
+<head><meta charset="UTF-8"></head>
+<body style="margin:0; padding:20px; font-family: 'Segoe UI', Helvetica, Arial, sans-serif; background: #eef2f8; text-align: center;">
+<div style="display: flex; justify-content: center; align-items: center; min-height: auto;">
+<TABLE style='MAX-WIDTH: 680px; BORDER-TOP: #e2e8f0 1px solid; FONT-FAMILY: "Segoe UI", Helvetica, Arial, sans-serif; BORDER-RIGHT: #e2e8f0 1px solid; WIDTH: 561px; BACKGROUND: #ffffff; BORDER-BOTTOM: #e2e8f0 1px solid; BORDER-LEFT: #e2e8f0 1px solid; border-radius: 20px; box-shadow: rgba(0, 0, 0, 0.05) 0px 10px 25px; margin: 0 auto;' cellSpacing=0 cellPadding=0 align=center>
+<TBODY>
+<TR>
+<TD style="BACKGROUND: #1e2f5e; BORDER-BOTTOM: #f9b81b 3px solid; PADDING-BOTTOM: 10px; TEXT-ALIGN: center; PADDING-TOP: 10px; PADDING-LEFT: 12px; PADDING-RIGHT: 12px; border-top-left-radius: 20px; border-top-right-radius: 20px">
+<H1 style="FONT-SIZE: 22px; FONT-WEIGHT: 800; COLOR: #ffffff; MARGIN: 0px; LETTER-SPACING: 1px">ICARAÍ PRAIA HOTEL</H1>
+<P style="FONT-SIZE: 16px; FONT-WEIGHT: 700; COLOR: #f9b81b; MARGIN: 4px 0px 0px">✅ RESERVA CONFIRMADA</P></TD></TR>
+<TR>
+<TD style="PADDING-BOTTOM: 10px; PADDING-TOP: 8px; PADDING-LEFT: 12px; PADDING-RIGHT: 12px">
+<TABLE style="MARGIN-BOTTOM: 6px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD>
+<P style="FONT-SIZE: 13px; FONT-WEIGHT: 700; COLOR: #1e2f5e; MARGIN: 0px 0px 3px">🎉 A sua Reserva foi confirmada!</P>
+<P style="FONT-SIZE: 11px; COLOR: #2c3e5c; MARGIN: 0px">Segue a confirmação da reserva de acordo com sua solicitação nas condições abaixo especificadas.</P>
+</TD></TR></TBODY></TABLE>
+
+<TABLE style="MARGIN-BOTTOM: 12px; BACKGROUND: #fff6cc; BORDER-LEFT: #f9b81b 4px solid; border-radius: 12px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD style="PADDING-BOTTOM: 10px; PADDING-TOP: 10px; PADDING-LEFT: 12px; PADDING-RIGHT: 12px">
+<DIV style="FONT-SIZE: 12px; MARGIN-BOTTOM: 4px; FONT-WEIGHT: 800; COLOR: #1e2f5e">🚀 EVITE FILAS - FAÇA SEU PRÉ-CHECK-IN</DIV>
+<P style="FONT-SIZE: 11px; COLOR: #2c3e5c; MARGIN: 0px 0px 6px">Para agilizar sua chegada, <STRONG>envie os dados abaixo</STRONG> para que todos os hóspedes recebam o link de pré-check-in por e-mail:</P>
+<DIV style="FONT-SIZE: 11px; BORDER-TOP: #f9b81b 1px solid; BORDER-RIGHT: #f9b81b 1px solid; WIDTH: auto; BACKGROUND: #ffffff; BORDER-BOTTOM: #f9b81b 1px solid; COLOR: #1e2f5e; PADDING-BOTTOM: 6px; PADDING-TOP: 6px; PADDING-LEFT: 8px; BORDER-LEFT: #f9b81b 1px solid; DISPLAY: inline-block; PADDING-RIGHT: 8px; border-radius: 8px">📧 <STRONG>Nome completo · Telefone · E-mail de cada hóspede</STRONG></DIV>
+<P style="FONT-SIZE: 10px; COLOR: #1e466e; MARGIN: 8px 0px 0px">✅ Ao enviar, todos receberão o link diretamente no e-mail e <STRONG>não precisarão enfrentar filas</STRONG> no check-in.</P>
+</TD></TR></TBODY></TABLE>
+
+<TABLE style="MARGIN-BOTTOM: 6px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD><DIV style="FONT-SIZE: 13px; MARGIN-BOTTOM: 5px; BORDER-BOTTOM: #f9b81b 2px solid; FONT-WEIGHT: 700; COLOR: #1e2f5e; PADDING-BOTTOM: 3px; DISPLAY: inline-block">📋 Informações da Reserva</DIV></TD></TR></TBODY></TABLE>
+
+<TABLE style="MARGIN-BOTTOM: 8px; BORDER-TOP: #e2edf2 1px solid; BORDER-RIGHT: #e2edf2 1px solid; BACKGROUND: #f8fafc; BORDER-BOTTOM: #e2edf2 1px solid; BORDER-LEFT: #e2edf2 1px solid; border-radius: 12px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD style="PADDING: 10px;">
+<TABLE cellSpacing=0 cellPadding=0 width="100%">
+<TBODY>
+<TR><TD width="50%"><SPAN style="FONT-WEIGHT: 700; COLOR: #1e2f5e">Empresa:</SPAN> ${escapeHtml(empresaPrincipal)}</TD>
+<TD width="50%"><SPAN style="FONT-WEIGHT: 700; COLOR: #1e2f5e">Tarifa:</SPAN> Net</TD></TR>
+<TR><TD><SPAN style="FONT-WEIGHT: 700; COLOR: #1e2f5e">Agência:</SPAN> DIRETO</TD>
+<TD><SPAN style="FONT-WEIGHT: 700; COLOR: #1e2f5e">Pagamento:</SPAN> CARTÃO / BOLETO</TD></TR>
+</TABLE>
+</TD></TR></TBODY></TABLE>
+
+${reservasListHtml}
+
+<TABLE style="MARGIN-BOTTOM: 8px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD align=center>
+<TABLE cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR>
+<TD style="BACKGROUND: #eef3fc; PADDING: 5px; border-radius: 12px" width="32%" align=center>
+<DIV style="FONT-SIZE: 11px; FONT-WEIGHT: 700; COLOR: #1e2f5e">CHECK-IN</DIV>
+<DIV style="FONT-SIZE: 13px; FONT-WEIGHT: 800; COLOR: #1e466e; MARGIN: 3px 0px">A partir 14h</DIV></TD>
+<TD width="2%"></TD>
+<TD style="BACKGROUND: #eef3fc; PADDING: 5px; border-radius: 12px" width="32%" align=center>
+<DIV style="FONT-SIZE: 11px; FONT-WEIGHT: 700; COLOR: #1e2f5e">CHECK-OUT</DIV>
+<DIV style="FONT-SIZE: 13px; FONT-WEIGHT: 800; COLOR: #1e466e; MARGIN: 3px 0px">Até 12h</DIV></TD>
+<TD width="2%"></TD>
+<TD style="BACKGROUND: #eefcee; PADDING: 5px; border-radius: 12px" width="32%" align=center>
+<DIV style="FONT-SIZE: 11px; FONT-WEIGHT: 700; COLOR: #1e2f5e">🍳 CAFÉ DA MANHÃ</DIV>
+<DIV style="FONT-SIZE: 12px; FONT-WEIGHT: 600; COLOR: #1b5e20; MARGIN: 3px 0px">Incluso</DIV></TD>
+</TR></TBODY></TABLE>
+</TD></TR></TBODY></TABLE>
+
+${totalGeralHtml}
+
+<TABLE style="MARGIN-BOTTOM: 6px; BACKGROUND: #f9fbfd; BORDER-LEFT: #f9b81b 3px solid; border-radius: 10px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD style="PADDING: 5px 10px">
+<DIV style="FONT-SIZE: 10px; LINE-HEIGHT: 1.4">✓ Wi-Fi ✓ Smart TV/Ar ✓ Telefone ✓ Minibar ✓ Cofre ✓ Restaurante (6h-22h) &nbsp; 🚗 Estacionamento R$45/dia</DIV>
+</TD></TR></TBODY></TABLE>
+
+<TABLE style="MARGIN-BOTTOM: 4px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD><DIV style="FONT-SIZE: 12px; MARGIN-BOTTOM: 3px; BORDER-BOTTOM: #f9b81b 2px solid; FONT-WEIGHT: 700; COLOR: #1e2f5e; DISPLAY: inline-block">📌 Políticas do Hotel & Menores</DIV></TD></TR></TBODY></TABLE>
+
+<UL style="FONT-SIZE: 10px; COLOR: #2c3e5c; PADDING-LEFT: 18px; MARGIN: 0px; LINE-HEIGHT: 1.4">
+<LI>Check-in 14h / Check-out 12h | Não aceitamos Pet 🚫</LI>
+<LI><STRONG>Estacionamento mediante disponibilidade, solicitação prévia e confirmação</STRONG></LI>
+<LI>Acompanhado dos pais: documento comprovando filiação / Desacompanhado: autorização reconhecida em cartório</LI>
+</UL>
+
+${garantiaHtml}
+
+<TABLE style="MARGIN-BOTTOM: 5px; BACKGROUND: #eef3fc; border-radius: 10px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD style="PADDING: 8px 10px">
+<TABLE cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR>
+<TD vAlign=top width="33%"><DIV style="FONT-SIZE: 11px; FONT-WEIGHT: 700; COLOR: #1b3a62">🏦 Depósito/Pix</DIV>
+<P style="FONT-SIZE: 9px; MARGIN: 2px 0px">Bradesco Ag 0541<br>C/c 17561-7</P>
+<P style="FONT-SIZE: 9px"><STRONG>Pix:</STRONG> reservas@icaraipraiahotel.com.br</P></TD>
+<TD vAlign=top width="33%"><DIV style="FONT-SIZE: 11px; FONT-WEIGHT: 700; COLOR: #1b3a62">💳 Cartão</DIV>
+<P style="FONT-SIZE: 9px; MARGIN: 2px 0px">Debitamos 1ª diária</P>
+<A style="FONT-SIZE: 8px; BACKGROUND: #25d366; COLOR: white; PADDING: 3px 8px; border-radius: 25px; text-decoration: none; display: inline-block;">📲 Solicitar link</A></TD>
+<TD vAlign=top width="34%"><DIV style="FONT-SIZE: 11px; FONT-WEIGHT: 700; COLOR: #1b3a62">🏢 Empresa/Agência</DIV>
+<P style="FONT-SIZE: 9px">Garantia no show. No-show: cobrança de 1ª diária.</P>
+<P style="FONT-SIZE: 8px"><STRONG>Reservas sem garantia podem ser canceladas.</STRONG></P></TD>
+</TR></TBODY></TABLE>
+</TD></TR></TBODY></TABLE>
+
+<TABLE style="BACKGROUND: #eef2fa; MARGIN: 6px 0px 4px; border-radius: 14px" cellSpacing=0 cellPadding=0 width="100%">
+<TBODY><TR><TD style="PADDING: 8px; TEXT-ALIGN: center">
+<P style="FONT-SIZE: 11px">Obrigado! Atenciosamente,</P>
+<P style="FONT-SIZE: 11px; FONT-WEIGHT: 700">Setor de Reservas</P>
+<A style="FONT-SIZE: 10px; BACKGROUND: #25d366; MARGIN-TOP: 4px; FONT-WEIGHT: 600; COLOR: white; PADDING: 4px 12px; DISPLAY: inline-block; border-radius: 25px; text-decoration: none;" href="#">📱 Fale conosco no WhatsApp</A>
+</TD></TR></TBODY></TABLE>
+
+<TABLE width="100%">
+<TBODY><TR><TD style="FONT-SIZE: 8px; COLOR: #385d8a; TEXT-ALIGN: center; PADDING-TOP: 6px"><STRONG>ICARAÍ PRAIA HOTEL</STRONG><br>Rua Belisario Augusto 21, Icaraí - Niterói/RJ - 🌐 www.icaraipraiahotel.com.br</TD></TR>
+<TR><TD style="FONT-SIZE: 7px; BORDER-TOP: #e4edf5 1px solid; COLOR: #6f7c91; TEXT-ALIGN: center; PADDING-TOP: 5px">Apresentar documento oficial no check-in.</TD></TR>
+</TBODY></TABLE>
+
+</TD></TR></TBODY></TABLE>
+</div>
+</body>
+</html>`;
+        
+        const div = document.createElement('div');
+        div.innerHTML = htmlContent;
+        return div;
+    }
+    
+    async function copyVoucherWithFormatting() {
+        if (!currentVoucherElement) {
+            showToast("❌ Gere o voucher primeiro!", "#c2410c");
+            return;
+        }
+        try {
+            const voucherTable = currentVoucherElement.querySelector('table') || currentVoucherElement;
+            const range = document.createRange();
+            range.selectNodeContents(voucherTable);
+            const selection = window.getSelection();
+            selection?.removeAllRanges();
+            selection?.addRange(range);
+            const success = document.execCommand('copy');
+            selection?.removeAllRanges();
+            if (success) {
+                showToast("✅ Voucher copiado! Cole no e-mail (Ctrl+V)", "#1e8a4d");
+                highlightCopyButton();
+            } else { throw new Error('execCommand falhou'); }
+        } catch (err) {
+            try {
+                const htmlContent = currentVoucherElement.outerHTML;
+                await navigator.clipboard.writeText(htmlContent);
+                showToast("✅ Voucher copiado (HTML)", "#f5a623");
+                highlightCopyButton();
+            } catch (err2) {
+                showToast("❌ Selecione manualmente e pressione Ctrl+C", "#c2410c");
+            }
+        }
+    }
+    
+    // ===== GERAR PDF =====
+    function generatePDF() {
+        if (!currentVoucherElement) {
+            showToast("❌ Gere o voucher primeiro!", "#c2410c");
+            return;
+        }
+        
+        const voucherHtml = currentVoucherElement.innerHTML;
+        
+        const printWindow = window.open('', '_blank', 'width=800,height=900');
+        if (!printWindow) {
+            showToast("❌ Permita pop-ups para gerar o PDF", "#c2410c");
+            return;
+        }
+        
+        printWindow.document.write(`
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Voucher Icaraí - Reserva Confirmada</title>
+<style>
+    @page { size: A4 portrait; margin: 10mm; }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+        font-family: 'Segoe UI', Helvetica, Arial, sans-serif;
+        background: #ffffff;
+        padding: 10px;
+        display: flex;
+        justify-content: center;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+    }
+    @media print {
+        body { padding: 0; background: #fff; }
+        .no-print { display: none !important; }
+    }
+    table { page-break-inside: avoid; }
+    tr { page-break-inside: avoid; }
+    thead { display: table-header-group; }
+</style>
+</head>
+<body>
+${voucherHtml}
+<script>
+    window.onload = function() {
+        setTimeout(function() {
+            window.print();
+        }, 400);
+    };
+<\/script>
+</body>
+</html>`);
+        printWindow.document.close();
+        
+        showToast("📄 Gerando PDF... escolha 'Salvar como PDF'", "#c0392b");
+    }
+    
+    function highlightCopyButton() {
+        const btn = document.getElementById('btnCopiarVoucher');
+        if (!btn) return;
+        const originalText = btn.innerHTML;
+        btn.innerHTML = '✅ Copiado!';
+        setTimeout(() => { btn.innerHTML = originalText; }, 2000);
+    }
+    
+    function showToast(message, bgColor = "#1e2f5e") {
+        const toast = document.getElementById('toastMsg');
+        toast.textContent = message;
+        toast.style.backgroundColor = bgColor;
+        toast.classList.add('show');
+        setTimeout(() => { toast.classList.remove('show'); }, 3500);
+    }
+    
+    function generateVoucher() {
+        if (!file1Data || !file2Data) return;
+        
+        let valoresMap, hospedesMap;
+        if (file1Data.tipo === "VALORES") {
+            valoresMap = file1Data.dados;
+            hospedesMap = file2Data.dados;
+        } else {
+            valoresMap = file2Data.dados;
+            hospedesMap = file1Data.dados;
+        }
+        
+        const bookings = [];
+        let totalGeral = 0;
+        let empresaPrincipal = "UNIMED LESTE FLUMINENSE";
+        
+        for (let [num, hosp] of hospedesMap.entries()) {
+            const valor = valoresMap.get(num) || { total: 0, empresa: "UNIMED LESTE FLUMINENSE" };
+            if (valor.empresa) empresaPrincipal = valor.empresa;
+            totalGeral += valor.total || 0;
             
-            // Show loading indicator
-            whatsappText.innerHTML = '<div class="loading"></div> Gerando imagem...';
-            whatsappBtn.disabled = true;
-            
-            html2canvas(tableContainer, {
-                scale: 2, // Melhora a qualidade da imagem
-                logging: false,
-                useCORS: true,
-                allowTaint: true,
-                backgroundColor: '#ffffff'
-            }).then(canvas => {
-                const imageContainer = document.getElementById('image-container');
-                imageContainer.innerHTML = '';
-                
-                // Exibe a imagem gerada
-                const img = document.createElement('img');
-                img.id = 'generated-image';
-                img.src = canvas.toDataURL('image/jpeg', 0.9); // Qualidade 90%
-                imageContainer.appendChild(img);
-                
-                // Atualiza o botão do WhatsApp para compartilhar a imagem
-                updateWhatsAppButton(canvas);
-                
-                // Configura o botão de download
-                setupDownloadButton(canvas);
-                
-                // Restore button state
-                whatsappText.textContent = 'Compartilhar via WhatsApp';
-                whatsappBtn.disabled = false;
-            }).catch(err => {
-                console.error('Erro ao gerar imagem:', err);
-                whatsappText.textContent = 'Erro ao gerar imagem';
-                setTimeout(() => {
-                    whatsappText.textContent = 'Compartilhar via WhatsApp';
-                    whatsappBtn.disabled = false;
-                }, 2000);
+            bookings.push({
+                numero: num,
+                checkin: hosp.checkin || "—",
+                checkout: hosp.checkout || "—",
+                guests: hosp.guests,
+                total: valor.total || 0,
+                empresa: valor.empresa || null
             });
         }
-
-        // Função para atualizar o botão do WhatsApp com a imagem
-        function updateWhatsAppButton(canvas) {
-            const whatsappBtn = document.getElementById('whatsapp-btn');
-            
-            whatsappBtn.onclick = function() {
-                // Mostra indicador de carregamento
-                const whatsappText = document.getElementById('whatsapp-text');
-                whatsappText.innerHTML = '<div class="loading"></div> Preparando...';
-                whatsappBtn.disabled = true;
-                
-                // Converte o canvas para blob
-                canvas.toBlob(function(blob) {
-                    // Cria um link temporário para o blob
-                    const url = URL.createObjectURL(blob);
-                    
-                    // Para dispositivos móveis
-                    if (/Android|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent)) {
-                        // Cria um link temporário para compartilhar
-                        const link = document.createElement('a');
-                        link.href = url;
-                        link.download = 'auditoria-hotel.jpg';
-                        
-                        // Tenta usar a API do WhatsApp diretamente
-                        const shareUrl = `whatsapp://send?text=${encodeURIComponent('Relatório de Auditoria Hotel')}`;
-                        
-                        // Primeiro tenta abrir o WhatsApp diretamente
-                        window.location.href = shareUrl;
-                        
-                        // Se não funcionar, oferece para baixar a imagem
-                        setTimeout(() => {
-                            document.body.appendChild(link);
-                            link.click();
-                            document.body.removeChild(link);
-                            URL.revokeObjectURL(url);
-                        }, 500);
-                    } 
-                    // Para desktop
-                    else {
-                        // Abre o WhatsApp Web com a imagem
-                        const a = document.createElement('a');
-                        a.href = `https://web.whatsapp.com/send?text=${encodeURIComponent('Relatório de Auditoria Hotel')}`;
-                        a.target = '_blank';
-                        document.body.appendChild(a);
-                        a.click();
-                        document.body.removeChild(a);
-                    }
-                    
-                    // Restaura o botão
-                    setTimeout(() => {
-                        whatsappText.textContent = 'Compartilhar via WhatsApp';
-                        whatsappBtn.disabled = false;
-                        URL.revokeObjectURL(url);
-                    }, 1000);
-                    
-                }, 'image/jpeg', 0.9);
-            };
-        }
-
-        // Função para configurar o botão de download
-        function setupDownloadButton(canvas) {
-            const downloadBtn = document.getElementById('download-btn');
-            
-            downloadBtn.onclick = function() {
-                // Cria um link temporário para download
-                const link = document.createElement('a');
-                link.download = `auditoria-hotel-${new Date().toISOString().slice(0,10)}.jpg`;
-                link.href = canvas.toDataURL('image/jpeg', 0.9);
-                document.body.appendChild(link);
-                link.click();
-                document.body.removeChild(link);
-            };
-        }
-
-        // Configura o botão de impressão
-        document.getElementById('print-btn').addEventListener('click', function() {
-            window.print();
+        
+        bookings.sort((a,b) => {
+            const da = a.checkin.split('/').reverse().join('');
+            const db = b.checkin.split('/').reverse().join('');
+            return da.localeCompare(db);
         });
-    </script>
+        
+        currentVoucherElement = buildVoucherElement(bookings, totalGeral, empresaPrincipal);
+        
+        const container = document.getElementById('vouchersContainer');
+        container.innerHTML = `
+            <div style="width:100%; display: flex; flex-direction: column; align-items: center;">
+                <div class="voucher-actions" style="width:561px;">
+                    <button class="btn-copiar" id="btnCopiarVoucher">📋 Copiar Voucher</button>
+                    <button class="btn-pdf" id="btnGerarPDF">📄 Gerar PDF</button>
+                </div>
+                <div id="voucherDisplay"></div>
+            </div>
+        `;
+        
+        document.getElementById('voucherDisplay').appendChild(currentVoucherElement);
+        
+        document.getElementById('btnCopiarVoucher')?.addEventListener('click', copyVoucherWithFormatting);
+        document.getElementById('btnGerarPDF')?.addEventListener('click', generatePDF);
+        
+        document.getElementById('statusMsg').innerHTML = 
+            `✅ Voucher gerado com ${bookings.length} reservas` +
+            (mostrarPrecos ? ` | Total: R$ ${totalGeral.toFixed(2).replace('.',',')}` : ' | 💰 preços ocultos');
+        document.getElementById('statusMsg').className = 'status success';
+    }
+    
+    function escapeHtml(str) {
+        if (!str) return '';
+        return String(str).replace(/[&<>]/g, function(m) {
+            if (m === '&') return '&amp;';
+            if (m === '<') return '&lt;';
+            if (m === '>') return '&gt;';
+            return m;
+        });
+    }
+    
+    function setupFileInput(inputId, areaId, statusId, nameId, areaCode) {
+        const input = document.getElementById(inputId);
+        const area = document.getElementById(areaId);
+        
+        area.addEventListener('click', () => input.click());
+        input.addEventListener('change', (e) => {
+            if (e.target.files && e.target.files.length) {
+                area.classList.add('has-file');
+                processFile(e.target.files[0], areaCode, statusId, nameId);
+            }
+        });
+        area.addEventListener('dragover', (e) => { e.preventDefault(); area.style.background = '#f1f5f9'; });
+        area.addEventListener('dragleave', () => { area.style.background = '#f8fafc'; });
+        area.addEventListener('drop', (e) => {
+            e.preventDefault();
+            area.style.background = '#f8fafc';
+            const file = e.dataTransfer.files[0];
+            if (file && (file.name.endsWith('.xlsx') || file.name.endsWith('.xls'))) {
+                area.classList.add('has-file');
+                processFile(file, areaCode, statusId, nameId);
+            } else {
+                alert('Envie arquivo .xlsx ou .xls');
+            }
+        });
+    }
+    
+    setupFileInput('fileInput1', 'dropArea1', 'status1', 'fileName1', 'area1');
+    setupFileInput('fileInput2', 'dropArea2', 'status2', 'fileName2', 'area2');
+    document.getElementById('btnProcessar').addEventListener('click', generateVoucher);
+    
+    // ===== TOGGLE MOSTRAR/OCULTAR PREÇOS =====
+    document.getElementById('togglePrecos').addEventListener('change', function(e) {
+        mostrarPrecos = e.target.checked;
+        // Se já existe voucher gerado, regenera automaticamente
+        if (currentVoucherElement && file1Data && file2Data) {
+            generateVoucher();
+            showToast(
+                mostrarPrecos ? "💰 Preços exibidos no voucher" : "🚫 Preços ocultados no voucher",
+                mostrarPrecos ? "#1e8a4d" : "#6c757d"
+            );
+        }
+    });
+</script>
 </body>
 </html>
