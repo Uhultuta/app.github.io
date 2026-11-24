@@ -333,7 +333,10 @@ function selCard(){
   const ok=ents.filter(e=>e.r),ns=ok.filter(e=>e.sel).length;
   if(!ok.length)return'';
   const dif=ok.filter(e=>e.bal&&Math.abs(covTot(e)-(e.val-e.r.tot))>.01);
-  return `<div class="card"><h2>Extratos da empresa para assinatura</h2><p class="mut">Imprime o extrato detalhado só com o que a empresa quita (sem álcool nem excessos), com campo de assinatura do hóspede.</p>${dif.length?`<div class="al wn">Atenção: em ${dif.length} extrato(s) a soma dos itens da empresa difere do saldo do PDF menos o valor do hóspede (pagamentos, taxas ou ajustes que não aparecem como itens): ${dif.map(e=>esc(e.name)).join('; ')}.</div>`:''}<div class="acts"><button class="btn sec" data-act="all">Marcar todos</button><button class="btn sec" data-act="none">Desmarcar</button><button class="btn" data-act="psel" ${ns?'':'disabled'}>Imprimir selecionados (${ns})</button><button class="btn" data-act="pall">Imprimir todos (${ok.length})</button></div><div class="grp">${ok.map(e=>`<label class="chk"><input type="checkbox" data-sel="${ents.indexOf(e)}" ${e.sel?'checked':''}> ${esc(e.name)} · UH ${esc(e.uh||'-')}</label>`).join('')}</div></div>`;
+  const par=(k,t,d)=>`<h2>${t}</h2><p class="mut">${d}</p><div class="acts"><button class="btn" data-act="${k}sel" ${ns?'':'disabled'}>Imprimir selecionados (${ns})</button><button class="btn" data-act="${k}all">Imprimir todos (${ok.length})</button></div>`;
+  return `<div class="card"><h2>Extratos da empresa para assinatura</h2><p class="mut">Marque os hóspedes e escolha o formato de impressão. Álcool e excessos de limite nunca entram nos extratos da empresa.</p>${dif.length?`<div class="al wn">Atenção: em ${dif.length} extrato(s) a soma dos itens da empresa difere do saldo do PDF menos o valor do hóspede (pagamentos, taxas ou ajustes que não aparecem como itens): ${dif.map(e=>esc(e.name)).join('; ')}.</div>`:''}<div class="acts"><button class="btn sec" data-act="all">Marcar todos</button><button class="btn sec" data-act="none">Desmarcar</button></div><div class="grp">${ok.map(e=>`<label class="chk"><input type="checkbox" data-sel="${ents.indexOf(e)}" ${e.sel?'checked':''}> ${esc(e.name)} · UH ${esc(e.uh||'-')}</label>`).join('')}</div>`+
+  par('p','Extrato da empresa (A4)','Página A4 com logo, detalhamento completo do que a empresa quita e campos de assinatura.')+
+  par('g','Extras do hóspede (cupom 80 mm)','Só o que o hóspede paga (álcool e excessos), item a item. Sem nome do titular: apenas reserva e número do quarto (UH).')+'</div>';
 }
 function render(){
   const only=$('oc')?$('oc').checked:false,c0=cfg();
@@ -462,22 +465,57 @@ h1{font-size:16px;margin:0 0 8px}
   });
   return h+'</body></html>';
 }
-function printEmp(list){
-  if(!list.length)return;
-  /* o nome sugerido ao salvar em PDF vem do título: um extrato = nº da reserva */
-  const t=list.length===1?(list[0].res?'Reserva '+fname(list[0].res):'Extrato '+fname(list[0].name)):'Extratos empresa ('+list.length+' extratos)';
+function cupHtml(list,g,title){
+  /* cupom 80 mm: g=true → extras do hóspede (sem nome); g=false → extrato da empresa (com titular) */
+  const now=new Date().toLocaleString('pt-BR');
+  let h=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>${esc(title)}</title><style>
+@page{size:80mm auto;margin:0}
+html,body{margin:0;padding:0;background:#fff}
+body{width:80mm;font:11px/1.35 "Courier New",monospace;color:#000}
+.cp{width:72mm;margin:0 auto;padding:4mm 0;break-after:page;page-break-after:always}
+.cp:last-child{break-after:auto;page-break-after:auto}
+.hd{display:flex;align-items:center;gap:3mm}.hd img{width:14mm;height:14mm}.hd b{font-size:13px}
+.t{text-align:center;font-weight:700;margin:3mm 0 2mm;text-transform:uppercase;font-size:12px}
+.sep{border-top:1px dashed #000;margin:2mm 0}
+.ln{display:flex;justify-content:space-between;gap:2mm}.ln span:last-child{white-space:nowrap}
+.d{font-weight:700;margin-top:2mm}.it{overflow-wrap:anywhere}
+.m{font-size:10px}.tot{font-size:13px;font-weight:700}
+.sig{margin-top:14mm;border-top:1px solid #000;text-align:center;padding-top:1mm;break-inside:avoid}
+</style></head><body>`;
+  list.forEach(e=>{
+    const rows=e.items.map(i=>({i,v:g?(i.gc||0):i.total-(i.gc||0)})).filter(x=>x.v>.005);
+    const tot=rows.reduce((s,x)=>s+x.v,0),dates=[...new Set(rows.map(x=>x.i.date))];
+    h+=`<div class="cp"><div class="hd"><img src="${LOGO}" alt=""><b>Icaraí Praia Hotel</b></div>
+<div class="t">${g?'Extras do hóspede':'Extrato da empresa'}</div>
+${g?'':`<div><b>Titular:</b> ${esc(e.name)}</div>`}<div><b>Reserva:</b> ${esc(e.res||'não identificada')}</div><div><b>UH:</b> ${esc(e.uh||'-')}${g?'':` · <b>Hóspedes:</b> ${e.r.n}`}</div>
+<div class="m">Emitido em ${now}</div><div class="sep"></div>`+
+    dates.map(d=>`<div class="d">${d}</div>`+rows.filter(x=>x.i.date===d).map(({i,v})=>`<div class="it">${esc(i.desc)}</div><div class="ln"><span>${i.qty} x ${brl(i.unit||0)}</span><span>${brl(v)}</span></div>${Math.abs(v-i.total)>.005?`<div class="m">${g?'parte do item':'parcial, excedente pago pelo hóspede'}; lançado ${brl(i.total)}</div>`:''}`).join('')).join('')+
+    `<div class="sep"></div><div class="ln tot"><span>TOTAL</span><span>${brl(tot)}</span></div>
+<div class="m">${g?'Bebidas alcoólicas e consumos acima dos limites da empresa: a pagar pelo hóspede.':'Bebidas alcoólicas e consumos acima dos limites não constam: pagos pelo hóspede.'}</div>
+<div class="sig">Assinatura do hóspede</div><div class="m" style="text-align:center">Data: ____/____/______</div></div>`;
+  });
+  return h+'</body></html>';
+}
+/* mode: 'a4' extrato da empresa em A4 | 'cg' cupom 80 mm de extras do hóspede */
+function printEmp(list,mode='a4'){
+  if(mode==='cg')list=list.filter(e=>e.items.some(i=>(i.gc||0)>.005));
+  if(!list.length){$('rmsg').textContent=mode==='cg'?'Nenhum dos extratos escolhidos tem extras a cobrar do hóspede.':'Nenhum extrato escolhido para imprimir.';return}
+  const one=list.length===1,rs=one&&list[0].res?' - Reserva '+fname(list[0].res):'';
+  /* o nome sugerido ao salvar em PDF vem do título; no cupom do hóspede nunca entra o nome */
+  const t=mode==='a4'?(one?(list[0].res?'Reserva '+fname(list[0].res):'Extrato '+fname(list[0].name)):'Extratos empresa ('+list.length+' extratos)')
+    :(one?'Extras hóspede'+rs:'Extras hóspedes ('+list.length+' cupons)');
   const old=document.title,back=()=>{document.title=old};
-  $('rmsg').textContent='Abrindo a impressão dos extratos da empresa. Se a janela não abrir, tente novamente ou use outro navegador. Para não sair endereço nem data no papel, desmarque "Cabeçalhos e rodapés" na janela de impressão, se aparecerem.';
+  $('rmsg').textContent='Abrindo a impressão. Se a janela não abrir, tente novamente ou use outro navegador. Para não sair endereço nem data no papel, desmarque "Cabeçalhos e rodapés" na janela de impressão, se aparecerem.'+(mode==='a4'?'':' Escolha o papel de 80 mm da impressora de cupom.');
   const fr=document.createElement('iframe');fr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';
   fr.onload=()=>{try{document.title=t;fr.contentWindow.onafterprint=back;fr.contentWindow.focus();fr.contentWindow.print()}catch(e){back()}setTimeout(()=>{back();fr.remove()},120000)};
-  fr.srcdoc=empHtml(list,t);document.body.appendChild(fr);
+  fr.srcdoc=mode==='a4'?empHtml(list,t):cupHtml(list,mode==='cg',t);document.body.appendChild(fr);
 }
 $('out').addEventListener('change',ev=>{const s=ev.target.dataset&&ev.target.dataset.sel;if(s!==undefined){ents[+s].sel=ev.target.checked;render()}});
 $('out').addEventListener('click',ev=>{
   const b=ev.target.closest('[data-act]');if(!b)return;
   const a=b.dataset.act,ok=ents.filter(e=>e.r);
-  if(a==='all'||a==='none'){ok.forEach(e=>e.sel=a==='all');render()}
-  else printEmp(a==='pall'?ok:ok.filter(e=>e.sel));
+  if(a==='all'||a==='none'){ok.forEach(e=>e.sel=a==='all');render();return}
+  printEmp(a.endsWith('all')?ok:ok.filter(e=>e.sel),{p:'a4',g:'cg'}[a[0]]);
 });
 </script>
 </body>
