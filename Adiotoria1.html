@@ -1,0 +1,522 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Painel do Hotel</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+<style>
+:root{--bg:#eef2f4;--sf:#fff;--ink:#14232b;--mut:#5b6b73;--ln:#d3dce1;--ac:#0b6b6f;--acx:#fff;--bad:#b3261e;--badbg:#fbe4e2;--wn:#7a5200;--wnbg:#fff0cc;--ok:#1b6b3a;--okbg:#dff3e6;--hd:#e3eaee;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1a1f;--sf:#17262d;--ink:#e6eef1;--mut:#9db0b8;--ln:#2c3f48;--ac:#46c2c6;--acx:#06292b;--bad:#ff9c93;--badbg:#3b1d1b;--wn:#ffd37a;--wnbg:#3a2e10;--ok:#7fd7a2;--okbg:#14301f;--hd:#1f323b}}
+:root[data-theme="dark"]{--bg:#0f1a1f;--sf:#17262d;--ink:#e6eef1;--mut:#9db0b8;--ln:#2c3f48;--ac:#46c2c6;--acx:#06292b;--bad:#ff9c93;--badbg:#3b1d1b;--wn:#ffd37a;--wnbg:#3a2e10;--ok:#7fd7a2;--okbg:#14301f;--hd:#1f323b}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.5 "Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif}
+.wrap{max-width:1040px;margin:0 auto;padding:16px}
+h1{font-size:1.4rem;margin:8px 0 14px}
+nav{display:flex;gap:4px;border-bottom:2px solid var(--ln);margin-bottom:18px;overflow-x:auto}
+nav button{background:none;border:0;border-bottom:3px solid transparent;margin-bottom:-2px;padding:10px 16px;font:inherit;font-weight:600;color:var(--mut);cursor:pointer;white-space:nowrap}
+nav button[aria-selected="true"]{color:var(--ac);border-color:var(--ac)}
+nav button:focus-visible,.btn:focus-visible,.drop:focus-visible{outline:3px solid var(--ac);outline-offset:2px}
+.card{background:var(--sf);border:1px solid var(--ln);border-radius:8px;padding:16px;margin-bottom:14px}
+.row{display:flex;gap:12px;flex-wrap:wrap;align-items:end}
+.row label{display:flex;flex-direction:column;font-size:13px;color:var(--mut);gap:4px}
+input[type=number]{width:110px;padding:8px;border:1px solid var(--ln);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit}
+input[type=number]:disabled{opacity:.45}
+.drop{border:2px dashed var(--ac);border-radius:8px;padding:22px;text-align:center;cursor:pointer;flex:1;min-width:220px;background:var(--sf)}
+.drop.over{background:var(--hd)}
+.drop small{display:block;color:var(--mut);margin-top:4px;word-break:break-all}
+.btn{background:var(--ac);color:var(--acx);border:0;border-radius:6px;padding:10px 18px;font:inherit;font-weight:600;cursor:pointer}
+.btn.sec{background:var(--hd);color:var(--ink)}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+.acts{display:flex;gap:8px;flex-wrap:wrap;margin:12px 0}
+.tot{font-size:1.25rem;font-weight:700;color:var(--bad)}
+.al{padding:10px 14px;border-radius:6px;margin-bottom:8px;border-left:5px solid}
+.al.bad{background:var(--badbg);color:var(--bad);border-color:var(--bad)}
+.al.wn{background:var(--wnbg);color:var(--wn);border-color:var(--wn)}
+.al.ok{background:var(--okbg);color:var(--ok);border-color:var(--ok)}
+.sc{overflow-x:auto}
+table{width:100%;border-collapse:collapse;font-size:14px}
+th,td{border:1px solid var(--ln);padding:7px 9px;text-align:left}
+th{background:var(--hd)}
+.r{text-align:right}.cg{color:var(--bad);font-weight:700}
+.mut{color:var(--mut);font-size:13px}
+h2{font-size:1.05rem;margin:18px 0 8px}
+.card h2:first-child{margin-top:0}
+details summary{cursor:pointer;color:var(--mut)}
+.chk{display:flex;gap:8px;align-items:center;margin:10px 0}
+.grp{display:flex;gap:6px 22px;flex-wrap:wrap}
+
+summary{cursor:pointer}details.card>summary{padding:2px 0}
+.num{width:64px!important}
+.prog{height:6px;background:var(--hd);border-radius:3px;overflow:hidden;margin-top:8px}.prog i{display:block;height:100%;background:var(--ac);width:0}
+</style>
+</head>
+<body>
+<div class="wrap">
+<h1>Painel do Hotel: auditoria de extratos</h1>
+<div class="card">
+  <h2>Limites por hóspede</h2>
+  <div class="row">
+    <label>Hóspedes (padrão)<input type="number" id="g" min="1" placeholder="1"></label>
+    <label>Frigobar/dia (R$)<input type="number" id="lf" min="0" step="0.01" placeholder="0,00"></label>
+    <label>Água/dia (R$)<input type="number" id="la" min="0" step="0.01" placeholder="0,00"></label>
+    <label>Valor da refeição (R$)<input type="number" id="lr" min="0" step="0.01" placeholder="0,00"></label>
+    <label>Refeições/dia por hóspede<input type="number" id="lq" min="0" step="1" placeholder="sem limite"></label>
+  </div>
+  <label class="chk"><input type="checkbox" id="aw"> Água faz parte do frigobar (soma no consumo e respeita o limite do frigobar; o limite de água é ignorado)</label>
+  <h2>Valor da diária por ocupação (R$)</h2>
+  <div class="row">
+    <label>Single<input type="number" id="ds" min="0" step="0.01" placeholder="0,00"></label>
+    <label>Duplo<input type="number" id="dd" min="0" step="0.01" placeholder="0,00"></label>
+    <label>Triplo<input type="number" id="dt" min="0" step="0.01" placeholder="0,00"></label>
+    <label>Quádruplo<input type="number" id="dq" min="0" step="0.01" placeholder="0,00"></label>
+  </div>
+  <p class="mut">A ocupação é definida pela quantidade de hóspedes de cada extrato. Diárias com valor diferente do informado são sinalizadas (não entram no valor a cobrar). Deixe em branco para não auditar diárias. As diárias divergentes sempre são mostradas e a diferença nunca é cobrada do hóspede. Por padrão ela fica fora do cálculo (não é cobrada da empresa nem do hóspede; estorno posterior). Com a opção abaixo marcada, ela é cobrada da empresa.</p>
+  <label class="chk"><input type="checkbox" id="idv"> Ignorar diárias divergentes (a diferença será cobrada da empresa; desmarcado, não é cobrada de ninguém e será estornada)</label>
+  <h2>Valores cumulativos</h2>
+  <div class="grp">
+    <label class="chk"><input type="checkbox" id="cf"> Frigobar</label>
+    <label class="chk"><input type="checkbox" id="ca"> Água</label>
+    <label class="chk"><input type="checkbox" id="cr"> Refeições</label>
+    <label class="chk"><input type="checkbox" id="cd"> Diárias</label>
+  </div>
+  <p class="mut">Cumulativo: o consumo total da estadia é comparado com a soma dos limites de todos os dias (limite diário × nº de dias), em vez de dia a dia. Desmarcado = cada dia/refeição é conferido separadamente.</p>
+  <h2>Opções de refeição</h2>
+  <label class="chk"><input type="checkbox" id="sp" checked> Abrir nova refeição quando o bloco anterior já atingiu o limite</label>
+  <label class="chk"><input type="checkbox" id="lz" checked> Lanche conta como refeição à parte, com o mesmo limite por hóspede (a empresa quita até o limite)</label>
+  <label class="chk"><input type="checkbox" id="bz" checked> Buffet conta como refeição à parte, com o mesmo limite por hóspede (a empresa quita até o limite)</label>
+  <p class="mut">O saldo a pagar das bebidas alcoólicas é sempre do hóspede. Os limites são por hóspede. Cada refeição (bloco) é limitada ao valor da refeição; se a quantidade por dia for informada, o total coberto no dia também não passa de quantidade × valor (no modo não cumulativo). A quantidade de hóspedes pode ser ajustada em cada extrato depois da auditoria.</p>
+</div>
+<div class="card">
+  <div class="drop" tabindex="0" role="button" data-file="f"><b>Selecionar os PDFs dos extratos</b> (vários de uma vez, ou arraste aqui)<small id="fn">Nenhum arquivo</small></div>
+  <input type="file" id="f" accept=".pdf" multiple hidden>
+  <div class="acts"><button class="btn" id="go" disabled>Auditar extratos</button><button class="btn sec" id="c1" disabled>Exportar resumo (CSV)</button><button class="btn sec" id="c2" disabled>Exportar ocorrências (CSV)</button><button class="btn sec" id="cl">Limpar tudo</button></div>
+  <div class="acts"><button class="btn" id="c3" disabled>Imprimir relatório (PDF)</button><button class="btn sec" id="c4" disabled>Baixar relatório (HTML)</button></div>
+  <p class="mut" id="rmsg"></p>
+  <div class="prog" hidden id="pg"><i></i></div>
+</div>
+<div id="out"></div>
+</div>
+<script>
+const $=id=>document.getElementById(id);
+const brl=n=>(n<0?'-':'')+'R$ '+Math.abs(n).toFixed(2).replace('.',',').replace(/\B(?=(\d{3})+(?!\d))/g,'.');
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const norm=s=>String(s||'').toLowerCase().normalize('NFD').replace(/[\u0300-\u036f]/g,'');
+const cnum=s=>parseFloat(String(s).replace(/[^\d,.-]/g,'').replace(/\.(?=\d{3}\b)/g,'').replace(',','.'))||0;
+const csvLine=a=>a.map(v=>'"'+String(v).replace(/"/g,'""')+'"').join(';');
+async function download(name,text){
+  const data=/\.csv$/.test(name)?'\ufeff'+text:text;
+  try{const d=window.claude&&await window.claude.use('downloads');if(d){await d.save({filename:name,data});return}}catch(e){if(e&&e.code==='declined')return}
+  const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([data],{type:/\.html$/.test(name)?'text/html':'text/csv;charset=utf-8'}));a.download=name;a.click();setTimeout(()=>URL.revokeObjectURL(a.href),2000);
+}
+
+document.querySelectorAll('.drop').forEach(d=>{
+  const inp=$(d.dataset.file);
+  d.onclick=()=>inp.click();
+  d.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();inp.click()}};
+  d.ondragover=e=>{e.preventDefault();d.classList.add('over')};
+  d.ondragleave=()=>d.classList.remove('over');
+  d.ondrop=e=>{e.preventDefault();d.classList.remove('over');inp.files=e.dataTransfer.files;inp.dispatchEvent(new Event('change'))};
+});
+
+/* ===== Leitura do PDF ===== */
+async function pdfLines(file){
+  if(typeof pdfjsLib==='undefined')throw new Error('Não foi possível carregar o leitor de PDF. Verifique a conexão com a internet e recarregue a página.');
+  try{if(!pdfjsLib.GlobalWorkerOptions.workerSrc)pdfjsLib.GlobalWorkerOptions.workerSrc='https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.worker.min.js'}catch(e){}
+  let pdf;
+  try{pdf=await pdfjsLib.getDocument(new Uint8Array(await file.arrayBuffer())).promise}
+  catch(e){throw new Error(e&&e.name==='PasswordException'?'PDF protegido por senha.':'Não foi possível abrir este PDF ('+((e&&e.message)||'arquivo inválido')+').')}
+  const out=[];
+  for(let p=1;p<=pdf.numPages;p++){
+    const tc=await(await pdf.getPage(p)).getTextContent();
+    /* agrupa por proximidade vertical (tolerância), e não por "baldes" fixos, que cortavam linhas ao meio */
+    const its=tc.items.filter(it=>it.str.trim()).sort((a,b)=>b.transform[5]-a.transform[5]),rows=[];
+    for(const it of its){const y=it.transform[5],r=rows[rows.length-1];if(r&&r.y-y<=4)r.items.push(it);else rows.push({y,items:[it]})}
+    rows.forEach(r=>out.push(r.items.sort((a,b)=>a.transform[4]-b.transform[4]).map(i=>i.str).join(' ').replace(/\s+/g,' ').trim()));
+  }
+  return out;
+}
+function infoExtrato(lines,fname){
+  const flat=lines.join(' ').replace(/\s+/g,' ');let name='',res='',uh='',bal='',val=0,cr=false,m;
+  m=flat.match(/H[óo]spede\s*:?\s*(.+?)\s+(?:Reserva|Check|UH|Pens[ãa]o|N[º°])/i);if(m)name=m[1].trim().toUpperCase();
+  if(name.length<5)name=fname.replace(/\.pdf$/i,'').replace(/[_-]+/g,' ').trim();
+  for(const p of [/Reserva\s*N?[º°o]?\.?\s*:?\s*(\d{3,})/i,/(?:Localizador|Confirma[çc][ãa]o)\s*:?\s*([A-Z0-9]{6,})/i]){m=flat.match(p);if(m){res=m[1];break}}
+  m=flat.match(/\bUH\s*:?\s*([A-Z0-9]+)/i);if(m)uh=m[1];
+  for(const p of [/Saldo\s*:?\s*R\$\s*([\d.]+,\d{2})\s*([DC])?/i,/Total\s*a\s*Pagar\s*:?\s*R\$\s*([\d.]+,\d{2})()/i]){m=flat.match(p);if(m){bal=m[1];cr=(m[2]||'').toUpperCase()==='C';break}}
+  if(bal){val=cnum(bal);if(cr)val=-val}
+  return{name,res,uh,bal,val,file:fname};
+}
+const IGN=['diaria','lavanderia','hospedagem'];
+const ITEM=/^(.+?)\s+(?:R\$\s*)?([\d.]+,\d{2})\s+(\d+(?:,\d+)?)\s+(?:R\$\s*)?([\d.]+,\d{2})\s+(?:R\$\s*)?([\d.]+,\d{2})\s*[DC]?\s*$/;
+const DATA=/^(\d{2}\/\d{2}\/\d{4})\s+(.*)$/;
+function parseItems(lines){
+  const it=[],skipped=[];
+  for(let i=0;i<lines.length;i++){
+    let d=lines[i].match(DATA);if(!d)continue;
+    let m=d[2].match(ITEM);
+    /* linha quebrada em duas (descrição longa ou valores em outra linha): tenta juntar com as seguintes */
+    for(let j=1;!m&&j<=2&&i+j<lines.length&&!DATA.test(lines[i+j]);j++){
+      const mm=(d[2]+' '+lines.slice(i+1,i+1+j).join(' ')).replace(/\s+/g,' ').match(ITEM);
+      if(mm){m=mm;i+=j}
+    }
+    if(!m){skipped.push(lines[i]);continue}
+    const desc=m[1].trim();
+    const ign=IGN.some(k=>norm(desc).includes(k));
+    it.push({date:d[1],desc,qty:parseInt(m[3]),unit:cnum(m[2]),total:cnum(m[5]),ign});
+  }
+  it.skipped=skipped;
+  return it;
+}
+
+/* ===== Classificação (baseada no cardápio do hotel) ===== */
+const mk=l=>new RegExp(l.map(k=>'\\b'+k.replace(/ /g,'\\s+')+(k.length<=4?'s?\\b':'')).join('|'));
+const R_GRAMAS=/\(\s*\d+(?:[.,]\d+)?\s*g\s*\)/;
+const R_SNACK=mk(['kit kat','bala','mentos','trident','salgadinho','chiclete','bombom','amendoim','biscoito','barra']);
+const R_ALCOOL=mk(['cerveja','antarctica','skol','stella','heineken','caipirinha','caipivodka','cachaca','vodka','gin','cuba libre','negroni','martini','campari','conhaque','whisky','johnny','chivas','vinho','espumante','chandon','dedicato','miolo','gato preto','concha y toro','santa helena','drink']);
+const R_ATON=/tonica|\btonic\b/;
+const R_AGUA=mk(['agua']);
+const R_BUFFET=mk(['buffet','brunch','cafe da manha']);
+const R_BEBIDA=mk(['refrigerante','coca','sprit','sprite','guarana','fanta','pepsi','soda','cerveja','antarctica','skol','stella','heineken','suco','jarra','vitamina','leite','cafe','cha','chocolate simples','chocolate quente','caipirinha','caipivodka','cachaca','vodka','gin','cuba libre','negroni','martini','campari','conhaque','whisky','johnny','chivas','vinho','espumante','chandon','dedicato','miolo','gato preto','concha y toro','santa helena','shot','drink']);
+const R_LANCHE=mk(['lanche','tapioca','omelete','misto','queijo quente','brunch']);
+const R_BUFFETSEP=mk(['buffet']);
+const R_COMIDA=mk(['salada','caesar','sopa','canja','baby beef','file','escalopinho','strogonoff','gnocchi','nhoque','fetuccine','espaguete','macarrao','brasileirinho','paillard','contrafile','moqueca','churrasco','bife','parmegiana','lombinho','linguica','calabresa','iscas','mini','burguer','burger','hamburguer','choripan','delicia','pizza','filezinho','gourjao','porcao','tapioca','omelete','misto','queijo quente','lanche','sanduiche','pudim','torta','banana split','sorvete','granola','arroz','farofa','legumes','brocolis','pure','fritas','chips','feijao','ovos','molho','batata','frango','peixe','carne','frutas','tutu','prato']);
+function classify(desc){
+  const d=norm(desc);
+  /* pudim e qualquer suco: sempre refeição (o frigobar não tem sucos), mesmo com gramas/ml no nome ou sem prato vizinho */
+  if(/\bpudim\b/.test(d)||/\bsucos?\b/.test(d))return'comida';
+  if(R_ATON.test(d)&&!/\bgin\b/.test(d))return'bebida';
+  if(R_ALCOOL.test(d)&&!/sem alcool|zero|0,0%/.test(d))return'alcool';
+  if(R_ATON.test(d))return'bebida';
+  if(R_GRAMAS.test(d)||R_SNACK.test(d))return'snack';
+  if(R_AGUA.test(d))return'agua';
+  if(R_BUFFET.test(d))return'comida';
+  if(R_BEBIDA.test(d))return'bebida';
+  if(R_COMIDA.test(d))return'comida';
+  return'outro';
+}
+
+/* ===== Auditoria ===== */
+const sg=x=>(x>0?'+':'')+brl(x)+(x>0?' (acima do esperado)':' (abaixo do esperado)');
+const cfg=()=>({g:Math.max(1,parseInt($('g').value)||1),lf:+$('lf').value||0,la:+$('la').value||0,lr:+$('lr').value||0,q:parseInt($('lq').value)||0,aw:$('aw').checked,
+  cf:$('cf').checked,ca:$('ca').checked,cr:$('cr').checked,cd:$('cd').checked,
+  rt:['ds','dd','dt','dq'].map(i=>+$(i).value||0),
+  idv:$('idv').checked,sp:$('sp').checked,lz:$('lz').checked,bz:$('bz').checked});
+/* retira 'x' do valor dos itens, do último para o primeiro, registrando em gc o que o hóspede paga */
+function cut(l,x){for(let i=l.length-1;i>=0&&x>.005;i--){const t=Math.min(x,l[i].total-l[i].gc);if(t>0){l[i].gc+=t;x-=t}}}
+function auditEnt(e,c){
+  const n=e.n||c.g,LF=c.lf*n,LA=c.la*n,LR=c.lr*n;
+  e.items.forEach(i=>i.gc=0);const AF=[],AA=[],AM=[];
+  const by=new Map();e.items.forEach(i=>{if(!by.has(i.date))by.set(i.date,[]);by.get(i.date).push(i)});
+  const isD=i=>i.ign&&/diaria|hospedagem/.test(norm(i.desc));
+  /* nº de dias da estadia (base dos limites cumulativos): datas com diária ou consumo */
+  const nDays=[...by.values()].filter(l=>l.some(i=>!i.ign||isD(i))).length;
+  const days=[],occ=[],outros=[],dv=[];let ef=0,ea=0,em=0,eb=0,sf=0,sa=0,mc=0,nob=0,nln=0;
+  for(const[date,list]of by){
+    if(!list.some(i=>!i.ign))continue;
+    let f=0,a=0,al=0,cur=null,pend=[];const blocks=[],alI=[];
+    /* classifica tudo; álcool é cobrado do hóspede e não interfere na vizinhança; lavanderia/diária não são auditadas, mas ocupam posição e separam os itens vizinhos */
+    const seq=[];
+    for(const it of list){
+      const k=it.ign?'ign':classify(it.desc);
+      if(k==='alcool'){al+=it.total;it.gc=it.total;alI.push(it);continue}
+      seq.push({it,k});
+    }
+    /* bebida só faz parte da refeição se o vizinho imediato (antes ou depois) for prato */
+    seq.forEach((x,i)=>{
+      if(x.k!=='bebida')return;
+      x.gp=!!(seq[i-1]&&seq[i-1].k==='comida');
+      x.gn=!!(seq[i+1]&&seq[i+1].k==='comida');
+    });
+    for(const{it,k,gp,gn}of seq){
+      if(k==='ign'){cur=null;pend.forEach(x=>f+=x.total);pend=[];continue}
+      if(k==='comida'){
+        const dn=norm(it.desc),ln=(c.bz&&R_BUFFETSEP.test(dn))?'Buffet':(c.lz&&R_LANCHE.test(dn)&&!/\bchurrasco\b/.test(dn))?'Lanche':'';
+        if(cur&&((c.sp&&cur.total>=LR)||cur.ln!==ln))cur=null;
+        if(!cur){cur={items:[],total:0,ln};blocks.push(cur)}
+        pend.forEach(x=>{cur.items.push(x);cur.total+=x.total});pend=[];
+        cur.items.push(it);cur.total+=it.total;
+      }else if(k==='bebida'&&gp&&cur){cur.items.push(it);cur.total+=it.total}
+      else if(k==='bebida'&&gn){pend.push(it)}
+      else{
+        cur=null;pend.forEach(x=>f+=x.total);pend=[];
+        if(k==='agua'){if(c.aw)f+=it.total;else a+=it.total}
+        else if(k==='snack'||k==='bebida')f+=it.total;else outros.push(it);
+      }
+    }
+    pend.forEach(x=>f+=x.total);
+    const ob=blocks.filter(b=>!b.ln);
+    nob+=ob.length;nln+=blocks.length-ob.length;sf+=f;sa+=a;blocks.forEach(b=>mc+=b.total);
+    /* modo não cumulativo: confere dia a dia; cumulativo: zera aqui e confere no período */
+    const xf=c.cf?0:Math.max(0,f-LF),xa=(c.ca&&!c.aw)?0:Math.max(0,a-LA);
+    blocks.forEach(b=>{b.ex=0;b.extra=false;b.qx=0});
+    if(!c.cr){
+      /* critério do código 1: cada bloco é limitado ao valor da refeição */
+      blocks.forEach(b=>b.ex=Math.max(0,b.total-LR));
+      /* quantidade de refeições/dia: o total coberto no dia não passa de quantidade × valor (blocos pequenos pesam pouco) */
+      if(c.q>0){
+        let over=ob.reduce((t,b)=>t+Math.min(b.total,LR),0)-c.q*LR;
+        [...ob].sort((x,y)=>Math.min(x.total,LR)-Math.min(y.total,LR)).forEach(b=>{
+          if(over<=.005)return;
+          const t=Math.min(over,Math.min(b.total,LR));
+          b.qx=t;b.ex+=t;b.extra=true;over-=t;
+        });
+      }
+    }
+    const xm=blocks.reduce((t,b)=>t+b.ex,0);
+    /* rastreia, item a item, quanto o hóspede paga (gc): o excesso sai dos últimos itens do dia */
+    const inB=new Set();blocks.forEach(b=>b.items.forEach(x=>inB.add(x)));
+    const fI=[],aI=[];
+    list.forEach(it=>{if(it.ign||inB.has(it)||alI.includes(it)||outros.includes(it))return;(classify(it.desc)==='agua'&&!c.aw?aI:fI).push(it)});
+    cut(fI,xf);cut(aI,xa);blocks.forEach(b=>cut(b.items,b.ex));
+    AF.push(...fI);AA.push(...aI);blocks.forEach(b=>AM.push(...b.items));
+    if(al>0)occ.push({date,t:'Bebida alcoólica',d:'saldo a pagar integral do hóspede. Itens: '+alI.map(x=>esc(x.desc)+' '+brl(x.total)).join(', ')+'.',k:'b',cons:al,lim:0,c:al});
+    if(xf>0)occ.push({date,t:'Frigobar'+(c.aw?' (com água)':''),d:`consumo ${brl(f)}, limite ${brl(LF)}.`,k:'f',cons:f,lim:LF,c:xf});
+    if(xa>0)occ.push({date,t:'Água',d:`consumo ${brl(a)}, limite ${brl(LA)}.`,k:'a',cons:a,lim:LA,c:xa});
+    blocks.forEach((b,i)=>b.ex>0&&occ.push({date,t:(b.ln||'Refeição')+(b.qx?' (acima da quantidade)':'')+' (bloco '+(i+1)+')',d:`consumo ${brl(b.total)}, limite ${brl(LR)}`+(b.qx?`; ${brl(b.qx)} acima da quantidade permitida (${c.q} refeição(ões)/dia × ${brl(LR)})`:'')+`. Itens: ${b.items.map(x=>esc(x.desc)+' '+brl(x.total)).join(', ')}.`,k:'r',cons:b.total,lim:LR,c:b.ex}));
+    days.push({date,f,a,al,xf,xa,blocks,xm});ef+=xf;ea+=xa;em+=xm;eb+=al;
+  }
+  /* cumulativo: consumo total da estadia x soma dos limites dos dias */
+  const cum=(on,t,lbl,lim,k,det)=>{
+    if(!on)return 0;
+    const x=Math.max(0,t-lim);
+    if(x>0)occ.push({date:'Período',t:lbl+' (cumulativo)',d:`consumo ${brl(t)}, limite acumulado ${brl(lim)} (${det}).`,k,cons:t,lim,c:x});
+    return x;
+  };
+  if(c.cf)ef=cum(1,sf,'Frigobar'+(c.aw?' (com água)':''),LF*nDays,'f',nDays+' dia(s) × '+brl(LF));
+  if(c.ca&&!c.aw)ea=cum(1,sa,'Água',LA*nDays,'a',nDays+' dia(s) × '+brl(LA));
+  if(c.cr)em=cum(1,mc,'Refeições',LR*((c.q>0?c.q*nDays:nob)+nln),'r',(c.q>0?nDays+' dia(s) × '+c.q+' refeição(ões)':nob+' refeição(ões)')+(nln?' + '+nln+' lanche/buffet':'')+' × '+brl(LR));
+  /* modo cumulativo: o excesso da estadia sai dos últimos itens do período */
+  if(c.cf)cut(AF,ef);if(c.ca&&!c.aw)cut(AA,ea);if(c.cr)cut(AM,em);
+  /* auditoria das diárias pela ocupação (nº de hóspedes) */
+  const rate=n<=4?c.rt[n-1]:0,dI=e.items.filter(isD).filter(i=>/diaria|hospedagem/.test(norm(i.desc)));
+  if(rate>0&&dI.length){
+    if(c.cd){
+      const tot=dI.reduce((s,i)=>s+i.total,0),nn=dI.reduce((s,i)=>s+(i.qty||1),0),exp=rate*nn;
+      if(Math.abs(tot-exp)>.005)dv.push({date:'Período',diff:tot-exp,d:`soma das diárias ${brl(tot)}, esperado ${brl(exp)} (${nn} diária(s) × ${brl(rate)}). Diferença: ${sg(tot-exp)}`});
+    }else dI.forEach(i=>{const v=i.total/(i.qty||1);if(Math.abs(v-rate)>.005)dv.push({date:i.date,diff:v-rate,d:`lançado ${brl(v)}, esperado ${brl(rate)} (${esc(i.desc)}). Diferença: ${sg(v-rate)}`})});
+  }
+  const noRate=dI.length>0&&rate===0&&c.rt.some(x=>x>0);
+  return{n,LF,LA,LR,days,occ,ef,ea,em,eb,dv,est:c.idv?0:dv.reduce((t,d)=>t+d.diff,0),rate,noRate,tot:ef+ea+em+eb,outros};
+}
+
+/* ===== Fluxo: vários PDFs ===== */
+let files=[],ents=[];
+$('f').onchange=e=>{
+  [...e.target.files].forEach(f=>{if(/\.pdf$/i.test(f.name)&&!files.some(x=>x.name===f.name&&x.size===f.size))files.push(f)});
+  e.target.value='';$('fn').textContent=files.length?files.length+' PDF(s) selecionado(s)':'Nenhum arquivo';$('go').disabled=!files.length;
+};
+$('go').onclick=async()=>{
+  const b=$('go'),pg=$('pg');b.disabled=true;ents=[];pg.hidden=false;
+  for(let i=0;i<files.length;i++){
+    b.textContent=`Processando ${i+1} de ${files.length}…`;pg.firstChild.style.width=((i+1)/files.length*100)+'%';
+    try{
+      const L=await pdfLines(files[i]),items=parseItems(L);
+      if(!items.length)throw new Error(L.length?'Nenhum item de consumo foi reconhecido neste PDF (o formato pode ser diferente do extrato esperado).':'Este PDF não tem texto selecionável (provavelmente é imagem digitalizada), por isso não pôde ser lido.');
+      ents.push({...infoExtrato(L,files[i].name),items,skipped:items.skipped,n:null,open:false});
+    }
+    catch(err){ents.push({file:files[i].name,name:files[i].name,err:err.message,items:[],val:0,n:null})}
+    await new Promise(r=>setTimeout(r));
+  }
+  b.textContent='Auditar extratos';b.disabled=false;pg.hidden=true;run();
+};
+function run(){const c=cfg();ents.forEach(e=>{if(!e.err)e.r=auditEnt(e,c)});render();$('c1').disabled=$('c2').disabled=$('c3').disabled=$('c4').disabled=!ents.length}
+['g','lf','la','lr','lq','ds','dd','dt','dq','aw','cf','ca','cr','cd','idv','sp','lz','bz'].forEach(id=>$(id).oninput=()=>ents.length&&run());
+/* água no frigobar: o limite próprio de água e o cumulativo de água deixam de valer */
+$('aw').addEventListener('change',()=>{$('la').disabled=$('ca').disabled=$('aw').checked});
+$('cl').onclick=()=>{files=[];ents=[];$('fn').textContent='Nenhum arquivo';$('go').disabled=true;$('out').innerHTML='';$('c1').disabled=$('c2').disabled=$('c3').disabled=$('c4').disabled=true;$('rmsg').textContent=''};
+
+/* total que a empresa quita segundo os itens (lançado − parte do hóspede) */
+const covTot=e=>e.items.reduce((s,i)=>s+i.total-(i.gc||0),0);
+function selCard(){
+  const ok=ents.filter(e=>e.r),ns=ok.filter(e=>e.sel).length;
+  if(!ok.length)return'';
+  const dif=ok.filter(e=>e.bal&&Math.abs(covTot(e)-(e.val-e.r.tot))>.01);
+  const par=(k,t,d)=>`<h2>${t}</h2><p class="mut">${d}</p><div class="acts"><button class="btn" data-act="${k}sel" ${ns?'':'disabled'}>Imprimir selecionados (${ns})</button><button class="btn" data-act="${k}all">Imprimir todos (${ok.length})</button></div>`;
+  return `<div class="card"><h2>Extratos da empresa para assinatura</h2><p class="mut">Marque os hóspedes e escolha o formato de impressão. Álcool e excessos de limite nunca entram nos extratos da empresa.</p>${dif.length?`<div class="al wn">Atenção: em ${dif.length} extrato(s) a soma dos itens da empresa difere do saldo do PDF menos o valor do hóspede (pagamentos, taxas ou ajustes que não aparecem como itens): ${dif.map(e=>esc(e.name)).join('; ')}.</div>`:''}<div class="acts"><button class="btn sec" data-act="all">Marcar todos</button><button class="btn sec" data-act="none">Desmarcar</button></div><div class="grp">${ok.map(e=>`<label class="chk"><input type="checkbox" data-sel="${ents.indexOf(e)}" ${e.sel?'checked':''}> ${esc(e.name)} · UH ${esc(e.uh||'-')}</label>`).join('')}</div>`+
+  par('p','Extrato da empresa (A4)','Página A4 com logo, detalhamento completo do que a empresa quita e campos de assinatura.')+
+  par('g','Extras do hóspede (cupom 80 mm)','Só o que o hóspede paga (álcool e excessos), item a item. Sem nome do titular: apenas reserva e número do quarto (UH).')+'</div>';
+}
+function render(){
+  const only=$('oc')?$('oc').checked:false,c0=cfg();
+  const ok=ents.filter(e=>e.r),T=ok.reduce((s,e)=>s+e.r.tot,0),S=ents.reduce((s,e)=>s+e.val,0),nC=ok.filter(e=>e.r.tot>0).length,E=ok.reduce((s,e)=>s+e.r.est,0);
+  const rows=ents.map((e,i)=>({e,i})).filter(x=>!only||(x.e.r&&(x.e.r.tot>0||x.e.r.dv.length)));
+  let h=(c0.lf||c0.la||c0.lr?'':'<div class="al wn">Nenhum limite de frigobar, água ou refeição foi informado: todo o consumo será cobrado do hóspede. Preencha os limites acima.</div>')+
+  `<div class="card"><div>${ents.length} extrato(s) · ${nC} com valor a cobrar · saldo total ${brl(S)}${E?` · diferença de diárias a estornar ${(E>0?'+':'')+brl(E)}`:''}</div><div class="tot">Total a cobrar (excessos): ${brl(T)}</div><label class="chk"><input type="checkbox" id="oc" ${only?'checked':''}> Mostrar só extratos com cobrança ou diária divergente</label></div>`;
+  h+=selCard();
+  h+=`<div class="sc card"><table><thead><tr><th>Hóspede</th><th>Reserva</th><th>UH</th><th class="r">Saldo</th><th>Hósp.</th><th class="r">Frigobar</th><th class="r">Água</th><th class="r">Refeições</th><th class="r">Álcool</th><th>Diárias</th><th class="r cg">A cobrar</th></tr></thead><tbody>`;
+  rows.forEach(({e,i})=>{
+    if(e.err){h+=`<tr><td colspan="11" class="cg">${esc(e.file)}: ${esc(e.err)}</td></tr>`;return}
+    const r=e.r;
+    if(e.skipped&&e.skipped.length)h+=`<tr><td colspan="11" class="cg">⚠ ${esc(e.name)}: ${e.skipped.length} linha(s) do extrato não puderam ser lidas e ficaram fora da auditoria: ${e.skipped.slice(0,3).map(esc).join(' | ')}${e.skipped.length>3?' …':''}</td></tr>`;
+    h+=`<tr><td>${esc(e.name)}</td><td>${esc(e.res||'-')}</td><td>${esc(e.uh||'-')}</td><td class="r">${e.bal?brl(e.val):'-'}</td><td><input class="num" type="number" min="1" data-g="${i}" value="${r.n}" aria-label="Hóspedes de ${esc(e.name)}"></td><td class="r">${r.ef?brl(r.ef):'-'}</td><td class="r">${r.ea?brl(r.ea):'-'}</td><td class="r">${r.em?brl(r.em):'-'}</td><td class="r">${r.eb?brl(r.eb):'-'}</td><td>${r.dv.length?`<span class="cg">⚠ ${r.dv.length} divergente(s)<br>${(x=>(x>0?'+':'')+brl(x))(r.dv.reduce((t,d)=>t+d.diff,0))}</span>`:r.rate>0?'ok':'-'}</td><td class="r cg">${r.tot?brl(r.tot):'-'}</td></tr>`;
+  });
+  h+='</tbody></table></div>';
+  rows.forEach(({e,i})=>{if(!e.err)h+=detail(e,i)});
+  $('out').innerHTML=h;
+}
+function detail(e,i){
+  const r=e.r;
+  let h=`<details class="card" data-i="${i}" ${e.open?'open':''}><summary><b>${esc(e.name)}</b> · UH ${esc(e.uh||'-')} · ${r.n} hóspede(s) · <span class="${r.tot>0?'cg':''}">${r.tot>0?'cobrar '+brl(r.tot):'sem cobrança'}</span>${r.dv.length?' · <span class="cg">diária divergente</span>':''}</summary>`;
+  h+=r.occ.length?r.occ.map(o=>`<div class="al ${o.k==='r'?'wn':'bad'}" style="margin-top:8px"><b>${o.t} ${o.date}:</b> ${o.d} Cobrar <b>${brl(o.c)}</b></div>`).join(''):'<div class="al ok" style="margin-top:8px">Nenhum limite ultrapassado.</div>';
+  h+=r.dv.map(d=>`<div class="al wn"><b>Diária divergente ${d.date}:</b> ${d.d}.${$('idv').checked?' Cobrada da empresa.':' Fora do cálculo (estorno posterior).'}</div>`).join('');
+  if(r.noRate)h+=`<p class="mut">Valor de diária para ${r.n} hóspede(s) não informado: diárias deste extrato não foram auditadas.</p>`;
+  h+=`<div class="sc"><table style="margin-top:10px"><thead><tr><th>Data</th><th class="r">Frigobar${$('aw').checked?' + água':''}</th><th class="r">Água</th><th>Refeições</th><th class="r">Álcool</th></tr></thead><tbody>`+
+   r.days.map(d=>`<tr><td>${d.date}</td><td class="r ${d.xf?'cg':''}">${brl(d.f)}</td><td class="r ${d.xa?'cg':''}">${brl(d.a)}</td><td>${d.blocks.map(b=>`<span class="${b.ex?'cg':''}">${brl(b.total)}</span>`).join(' · ')||'-'}</td><td class="r ${d.al?'cg':''}">${d.al?brl(d.al):'-'}</td></tr>`).join('')+'</tbody></table></div>';
+  if(r.outros.length)h+=`<p class="mut">Itens não classificados (fora dos limites): ${r.outros.map(x=>esc(x.desc)+' '+x.date).join('; ')}</p>`;
+  return h+'</details>';
+}
+$('out').addEventListener('change',e=>{
+  if(e.target.id==='oc')return render();
+  if(e.target.dataset.g!==undefined){const x=ents[+e.target.dataset.g];x.n=parseInt(e.target.value)>0?parseInt(e.target.value):null;x.r=auditEnt(x,cfg());render()}
+});
+$('out').addEventListener('toggle',e=>{const i=e.target.dataset&&e.target.dataset.i;if(i!==undefined)ents[+i].open=e.target.open},true);
+
+$('c1').onclick=()=>{
+  const ok=ents.filter(e=>e.r);
+  download('resumo_auditoria.csv',[csvLine(['Hóspede','Reserva','UH','Hóspedes','Saldo','Excesso frigobar','Excesso água','Excesso refeições','Bebidas alcoólicas','Total a cobrar','Diárias divergentes','Estorno de diárias','Arquivo']),
+   ...ok.map(e=>csvLine([e.name,e.res,e.uh,e.r.n,e.bal?e.val.toFixed(2).replace('.',','):'',e.r.ef.toFixed(2).replace('.',','),e.r.ea.toFixed(2).replace('.',','),e.r.em.toFixed(2).replace('.',','),e.r.eb.toFixed(2).replace('.',','),e.r.tot.toFixed(2).replace('.',','),e.r.dv.length,e.r.est.toFixed(2).replace('.',','),e.file])),
+   csvLine(['Total','','','','','','','','',ok.reduce((s,e)=>s+e.r.tot,0).toFixed(2).replace('.',','),'','',''])].join('\n'));
+};
+$('c2').onclick=()=>{
+  const L=[csvLine(['Hóspede','UH','Data','Tipo','Consumo','Limite','Cobrar','Arquivo'])];
+  ents.filter(e=>e.r).forEach(e=>{
+    e.r.occ.forEach(o=>L.push(csvLine([e.name,e.uh,o.date,o.t,o.cons.toFixed(2).replace('.',','),o.lim.toFixed(2).replace('.',','),o.c.toFixed(2).replace('.',','),e.file])));
+    e.r.dv.forEach(d=>L.push(csvLine([e.name,e.uh,d.date,'Diária divergente (sem cobrança): '+d.d.replace(/&amp;/g,'&'),'','','',e.file])));
+  });
+  download('ocorrencias.csv',L.join('\n'));
+};
+
+/* ===== Relatório: o que a empresa quita x o que o hóspede quita ===== */
+function repHtml(){
+  const ok=ents.filter(e=>e.r),c=cfg();
+  /* Hóspede = excessos + álcool (r.tot) MENOS a diferença das diárias divergentes (r.est).
+     Empresa = saldo − (excessos + álcool). Estorno = r.est.
+     Conferência: saldo = empresa + hóspede + estorno. */
+  const hosp=e=>e.r.tot-e.r.est;
+  const T=ok.reduce((o,e)=>{o.g+=hosp(e);o.est+=e.r.est;if(e.bal){o.s+=e.val;o.e+=e.val-e.r.tot}else o.ns++;return o},{g:0,s:0,e:0,ns:0,est:0});
+  const empresa=e=>e.bal?brl(e.val-e.r.tot):'a conferir';
+  let h=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>Relatório de quitação</title><style>
+body{font:13px/1.45 "Segoe UI",Arial,sans-serif;color:#111;margin:24px}h1{font-size:20px;margin:0 0 4px}h2{font-size:15px;margin:0 0 6px}
+table{width:100%;border-collapse:collapse;margin:8px 0}th,td{border:1px solid #bbb;padding:5px 7px;text-align:left}th{background:#e8eef1}.r{text-align:right}
+.box{display:flex;gap:12px;margin:8px 0}.box div{flex:1;border:1px solid #bbb;border-radius:6px;padding:8px}.box b{display:block;font-size:17px}
+.pg{page-break-inside:avoid;margin-top:22px;border-top:2px solid #0b6b6f;padding-top:10px}.m{color:#555;font-size:12px}.np{margin-bottom:14px}
+@media print{.np{display:none}body{margin:10mm}}</style></head><body>
+<button class="np" onclick="window.print()">Imprimir / salvar em PDF</button>
+<h1>Relatório de quitação de extratos</h1>
+<div class="m">Gerado em ${new Date().toLocaleString('pt-BR')} · Limites por hóspede: frigobar ${brl(c.lf)}/dia${c.aw?' (inclui água)':`, água ${brl(c.la)}/dia`}, refeição ${brl(c.lr)}${c.q?' ('+c.q+' por dia)':''}. Cumulativo: ${[c.cf&&'frigobar',c.ca&&!c.aw&&'água',c.cr&&'refeições',c.cd&&'diárias'].filter(Boolean).join(', ')||'nenhum'}. O hóspede paga o que excedeu os limites e todas as bebidas alcoólicas; o restante do saldo fica a pagar pela empresa. ${c.idv?'A diferença das diárias divergentes é cobrada da empresa (permanece no saldo).':'A diferença das diárias divergentes fica fora do cálculo (estorno posterior pelo departamento responsável). O valor do hóspede é: excessos e álcool − diferença das diárias; o da empresa é: saldo − excessos e álcool.'}</div>
+<div class="box"><div>Saldo total dos extratos<b>${brl(T.s)}</b></div><div>Saldo a pagar pela empresa<b>${brl(T.e)}</b></div><div>Saldo a pagar pelos hóspedes<b>${brl(T.g)}</b></div>${c.idv?'':`<div>Diárias divergentes (a estornar)<b>${brl(T.est)}</b></div>`}</div>
+${c.idv?'':`<div class="m">Conferência: saldo ${brl(T.s)} = empresa ${brl(T.e)} + hóspedes ${brl(T.g)} + diárias divergentes fora do cálculo ${brl(T.est)}.</div>`}
+${T.ns?`<div class="m">Atenção: ${T.ns} extrato(s) sem saldo identificado, fora dos totais de saldo e empresa.</div>`:''}
+<table><thead><tr><th>Hóspede</th><th>UH</th><th>Reserva</th><th class="r">Saldo</th><th class="r">Empresa quita</th><th class="r">Hóspede quita</th>${c.idv?'':'<th class="r">Estorno de diárias</th>'}</tr></thead><tbody>`+
+  ok.map(e=>`<tr><td>${esc(e.name)}</td><td>${esc(e.uh||'-')}</td><td>${esc(e.res||'-')}</td><td class="r">${e.bal?brl(e.val):'-'}</td><td class="r">${empresa(e)}</td><td class="r">${brl(hosp(e))}</td>${c.idv?'':`<td class="r">${e.r.est?brl(e.r.est):'-'}</td>`}</tr>`).join('')+
+  `<tr><th colspan="3">Total</th><th class="r">${brl(T.s)}</th><th class="r">${brl(T.e)}</th><th class="r">${brl(T.g)}</th>${c.idv?'':`<th class="r">${brl(T.est)}</th>`}</tr></tbody></table>`;
+  const dvs=ok.filter(e=>e.r.dv.length);
+  if(dvs.length)h+=`<div class="pg"><h2>Diárias com valor divergente</h2><table><thead><tr><th>Hóspede</th><th>UH</th><th>Data</th><th>Detalhe</th></tr></thead><tbody>`+dvs.map(e=>e.r.dv.map(d=>`<tr><td>${esc(e.name)}</td><td>${esc(e.uh||'-')}</td><td>${d.date}</td><td>${d.d}</td></tr>`).join('')).join('')+`</tbody></table></div>`;
+  ok.filter(e=>e.r.tot>0).forEach(e=>{
+    h+=`<div class="pg"><h2>${esc(e.name)} · UH ${esc(e.uh||'-')} · Reserva ${esc(e.res||'-')} · ${e.r.n} hóspede(s)</h2>
+<div class="box"><div>Saldo do extrato<b>${e.bal?brl(e.val):'não identificado'}</b></div><div>Empresa quita<b>${empresa(e)}</b></div><div>Hóspede quita${e.r.est?' (excessos − diárias divergentes)':' (excessos)'}<b>${brl(hosp(e))}</b></div></div>
+<table><thead><tr><th>Data</th><th>Tipo</th><th class="r">Consumo</th><th class="r">Limite</th><th class="r">Hóspede paga</th></tr></thead><tbody>`+
+    e.r.occ.map(o=>`<tr><td>${o.date}</td><td>${o.t}${o.k==='r'?`<div class="m">${o.d.split('Itens: ')[1]||''}</div>`:''}</td><td class="r">${brl(o.cons)}</td><td class="r">${o.k==='b'?'—':brl(o.lim)}</td><td class="r">${brl(o.c)}</td></tr>`).join('')+
+    (e.r.est?`<tr><td colspan="4">Excessos e álcool</td><td class="r">${brl(e.r.tot)}</td></tr><tr><td colspan="4">(−) Diárias divergentes (a estornar)</td><td class="r">${brl(-e.r.est)}</td></tr>`:'')+`<tr><th colspan="4">Total a pagar pelo hóspede</th><th class="r">${brl(hosp(e))}</th></tr></tbody></table></div>`;
+  });
+  return h+'</body></html>';
+}
+$('c3').onclick=()=>{
+  $('rmsg').textContent='Abrindo a impressão. Se a janela não abrir, use "Baixar relatório (HTML)", abra o arquivo e imprima ou salve em PDF.';
+  try{
+    const fr=document.createElement('iframe');fr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+    fr.onload=()=>{try{fr.contentWindow.focus();fr.contentWindow.print()}catch(e){}setTimeout(()=>fr.remove(),120000)};
+    fr.srcdoc=repHtml();document.body.appendChild(fr);
+  }catch(e){}
+};
+$('c4').onclick=()=>download('relatorio_quitacao.html',repHtml());
+
+/* ===== Extrato da empresa para assinatura do hóspede ===== */
+const LOGO='data:image/png;base64,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';
+const fname=s=>String(s).replace(/[\\/:*?"<>|]+/g,' ').replace(/\s+/g,' ').trim();
+function empHtml(list,title){
+  /* @page sem margem elimina o cabeçalho/rodapé do navegador (endereço do app, data, nº da página); as margens vêm do espaçador repetido em cada página (thead/tfoot) */
+  let h=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>${esc(title)}</title><style>
+@page{size:A4;margin:0}
+html,body{margin:0;padding:0}
+body{font:12px/1.4 "Segoe UI",Arial,sans-serif;color:#111;padding:0 14mm}
+.ext{width:100%;border-collapse:collapse;border:0;margin:0;break-after:page;page-break-after:always}
+.ext:last-child{break-after:auto;page-break-after:auto}
+.ext>thead>tr>td,.ext>tbody>tr>td,.ext>tfoot>tr>td{border:0;padding:0;background:none}
+.top{padding-top:12mm;margin-bottom:4mm;display:flex;align-items:center;gap:4mm}.top img{display:block;width:20mm;height:20mm}.hn{font-size:15px}
+.sp{height:12mm}
+h1{font-size:16px;margin:0 0 8px}
+.it{width:100%;border-collapse:collapse;margin:8px 0}.it th,.it td{border:1px solid #bbb;padding:4px 6px;text-align:left}.it th{background:#e8eef1}.it tr{break-inside:avoid;page-break-inside:avoid}.it thead{display:table-header-group}
+.r{text-align:right}
+.hd{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:6px}.m{color:#555;font-size:11px}.sig{margin-top:40px;display:flex;gap:30px;break-inside:avoid;page-break-inside:avoid}.sig div{flex:1;border-top:1px solid #111;padding-top:4px;text-align:center}
+</style></head><body>`;
+  list.forEach(e=>{
+    const rows=e.items.map(i=>({i,cov:i.total-(i.gc||0)})).filter(x=>x.cov>.005);
+    const tot=rows.reduce((s,x)=>s+x.cov,0);
+    h+=`<table class="ext"><thead><tr><td><div class="top"><img src="${LOGO}" alt="Icaraí Praia Hotel"><div><b class="hn">Icaraí Praia Hotel</b><br>CNPJ 27.890.847/0001-45</div></div></td></tr></thead><tbody><tr><td><h1>Extrato de consumo: a pagar pela empresa</h1>
+<div class="hd"><div><b>Hóspede</b><br>${esc(e.name)}</div><div><b>UH</b><br>${esc(e.uh||'-')}</div><div><b>Reserva</b><br>${esc(e.res||'-')}</div><div><b>Hóspedes</b><br>${e.r.n}</div></div>
+<table class="it"><thead><tr><th>Data</th><th>Descrição</th><th class="r">Qtd</th><th class="r">Valor unit.</th><th class="r">Lançado</th><th class="r">Empresa quita</th></tr></thead><tbody>`+
+    rows.map(({i,cov})=>`<tr><td>${i.date}</td><td>${esc(i.desc)}${i.gc>.005?'<div class="m">parcial: o excedente é pago pelo hóspede</div>':''}</td><td class="r">${i.qty}</td><td class="r">${brl(i.unit||0)}</td><td class="r">${brl(i.total)}</td><td class="r">${brl(cov)}</td></tr>`).join('')+
+    `<tr><th colspan="5">Total a pagar pela empresa</th><th class="r">${brl(tot)}</th></tr></tbody></table>
+<div class="m">Bebidas alcoólicas e consumos acima dos limites não constam neste extrato: são pagos diretamente pelo hóspede.</div>
+<div class="sig"><div>Assinatura do hóspede</div><div>Data</div></div></td></tr></tbody><tfoot><tr><td><div class="sp"></div></td></tr></tfoot></table>`;
+  });
+  return h+'</body></html>';
+}
+function cupHtml(list,g,title){
+  /* cupom 80 mm: g=true → extras do hóspede (sem nome); g=false → extrato da empresa (com titular) */
+  const now=new Date().toLocaleString('pt-BR');
+  let h=`<!DOCTYPE html><html lang="pt-BR"><head><meta charset="UTF-8"><title>${esc(title)}</title><style>
+@page{size:80mm auto;margin:0}
+html,body{margin:0;padding:0;background:#fff}
+body{width:80mm;font:11px/1.35 "Courier New",monospace;color:#000}
+.cp{width:72mm;margin:0 auto;padding:4mm 0;break-after:page;page-break-after:always}
+.cp:last-child{break-after:auto;page-break-after:auto}
+.hd{display:flex;align-items:center;gap:3mm}.hd img{width:14mm;height:14mm}.hd b{font-size:13px}
+.t{text-align:center;font-weight:700;margin:3mm 0 2mm;text-transform:uppercase;font-size:12px}
+.sep{border-top:1px dashed #000;margin:2mm 0}
+.ln{display:flex;justify-content:space-between;gap:2mm}.ln span:last-child{white-space:nowrap}
+.d{font-weight:700;margin-top:2mm}.it{overflow-wrap:anywhere}
+.m{font-size:10px}.tot{font-size:13px;font-weight:700}
+.sig{margin-top:14mm;border-top:1px solid #000;text-align:center;padding-top:1mm;break-inside:avoid}
+</style></head><body>`;
+  list.forEach(e=>{
+    const rows=e.items.map(i=>({i,v:g?(i.gc||0):i.total-(i.gc||0)})).filter(x=>x.v>.005);
+    const tot=rows.reduce((s,x)=>s+x.v,0),dates=[...new Set(rows.map(x=>x.i.date))];
+    h+=`<div class="cp"><div class="hd"><img src="${LOGO}" alt=""><div><b>Icaraí Praia Hotel</b><div class="m">CNPJ 27.890.847/0001-45</div></div></div>
+<div class="t">${g?'Extras do hóspede':'Extrato da empresa'}</div>
+${g?'':`<div><b>Titular:</b> ${esc(e.name)}</div>`}<div><b>Reserva:</b> ${esc(e.res||'não identificada')}</div><div><b>UH:</b> ${esc(e.uh||'-')}${g?'':` · <b>Hóspedes:</b> ${e.r.n}`}</div>
+<div class="m">Emitido em ${now}</div><div class="sep"></div>`+
+    dates.map(d=>`<div class="d">${d}</div>`+rows.filter(x=>x.i.date===d).map(({i,v})=>`<div class="it">${esc(i.desc)}</div><div class="ln"><span>${i.qty} x ${brl(i.unit||0)}</span><span>${brl(v)}</span></div>${Math.abs(v-i.total)>.005?`<div class="m">${g?'parte do item':'parcial, excedente pago pelo hóspede'}; lançado ${brl(i.total)}</div>`:''}`).join('')).join('')+
+    `<div class="sep"></div><div class="ln tot"><span>TOTAL</span><span>${brl(tot)}</span></div>
+<div class="m">${g?'Bebidas alcoólicas e consumos acima dos limites da empresa: a pagar pelo hóspede.':'Bebidas alcoólicas e consumos acima dos limites não constam: pagos pelo hóspede.'}</div>
+<div class="sig">Assinatura do hóspede</div><div class="m" style="text-align:center">Data: ____/____/______</div></div>`;
+  });
+  return h+'</body></html>';
+}
+/* mode: 'a4' extrato da empresa em A4 | 'cg' cupom 80 mm de extras do hóspede */
+function printEmp(list,mode='a4'){
+  if(mode==='cg')list=list.filter(e=>e.items.some(i=>(i.gc||0)>.005));
+  if(!list.length){$('rmsg').textContent=mode==='cg'?'Nenhum dos extratos escolhidos tem extras a cobrar do hóspede.':'Nenhum extrato escolhido para imprimir.';return}
+  const one=list.length===1,rs=one&&list[0].res?' - Reserva '+fname(list[0].res):'';
+  /* o nome sugerido ao salvar em PDF vem do título; no cupom do hóspede nunca entra o nome */
+  const t=mode==='a4'?(one?(list[0].res?'Reserva '+fname(list[0].res):'Extrato '+fname(list[0].name)):'Extratos empresa ('+list.length+' extratos)')
+    :(one?'Extras hóspede'+rs:'Extras hóspedes ('+list.length+' cupons)');
+  const old=document.title,back=()=>{document.title=old};
+  $('rmsg').textContent='Abrindo a impressão. Se a janela não abrir, tente novamente ou use outro navegador. Para não sair endereço nem data no papel, desmarque "Cabeçalhos e rodapés" na janela de impressão, se aparecerem.'+(mode==='a4'?'':' Escolha o papel de 80 mm da impressora de cupom.');
+  const fr=document.createElement('iframe');fr.style.cssText='position:fixed;right:0;bottom:0;width:0;height:0;border:0';
+  fr.onload=()=>{try{document.title=t;fr.contentWindow.onafterprint=back;fr.contentWindow.focus();fr.contentWindow.print()}catch(e){back()}setTimeout(()=>{back();fr.remove()},120000)};
+  fr.srcdoc=mode==='a4'?empHtml(list,t):cupHtml(list,mode==='cg',t);document.body.appendChild(fr);
+}
+$('out').addEventListener('change',ev=>{const s=ev.target.dataset&&ev.target.dataset.sel;if(s!==undefined){ents[+s].sel=ev.target.checked;render()}});
+$('out').addEventListener('click',ev=>{
+  const b=ev.target.closest('[data-act]');if(!b)return;
+  const a=b.dataset.act,ok=ents.filter(e=>e.r);
+  if(a==='all'||a==='none'){ok.forEach(e=>e.sel=a==='all');render();return}
+  printEmp(a.endsWith('all')?ok:ok.filter(e=>e.sel),{p:'a4',g:'cg'}[a[0]]);
+});
+</script>
+</body>
+</html>
