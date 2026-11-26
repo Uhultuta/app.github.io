@@ -51,6 +51,12 @@ details summary{cursor:pointer;color:var(--mut)}
 summary{cursor:pointer}details.card>summary{padding:2px 0}
 .num{width:64px!important}
 .prog{height:6px;background:var(--hd);border-radius:3px;overflow:hidden;margin-top:8px}.prog i{display:block;height:100%;background:var(--ac);width:0}
+.sgl{margin-top:6px}.sr{display:flex;gap:6px 14px;flex-wrap:wrap;align-items:center;border-bottom:1px solid var(--ln);padding:4px 0}.sr .chk{margin:6px 0;flex:1;min-width:220px}.sr .btn{padding:6px 12px;font-size:13px;min-height:40px}
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.55);display:flex;align-items:center;justify-content:center;padding:max(12px,env(safe-area-inset-top,0px)) 12px max(12px,env(safe-area-inset-bottom,0px));z-index:50}
+.mdl{background:var(--sf);color:var(--ink);border:1px solid var(--ln);border-radius:10px;padding:16px;width:100%;max-width:720px;max-height:100%;overflow:auto}
+.mdl h2{margin-top:0}.mscroll{max-height:30vh;margin:8px 0}
+.pad{display:block;width:100%;height:200px;background:#fff;border:2px dashed var(--ac);border-radius:8px;touch-action:none;cursor:crosshair}
+.sr input.wa{width:180px;padding:7px;border:1px solid var(--ln);border-radius:6px;background:var(--bg);color:var(--ink);font:inherit;min-height:40px}
 </style>
 </head>
 <body>
@@ -84,7 +90,7 @@ summary{cursor:pointer}details.card>summary{padding:2px 0}
   </div>
   <p class="mut">Cumulativo: o consumo total da estadia é comparado com a soma dos limites de todos os dias (limite diário × nº de dias), em vez de dia a dia. Desmarcado = cada dia/refeição é conferido separadamente.</p>
   <h2>Opções de refeição</h2>
-  <label class="chk"><input type="checkbox" id="sp"> Abrir nova refeição quando o bloco anterior já atingiu o limite</label>
+  <label class="chk"><input type="checkbox" id="sp" checked> Abrir nova refeição quando o bloco anterior já atingiu o limite</label>
   <label class="chk"><input type="checkbox" id="lz" checked> Lanche conta como refeição à parte, com o mesmo limite por hóspede (a empresa quita até o limite)</label>
   <label class="chk"><input type="checkbox" id="bz" checked> Buffet conta como refeição à parte, com o mesmo limite por hóspede (a empresa quita até o limite)</label>
   <p class="mut">O saldo a pagar das bebidas alcoólicas é sempre do hóspede. Os limites são por hóspede. Cada refeição (bloco) é limitada ao valor da refeição; se a quantidade por dia for informada, o total coberto no dia também não passa de quantidade × valor (no modo não cumulativo). A quantidade de hóspedes pode ser ajustada em cada extrato depois da auditoria.</p>
@@ -329,13 +335,209 @@ $('cl').onclick=()=>{files=[];ents=[];$('fn').textContent='Nenhum arquivo';$('go
 
 /* total que a empresa quita segundo os itens (lançado − parte do hóspede) */
 const covTot=e=>e.items.reduce((s,i)=>s+i.total-(i.gc||0),0);
+/* a assinatura só vale enquanto o total da empresa for o mesmo de quando foi colhida */
+const sigOk=e=>!!e.sig&&Math.abs(covTot(e)-(e.sigTot||0))<=.005;
+function sgPaint(ctx,st,ox,oy,k){
+  ctx.save();ctx.scale(k,k);ctx.translate(-ox,-oy);ctx.strokeStyle=ctx.fillStyle='#111';ctx.lineCap=ctx.lineJoin='round';
+  st.forEach(s=>{
+    if(s.length===1){ctx.beginPath();ctx.arc(s[0].x,s[0].y,s[0].w/2,0,Math.PI*2);ctx.fill();return}
+    for(let j=1;j<s.length;j++){ctx.lineWidth=(s[j-1].w+s[j].w)/2;ctx.beginPath();ctx.moveTo(s[j-1].x,s[j-1].y);ctx.lineTo(s[j].x,s[j].y);ctx.stroke()}
+  });
+  ctx.restore();
+}
+/* assinatura na tela: dedo, caneta digitalizadora (com pressão) ou mouse */
+function openSign(i){
+  const e=ents[i];if(!e||!e.r||document.querySelector('.ov'))return;
+  const rows=e.items.map(x=>({x,c:x.total-(x.gc||0)})).filter(r=>r.c>.005),tot=rows.reduce((s,r)=>s+r.c,0);
+  const ov=document.createElement('div');ov.className='ov';ov.setAttribute('role','dialog');ov.setAttribute('aria-modal','true');ov.setAttribute('aria-label','Assinatura do hóspede');
+  ov.innerHTML=`<div class="mdl"><h2>Assinatura do hóspede</h2><div class="mut">${esc(e.name)} · UH ${esc(e.uh||'-')} · Reserva ${esc(e.res||'-')}</div><div class="sc mscroll"><table><thead><tr><th>Data</th><th>Descrição</th><th class="r">Qtd</th><th class="r">Empresa quita</th></tr></thead><tbody>${rows.map(({x,c})=>`<tr><td>${x.date}</td><td>${esc(x.desc)}</td><td class="r">${x.qty}</td><td class="r">${brl(c)}</td></tr>`).join('')}<tr><th colspan="3">Total a pagar pela empresa</th><th class="r">${brl(tot)}</th></tr></tbody></table></div><p class="mut">Assine no quadro abaixo com o dedo, a caneta ou o mouse.</p><canvas class="pad" aria-label="Quadro de assinatura"></canvas><div class="acts"><button class="btn sec" data-k="x">Cancelar</button><button class="btn sec" data-k="l">Limpar</button><button class="btn" data-k="o" disabled>Confirmar assinatura</button></div></div>`;
+  document.body.appendChild(ov);document.body.style.overflow='hidden';
+  const cv=ov.querySelector('canvas'),bo=ov.querySelector('[data-k=o]'),ctx=cv.getContext('2d');
+  let st=[],cur=null,pid=null,pen=false,dpr=1;
+  const kd=ev=>{if(ev.key==='Escape')close()};
+  const fit=()=>{dpr=window.devicePixelRatio||1;cv.width=Math.max(1,Math.round(cv.clientWidth*dpr));cv.height=Math.max(1,Math.round(cv.clientHeight*dpr));sgPaint(ctx,st,0,0,dpr)};
+  function close(){document.removeEventListener('keydown',kd);window.removeEventListener('resize',fit);ov.remove();document.body.style.overflow=''}
+  const bb=()=>{let a=1e9,b=1e9,c=-1e9,d=-1e9;st.forEach(s=>s.forEach(p=>{a=Math.min(a,p.x);b=Math.min(b,p.y);c=Math.max(c,p.x);d=Math.max(d,p.y)}));return{a,b,c,d}};
+  const upd=()=>{if(!st.length){bo.disabled=true;return}const q=bb();bo.disabled=!(q.c-q.a>=20||q.d-q.b>=20)};
+  const pos=p=>{const r=cv.getBoundingClientRect();return{x:p.clientX-r.left,y:p.clientY-r.top,w:p.pointerType==='pen'&&p.pressure>0?1.2+p.pressure*2.8:2.4}};
+  const seg=(l,q)=>{ctx.save();ctx.scale(dpr,dpr);ctx.strokeStyle='#111';ctx.lineCap='round';ctx.lineWidth=(l.w+q.w)/2;ctx.beginPath();ctx.moveTo(l.x,l.y);ctx.lineTo(q.x,q.y);ctx.stroke();ctx.restore()};
+  cv.addEventListener('pointerdown',ev=>{
+    ev.preventDefault();
+    if(ev.pointerType==='pen')pen=true;
+    if(pid!==null||(pen&&ev.pointerType==='touch'))return; /* rejeição de palma: com caneta em uso, o toque é ignorado */
+    pid=ev.pointerId;try{cv.setPointerCapture(pid)}catch(x){}
+    const q=pos(ev);cur=[q];st.push(cur);
+    ctx.save();ctx.scale(dpr,dpr);ctx.fillStyle='#111';ctx.beginPath();ctx.arc(q.x,q.y,q.w/2,0,Math.PI*2);ctx.fill();ctx.restore();
+  },{passive:false});
+  cv.addEventListener('pointermove',ev=>{
+    if(ev.pointerId!==pid||!cur)return;ev.preventDefault();
+    const L=ev.getCoalescedEvents?ev.getCoalescedEvents():[];
+    (L.length?L:[ev]).forEach(p=>{const q=pos(p),l=cur[cur.length-1];cur.push(q);seg(l,q)});
+  },{passive:false});
+  const end=ev=>{if(ev.pointerId!==pid)return;cur=null;pid=null;upd()};
+  cv.addEventListener('pointerup',end);cv.addEventListener('pointercancel',end);
+  cv.addEventListener('contextmenu',ev=>ev.preventDefault());
+  ov.addEventListener('click',ev=>{
+    const k=ev.target.closest('[data-k]');if(!k)return;
+    if(k.dataset.k==='x')close();
+    else if(k.dataset.k==='l'){st=[];cur=null;pid=null;fit();upd()}
+    else if(k.dataset.k==='o'&&!bo.disabled){
+      /* recorta no traço e salva em PNG transparente, em resolução ≥ 2x */
+      const q=bb(),m=8,ox=Math.max(0,q.a-m),oy=Math.max(0,q.b-m),w=Math.max(1,Math.min(cv.clientWidth,q.c+m)-ox),h=Math.max(1,Math.min(cv.clientHeight,q.d+m)-oy),kk=Math.max(2,dpr);
+      const o=document.createElement('canvas');o.width=Math.ceil(w*kk);o.height=Math.ceil(h*kk);sgPaint(o.getContext('2d'),st,ox,oy,kk);
+      const d=new Date();e.sig=o.toDataURL('image/png');e.sigD=d.toLocaleDateString('pt-BR');e.sigAt=e.sigD+' '+d.toLocaleTimeString('pt-BR',{hour:'2-digit',minute:'2-digit'});e.sigTot=covTot(e);
+      close();render();if(autoSave)savePdf(e);
+    }
+  });
+  document.addEventListener('keydown',kd);window.addEventListener('resize',fit);
+  fit();
+}
+/* ===== PDF do extrato da empresa (gerado no navegador, sem biblioteca) ===== */
+const HR=[278,278,355,556,556,889,667,191,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,278,278,584,584,584,556,1015,667,667,722,722,667,611,778,722,278,500,667,556,833,722,778,667,778,722,667,611,722,667,944,667,667,611,278,278,278,469,556,333,556,556,500,556,556,278,556,556,222,222,500,222,833,556,556,556,556,333,500,278,556,500,722,500,500,500,334,260,334,584];
+const HB=[278,333,474,556,556,889,722,238,333,333,389,584,278,333,278,278,556,556,556,556,556,556,556,556,556,556,333,333,584,584,584,611,975,722,722,722,722,667,611,778,722,278,556,722,611,833,722,778,667,778,722,667,611,722,667,944,667,667,611,333,278,333,584,556,333,556,611,556,611,556,333,611,611,278,278,556,278,889,611,611,611,611,389,556,333,611,556,778,556,556,500,389,280,389,584];
+const W1252={'–':150,'—':151,'‘':145,'’':146,'“':147,'”':148,'•':149,'€':128};
+const cwid=(ch,b)=>{const t=b?HB:HR,c=ch.charCodeAt(0);if(ch==='·')return 278;if(c>=32&&c<=126)return t[c-32];const d=ch.normalize('NFD').charCodeAt(0);return d>=32&&d<=126&&d!==c?t[d-32]:556};
+const tw=(s,b,z)=>{let t=0;for(const ch of s)t+=cwid(ch,b);return t*z/1000};
+const pdfStr=s=>{let o='';for(const ch of s){let c=W1252[ch]||ch.charCodeAt(0);if(c>255||c<32)c=63;o+=(c<32||c>126||c===40||c===41||c===92)?'\\'+c.toString(8).padStart(3,'0'):String.fromCharCode(c)}return'('+o+')'};
+const lat=s=>{const u=new Uint8Array(s.length);for(let i=0;i<s.length;i++)u[i]=s.charCodeAt(i)&255;return u};
+async function deflate(u){if(typeof CompressionStream==='undefined')return null;try{const cs=new CompressionStream('deflate'),w=cs.writable.getWriter();w.write(u);w.close();return new Uint8Array(await new Response(cs.readable).arrayBuffer())}catch(x){return null}}
+async function imgX(uri){
+  const im=new Image();im.src=uri;await im.decode();
+  const c=document.createElement('canvas');c.width=im.naturalWidth;c.height=im.naturalHeight;
+  const x=c.getContext('2d');x.drawImage(im,0,0);
+  const d=x.getImageData(0,0,c.width,c.height).data,n=c.width*c.height,rgb=new Uint8Array(n*3),a=new Uint8Array(n);let ha=false;
+  for(let i=0;i<n;i++){rgb[i*3]=d[i*4];rgb[i*3+1]=d[i*4+1];rgb[i*3+2]=d[i*4+2];a[i]=d[i*4+3];if(a[i]<255)ha=true}
+  return{w:c.width,h:c.height,rgb,a:ha?a:null};
+}
+let LOGOX=null;
+const pdfName=e=>(e.res?'Reserva '+fname(e.res):'Extrato '+fname(e.name))+'.pdf';
+async function pdfExtrato(e){
+  const W=595.28,H=841.89,mx=40,mt=34,mb=36,cw=W-2*mx,LH=12.5,L=56.69,GR='0.91 0.933 0.945';
+  const rows=e.items.map(i=>({i,cov:i.total-(i.gc||0)})).filter(x=>x.cov>.005),tot=rows.reduce((s,x)=>s+x.cov,0),sg=sigOk(e);
+  const LG=LOGOX||(LOGOX=await imgX(LOGO)),SX=sg?await imgX(e.sig):null;
+  const f=x=>x.toFixed(2),pages=[];let cur,y;
+  const np=()=>{cur=[];pages.push(cur)};
+  const T=(s,x,yy,o={})=>{s=String(s).normalize('NFC');const z=o.z||10,b=!!o.b,w=tw(s,b,z),xx=o.a==='r'?x-w:o.a==='c'?x-w/2:x;cur.push(`${o.g===undefined?0:o.g} g BT /${b?'F2':'F1'} ${z} Tf ${f(xx)} ${f(H-yy)} Td ${pdfStr(s)} Tj ET`)};
+  const R=(x,yy,w,h,fill)=>cur.push(`${fill?fill+' rg ':''}0.73 G 0.5 w ${f(x)} ${f(H-yy-h)} ${f(w)} ${f(h)} re ${fill?'B':'S'}`);
+  const Ln=(x1,y1,x2,y2)=>cur.push(`0 G 0.8 w ${f(x1)} ${f(H-y1)} m ${f(x2)} ${f(H-y2)} l S`);
+  const wrap=(s,w,b,z)=>{const out=[];let line='';for(const word of String(s).normalize('NFC').split(/\s+/)){if(!word)continue;const t=line?line+' '+word:word;if(tw(t,b,z)<=w){line=t;continue}if(line)out.push(line);line=word;while(tw(line,b,z)>w){let k=line.length;while(k>1&&tw(line.slice(0,k),b,z)>w)k--;out.push(line.slice(0,k));line=line.slice(k)}}if(line)out.push(line);return out.length?out:['']};
+  const head=()=>{cur.push(`q ${f(L)} 0 0 ${f(L)} ${f(mx)} ${f(H-mt-L)} cm /Im1 Do Q`);T('Icaraí Praia Hotel',mx+L+11,mt+24,{b:1,z:14});T('CNPJ 27.890.847/0001-45',mx+L+11,mt+40);y=mt+L+14};
+  const cols=[['Data',62,'l'],['Descrição',0,'l'],['Qtd',30,'r'],['Valor unit.',72,'r'],['Lançado',72,'r'],['Empresa quita',84,'r']];
+  cols[1][1]=cw-cols.reduce((s,c)=>s+c[1],0);
+  const xs=[];let ax=mx;cols.forEach(c=>{xs.push(ax);ax+=c[1]});
+  const cx=(k)=>cols[k][2]==='r'?xs[k]+cols[k][1]-5:xs[k]+5;
+  const thead=()=>{R(mx,y,cw,LH+8,GR);cols.forEach((c,k)=>T(c[0],cx(k),y+LH+1,{b:1,a:c[2]==='r'?'r':'l'}));y+=LH+8};
+  np();head();
+  T('Extrato de consumo: a pagar pela empresa',mx,y+12,{b:1,z:16});y+=30;
+  let ix=mx;[['Hóspede',e.name],['UH',e.uh||'-'],['Reserva',e.res||'-'],['Hóspedes',String(e.r.n)]].forEach(([l,v])=>{T(l,ix,y+10,{b:1});T(v,ix,y+24);ix+=Math.max(tw(l,1,10),tw(v,0,10))+18});
+  y+=40;thead();
+  rows.forEach(({i,cov})=>{
+    const dl=wrap(i.desc,cols[1][1]-10,0,10),part=i.gc>.005,h=dl.length*LH+(part?11:0)+8;
+    if(y+h>H-mb){np();head();thead()}
+    const vals=[i.date,null,String(i.qty),brl(i.unit||0),brl(i.total),brl(cov)];
+    cols.forEach((c,k)=>{
+      R(xs[k],y,c[1],h);
+      if(k===1){dl.forEach((t,n)=>T(t,xs[k]+5,y+LH+1+n*LH));if(part)T('parcial: o excedente é pago pelo hóspede',xs[k]+5,y+dl.length*LH+11,{z:8,g:.33})}
+      else T(vals[k],cx(k),y+LH+1,{a:c[2]==='r'?'r':'l'});
+    });
+    y+=h;
+  });
+  if(y+LH+8>H-mb){np();head();thead()}
+  R(mx,y,cw-cols[5][1],LH+8,GR);R(xs[5],y,cols[5][1],LH+8,GR);
+  T('Total a pagar pela empresa',mx+5,y+LH+1,{b:1});T(brl(tot),xs[5]+cols[5][1]-5,y+LH+1,{b:1,a:'r'});y+=LH+8+10;
+  const nt=wrap('Bebidas alcoólicas e consumos acima dos limites não constam neste extrato: são pagos diretamente pelo hóspede.',cw,0,9);
+  if(y+nt.length*11+(sg?110:72)>H-mb){np();head()}
+  nt.forEach((t,n)=>T(t,mx,y+9+n*11,{z:9,g:.33}));y+=nt.length*11+4;
+  const ly=y+(sg?78:40),gap=30,cc=(cw-gap)/2,x2=mx+cc+gap;
+  Ln(mx,ly,mx+cc,ly);Ln(x2,ly,x2+cc,ly);
+  T('Assinatura do hóspede',mx+cc/2,ly+13,{a:'c'});T('Data',x2+cc/2,ly+13,{a:'c'});
+  if(sg){
+    const k=Math.min(cc*.9/SX.w,68/SX.h),iw=SX.w*k,ih=SX.h*k;
+    cur.push(`q ${f(iw)} 0 0 ${f(ih)} ${f(mx+(cc-iw)/2)} ${f(H-ly+3)} cm /Im2 Do Q`);
+    T(e.sigD,x2+cc/2,ly-4,{a:'c'});
+  }
+  if(pages.length>1)pages.forEach((pg,n)=>{cur=pg;T('Página '+(n+1)+' de '+pages.length,W/2,H-20,{a:'c',z:8,g:.4})});
+  /* montagem do arquivo PDF 1.4: fontes padrão Helvetica (WinAnsi), imagens com máscara de transparência, fluxos comprimidos quando o navegador permite */
+  const parts=[],offs=[];let len=0;
+  const push=b=>{const u=typeof b==='string'?lat(b):b;parts.push(u);len+=u.length};
+  const obj=(id,dict,st,flt)=>{offs[id]=len;push(id+' 0 obj\n');if(st){push('<< '+dict+(flt||'')+' /Length '+st.length+' >>\nstream\n');push(st);push('\nendstream\nendobj\n')}else push(dict+'\nendobj\n')};
+  const zz=async u=>{const c=await deflate(u);return c?[c,' /Filter /FlateDecode']:[u,'']};
+  const imgs=[LG].concat(sg?[SX]:[]),base=7+2*imgs.length,kids=[];
+  push('%PDF-1.4\n%\xE2\xE3\xCF\xD3\n');
+  for(let k=0;k<imgs.length;k++){
+    const im=imgs[k],id=7+2*k,[d,fl]=await zz(im.rgb);
+    obj(id,'/Type /XObject /Subtype /Image /Width '+im.w+' /Height '+im.h+' /ColorSpace /DeviceRGB /BitsPerComponent 8'+(im.a?' /SMask '+(id+1)+' 0 R':''),d,fl);
+    if(im.a){const[d2,g2]=await zz(im.a);obj(id+1,'/Type /XObject /Subtype /Image /Width '+im.w+' /Height '+im.h+' /ColorSpace /DeviceGray /BitsPerComponent 8',d2,g2)}else obj(id+1,'null');
+  }
+  for(let n=0;n<pages.length;n++){
+    const cid=base+2*n,pid=cid+1,[d,fl]=await zz(lat(pages[n].join('\n')));
+    obj(cid,'',d,fl);
+    obj(pid,'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 '+f(W)+' '+f(H)+'] /Resources 5 0 R /Contents '+cid+' 0 R >>');
+    kids.push(pid+' 0 R');
+  }
+  const dt=new Date(),p2=v=>String(v).padStart(2,'0'),N=base+2*pages.length-1;
+  obj(1,'<< /Type /Catalog /Pages 2 0 R >>');
+  obj(2,'<< /Type /Pages /Kids ['+kids.join(' ')+'] /Count '+pages.length+' >>');
+  obj(3,'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>');
+  obj(4,'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica-Bold /Encoding /WinAnsiEncoding >>');
+  obj(5,'<< /Font << /F1 3 0 R /F2 4 0 R >> /XObject << /Im1 7 0 R'+(sg?' /Im2 9 0 R':'')+' >> >>');
+  obj(6,'<< /Title '+pdfStr(pdfName(e).replace(/\.pdf$/,''))+' /Producer (Painel do Hotel) /CreationDate (D:'+dt.getFullYear()+p2(dt.getMonth()+1)+p2(dt.getDate())+p2(dt.getHours())+p2(dt.getMinutes())+p2(dt.getSeconds())+') >>');
+  const xr=len;push('xref\n0 '+(N+1)+'\n0000000000 65535 f \n');
+  for(let i=1;i<=N;i++)push(String(offs[i]).padStart(10,'0')+' 00000 n \n');
+  push('trailer\n<< /Size '+(N+1)+' /Root 1 0 R /Info 6 0 R >>\nstartxref\n'+xr+'\n%%EOF');
+  return new Blob(parts,{type:'application/pdf'});
+}
+/* ===== Salvar PDF e enviar por WhatsApp ===== */
+let autoSave=true,smsg='';
+const say=t=>{smsg=t;const el=$('smsg');if(el)el.textContent=t;$('rmsg').textContent=t};
+function saveBlob(name,blob){const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),4000)}
+async function savePdf(e){
+  try{say('Gerando o PDF…');const blob=await pdfExtrato(e),name=pdfName(e);saveBlob(name,blob);say('PDF salvo: '+name+(sigOk(e)?' (com assinatura).':' (sem assinatura).'))}
+  catch(err){say('Não foi possível gerar o PDF: '+((err&&err.message)||err))}
+}
+async function savePdfs(list){
+  if(!list.length){say('Nenhum extrato escolhido para salvar.');return}
+  let dir=null;
+  if(window.showDirectoryPicker){try{dir=await window.showDirectoryPicker({mode:'readwrite'})}catch(err){if(err&&err.name==='AbortError')return}}
+  const used=new Set();let n=0;
+  try{
+    for(const e of list){
+      say('Gerando PDF '+(n+1)+' de '+list.length+'…');
+      let name=pdfName(e),k=2;while(used.has(name))name=pdfName(e).replace(/\.pdf$/,' ('+(k++)+').pdf');used.add(name);
+      const blob=await pdfExtrato(e);
+      if(dir){try{const fh=await dir.getFileHandle(name,{create:true}),w=await fh.createWritable();await w.write(blob);await w.close()}catch(x){saveBlob(name,blob)}}
+      else{saveBlob(name,blob);await new Promise(r=>setTimeout(r,350))}
+      n++;
+    }
+    say(n+' PDF(s) '+(dir?'salvo(s) na pasta escolhida.':'baixado(s) com o número da reserva no nome. Se o navegador pedir, permita downloads múltiplos.'));
+  }catch(err){say('Não foi possível gerar os PDFs: '+((err&&err.message)||err))}
+}
+const waNum=s=>{let d=String(s||'').replace(/\D/g,'');if(d.length===10||d.length===11)d='55'+d;return d.length>=12?d:''};
+async function sendWa(i){
+  const e=ents[i];if(!e||!sigOk(e))return;
+  const name=pdfName(e),msg='Olá! Segue o extrato de consumo assinado'+(e.res?' da reserva '+e.res:'')+' - Icaraí Praia Hotel.',num=waNum(e.wa);
+  const probe=typeof navigator.canShare==='function'&&(()=>{try{return navigator.canShare({files:[new File(['x'],name,{type:'application/pdf'})]})}catch(x){return false}})();
+  let w=null;if(!probe)w=window.open('','_blank'); /* abre dentro do clique para o navegador não bloquear o pop-up */
+  say('Gerando o PDF…');
+  let blob;try{blob=await pdfExtrato(e)}catch(err){if(w)w.close();say('Não foi possível gerar o PDF: '+((err&&err.message)||err));return}
+  if(probe){
+    try{await navigator.share({files:[new File([blob],name,{type:'application/pdf'})],title:name,text:msg});say('Compartilhado. Na lista do aparelho, escolha o WhatsApp.');return}
+    catch(err){if(err&&err.name==='AbortError'){say('Envio cancelado.');return}}
+  }
+  saveBlob(name,blob);
+  const url='https://wa.me/'+num+'?text='+encodeURIComponent(msg);
+  if(w)w.location.href=url;else window.open(url,'_blank');
+  say('PDF "'+name+'" salvo. No WhatsApp que abriu, anexe o arquivo (clipe > Documento).'+(num?'':' Informe o número do hóspede ao lado para abrir a conversa direto.'));
+}
+const pdfBlk=(ns,n)=>`<h2>PDF do extrato da empresa</h2><p class="mut">Gera o PDF do extrato A4 (com a assinatura, se houver) com o número da reserva no nome do arquivo, ex.: "Reserva 12345.pdf". No computador, com Chrome ou Edge, você escolhe uma pasta uma vez e os PDFs em lote vão direto para ela. O botão WhatsApp de cada hóspede (liberado depois da assinatura) abre o compartilhamento do aparelho com o PDF anexado; no computador ele salva o PDF e abre o WhatsApp para você anexar.</p><label class="chk"><input type="checkbox" data-auto ${autoSave?'checked':''}> Salvar o PDF automaticamente ao confirmar a assinatura</label><div class="acts"><button class="btn" data-act="vsel" ${ns?'':'disabled'}>Salvar PDFs selecionados (${ns})</button><button class="btn" data-act="vall">Salvar PDFs de todos (${n})</button></div><p class="mut" id="smsg" role="status">${esc(smsg)}</p>`;
 function selCard(){
   const ok=ents.filter(e=>e.r),ns=ok.filter(e=>e.sel).length;
   if(!ok.length)return'';
   const dif=ok.filter(e=>e.bal&&Math.abs(covTot(e)-(e.val-e.r.tot))>.01);
   const par=(k,t,d)=>`<h2>${t}</h2><p class="mut">${d}</p><div class="acts"><button class="btn" data-act="${k}sel" ${ns?'':'disabled'}>Imprimir selecionados (${ns})</button><button class="btn" data-act="${k}all">Imprimir todos (${ok.length})</button></div>`;
-  return `<div class="card"><h2>Extratos da empresa para assinatura</h2><p class="mut">Marque os hóspedes e escolha o formato de impressão. Álcool e excessos de limite nunca entram nos extratos da empresa.</p>${dif.length?`<div class="al wn">Atenção: em ${dif.length} extrato(s) a soma dos itens da empresa difere do saldo do PDF menos o valor do hóspede (pagamentos, taxas ou ajustes que não aparecem como itens): ${dif.map(e=>esc(e.name)).join('; ')}.</div>`:''}<div class="acts"><button class="btn sec" data-act="all">Marcar todos</button><button class="btn sec" data-act="none">Desmarcar</button></div><div class="grp">${ok.map(e=>`<label class="chk"><input type="checkbox" data-sel="${ents.indexOf(e)}" ${e.sel?'checked':''}> ${esc(e.name)} · UH ${esc(e.uh||'-')}</label>`).join('')}</div>`+
+  return `<div class="card"><h2>Extratos da empresa para assinatura</h2><p class="mut">Marque os hóspedes e escolha o formato de impressão. Álcool e excessos de limite nunca entram nos extratos da empresa. Use "Assinar na tela" para colher a assinatura do hóspede no tablet (dedo ou caneta); ela sai impressa no extrato A4.</p>${dif.length?`<div class="al wn">Atenção: em ${dif.length} extrato(s) a soma dos itens da empresa difere do saldo do PDF menos o valor do hóspede (pagamentos, taxas ou ajustes que não aparecem como itens): ${dif.map(e=>esc(e.name)).join('; ')}.</div>`:''}<div class="acts"><button class="btn sec" data-act="all">Marcar todos</button><button class="btn sec" data-act="none">Desmarcar</button></div><div class="sgl">${ok.map(e=>{const i=ents.indexOf(e);return `<div class="sr"><label class="chk"><input type="checkbox" data-sel="${i}" ${e.sel?'checked':''}> ${esc(e.name)} · UH ${esc(e.uh||'-')}</label><span class="mut">${e.sig?(sigOk(e)?'✔ assinado em '+esc(e.sigAt):'⚠ o valor mudou depois da assinatura: assine de novo'):'sem assinatura'}</span><button class="btn sec" data-sign="${i}">${e.sig?'Assinar de novo':'Assinar na tela'}</button>${e.sig?`<button class="btn sec" data-unsign="${i}">Remover assinatura</button>`:''}<button class="btn sec" data-pdf="${i}">Salvar PDF</button><button class="btn sec" data-wa="${i}" ${sigOk(e)?'':'disabled'} title="${sigOk(e)?'Enviar o PDF assinado':'Colha a assinatura para liberar'}">WhatsApp</button><input class="wa" type="tel" inputmode="tel" data-wanum="${i}" placeholder="WhatsApp (DDD + número)" value="${esc(e.wa||'')}" aria-label="WhatsApp de ${esc(e.name)}"></div>`}).join('')}</div>`+
   par('p','Extrato da empresa (A4)','Página A4 com logo, detalhamento completo do que a empresa quita e campos de assinatura.')+
+  pdfBlk(ns,ok.length)+
   par('g','Extras do hóspede (cupom 80 mm)','Só o que o hóspede paga (álcool e excessos), item a item. Sem nome do titular: apenas reserva e número do quarto (UH).')+'</div>';
 }
 function render(){
@@ -445,23 +647,23 @@ body{font:12px/1.4 "Segoe UI",Arial,sans-serif;color:#111;padding:0 14mm}
 .ext{width:100%;border-collapse:collapse;border:0;margin:0;break-after:page;page-break-after:always}
 .ext:last-child{break-after:auto;page-break-after:auto}
 .ext>thead>tr>td,.ext>tbody>tr>td,.ext>tfoot>tr>td{border:0;padding:0;background:none}
-.top{padding-top:12mm;margin-bottom:4mm}.top img{display:block;width:20mm;height:20mm}
+.top{padding-top:12mm;margin-bottom:4mm;display:flex;align-items:center;gap:4mm}.top img{display:block;width:20mm;height:20mm}.hn{font-size:15px}
 .sp{height:12mm}
 h1{font-size:16px;margin:0 0 8px}
 .it{width:100%;border-collapse:collapse;margin:8px 0}.it th,.it td{border:1px solid #bbb;padding:4px 6px;text-align:left}.it th{background:#e8eef1}.it tr{break-inside:avoid;page-break-inside:avoid}.it thead{display:table-header-group}
 .r{text-align:right}
-.hd{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:6px}.m{color:#555;font-size:11px}.sig{margin-top:40px;display:flex;gap:30px;break-inside:avoid;page-break-inside:avoid}.sig div{flex:1;border-top:1px solid #111;padding-top:4px;text-align:center}
+.hd{display:flex;gap:18px;flex-wrap:wrap;margin-bottom:6px}.m{color:#555;font-size:11px}.sig{margin-top:40px;display:flex;gap:30px;break-inside:avoid;page-break-inside:avoid}.sig.s{margin-top:28mm}.sig div{flex:1;border-top:1px solid #111;padding-top:4px;text-align:center;position:relative}.sg{position:absolute;left:50%;transform:translateX(-50%);bottom:100%;max-height:24mm;max-width:90%}.dt{position:absolute;left:0;right:0;bottom:100%;font-size:11px;padding-bottom:2px}
 </style></head><body>`;
   list.forEach(e=>{
     const rows=e.items.map(i=>({i,cov:i.total-(i.gc||0)})).filter(x=>x.cov>.005);
-    const tot=rows.reduce((s,x)=>s+x.cov,0);
-    h+=`<table class="ext"><thead><tr><td><div class="top"><img src="${LOGO}" alt="Icaraí Praia Hotel"></div></td></tr></thead><tbody><tr><td><h1>Extrato de consumo: a pagar pela empresa</h1>
+    const tot=rows.reduce((s,x)=>s+x.cov,0),sg=sigOk(e);
+    h+=`<table class="ext"><thead><tr><td><div class="top"><img src="${LOGO}" alt="Icaraí Praia Hotel"><div><b class="hn">Icaraí Praia Hotel</b><br>CNPJ 27.890.847/0001-45</div></div></td></tr></thead><tbody><tr><td><h1>Extrato de consumo: a pagar pela empresa</h1>
 <div class="hd"><div><b>Hóspede</b><br>${esc(e.name)}</div><div><b>UH</b><br>${esc(e.uh||'-')}</div><div><b>Reserva</b><br>${esc(e.res||'-')}</div><div><b>Hóspedes</b><br>${e.r.n}</div></div>
 <table class="it"><thead><tr><th>Data</th><th>Descrição</th><th class="r">Qtd</th><th class="r">Valor unit.</th><th class="r">Lançado</th><th class="r">Empresa quita</th></tr></thead><tbody>`+
     rows.map(({i,cov})=>`<tr><td>${i.date}</td><td>${esc(i.desc)}${i.gc>.005?'<div class="m">parcial: o excedente é pago pelo hóspede</div>':''}</td><td class="r">${i.qty}</td><td class="r">${brl(i.unit||0)}</td><td class="r">${brl(i.total)}</td><td class="r">${brl(cov)}</td></tr>`).join('')+
     `<tr><th colspan="5">Total a pagar pela empresa</th><th class="r">${brl(tot)}</th></tr></tbody></table>
 <div class="m">Bebidas alcoólicas e consumos acima dos limites não constam neste extrato: são pagos diretamente pelo hóspede.</div>
-<div class="sig"><div>Assinatura do hóspede</div><div>Data</div></div></td></tr></tbody><tfoot><tr><td><div class="sp"></div></td></tr></tfoot></table>`;
+<div class="sig${sg?' s':''}"><div>${sg?`<img class="sg" src="${e.sig}" alt="">`:''}Assinatura do hóspede</div><div>${sg?`<span class="dt">${esc(e.sigD)}</span>`:''}Data</div></div></td></tr></tbody><tfoot><tr><td><div class="sp"></div></td></tr></tfoot></table>`;
   });
   return h+'</body></html>';
 }
@@ -485,7 +687,7 @@ body{width:80mm;font:11px/1.35 "Courier New",monospace;color:#000}
   list.forEach(e=>{
     const rows=e.items.map(i=>({i,v:g?(i.gc||0):i.total-(i.gc||0)})).filter(x=>x.v>.005);
     const tot=rows.reduce((s,x)=>s+x.v,0),dates=[...new Set(rows.map(x=>x.i.date))];
-    h+=`<div class="cp"><div class="hd"><img src="${LOGO}" alt=""><b>Icaraí Praia Hotel</b></div>
+    h+=`<div class="cp"><div class="hd"><img src="${LOGO}" alt=""><div><b>Icaraí Praia Hotel</b><div class="m">CNPJ 27.890.847/0001-45</div></div></div>
 <div class="t">${g?'Extras do hóspede':'Extrato da empresa'}</div>
 ${g?'':`<div><b>Titular:</b> ${esc(e.name)}</div>`}<div><b>Reserva:</b> ${esc(e.res||'não identificada')}</div><div><b>UH:</b> ${esc(e.uh||'-')}${g?'':` · <b>Hóspedes:</b> ${e.r.n}`}</div>
 <div class="m">Emitido em ${now}</div><div class="sep"></div>`+
@@ -512,11 +714,18 @@ function printEmp(list,mode='a4'){
 }
 $('out').addEventListener('change',ev=>{const s=ev.target.dataset&&ev.target.dataset.sel;if(s!==undefined){ents[+s].sel=ev.target.checked;render()}});
 $('out').addEventListener('click',ev=>{
+  const pb=ev.target.closest('[data-pdf]');if(pb){savePdf(ents[+pb.dataset.pdf]);return}
+  const wb=ev.target.closest('[data-wa]');if(wb){sendWa(+wb.dataset.wa);return}
+  const sb=ev.target.closest('[data-sign]');if(sb){openSign(+sb.dataset.sign);return}
+  const ub=ev.target.closest('[data-unsign]');if(ub){const x=ents[+ub.dataset.unsign];x.sig=null;x.sigAt=x.sigD=null;x.sigTot=0;render();return}
   const b=ev.target.closest('[data-act]');if(!b)return;
   const a=b.dataset.act,ok=ents.filter(e=>e.r);
+  if(a==='vsel'||a==='vall'){savePdfs(a==='vall'?ok:ok.filter(e=>e.sel));return}
   if(a==='all'||a==='none'){ok.forEach(e=>e.sel=a==='all');render();return}
   printEmp(a.endsWith('all')?ok:ok.filter(e=>e.sel),{p:'a4',g:'cg'}[a[0]]);
 });
+$('out').addEventListener('input',ev=>{const t=ev.target;if(t.dataset&&t.dataset.wanum!==undefined)ents[+t.dataset.wanum].wa=t.value});
+$('out').addEventListener('change',ev=>{if(ev.target.dataset&&ev.target.dataset.auto!==undefined)autoSave=ev.target.checked});
 </script>
 </body>
 </html>
